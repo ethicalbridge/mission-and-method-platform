@@ -1,0 +1,26 @@
+.founder-page-hero{padding:72px 0 78px;background:#f5f6f3;border-bottom:1px solid #d8dfd9;overflow:hidden}
+.founder-page-grid{display:grid;grid-template-columns:minmax(320px,400px) minmax(0,1fr);gap:72px;align-items:center}
+.founder-page-grid h1{font-family:'Nunito Sans',system-ui,sans-serif;font-size:clamp(42px,4.7vw,64px);font-weight:900;line-height:1.03;letter-spacing:-.045em;margin:15px 0 22px;max-width:760px}
+.founder-lead{max-width:680px;font-size:18px;line-height:1.7}
+.founder-page-photo{width:100%;max-width:390px;position:relative;padding:0 0 48px;margin:0 auto}
+.portrait-arch{position:relative;width:100%}
+.portrait-arch:before{content:"";position:absolute;inset:14px -14px -14px 14px;background:#16746e;border-radius:12px}
+.portrait-arch img{display:block;position:relative;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:center top;border-radius:12px;box-shadow:0 12px 30px #123c481c}
+.portrait-name{position:absolute;left:18px;right:auto;bottom:0;width:calc(100% - 18px);background:#123c48;color:#fff;padding:15px 19px;border-radius:8px;display:grid;box-shadow:none}
+.portrait-name span{font-size:9px;font-weight:900;letter-spacing:.12em;color:#f8ca68}
+.portrait-name b{font-family:'Nunito Sans',system-ui,sans-serif;font-size:18px;line-height:1.2;margin:3px 0;font-weight:900}
+.portrait-name small{font-size:11px;font-weight:800}
+.founder-story{background:#fff}
+.founder-story-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:75px}
+.founder-story-grid p,.wide-copy{font-size:17px;line-height:1.75}
+.wide-copy{max-width:830px}
+.founder-belief{background:#123c48;color:#fff;padding:72px 0;text-align:center}
+.founder-belief>div>span{font:70px/.4 'Nunito Sans',sans-serif;color:#f8ca68}
+.founder-belief blockquote{font:800 clamp(27px,3.3vw,43px)/1.18 'Nunito Sans',system-ui,sans-serif;letter-spacing:-.035em;max-width:960px;margin:22px auto 28px}
+.founder-belief p{max-width:1050px;margin:0 auto 25px;color:#e4eeee;font-size:clamp(19px,1.5vw,24px);line-height:1.55;font-weight:600}
+.founder-belief a{color:#f8ca68;font-weight:900}
+.founder-principles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:38px}
+.founder-principles article{background:#fff;border:1px solid #d8dfd9;border-radius:10px;padding:25px}
+.founder-principles article>b{color:#16746e;font:900 20px 'Nunito Sans',sans-serif}
+.founder-principles h3{margin:17px 0 8px}
+@media(max-width:850px){.founder-page-hero{padding:55px 0 70px;background:#fff3e7}.founder-page-grid,.founder-story-grid{grid-template-columns:1fr;gap:48px}.founder-page-photo{max-width:380px}.founder-principles{grid-template-columns:1fr}}

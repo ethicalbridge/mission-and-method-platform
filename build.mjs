@@ -1,11 +1,12 @@
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 
 await rm('dist', { recursive: true, force: true });
 await mkdir('dist/server', { recursive: true });
 await mkdir('dist/client', { recursive: true });
 await mkdir('dist/.openai', { recursive: true });
-for (const file of ['index.html','about.html','courses.html','planning-system.html','theory-of-change.html','fundraising-partnerships.html','organisation-systems.html','strategy-to-action.html','subscribe.html','contact.html','styles.css','app.js']) {
-  await cp(file, `dist/client/${file}`);
+for (const entry of await readdir('.')) {
+  if (['.git', '.openai', 'dist'].includes(entry)) continue;
+  await cp(entry, `dist/client/${entry}`, { recursive: true });
 }
 await cp('.openai/hosting.json', 'dist/.openai/hosting.json');
 await writeFile('dist/server/index.js', `export default {
