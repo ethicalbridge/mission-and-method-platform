@@ -1,8 +1,14 @@
 // Shared navigation and honest preview interactions; no entitlement is granted here.
 const menu=document.querySelector('.menu'),links=document.querySelector('.nav-links');
+const coursesDropdown=document.querySelector('.courses-dropdown');
+coursesDropdown?.addEventListener('keydown',event=>{if(event.key==='Escape'&&coursesDropdown.open){event.stopPropagation();coursesDropdown.open=false;coursesDropdown.querySelector('summary').focus();}});
+document.addEventListener('click',event=>{if(coursesDropdown&&!coursesDropdown.contains(event.target))coursesDropdown.open=false;});
+coursesDropdown?.addEventListener('focusout',event=>{if(!coursesDropdown.contains(event.relatedTarget))coursesDropdown.open=false;});
+coursesDropdown?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{coursesDropdown.open=false;links.classList.remove('open');menu?.setAttribute('aria-expanded','false');}));
 menu?.addEventListener('click',()=>{const open=links.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&links?.classList.contains('open')){links.classList.remove('open');menu.setAttribute('aria-expanded','false');menu.focus();}});
 const page=location.pathname.split('/').pop()||'index.html';
+if(['courses.html','planning-system.html','learn.html','organisation.html','strategic-foundation.html','theory-of-change.html','team-organisation.html','organisation-systems.html','policies-procedures.html','strategy-to-action.html','business-model.html','fundraising-partnerships.html'].includes(page))coursesDropdown?.classList.add('active');
 document.querySelectorAll('.nav-links a').forEach(a=>{const path=a.getAttribute('href');if(path===page||(path==='courses.html'&&['learn.html','planning-system.html','organisation.html'].includes(page))||(path==='software.html'&&page.startsWith('software-'))){a.classList.add('active');a.setAttribute('aria-current','page');}else a.classList.remove('active');});
 document.querySelectorAll('[data-accordion]').forEach(item=>{const button=item.querySelector('button');button?.addEventListener('click',()=>{const open=item.classList.toggle('open');button.setAttribute('aria-expanded',String(open));const marker=button.querySelector('i');if(marker)marker.textContent=open?'−':'+';});});
 document.querySelectorAll('[data-course-tab]').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('[data-course-tab]').forEach(t=>t.classList.toggle('active',t===tab));document.querySelectorAll('[data-course-panel]').forEach(p=>p.classList.toggle('active',p.dataset.coursePanel===tab.dataset.courseTab));}));
