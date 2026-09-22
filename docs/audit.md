@@ -53,4 +53,10 @@ The course overview now restores audience, instructor, expanded outcomes, skill 
 
 The latest pricing brief supersedes the earlier individual-subscriptions-only model: the course is US$39 once, the optional Suite displays example US$15 monthly or US$90 annual pricing, and an optional US$109 bundle combines the course with one year of software. The 11 existing tool demos remain independent. Prices and package contents are centralized in `pricing-config.js`; savings and comparison prices are calculated. Package mapping retains separate course and software permissions. Purchase links show honest package details with checkout disabled. No certificate, uploaded workbook, payment processing or cloud feature is represented as already delivered.
 
-Four additional tests cover pricing calculations, configuration changes, package isolation and invalid offers. All 12 tests, all 35 HTML-page link checks and the static build pass.
+Four additional tests cover pricing calculations, configuration changes, package isolation and invalid offers. The reading revision adds a coverage and metadata test. All 13 tests, all 35 HTML-page link checks and the static build pass.
+
+## Lesson-level reading audit
+
+The earlier build assigned one broad reference to each whole module, which produced weak matches at lesson level. The September 2026 research revision replaces that structure with 75 placements from 35 distinct sources across all 37 taught lessons. Every lesson now presents at least two relevant documents, the publisher and a concise explanation of the match. The full Evidence Library exposes all lessons rather than only the first three in each module.
+
+The collection prioritises official institutional guidance, primary framework material and established research organisations. UK regulatory sources are labelled as jurisdiction-specific. A coverage test prevents a taught lesson from shipping without multiple described readings. See `docs/reading-research.md` for selection and maintenance criteria.

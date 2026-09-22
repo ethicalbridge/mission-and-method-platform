@@ -27,3 +27,5 @@ Edit prices, package inclusions, Suite membership and future commercial offers i
 Do not put paid Excel files or secrets in this public repository. Full lessons are currently public development-preview assets, not paywalled course content. `server/entitlements.mjs` contains tested access policy logic but requires a trusted server, billing events and authenticated identity before production use. Follow [the production access plan](docs/production-access.md).
 
 See [the audit](docs/audit.md) for changes and limits. No API keys or payment credentials belong in frontend code.
+
+The lesson-level research collection is maintained in `course-data.js`. See [the reading research method](docs/reading-research.md) for source criteria, coverage and maintenance notes. Run the test suite after changing lesson IDs or reading assignments; it requires multiple fully described readings for every taught lesson.
