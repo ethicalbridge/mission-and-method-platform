@@ -1,0 +1,4 @@
+import {readFile,readdir,access} from 'node:fs/promises';
+const files=(await readdir('.')).filter(f=>f.endsWith('.html'));const pages=new Map(await Promise.all(files.map(async f=>[f,await readFile(f,'utf8')])));const errors=[];
+for(const [file,html] of pages)for(const match of html.matchAll(/(?:href|src)="([^"]+)"/g)){const url=match[1];if(/^(https?:|mailto:|data:|javascript:)/.test(url))continue;const [raw,hash]=url.split('#');const target=raw.split('?')[0]||file;try{await access(target);}catch{errors.push(`${file}: missing ${url}`);continue;}if(hash&&pages.has(target)&&!pages.get(target).includes(`id="${hash}"`)&&!pages.get(target).includes(`id='${hash}'`))errors.push(`${file}: missing anchor ${url}`);}
+console.log(`Checked ${files.length} HTML pages and local href/src targets.`);if(errors.length){console.error(errors.join('\n'));process.exitCode=1;}
