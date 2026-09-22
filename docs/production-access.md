@@ -4,11 +4,13 @@
 
 This branch is a functional **public development preview**, not a secure paid learning platform. Course content is static and readable without authentication. Browser storage is for drafts, not identity, billing or permissions. Do not advertise paid protection or upload paid workbooks to the public repository.
 
-The original repository had no authentication, payment service, database, private file storage, workbook files or videos. Prices and trial terms have not been supplied. These dependencies are left explicit rather than simulated.
+The original repository had no authentication, payment service, database, private file storage, workbook files or videos. The latest brief supplies launch prices and example subscription prices; payment integration and trial terms remain unconfigured.
 
 ## Product model
 
-`products.js` is the product/resource catalogue. `course_planning_system` is a one-time course purchase. Each `software_*` product has separate monthly and annual price configuration. Prices and checkout identifiers remain null until approved. There is no generic PRO grant and no active bundle. A later bundle can map one billing SKU to multiple explicit product grants; individual product access checks stay unchanged.
+`pricing-config.js` owns commercial prices, package contents, Suite membership, availability notices and future-offer configuration. The Complete Impact Course costs US$39 once at launch (regular US$89), with lifetime course access. The optional Ethical Bridge Software Suite displays example prices of US$15/month or US$90/year. The optional US$109 bundle includes lifetime course access and 12 months of the Suite. The US$269 reference value uses the regular course price plus 12 monthly software payments; the bundle saves US$20 against the current course plus annual plan. This model supersedes the earlier individual-subscriptions-only brief.
+
+`products.js` remains the product/resource catalogue. `server/package-grants.mjs` maps the Suite and bundle to explicit product grants; course-only purchases never include software. Every tool retains its own permission check and storage boundary. Provider identifiers remain null. `purchase.html` only reviews the selected package, with checkout explicitly disabled: it creates neither an order nor a grant. Future coupons, team plans, alumni discounts, trials, regional and student pricing have configuration placeholders, not operational billing features.
 
 Course answers belong to `mm.course.planning-system.v1`. Every software demo has its own `mm.software.<slug>.v1` namespace. No software imports course data, requires another tool, or shares records with it. The course may show earlier course answers as read-only context. Shared branding and account identity do not imply shared product data.
 
@@ -34,7 +36,7 @@ Course access requires `kind=course`, the exact course product, `status=purchase
 
 ## Files, prices and production inputs still needed
 
-1. Confirmed one-time course price and monthly/annual prices per software product, currencies and applicable commercial terms.
+1. Final approval of the example Suite prices, bundle renewal terms, applicable commercial terms and provider price identifiers. Current launch copy uses USD. The certificate remains undecided and is not advertised as included.
 2. Payment provider and verified backend/authentication hosting; existing GitHub Pages alone cannot enforce paid access.
 3. The founder's Excel files, versions and instructions. Eight resource manifest entries already identify their course and module. Keep basic workbook functionality fully usable; do not restrict it to sell software.
 4. Instructor videos if wanted. Written lessons do not depend on videos and no missing videos are advertised as delivered.

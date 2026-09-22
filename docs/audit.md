@@ -46,3 +46,11 @@ Sources are linked within the relevant module and in the reading guide. Jurisdic
 - Browser testing covers all 78 screen states (45 lessons, 11 software product pages and 22 other pages) at 390px and 1280px widths: no horizontal overflow, missing headings or console errors were observed.
 - Module 1 completion and output assembly passed. Saved task dates persisted after reload. Software record editing/filtering and independent data stores passed. A downloaded course backup was restored through the real file chooser, retaining six lesson drafts, six completed lessons and one task; an invalid backup was rejected. Temporary test records were then removed from the local preview.
 - Remaining commercial integrations and owner-supplied materials are release blockers, not completed features.
+
+## Course visibility and pricing revision
+
+The course overview now restores audience, instructor, expanded outcomes, skill and toolkit descriptions, and the full lesson list. A visible page guide complements the Courses dropdown so these sections are easy to find.
+
+The latest pricing brief supersedes the earlier individual-subscriptions-only model: the course is US$39 once, the optional Suite displays example US$15 monthly or US$90 annual pricing, and an optional US$109 bundle combines the course with one year of software. The 11 existing tool demos remain independent. Prices and package contents are centralized in `pricing-config.js`; savings and comparison prices are calculated. Package mapping retains separate course and software permissions. Purchase links show honest package details with checkout disabled. No certificate, uploaded workbook, payment processing or cloud feature is represented as already delivered.
+
+Four additional tests cover pricing calculations, configuration changes, package isolation and invalid offers. All 12 tests, all 35 HTML-page link checks and the static build pass.

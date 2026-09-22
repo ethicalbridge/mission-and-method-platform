@@ -20,6 +20,8 @@ Learning starts at `planning-system.html`. `learn.html` renders 45 numbered less
 
 Each `software-*.html` page has a separate browser data namespace. Course answers are not imported into software. The common account page does not invent an identity or entitlement.
 
+Edit prices, package inclusions, Suite membership and future commercial offers in `pricing-config.js`, then run `node scripts/generate-pages.mjs` and `node build.mjs`. Annual savings and bundle reference values are calculated from that configuration. Course overview content lives in `scripts/course-overview-sections.mjs`; shared pricing layouts live in `scripts/pricing-sections.mjs`. The optional Suite and course-plus-year bundle map to explicit tool grants through `server/package-grants.mjs`; checkout remains disabled pending a real payment service.
+
 ## Paid access is not live
 
 Do not put paid Excel files or secrets in this public repository. Full lessons are currently public development-preview assets, not paywalled course content. `server/entitlements.mjs` contains tested access policy logic but requires a trusted server, billing events and authenticated identity before production use. Follow [the production access plan](docs/production-access.md).
