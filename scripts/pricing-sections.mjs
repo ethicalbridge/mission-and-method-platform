@@ -9,7 +9,6 @@ const upcomingToolGroups=[
  ['Strategy & impact',[['Results & Indicator Tracking','Define indicators, data sources, collection frequency and evidence responsibilities.'],['Change Adoption Manager','Plan stakeholder engagement, readiness, communication and adoption during change.']]],
  ['Project & operations',[['Meetings, Actions & Decisions','Turn meeting notes into accountable actions and a searchable decision record.'],['Policy Management','Keep policy ownership, approvals, review dates and next actions visible.']]],
  ['Funding & partnerships',[['Donor Mapping, Engagement & Funding Tracking','Research prospects, manage engagement and track funding from first fit check through stewardship.'],['Partner Mapping & Partnership Tracking','Map partnership fit, shared commitments, responsibilities and next conversations.']]],
- ['People & organisation',[['Onboarding, 30/60/90 Days & Probation','Give new team members a clear starting plan, support checkpoints and probation review.']]],
  ['Marketing & engagement',[['Marketing Campaigns & Social Media Planner','Plan campaigns, content, channels, ownership and publishing deadlines in one place.']]]
 ];
 export const toolAccessForm=(redirectUrl='')=>`<section class="tool-access" id="tool-access"><span class="eyebrow">Invitation access</span><h3>Have an access code?</h3><p>Enter it to unlock the Theory of Change Builder and Ethical Bridge CRM at no cost.</p><form data-tool-access-form${redirectUrl?` data-redirect-url="${redirectUrl}"`:''}><label for="access-code">Access code<input id="access-code" name="access-code" inputmode="numeric" autocomplete="one-time-code" required></label><button class="button" type="submit">Unlock the tools</button><p role="status" class="saved-status" data-tool-access-status></p></form></section>`;
@@ -18,7 +17,7 @@ export const availableToolGroups=[
  ['Monitoring & evaluation',['meal-strategy']],
  ['Project & operations',['gantt','issue-risk-management']],
  ['Relationships',['ethical-bridge-crm']],
- ['People & organisation',['people-check-ins-development']]
+ ['People & organisation',['people-check-ins-development','onboarding-compliance']]
 ];
 const availableToolCard=tool=>tool.previewOnly
  ? `<article class="suite-tool-card"><h4>${tool.name}</h4><p>${tool.description}</p><span class="small-tag">Interactive preview</span><p class="tool-card-actions"><a class="button ghost" href="${tool.launchUrl}">Open ${tool.name} →</a></p><p class="subtle">Saved in this browser. Do not enter confidential records.</p></article>`
