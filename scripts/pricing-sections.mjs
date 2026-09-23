@@ -13,7 +13,7 @@ const upcomingToolGroups=[
 ];
 export const toolAccessForm=(redirectUrl='')=>`<section class="tool-access" id="tool-access"><span class="eyebrow">Invitation access</span><h3>Have an access code?</h3><p>Enter it to unlock the Theory of Change Builder and Ethical Bridge CRM at no cost.</p><form data-tool-access-form${redirectUrl?` data-redirect-url="${redirectUrl}"`:''}><label for="access-code">Access code<input id="access-code" name="access-code" inputmode="numeric" autocomplete="one-time-code" required></label><button class="button" type="submit">Unlock the tools</button><p role="status" class="saved-status" data-tool-access-status></p></form></section>`;
 export const availableToolGroups=[
- ['Strategy & impact',['strategy-kpis-annual-planning','theory-of-change']],
+ ['Strategy & impact',['strategy-kpis-annual-planning','strategic-objectives','theory-of-change']],
  ['Monitoring & evaluation',['meal-strategy']],
  ['Project & operations',['gantt','issue-risk-management']],
  ['Relationships',['ethical-bridge-crm']],

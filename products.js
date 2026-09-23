@@ -1,9 +1,9 @@
 import {pricing} from './pricing-config.js';
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:['strategic-foundation','theory-of-change','organisation-chart','internal-systems','policies','work-plan-gantt','business-model','funding-strategy']};
 // No price, trial, subscription, or bundle is inferred from a course purchase.
-export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','gantt','meal-strategy'];
+export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
 export const invitationToolSlugs=['theory-of-change','ethical-bridge-crm'];
-export const previewToolSlugs=['issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','gantt','meal-strategy'];
+export const previewToolSlugs=['issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
 const launchUrls={
  'theory-of-change':'assets/tools/Theory-of-Change-Builder.html',
  'ethical-bridge-crm':'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/',
@@ -11,6 +11,7 @@ const launchUrls={
  'people-check-ins-development':'assets/tools/People-Check-Ins-and-Development.html',
  'onboarding-compliance':'assets/tools/Onboarding-and-Compliance.html',
  'strategy-kpis-annual-planning':'assets/tools/Strategy-KPIs-and-Annual-Planning.html',
+ 'strategic-objectives':'assets/tools/Strategic-Objectives.html',
  'gantt':'assets/tools/Gantt-Project-Planner.html',
  'meal-strategy':'assets/tools/MEAL-Strategy.html'
 };
@@ -31,6 +32,7 @@ export const softwareProducts=[
  ['people-check-ins-development','People Check-Ins & Development','People & organisation','Managers and team members holding useful recurring conversations','Prepare check-ins, agree mutual commitments and revisit objectives and development goals.',['Person','Check-in','Commitment','Objective','Development goal']],
  ['onboarding-compliance','Onboarding & Staff Compliance','People & organisation','HR, managers, buddies and new joiners organising induction and continuing learning','Create role-based onboarding plans, guide a first-week buddy and track training, policy acknowledgements and renewals.',['Person','Task','Owner','Due date','Requirement','Verification']],
  ['strategy-kpis-annual-planning','Strategy, KPIs & Annual Planning','Strategy','Leadership teams turning mission into measurable priorities and decisions','Connect priorities, objectives, measures, actual results, initiatives and review decisions in one exportable workspace.',['Priority','Objective','KPI','Target','Initiative']],
+ ['strategic-objectives','Strategic Objectives','Strategy','Leadership teams defining outward results and the organisational capacity needed to deliver them','Build separate external and internal strategic objectives, with actions, owners, progress and review decisions.',['Code','Type','Objective','Actions','Owner','Progress']],
  ['meal-strategy','MEAL Strategy','Monitoring & evaluation','Programme teams designing and reviewing a monitoring, evaluation, accountability and learning approach','Define what to collect, who manages it and when; compare monthly planned and actual results, then record review decisions.',['Objective','Data source','Indicator','Planned','Actual']]
 ].map(([slug,name,category,audience,description,fields])=>({id:`software_${slug.replaceAll('-','_')}`,slug,name,category,audience,description,fields,launchUrl:launchUrls[slug]||null,previewOnly:previewToolSlugs.includes(slug),kind:'software',suiteIncluded:pricing.suite.toolSlugs.includes(slug),billing:['monthly','annual'],prices:{monthly:null,annual:null},currency:pricing.currency,status:previewToolSlugs.includes(slug)?'preview':availableToolSlugs.includes(slug)?'available':'coming_soon',trial:null,checkout:{monthly:null,annual:null},dataNamespace:`mm.software.${slug}.v1`,entitlements:[]}));
 export const resourceManifest=courseProduct.resourceIds.map((id,index)=>({id,courseId:courseProduct.id,module:index+1,name:['Strategic Foundation','Theory of Change','Organisation Chart and Role Framework','Internal Systems Blueprint','Policy Register and Procedures','Work Plan and Gantt','Business Model','Funding and Partnerships'][index]+' Excel workbook',version:null,objectKey:null,status:'awaiting_owner_file',requiresEntitlement:courseProduct.id}));
