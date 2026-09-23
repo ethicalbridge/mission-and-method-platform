@@ -1,9 +1,8 @@
 import {softwareProducts,availableToolSlugs} from './products.js';
-import {hasToolAccess} from './tool-access.js';
 import {escapeHTML as e,download} from './ui-utils.js';
 const root=document.querySelector('#software-demo');
 const product=softwareProducts.find(p=>p.slug===document.body.dataset.product);
-if(root&&product&&(!availableToolSlugs.includes(product.slug)||hasToolAccess())){
+if(root&&product&&availableToolSlugs.includes(product.slug)){
  let rows=[],error='',editing=null;
  try{const raw=JSON.parse(localStorage.getItem(product.dataNamespace)||'[]');if(!Array.isArray(raw)||raw.length>500||raw.some(x=>!x||typeof x!=='object'||product.fields.some(f=>typeof x[f]!=='string'||x[f].length>2000)))throw Error('invalid');rows=raw;}catch{error='Previous demo data could not be loaded. Export any current work before leaving; existing storage will not be overwritten.';}
  let query='';
