@@ -18,5 +18,6 @@
 .footer-brand-column .brand{font-size:23px}
 .footer-brand-column p{font-size:12px;line-height:1.5}
 .footer-bottom{padding:15px 0}
+.footer-contact{border-top:1px solid #ffffff1f;border-bottom:1px solid #ffffff1f;padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:24px}.footer-contact span{display:block;color:#9eb6b8;font-size:11px;text-transform:uppercase;letter-spacing:.09em}.footer-contact b{display:block;margin-top:4px;font-size:18px}.footer-contact-button{display:inline-flex;align-items:center;justify-content:center;border:1px solid #f8ca68;border-radius:999px;padding:10px 16px;color:#f8ca68!important;font-weight:800;white-space:nowrap}.footer-contact-button:hover{background:#f8ca68;color:#102f3b!important}
 @media(max-width:900px){.footer-newsletter{padding:32px 0}.footer-map{padding:30px 0}}
-@media(max-width:560px){.footer-newsletter form>div:not(.footer-social-icons){display:grid}.footer-social-icons{display:flex!important}}
+@media(max-width:560px){.footer-newsletter form>div:not(.footer-social-icons){display:grid}.footer-social-icons{display:flex!important}.footer-contact{align-items:flex-start;flex-direction:column}.footer-contact-button{width:100%}}
