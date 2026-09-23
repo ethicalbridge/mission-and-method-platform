@@ -27,7 +27,7 @@ export const pricing = {
     availability: 'Software is in development. Local demos are available; cloud saving, collaboration, reporting and automation are planned.'
   },
   bundle: {
-    id: 'bundle', name: 'Course + 1 Year Software Access', launch: 10900, softwareMonths: 12,
+    id: 'bundle', name: 'Course + 1 Year Software Access', launch: 9900, softwareMonths: 12,
     badge: 'Best value', providerPriceId: null,
     includes: ['Complete course with lifetime access', 'Course Excel templates and resources', '12 months of the Software Suite'],
     contents: [{productId:'course_planning_system',access:'lifetime'},{productId:'software_suite',months:12}],
