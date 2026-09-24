@@ -20,11 +20,30 @@
 .plan-table td:nth-child(16){min-width:180px}
 .plan-table tr:hover td{background:#f7fafb}
 .plan-table tr:hover td:nth-child(-n+3){background:#f7fafb}
+.plan-activity-cell{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.plan-edit{border:1px solid #b8d6d4;background:#e8f5f1;color:#075c63;border-radius:7px;padding:4px 10px;font-size:12px;font-weight:800}
+.plan-edit:hover{background:#d4ece6}
 .plan-table .qmark{color:#168277;font-weight:900}
 .plan-checks{border:1px solid #d4dfe6;border-radius:10px;padding:12px;display:flex;gap:10px 18px;flex-wrap:wrap}
 .plan-checks legend{font-weight:800;font-size:14px;padding:0 5px}
 .plan-checks label{display:flex;align-items:center;gap:6px;font-weight:500}
 .plan-checks input{width:auto}
+.strategy-section{margin:20px 0 34px}
+.strategy-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:17px}
+.strategy-heading h2{margin:0;font-size:23px}
+.strategy-eso-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.strategy-card{display:flex;flex-direction:column;gap:16px;min-height:205px;text-align:left;background:#fff;border:1px solid var(--line);border-top:5px solid #2b9b83;border-radius:16px;padding:23px;color:var(--ink);box-shadow:0 4px 15px #18324e08}
+.strategy-card:nth-child(2){border-top-color:#80c7ca}.strategy-card:nth-child(3){border-top-color:#e8c977}
+.strategy-card:hover,.strategy-list-item:hover{border-color:#2b9b83;box-shadow:0 8px 24px #18324e17}
+.strategy-code{color:#075c63;font-size:13px;font-weight:900;letter-spacing:.08em}
+.strategy-card strong{font-size:19px;line-height:1.3}.strategy-card small{margin-top:auto;color:var(--muted);font-size:13px}
+.strategy-flower{position:relative;height:475px;max-width:900px;margin:0 auto;background:radial-gradient(circle at 50% 78%,#f3f8f8 0 26%,transparent 26.5%)}
+.strategy-center{position:absolute;z-index:2;left:50%;bottom:10px;transform:translateX(-50%);width:240px;height:240px;border-radius:50%;background:#e8cb78;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-transform:uppercase;font-weight:900;line-height:1.3;color:#173949;box-shadow:0 0 0 22px #a2d7d5}
+.strategy-petal{position:absolute;z-index:1;width:176px;min-height:172px;padding:22px 13px;border:0;border-radius:42% 42% 22% 22%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:#16384b;line-height:1.25;box-shadow:0 4px 15px #18324e12}
+.strategy-petal:hover{filter:brightness(.96);transform:translateY(-4px)}.strategy-petal span{font-size:21px;font-weight:900}.strategy-petal strong{font-size:14px;text-transform:uppercase}
+.petal-1{left:1%;top:180px;background:#fff0b8}.petal-2{left:20%;top:52px;background:#fac2df}.petal-3{left:40%;top:4px;background:#91d3d2}.petal-4{right:20%;top:52px;background:#fac2df}.petal-5{right:1%;top:180px;background:#fff0b8}
+.strategy-iso-list{display:none;gap:10px}.strategy-list-item{display:flex;gap:12px;align-items:center;width:100%;padding:14px 16px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:11px;color:var(--ink)}.strategy-list-item b{color:#075c63}.strategy-list-item small{margin-left:auto;white-space:nowrap;color:var(--muted)}
 @media(max-width:900px){.plan-controls{grid-template-columns:1fr 110px}.plan-control-actions{justify-content:flex-start}.plan-context{display:block}.plan-table th:nth-child(2),.plan-table td:nth-child(2),.plan-table th:nth-child(3),.plan-table td:nth-child(3){position:static;box-shadow:none}}
+@media(max-width:800px){.strategy-eso-grid{grid-template-columns:1fr}.strategy-card{min-height:0}.strategy-flower{display:none}.strategy-iso-list{display:grid}}
 @media(max-width:600px){.plan-controls{grid-template-columns:1fr}.plan-control-actions{justify-content:flex-start}}
-@media print{.plan-controls,.plan-top-scroll,.plan-table td:last-child,.plan-table th:last-child{display:none!important}.plan-table-wrap{overflow:visible;max-height:none}.plan-table{min-width:0;font-size:9pt}.plan-table th,.plan-table td{padding:4px;min-width:0!important;max-width:none!important;position:static!important}}
+@media print{.plan-controls,.plan-top-scroll,.plan-edit{display:none!important}.plan-table-wrap{overflow:visible;max-height:none}.plan-table{min-width:0;font-size:9pt}.plan-table th,.plan-table td{padding:4px;min-width:0!important;max-width:none!important;position:static!important}}

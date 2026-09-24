@@ -1,5 +1,5 @@
 /* Annual work plan. Keeps the existing browser draft and upgrades older rows in place. */
-const strategyObjectives = {
+let strategyObjectives = {
   eso: [
     ['ESO1', 'Build a Global Hub to Connect with Ethical Organisations'],
     ['ESO2', 'Promote Ethical Opportunities Across Borders'],
@@ -13,6 +13,47 @@ const strategyObjectives = {
     ['ISO5', 'Invest in Digital Innovation and Communication']
   ]
 };
+const STRATEGY_KEY='mm-org-strategy-v1';
+const strategyDetails={
+  ESO1:'Create a digital hub that helps people discover and connect with verified ethical organisations across borders.',
+  ESO2:'Improve access to ethical jobs, internships, volunteering, education and other meaningful opportunities.',
+  ESO3:'Develop and diversify aligned relationships that extend reach, resilience and impact.',
+  ISO1:'Build clear roles, governance and operational systems that support a resilient organisation.',
+  ISO2:'Embed ethical practice, cultural sensitivity and continuous learning across the team.',
+  ISO3:'Recruit inclusively and create a team where varied backgrounds and perspectives are valued.',
+  ISO4:'Support wellbeing, professional growth and leadership development.',
+  ISO5:'Strengthen digital platforms, collaboration tools and communication.'
+};
+try{
+  const saved=JSON.parse(localStorage.getItem(STRATEGY_KEY)||'null');
+  if(saved?.objectives?.eso?.length===3&&saved?.objectives?.iso?.length===5){
+    strategyObjectives=saved.objectives;
+    Object.assign(strategyDetails,saved.details||{});
+  }
+}catch(e){}
+
+function saveStrategy(){localStorage.setItem(STRATEGY_KEY,JSON.stringify({objectives:strategyObjectives,details:strategyDetails}))}
+function strategyName(code){return [...strategyObjectives.eso,...strategyObjectives.iso].find(x=>x[0]===code)?.[1]||code}
+function strategyCount(code){return state.activities.filter(a=>a.eso===code||a.iso===code).length}
+function strategyPage(){
+  const eso= strategyObjectives.eso.map(([code,name])=>`<button class="strategy-card" onclick="editStrategy('${code}')"><span class="strategy-code">${code}</span><strong>${esc(name)}</strong><small>${strategyCount(code)} linked activities · Edit objective →</small></button>`).join('');
+  const petals=strategyObjectives.iso.map(([code,name],i)=>`<button class="strategy-petal petal-${i+1}" onclick="editStrategy('${code}')"><span>${code}</span><strong>${esc(name)}</strong></button>`).join('');
+  return title('Strategic objectives','The 3 external and 5 internal objectives from the Ethical Bridge Strategic Plan 2025–2029. Select any objective to view or edit it.')+
+    `<section class="strategy-section"><div class="strategy-heading"><div><p class="eyebrow">External strategic objectives</p><h2>Where Ethical Bridge creates impact</h2></div><span class="pill">3 ESOs</span></div><div class="strategy-eso-grid">${eso}</div></section>`+
+    `<section class="strategy-section"><div class="strategy-heading"><div><p class="eyebrow">Internal strategic objectives</p><h2>What enables the work</h2></div><span class="pill">5 ISOs</span></div><div class="strategy-flower" aria-label="Five internal strategic objectives around a central hub"><div class="strategy-center">Internal strategic<br>objectives <b>(ISO)</b></div>${petals}</div><div class="strategy-iso-list">${strategyObjectives.iso.map(([code,name])=>`<button class="strategy-list-item" onclick="editStrategy('${code}')"><b>${code}</b><span>${esc(name)}</span><small>Edit →</small></button>`).join('')}</div></section>`;
+}
+function editStrategy(code){
+  const name=strategyName(code);
+  modal(`<div class="modalhead"><div><p class="eyebrow">${code.startsWith('ESO')?'External':'Internal'} strategic objective · ${code}</p><h2>Edit objective</h2></div><button class="close" onclick="closeModal()">✕</button></div><form id="strategyform" class="fieldgrid"><label class="wide">Title<input name="name" required value="${esc(name)}"></label><label class="wide">Description<textarea name="description">${esc(strategyDetails[code]||'')}</textarea></label><p class="wide hint">${strategyCount(code)} work plan activities link to ${code}. The code stays fixed so existing links remain connected.</p><div class="wide actions"><button class="btn primary" type="submit">Save objective</button><button class="btn" type="button" onclick="closeModal()">Cancel</button></div></form>`);
+  document.querySelector('#strategyform').onsubmit=e=>{
+    e.preventDefault();
+    const data=new FormData(e.target);
+    const entry=[...strategyObjectives.eso,...strategyObjectives.iso].find(x=>x[0]===code);
+    entry[1]=String(data.get('name')).trim();
+    strategyDetails[code]=String(data.get('description')).trim();
+    saveStrategy();closeModal();render();
+  };
+}
 
 const starterPlanRows = [
   ['r1','Set company direction and governance','Approved annual company plan','Agree annual priorities, decision rights and quarterly review cadence','ESO1','ISO1','Board approves priorities and delegation','2027-01-05','2027-03-31','Q1','r2,r4,r6,r8','Planned','Confirm the commercial model before final approval.'],
@@ -118,7 +159,7 @@ plans = function() {
   return title('Annual work plan', 'Objectives, outputs and activities linked to the 2025–2029 strategy.') +
     `<div class="plan-controls card"><label>Role plan<select aria-label="Select role plan" onchange="planRoleFilter=this.value;render()">${options([['','All roles'],...state.roles.map(r=>[r.id,r.title])],planRoleFilter)}</select></label><label>Year<input aria-label="Plan year" type="number" min="2025" max="2035" value="${planYearFilter}" onchange="planYearFilter=Number(this.value)||2027;render()"></label><label>Find in plan<input aria-label="Search work plan" type="search" value="${esc(planSearch)}" placeholder="Objective, output or activity" oninput="planSearch=this.value;render()"></label><div class="plan-control-actions"><button class="btn primary" onclick="openActivityForm()">+ Add activity</button><button class="btn" onclick="downloadWorkPlanCSV()">↓ Download CSV</button></div></div>`+
     `<div class="plan-context"><div><h2>${esc(roleName)} · ${planYearFilter}</h2><p class="hint">${rows.length} activities · ${counts['In progress']||0} in progress · ${counts['Done']||0} done</p></div><span class="help" title="The attached strategic plan contains 3 ESOs and 5 ISOs. Choose the link for each activity.">Strategy links: 3 ESOs · 5 ISOs ⓘ</span></div>`+
-    `<div class="plan-top-scroll" aria-label="Scroll work plan columns" tabindex="0"><div class="plan-top-scroll-inner"></div></div><div class="plan-table-wrap card"><table class="plan-table"><thead><tr><th>Objective</th><th>Output</th><th>Activity</th><th>ESO</th><th>ISO</th><th>Strategy KPI / milestone</th><th>Start</th><th>End</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Responsible</th><th>Consult</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(a.objective||'—')}</td><td>${esc(a.output||'—')}</td><td><b>${esc(a.title)}</b></td><td title="${esc(strategyLabel(a.eso))}">${esc(a.eso||'—')}</td><td title="${esc(strategyLabel(a.iso))}">${esc(a.iso||'—')}</td><td>${esc(a.milestone||'—')}</td><td>${esc(a.start||'—')}</td><td>${esc(a.end||'—')}</td>${['Q1','Q2','Q3','Q4'].map(q=>`<td class="qmark">${a.quarters?.includes(q)?'●':''}</td>`).join('')}<td>${esc(role(a.role)?.title||'Unassigned')}</td><td>${esc((a.consult||[]).map(id=>role(id)?.title).filter(Boolean).join(', ')||'—')}</td><td><span class="pill ${a.status==='Done'?'done':a.status==='In progress'?'progress':'planned'}">${esc(a.status||'Planned')}</span></td><td>${esc(a.notes||'—')}</td><td><button class="btn" onclick="openActivityForm('${a.id}')">Edit</button></td></tr>`).join('')||'<tr><td colspan="17" class="empty">No activities for this role and year. Add one to start its work plan.</td></tr>'}</tbody></table></div>`;
+    `<div class="plan-top-scroll" aria-label="Scroll work plan columns" tabindex="0"><div class="plan-top-scroll-inner"></div></div><div class="plan-table-wrap card"><table class="plan-table"><thead><tr><th>Objective</th><th>Output</th><th>Activity</th><th>ESO</th><th>ISO</th><th>Strategy KPI / milestone</th><th>Start</th><th>End</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Responsible</th><th>Consult</th><th>Status</th><th>Notes</th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(a.objective||'—')}</td><td>${esc(a.output||'—')}</td><td><div class="plan-activity-cell"><b>${esc(a.title)}</b><button class="plan-edit" onclick="openActivityForm('${a.id}')" aria-label="Edit ${esc(a.title)}">Edit</button></div></td><td title="${esc(strategyLabel(a.eso))}">${esc(a.eso||'—')}</td><td title="${esc(strategyLabel(a.iso))}">${esc(a.iso||'—')}</td><td>${esc(a.milestone||'—')}</td><td>${esc(a.start||'—')}</td><td>${esc(a.end||'—')}</td>${['Q1','Q2','Q3','Q4'].map(q=>`<td class="qmark">${a.quarters?.includes(q)?'●':''}</td>`).join('')}<td>${esc(role(a.role)?.title||'Unassigned')}</td><td>${esc((a.consult||[]).map(id=>role(id)?.title).filter(Boolean).join(', ')||'—')}</td><td><span class="pill ${a.status==='Done'?'done':a.status==='In progress'?'progress':'planned'}">${esc(a.status||'Planned')}</span></td><td>${esc(a.notes||'—')}</td></tr>`).join('')||'<tr><td colspan="16" class="empty">No activities for this role and year. Add one to start its work plan.</td></tr>'}</tbody></table></div>`;
 };
 
 openActivityForm = function(id='') {
