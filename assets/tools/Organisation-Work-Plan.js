@@ -82,14 +82,43 @@ function planFilteredRows() {
   ).sort((a,b)=>(a.start||'9999').localeCompare(b.start||'9999'));
 }
 
+function initPlanTableScroll() {
+  const top=document.querySelector('.plan-top-scroll');
+  const spacer=document.querySelector('.plan-top-scroll-inner');
+  const wrap=document.querySelector('.plan-table-wrap');
+  const table=wrap?.querySelector('.plan-table');
+  if(!top||!spacer||!table)return;
+  const size=()=>{
+    const headers=table.tHead?.rows[0]?.cells;
+    if(headers?.length>=2){
+      table.style.setProperty('--plan-first-width',`${headers[0].offsetWidth}px`);
+      table.style.setProperty('--plan-first-two-widths',`${headers[0].offsetWidth+headers[1].offsetWidth}px`);
+    }
+    spacer.style.width=`${table.scrollWidth}px`;
+    top.scrollLeft=wrap.scrollLeft;
+  };
+  top.addEventListener('scroll',()=>{wrap.scrollLeft=top.scrollLeft});
+  wrap.addEventListener('scroll',()=>{top.scrollLeft=wrap.scrollLeft});
+  size();
+  if(window.ResizeObserver){
+    const observer=new ResizeObserver(()=>{
+      if(!table.isConnected){observer.disconnect();return}
+      size();
+    });
+    observer.observe(wrap);
+    observer.observe(table);
+  }
+}
+
 plans = function() {
   const rows=planFilteredRows();
   const roleName=planRoleFilter ? role(planRoleFilter)?.title || 'Selected role' : 'All roles';
   const counts=rows.reduce((m,a)=>(m[a.status]=(m[a.status]||0)+1,m),{});
+  requestAnimationFrame(initPlanTableScroll);
   return title('Annual work plan', 'Objectives, outputs and activities linked to the 2025–2029 strategy.') +
     `<div class="plan-controls card"><label>Role plan<select aria-label="Select role plan" onchange="planRoleFilter=this.value;render()">${options([['','All roles'],...state.roles.map(r=>[r.id,r.title])],planRoleFilter)}</select></label><label>Year<input aria-label="Plan year" type="number" min="2025" max="2035" value="${planYearFilter}" onchange="planYearFilter=Number(this.value)||2027;render()"></label><label>Find in plan<input aria-label="Search work plan" type="search" value="${esc(planSearch)}" placeholder="Objective, output or activity" oninput="planSearch=this.value;render()"></label><div class="plan-control-actions"><button class="btn primary" onclick="openActivityForm()">+ Add activity</button><button class="btn" onclick="downloadWorkPlanCSV()">↓ Download CSV</button></div></div>`+
     `<div class="plan-context"><div><h2>${esc(roleName)} · ${planYearFilter}</h2><p class="hint">${rows.length} activities · ${counts['In progress']||0} in progress · ${counts['Done']||0} done</p></div><span class="help" title="The attached strategic plan contains 3 ESOs and 5 ISOs. Choose the link for each activity.">Strategy links: 3 ESOs · 5 ISOs ⓘ</span></div>`+
-    `<div class="plan-table-wrap card"><table class="plan-table"><thead><tr><th>Objective</th><th>Output</th><th>Activity</th><th>ESO</th><th>ISO</th><th>Strategy KPI / milestone</th><th>Start</th><th>End</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Responsible</th><th>Consult</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(a.objective||'—')}</td><td>${esc(a.output||'—')}</td><td><b>${esc(a.title)}</b></td><td title="${esc(strategyLabel(a.eso))}">${esc(a.eso||'—')}</td><td title="${esc(strategyLabel(a.iso))}">${esc(a.iso||'—')}</td><td>${esc(a.milestone||'—')}</td><td>${esc(a.start||'—')}</td><td>${esc(a.end||'—')}</td>${['Q1','Q2','Q3','Q4'].map(q=>`<td class="qmark">${a.quarters?.includes(q)?'●':''}</td>`).join('')}<td>${esc(role(a.role)?.title||'Unassigned')}</td><td>${esc((a.consult||[]).map(id=>role(id)?.title).filter(Boolean).join(', ')||'—')}</td><td><span class="pill ${a.status==='Done'?'done':a.status==='In progress'?'progress':'planned'}">${esc(a.status||'Planned')}</span></td><td>${esc(a.notes||'—')}</td><td><button class="btn" onclick="openActivityForm('${a.id}')">Edit</button></td></tr>`).join('')||'<tr><td colspan="17" class="empty">No activities for this role and year. Add one to start its work plan.</td></tr>'}</tbody></table></div>`;
+    `<div class="plan-top-scroll" aria-label="Scroll work plan columns" tabindex="0"><div class="plan-top-scroll-inner"></div></div><div class="plan-table-wrap card"><table class="plan-table"><thead><tr><th>Objective</th><th>Output</th><th>Activity</th><th>ESO</th><th>ISO</th><th>Strategy KPI / milestone</th><th>Start</th><th>End</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Responsible</th><th>Consult</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(a.objective||'—')}</td><td>${esc(a.output||'—')}</td><td><b>${esc(a.title)}</b></td><td title="${esc(strategyLabel(a.eso))}">${esc(a.eso||'—')}</td><td title="${esc(strategyLabel(a.iso))}">${esc(a.iso||'—')}</td><td>${esc(a.milestone||'—')}</td><td>${esc(a.start||'—')}</td><td>${esc(a.end||'—')}</td>${['Q1','Q2','Q3','Q4'].map(q=>`<td class="qmark">${a.quarters?.includes(q)?'●':''}</td>`).join('')}<td>${esc(role(a.role)?.title||'Unassigned')}</td><td>${esc((a.consult||[]).map(id=>role(id)?.title).filter(Boolean).join(', ')||'—')}</td><td><span class="pill ${a.status==='Done'?'done':a.status==='In progress'?'progress':'planned'}">${esc(a.status||'Planned')}</span></td><td>${esc(a.notes||'—')}</td><td><button class="btn" onclick="openActivityForm('${a.id}')">Edit</button></td></tr>`).join('')||'<tr><td colspan="17" class="empty">No activities for this role and year. Add one to start its work plan.</td></tr>'}</tbody></table></div>`;
 };
 
 openActivityForm = function(id='') {
