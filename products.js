@@ -1,15 +1,16 @@
 import {pricing} from './pricing-config.js';
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:['strategic-foundation','theory-of-change','organisation-chart','internal-systems','policies','work-plan-gantt','business-model','funding-strategy']};
 // No price, trial, subscription, or bundle is inferred from a course purchase.
-export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
+export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
 export const invitationToolSlugs=['theory-of-change','ethical-bridge-crm'];
-export const previewToolSlugs=['issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
+export const previewToolSlugs=['issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
 const launchUrls={
  'theory-of-change':'assets/tools/Theory-of-Change-Builder.html',
  'ethical-bridge-crm':'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/',
  'issue-risk-management':'assets/tools/Issue-and-Risk-Management.html',
  'people-check-ins-development':'assets/tools/People-Check-Ins-and-Development.html',
  'onboarding-compliance':'assets/tools/Onboarding-and-Compliance.html',
+ 'organisation-structure':'assets/tools/Organisation-Structure.html',
  'strategy-kpis-annual-planning':'assets/tools/Strategy-KPIs-and-Annual-Planning.html',
  'strategic-objectives':'assets/tools/Strategic-Objectives.html',
  'gantt':'assets/tools/Gantt-Project-Planner.html',
@@ -31,6 +32,7 @@ export const softwareProducts=[
  ['issue-risk-management','Issue & Risk Management','Project & operations','Teams tracking incidents, risk exposure and corrective action','Connect issues, risks, owners and actions in one management workspace.',['Issue','Risk','Owner','Action','Review date']],
  ['people-check-ins-development','People Check-Ins & Development','People & organisation','Managers and team members holding useful recurring conversations','Prepare check-ins, agree mutual commitments and revisit objectives and development goals.',['Person','Check-in','Commitment','Objective','Development goal']],
  ['onboarding-compliance','Onboarding & Staff Compliance','People & organisation','HR, managers, buddies and new joiners organising induction and continuing learning','Create role-based onboarding plans, guide a first-week buddy and track training, policy acknowledgements and renewals.',['Person','Task','Owner','Due date','Requirement','Verification']],
+ ['organisation-structure','Organisation Structure','People & organisation','Founders and managers designing teams and coordinating work','Map reporting lines, define roles and connect annual activities to accountable teams.',['Department','Role','Reports to','Activity','Owner','Deadline']],
  ['strategy-kpis-annual-planning','Strategy, KPIs & Annual Planning','Strategy','Leadership teams turning mission into measurable priorities and decisions','Connect priorities, objectives, measures, actual results, initiatives and review decisions in one exportable workspace.',['Priority','Objective','KPI','Target','Initiative']],
  ['strategic-objectives','Strategic Objectives','Strategy','Leadership teams defining outward results and the organisational capacity needed to deliver them','Build separate external and internal strategic objectives, with actions, owners, progress and review decisions.',['Code','Type','Objective','Actions','Owner','Progress']],
  ['meal-strategy','MEAL Strategy','Monitoring & evaluation','Programme teams designing and reviewing a monitoring, evaluation, accountability and learning approach','Define what to collect, who manages it and when; compare monthly planned and actual results, then record review decisions.',['Objective','Data source','Indicator','Planned','Actual']]

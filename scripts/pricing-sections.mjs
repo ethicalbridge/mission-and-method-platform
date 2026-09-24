@@ -17,7 +17,7 @@ export const availableToolGroups=[
  ['Monitoring & evaluation',['meal-strategy']],
  ['Project & operations',['gantt','issue-risk-management']],
  ['Relationships',['ethical-bridge-crm']],
- ['People & organisation',['people-check-ins-development','onboarding-compliance']]
+ ['People & organisation',['people-check-ins-development','onboarding-compliance','organisation-structure']]
 ];
 const availableToolCard=tool=>tool.previewOnly
  ? `<article class="suite-tool-card"><h4>${tool.name}</h4><p>${tool.description}</p><span class="small-tag">Interactive preview</span><p class="tool-card-actions"><a class="button ghost" href="${tool.launchUrl}">Open ${tool.name} →</a></p><p class="subtle">Saved in this browser. Do not enter confidential records.</p></article>`
