@@ -320,7 +320,7 @@
   }
 
   function tabsHtml() {
-    return TABS.map(([id, label]) => `<button type="button" data-tab="${id}" class="${tab === id ? 'active' : ''}" aria-current="${tab === id ? 'page' : 'false'}">${label}</button>`).join('');
+    return `<div class="rail-brand"><span class="rail-mark" aria-hidden="true">M</span><span><strong>Mission &amp; Method</strong><small>Funding &amp; business development</small></span></div><p class="rail-section-label">Donor Mapping</p><div class="rail-links" role="group" aria-label="Donor Mapping sections">${TABS.map(([id, label]) => `<button type="button" data-tab="${id}" class="${tab === id ? 'active' : ''}" aria-current="${tab === id ? 'page' : 'false'}"><span>${label}</span></button>`).join('')}</div>`;
   }
 
   function matrix() {
