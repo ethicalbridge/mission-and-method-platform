@@ -251,6 +251,7 @@
   let state = initialState();
   let tab = 'matrix';
   let filters = { decision: 'all', priority: 'all', donorType: 'all', assessment: 'all' };
+  let disposeMatrixScroll = () => {};
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -324,11 +325,68 @@
     return `<div class="rail-brand"><span class="rail-mark" aria-hidden="true">M</span><span><strong>Mission &amp; Method</strong><small>Funding &amp; business development</small></span></div><p class="rail-section-label">Donor Mapping</p><div class="rail-links" role="group" aria-label="Donor Mapping sections">${TABS.map(([id, label]) => `<button type="button" data-tab="${id}" class="${tab === id ? 'active' : ''}" aria-current="${tab === id ? 'page' : 'false'}"><span>${label}</span></button>`).join('')}</div>`;
   }
 
+  function percentage(value, total) {
+    return total ? Math.round((value / total) * 100) : 0;
+  }
+
+  function priorityBar(label, count, total, className) {
+    return `<div class="priority-row"><div><span>${esc(label)}</span><strong>${count}</strong></div><span class="priority-track"><i class="priority-fill ${esc(className)}" style="--share:${percentage(count, total)}%"></i></span></div>`;
+  }
+
+  function visualOverview({ goCount, noGoCount, inReview, highPriority, mediumPriority, lowPriority, unprioritised, assessment }) {
+    const donorTotal = state.donors.length;
+    const assessmentPercentage = percentage(assessment.complete, assessment.total);
+    return `<section class="visual-dashboard" aria-label="Donor mapping visual overview">
+      <article class="visual-card decision-visual">
+        <div class="visual-card-heading"><div><p class="eyebrow">Decision view</p><h3>Go / no-go</h3></div><span>${donorTotal} donor${donorTotal === 1 ? '' : 's'}</span></div>
+        <div class="decision-graphic">
+          <div class="decision-donut" role="img" aria-label="${goCount} go, ${noGoCount} no go and ${inReview} in review" style="--go-share:${percentage(goCount, donorTotal)}%; --no-go-share:${percentage(noGoCount, donorTotal)}%"><div><strong>${percentage(goCount, donorTotal)}%</strong><span>Go</span></div></div>
+          <dl class="chart-legend">
+            <div class="legend-go"><dt>Go</dt><dd>${goCount}</dd></div>
+            <div class="legend-no-go"><dt>No go</dt><dd>${noGoCount}</dd></div>
+            <div class="legend-review"><dt>In review</dt><dd>${inReview}</dd></div>
+          </dl>
+        </div>
+      </article>
+      <article class="visual-card priority-visual">
+        <div class="visual-card-heading"><div><p class="eyebrow">Focus view</p><h3>Priorities</h3></div><span>Where to focus</span></div>
+        <div class="priority-bars" aria-label="Priority distribution">
+          ${priorityBar('High', highPriority, donorTotal, 'high')}
+          ${priorityBar('Medium', mediumPriority, donorTotal, 'medium')}
+          ${priorityBar('Low', lowPriority, donorTotal, 'low')}
+          ${priorityBar('Not prioritised', unprioritised, donorTotal, 'none')}
+        </div>
+      </article>
+      <article class="visual-card assessment-visual">
+        <div class="visual-card-heading"><div><p class="eyebrow">Evidence view</p><h3>Assessment coverage</h3></div><span>${assessment.complete}/${assessment.total}</span></div>
+        <div class="coverage-number"><strong>${assessmentPercentage}%</strong><span>assessment recorded</span></div>
+        <div class="coverage-track" aria-hidden="true"><i style="--coverage:${assessmentPercentage}%"></i></div>
+        <dl class="assessment-key-mini">
+          <div><dt>Yes</dt><dd>${assessment.yes}</dd></div>
+          <div><dt>No</dt><dd>${assessment.no}</dd></div>
+          <div><dt>Unsure</dt><dd>${assessment.unknown}</dd></div>
+        </dl>
+      </article>
+    </section>`;
+  }
+
   function matrix() {
     const goCount = state.donors.filter(row => row.goNoGo === 'Go').length;
     const noGoCount = state.donors.filter(row => row.goNoGo === 'No go').length;
     const highPriority = state.donors.filter(row => row.priority === 'High').length;
+    const mediumPriority = state.donors.filter(row => row.priority === 'Medium').length;
+    const lowPriority = state.donors.filter(row => row.priority === 'Low').length;
+    const unprioritised = state.donors.filter(row => !row.priority).length;
     const inReview = state.donors.filter(row => !row.goNoGo).length;
+    const assessment = state.donors.reduce((totals, row) => {
+      const progress = assessmentProgress(row);
+      totals.yes += progress.yes;
+      totals.no += progress.no;
+      totals.unknown += progress.unknown;
+      totals.complete += progress.complete;
+      totals.total += progress.total;
+      return totals;
+    }, { yes: 0, no: 0, unknown: 0, complete: 0, total: 0 });
     const filteredDonors = state.donors.filter(matchesFilters);
     const columnHeaders = [...GENERAL.map(field => field[1]), ...ASSESSMENT_FIELDS.map(field => field[1])];
     const headers = columnHeaders.map((label, index) => `<th scope="col" class="${index < FIXED_GENERAL_COLUMNS ? `sticky-${index + 1}` : ''} ${index >= GENERAL.length ? 'assessment-heading' : ''}">${esc(label)}</th>`).join('');
@@ -351,12 +409,14 @@
       </section>
 
       <section class="metric-strip" aria-label="Donor mapping summary">
-        <div class="card metric"><small>Donors mapped</small><strong>${state.donors.length}</strong></div>
-        <div class="card metric"><small>Go</small><strong>${goCount}</strong></div>
-        <div class="card metric"><small>No go</small><strong>${noGoCount}</strong></div>
-        <div class="card metric"><small>High priority</small><strong>${highPriority}</strong></div>
-        <div class="card metric"><small>In review</small><strong>${inReview}</strong></div>
+        <div class="card metric metric-total"><small>Donors mapped</small><strong>${state.donors.length}</strong></div>
+        <div class="card metric metric-go"><small>Go</small><strong>${goCount}</strong></div>
+        <div class="card metric metric-no-go"><small>No go</small><strong>${noGoCount}</strong></div>
+        <div class="card metric metric-priority"><small>High priority</small><strong>${highPriority}</strong></div>
+        <div class="card metric metric-review"><small>In review</small><strong>${inReview}</strong></div>
       </section>
+
+      ${visualOverview({ goCount, noGoCount, inReview, highPriority, mediumPriority, lowPriority, unprioritised, assessment })}
 
       ${filtersHtml()}
 
@@ -381,8 +441,13 @@
           <div class="list-actions"><span class="results-count" role="status" aria-live="polite">Showing ${filteredDonors.length} of ${state.donors.length}</span><button type="button" data-action="add">Add donor</button></div>
         </div>
         <p class="example-note"><strong>Example records are included.</strong> Edit or delete them, then add your own donor research. The examples contain public, illustrative information only.</p>
-        ${state.donors.length && filteredDonors.length ? `<div class="table-wrap">
-          <table id="donor-table">
+        ${state.donors.length && filteredDonors.length ? `<div class="matrix-scroll-shell">
+          <div class="matrix-top-scroll" id="donor-table-top-scroll" role="region" aria-label="Horizontal scroll for the donor assessment matrix" aria-controls="donor-table" tabindex="0">
+            <span class="sr-only">Use this horizontal scroll bar to view more donor assessment columns.</span>
+            <div class="matrix-top-scroll-spacer" aria-hidden="true"></div>
+          </div>
+          <div class="table-wrap" id="donor-table-scroll" role="region" aria-label="Donor assessment matrix, horizontally scrollable" tabindex="0">
+            <table id="donor-table">
             <caption>Donor assessment matrix — showing ${filteredDonors.length} of ${state.donors.length} mapped donors</caption>
             <thead>
               <tr class="group-row">
@@ -395,7 +460,8 @@
               <tr class="column-row">${headers}</tr>
             </thead>
             <tbody>${rows}</tbody>
-          </table>
+            </table>
+          </div>
         </div>` : state.donors.length ? `<div class="zero-results"><h3>No donors match these filters</h3><p>Clear the filters to see all mapped donors, or add another donor.</p><div class="actions"><button type="button" class="light" data-action="clear-filters">Clear filters</button><button type="button" data-action="add">Add donor</button></div></div>` : `<div class="empty"><h3>Your donor map is ready to start</h3><p>Add a donor to begin the go/no-go assessment.</p><button type="button" data-action="add">Add first donor</button></div>`}
       </section>`;
   }
@@ -433,9 +499,53 @@
       </section>`;
   }
 
+  function setupMatrixScroll() {
+    const topScroll = $('#donor-table-top-scroll');
+    const spacer = $('.matrix-top-scroll-spacer');
+    const tableWrap = $('#donor-table-scroll');
+    const table = $('#donor-table');
+    if (!topScroll || !spacer || !tableWrap || !table) return;
+
+    let syncing = false;
+    const copyScrollPosition = (from, to) => {
+      if (syncing) return;
+      const fromMaximum = from.scrollWidth - from.clientWidth;
+      const toMaximum = to.scrollWidth - to.clientWidth;
+      if (fromMaximum <= 0 || toMaximum <= 0) return;
+      syncing = true;
+      to.scrollLeft = Math.round((from.scrollLeft / fromMaximum) * toMaximum);
+      requestAnimationFrame(() => { syncing = false; });
+    };
+    const syncSize = () => {
+      const width = Math.max(table.scrollWidth, tableWrap.scrollWidth, tableWrap.clientWidth);
+      spacer.style.width = `${width}px`;
+      const hasOverflow = tableWrap.scrollWidth - tableWrap.clientWidth > 1;
+      topScroll.hidden = !hasOverflow;
+      topScroll.tabIndex = hasOverflow ? 0 : -1;
+      if (hasOverflow) copyScrollPosition(tableWrap, topScroll);
+    };
+    const fromTop = () => copyScrollPosition(topScroll, tableWrap);
+    const fromTable = () => copyScrollPosition(tableWrap, topScroll);
+    topScroll.addEventListener('scroll', fromTop, { passive: true });
+    tableWrap.addEventListener('scroll', fromTable, { passive: true });
+    const observer = 'ResizeObserver' in window ? new ResizeObserver(syncSize) : null;
+    observer?.observe(table);
+    observer?.observe(tableWrap);
+    const frame = requestAnimationFrame(syncSize);
+    disposeMatrixScroll = () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+      topScroll.removeEventListener('scroll', fromTop);
+      tableWrap.removeEventListener('scroll', fromTable);
+      disposeMatrixScroll = () => {};
+    };
+  }
+
   function render() {
+    disposeMatrixScroll();
     $('#tabs').innerHTML = tabsHtml();
     $('#app').innerHTML = tab === 'matrix' ? matrix() : tab === 'guide' ? guide() : backup();
+    setupMatrixScroll();
   }
 
   function updateMeta(form) {
