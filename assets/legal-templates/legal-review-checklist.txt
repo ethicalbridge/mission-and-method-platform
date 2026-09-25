@@ -1,0 +1,35 @@
+LEGAL REVIEW CHECKLIST — STARTER OUTLINE
+
+TEMPLATE ONLY. This is not legal advice or a ready-to-use document. Have a qualified legal professional review and adapt it to the applicable local laws, regulations, sector rules and facts before use.
+
+Organisation: [name]
+Jurisdiction(s): [locations]
+Document owner: [role]
+Version and date: [version/date]
+Approved by: [person or body]
+Next review date: [date]
+
+1. JURISDICTIONS AND OPERATING CONTEXT
+[Describe the organisation-specific approach. Have local counsel check required wording, rights, duties, time limits and enforceability.]
+
+2. MANDATORY LAW AND REGULATOR REQUIREMENTS
+[Describe the organisation-specific approach. Have local counsel check required wording, rights, duties, time limits and enforceability.]
+
+3. PARTIES AND CAPACITY
+[Describe the organisation-specific approach. Have local counsel check required wording, rights, duties, time limits and enforceability.]
+
+4. PRIVACY, SAFEGUARDING AND SECTOR DUTIES
+[Describe the organisation-specific approach. Have local counsel check required wording, rights, duties, time limits and enforceability.]
+
+5. INSURANCE AND LIABILITY
+[Describe the organisation-specific approach. Have local counsel check required wording, rights, duties, time limits and enforceability.]
+
+6. APPROVALS, VERSION AND NEXT REVIEW
+[Describe the organisation-specific approach. Have local counsel check required wording, rights, duties, time limits and enforceability.]
+
+LEGAL REVIEW AND APPROVAL
+Reviewer: [name and qualification]
+Review date: [date]
+Applicable laws and rules checked: [list]
+Required changes: [list]
+Approval: [name/date]

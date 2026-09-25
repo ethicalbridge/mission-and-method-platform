@@ -1,9 +1,9 @@
 import {pricing} from './pricing-config.js';
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:['strategic-foundation','theory-of-change','organisation-chart','internal-systems','policies','work-plan-gantt','business-model','funding-strategy']};
 // No price, trial, subscription, or bundle is inferred from a course purchase.
-export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
+export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
 export const invitationToolSlugs=['theory-of-change','ethical-bridge-crm'];
-export const previewToolSlugs=['donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
+export const previewToolSlugs=['donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
 const launchUrls={
  'theory-of-change':'assets/tools/Theory-of-Change-Builder.html',
  'ethical-bridge-crm':'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/',
@@ -16,7 +16,8 @@ const launchUrls={
  'strategy-kpis-annual-planning':'assets/tools/Strategy-KPIs-and-Annual-Planning.html',
  'strategic-objectives':'assets/tools/Strategic-Objectives.html',
  'gantt':'assets/tools/Gantt-Project-Planner.html',
- 'meal-strategy':'assets/tools/MEAL-Strategy.html'
+ 'meal-strategy':'assets/tools/MEAL-Strategy.html',
+ 'customer-persona':'assets/tools/Customer-Persona-Builder.html'
 };
 export const softwareProducts=[
  ['strategic-planning','Strategic Planning','Strategy','Founders keeping strategic priorities clear','Track objectives, measures and responsibility in one focused tool.',['Objective','Indicator','Owner','Deadline','Status']],
@@ -38,6 +39,7 @@ export const softwareProducts=[
  ['organisation-structure','Organisation Structure','People & organisation','Founders and managers designing teams and coordinating work','Map reporting lines, define roles and connect annual activities to accountable teams.',['Department','Role','Reports to','Activity','Owner','Deadline']],
  ['strategy-kpis-annual-planning','Strategy, KPIs & Annual Planning','Strategy','Leadership teams turning mission into measurable priorities and decisions','Connect priorities, objectives, measures, actual results, initiatives and review decisions in one exportable workspace.',['Priority','Objective','KPI','Target','Initiative']],
  ['strategic-objectives','Strategic Objectives','Strategy','Leadership teams defining outward results and the organisational capacity needed to deliver them','Build separate external and internal strategic objectives, with actions, owners, progress and review decisions.',['Code','Type','Objective','Actions','Owner','Progress']],
- ['meal-strategy','MEAL Strategy','Monitoring & evaluation','Programme teams designing and reviewing a monitoring, evaluation, accountability and learning approach','Define what to collect, who manages it and when; compare monthly planned and actual results, then record review decisions.',['Objective','Data source','Indicator','Planned','Actual']]
+ ['meal-strategy','MEAL Strategy','Monitoring & evaluation','Programme teams designing and reviewing a monitoring, evaluation, accountability and learning approach','Define what to collect, who manages it and when; compare monthly planned and actual results, then record review decisions.',['Objective','Data source','Indicator','Planned','Actual']],
+ ['customer-persona','Customer Persona Builder','Communications, marketing & visibility','Purpose-led teams clarifying who they need to reach','Build an evidence-informed customer persona, choose useful channels and create a portrait prompt from the completed profile.',['Persona name','Audience','Goals','Challenges','Channels']]
 ].map(([slug,name,category,audience,description,fields])=>({id:`software_${slug.replaceAll('-','_')}`,slug,name,category,audience,description,fields,launchUrl:launchUrls[slug]||null,previewOnly:previewToolSlugs.includes(slug),kind:'software',suiteIncluded:pricing.suite.toolSlugs.includes(slug),billing:['monthly','annual'],prices:{monthly:null,annual:null},currency:pricing.currency,status:previewToolSlugs.includes(slug)?'preview':availableToolSlugs.includes(slug)?'available':'coming_soon',trial:null,checkout:{monthly:null,annual:null},dataNamespace:`mm.software.${slug}.v1`,entitlements:[]}));
 export const resourceManifest=courseProduct.resourceIds.map((id,index)=>({id,courseId:courseProduct.id,module:index+1,name:['Strategic Foundation','Theory of Change','Organisation Chart and Role Framework','Internal Systems Blueprint','Policy Register and Procedures','Work Plan and Gantt','Business Model','Funding and Partnerships'][index]+' Excel workbook',version:null,objectKey:null,status:'awaiting_owner_file',requiresEntitlement:courseProduct.id}));
