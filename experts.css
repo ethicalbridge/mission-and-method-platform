@@ -16,3 +16,6 @@
 .trust-section .trust-belief{max-width:none;margin:0 0 24px;font-size:clamp(1.3rem,1.7vw,1.55rem);line-height:1.45;font-weight:700;color:#16303d}
 .trust-section .trust-sustain{max-width:none;margin:0;font-size:1.06rem;line-height:1.6;color:#34515b}
 @media(max-width:760px){.trust-grid{grid-template-columns:1fr;gap:20px}.trust-notes{padding-top:0}.experts-main .trust-section{padding:46px 0 52px}}
+.experts-main .consultation-section{padding-bottom:40px}
+.experts-main .foundation-section{padding-top:38px}
+@media(max-width:760px){.experts-main .consultation-section{padding-bottom:32px}.experts-main .foundation-section{padding-top:32px}}
