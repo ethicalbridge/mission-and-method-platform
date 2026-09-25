@@ -8,6 +8,7 @@
     ['guide', 'Assessment guide'],
     ['backup', 'Backup & restore']
   ];
+  const FIXED_GENERAL_COLUMNS = 4;
 
   const GENERAL = [
     ['donor', 'Donor', 'text', 'Name of the donor organisation or fund.'],
@@ -330,10 +331,10 @@
     const inReview = state.donors.filter(row => !row.goNoGo).length;
     const filteredDonors = state.donors.filter(matchesFilters);
     const columnHeaders = [...GENERAL.map(field => field[1]), ...ASSESSMENT_FIELDS.map(field => field[1])];
-    const headers = columnHeaders.map((label, index) => `<th scope="col" class="${index < 4 ? `sticky-${index + 1}` : ''} ${index >= GENERAL.length ? 'assessment-heading' : ''}">${esc(label)}</th>`).join('');
+    const headers = columnHeaders.map((label, index) => `<th scope="col" class="${index < FIXED_GENERAL_COLUMNS ? `sticky-${index + 1}` : ''} ${index >= GENERAL.length ? 'assessment-heading' : ''}">${esc(label)}</th>`).join('');
     const rows = filteredDonors.map(row => `
       <tr>
-        ${GENERAL.map((field, index) => `<td class="${index < 4 ? `sticky-${index + 1}` : ''}">${fieldControl(row, field)}</td>`).join('')}
+        ${GENERAL.map((field, index) => `<td class="${index < FIXED_GENERAL_COLUMNS ? `sticky-${index + 1}` : ''}">${fieldControl(row, field)}</td>`).join('')}
         ${ASSESSMENT_FIELDS.map(field => `<td>${fieldControl(row, field, true)}</td>`).join('')}
         <td class="summary-cell">${assessmentSummary(row)}</td>
         <td class="row-actions"><button class="danger" type="button" data-action="delete" data-row="${esc(row.id)}" aria-label="Delete ${esc(row.donor || 'donor row')}">Delete</button></td>
@@ -385,7 +386,8 @@
             <caption>Donor assessment matrix — showing ${filteredDonors.length} of ${state.donors.length} mapped donors</caption>
             <thead>
               <tr class="group-row">
-                <th scope="colgroup" colspan="${GENERAL.length}" class="group-general">General information</th>
+                <th scope="colgroup" colspan="${FIXED_GENERAL_COLUMNS}" class="group-general group-general-fixed">General information</th>
+                <th scope="colgroup" colspan="${GENERAL.length - FIXED_GENERAL_COLUMNS}" class="group-general group-general-continued" aria-label="General information"></th>
                 ${GROUPS.map(group => `<th scope="colgroup" colspan="${group.fields.length}" class="${group.className}">${esc(group.label)}</th>`).join('')}
                 <th rowspan="2" class="group-general">Assessment</th>
                 <th rowspan="2" class="group-general">Actions</th>
