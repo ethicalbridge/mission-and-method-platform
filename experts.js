@@ -2,7 +2,7 @@
 const consultants = [
   {id:'julieta',name:'Julieta Castiñeira de Dios',role:'NGO Strategy, Programmes & Organisational Foundations',summary:'Mission, vision and values; theory of change; strategic planning; fundraising; donor compliance; programme design; MEAL; partnerships and organisational development.',days:[1,3],hours:[8,9,10,11],schedule:'Monday and Wednesday · 08:00–12:00 WIB',button:'Book with Julieta',image:'assets/experts/julieta.png'},
   {id:'marketing',name:'Marketing Specialist',role:'Marketing, Communications & Brand Strategy',summary:'Brand positioning; communications strategy; social media; storytelling; website messaging; audience growth; campaigns; content planning and visual identity.',days:[2,4],hours:[10,11,12,13],schedule:'Tuesday and Thursday · 10:00–14:00 WIB',button:'Book a marketing consultation',image:'assets/experts/marketing.png'},
-  {id:'startup',name:'Startup Strategy Specialist',role:'Startup Strategy, Growth & Business Foundations',summary:'Business models; market positioning; product strategy; growth planning; partnerships; operations; investor readiness; revenue and social enterprise development.',days:[1,4,5],hours:[13,14,15,16],schedule:'Monday, Thursday and Friday · 13:00–17:00 WIB',button:'Book a startup consultation',image:'assets/experts/startup.png'},
+  {id:'startup',name:'Startup Strategy Specialist',role:'Startup Strategy, Growth & Business Foundations',summary:'Business models; market positioning; product strategy; growth planning; partnerships; operations; investor readiness; revenue and social enterprise development.',days:[1,4,5],hours:[13,14,15,16],schedule:'Monday, Thursday and Friday · 13:00–17:00 WIB',button:'Book a startup consultation',image:'assets/experts/startup-man.png'},
   {id:'digital',name:'Web Development Specialist',role:'Programming, Digital Tools & Web Development',summary:'Website strategy; platform design; user journeys; no-code and custom tools; CRM setup; digital systems; automation; web development and technical scoping.',days:[2,3,5],hours:[9,10,11,12],schedule:'Tuesday, Wednesday and Friday · 09:00–13:00 WIB',button:'Book a digital consultation',image:'assets/experts/digital.png'}
 ];
 const areas=[...document.querySelectorAll('#areas-list li')].map(item=>item.textContent.trim());
@@ -27,3 +27,4 @@ document.querySelector('#open-proposal').addEventListener('click',setupProposal)
 document.querySelector('#open-proposal-bottom').addEventListener('click',setupProposal);
 document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog').close()));
 for(const dialog of [bookingDialog,proposalDialog])dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
+
