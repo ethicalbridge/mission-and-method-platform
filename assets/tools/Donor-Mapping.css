@@ -404,10 +404,10 @@ textarea.cell-control { min-height: 54px; }
 
 .sticky-1, .sticky-2, .sticky-3, .sticky-4 { position: sticky; z-index: 3; }
 thead .sticky-1, thead .sticky-2, thead .sticky-3, thead .sticky-4 { z-index: 6; }
-.sticky-1 { left: 0; min-width: var(--fixed-donor-width); width: var(--fixed-donor-width); }
-.sticky-2 { left: var(--fixed-donor-width); min-width: var(--fixed-fund-width); width: var(--fixed-fund-width); }
-.sticky-3 { left: calc(var(--fixed-donor-width) + var(--fixed-fund-width)); min-width: var(--fixed-decision-width); width: var(--fixed-decision-width); }
-.sticky-4 { left: calc(var(--fixed-donor-width) + var(--fixed-fund-width) + var(--fixed-decision-width)); min-width: var(--fixed-priority-width); width: var(--fixed-priority-width); }
+.table-wrap .sticky-1 { left: 0; min-width: var(--fixed-donor-width); width: var(--fixed-donor-width); }
+.table-wrap .sticky-2 { left: var(--fixed-donor-width); min-width: var(--fixed-fund-width); width: var(--fixed-fund-width); }
+.table-wrap .sticky-3 { left: calc(var(--fixed-donor-width) + var(--fixed-fund-width)); min-width: var(--fixed-decision-width); width: var(--fixed-decision-width); }
+.table-wrap .sticky-4 { left: calc(var(--fixed-donor-width) + var(--fixed-fund-width) + var(--fixed-decision-width)); min-width: var(--fixed-priority-width); width: var(--fixed-priority-width); }
 td.sticky-1, td.sticky-2, td.sticky-3, td.sticky-4 { background: var(--white); }
 td.sticky-1, td.sticky-2, td.sticky-3, td.sticky-4 { padding-left: .46rem; padding-right: .46rem; }
 td.sticky-1 .cell-control, td.sticky-2 .cell-control, td.sticky-3 .cell-control, td.sticky-4 .cell-control { min-width: 0; }
