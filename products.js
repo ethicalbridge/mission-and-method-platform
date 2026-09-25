@@ -1,15 +1,16 @@
 import {pricing} from './pricing-config.js';
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:['strategic-foundation','theory-of-change','organisation-chart','internal-systems','policies','work-plan-gantt','business-model','funding-strategy']};
 // No price, trial, subscription, or bundle is inferred from a course purchase.
-export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
+export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
 export const invitationToolSlugs=['theory-of-change','ethical-bridge-crm'];
-export const previewToolSlugs=['donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
+export const previewToolSlugs=['donor-mapping','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
 const launchUrls={
  'theory-of-change':'assets/tools/Theory-of-Change-Builder.html',
  'ethical-bridge-crm':'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/',
  'donor-mapping':'assets/tools/Donor-Mapping.html',
  'individual-giving':'assets/tools/Individual-Giving-and-Donor-Management.html',
  'issue-risk-management':'assets/tools/Issue-and-Risk-Management.html',
+ 'meetings-actions-decisions':'assets/tools/Meetings-Actions-and-Decisions.html',
  'people-check-ins-development':'assets/tools/People-Check-Ins-and-Development.html',
  'onboarding-compliance':'assets/tools/Onboarding-and-Compliance.html',
  'organisation-structure':'assets/tools/Organisation-Structure.html',
@@ -34,6 +35,7 @@ export const softwareProducts=[
  ['partner-tracker','Partner Tracker','Funding & Business Development','Teams maintaining purposeful partnerships','Keep commitments and next conversations visible without a complex CRM.',['Partner','Shared purpose','Commitment','Owner','Next action']],
  ['ethical-bridge-crm','Ethical Bridge CRM','Relationships','Teams building trusted relationships across supporters, partners and communities','Keep contacts, relationship context, agreed actions and next conversations in one focused relationship workspace.',['Person or organisation','Relationship type','Shared context','Owner','Next action']],
  ['issue-risk-management','Issue & Risk Management','Project & operations','Teams tracking incidents, risk exposure and corrective action','Connect issues, risks, owners and actions in one management workspace.',['Issue','Risk','Owner','Action','Review date']],
+ ['meetings-actions-decisions','Meetings, Actions & Decisions','Project & operations','Teams turning meetings into documented follow-through','Prepare agendas, record minutes and decisions, assign actions, and export a clear record of what was agreed.',['Meeting','Agenda','Minutes','Action','Decision','Owner','Due date']],
  ['people-check-ins-development','People Check-Ins & Development','People & organisation','Managers and team members holding useful recurring conversations','Prepare check-ins, agree mutual commitments and revisit objectives and development goals.',['Person','Check-in','Commitment','Objective','Development goal']],
  ['onboarding-compliance','Onboarding & Staff Compliance','People & organisation','HR, managers, buddies and new joiners organising induction and continuing learning','Create role-based onboarding plans, guide a first-week buddy and track training, policy acknowledgements and renewals.',['Person','Task','Owner','Due date','Requirement','Verification']],
  ['organisation-structure','Organisation Structure','People & organisation','Founders and managers designing teams and coordinating work','Map reporting lines, define roles and connect annual activities to accountable teams.',['Department','Role','Reports to','Activity','Owner','Deadline']],

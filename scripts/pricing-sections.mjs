@@ -7,7 +7,7 @@ export const coursePricing=()=>`<section class="course-pricing-section" id="pric
 export const suiteIntro=({showPricing=false}={})=>`<section class="suite-section" id="software-suite"><span class="eyebrow">Optional software · separate subscription</span><h2>Want to go beyond spreadsheets?</h2><p class="lead">${p.suite.name} brings digital versions of course tools together in one optional subscription. The tools are being developed to make planning, tracking, collaboration, reporting and impact management easier.</p><p class="optional-message"><b>The software subscription is optional. You do not need it to complete the course.</b> Use the Excel tools included with your course at no additional cost.</p>${showPricing?`${suitePricing()}<p>${p.suite.availability}</p><p>Tools share a subscription and design system, but each works independently. Buying the course does not activate the Suite.</p><a href="software.html">Explore the Software Suite →</a>`:''}</section>`;
 const upcomingToolGroups=[
  ['Strategy & impact',[['Results & Indicator Tracking','Define indicators, data sources, collection frequency and evidence responsibilities.'],['Change Adoption Manager','Plan stakeholder engagement, readiness, communication and adoption during change.']]],
- ['Project & operations',[['Meetings, Actions & Decisions','Turn meeting notes into accountable actions and a searchable decision record.'],['Policy Management','Keep policy ownership, approvals, review dates and next actions visible.']]],
+ ['Project & operations',[['Policy Management','Keep policy ownership, approvals, review dates and next actions visible.']]],
  ['Funding & Business Development',[['Funding Pipeline','Track relationship stages and distinguish opportunities from commitments.'],['Partner Mapping & Partnership Tracking','Map partnership fit, shared commitments, responsibilities and next conversations.']]],
  ['Marketing & engagement',[['Marketing Campaigns & Social Media Planner','Plan campaigns, content, channels, ownership and publishing deadlines in one place.']]]
 ];
@@ -15,7 +15,7 @@ export const toolAccessForm=(redirectUrl='')=>`<section class="tool-access" id="
 export const availableToolGroups=[
  ['Strategy & impact',['strategy-kpis-annual-planning','strategic-objectives','theory-of-change']],
  ['Monitoring & evaluation',['meal-strategy']],
- ['Project & operations',['gantt','issue-risk-management']],
+ ['Project & operations',['gantt','issue-risk-management','meetings-actions-decisions']],
  ['Funding & Business Development',['donor-mapping','individual-giving']],
  ['Relationships',['ethical-bridge-crm']],
  ['People & organisation',['people-check-ins-development','onboarding-compliance','organisation-structure']],
