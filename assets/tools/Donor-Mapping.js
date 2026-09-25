@@ -327,7 +327,7 @@
     const goCount = state.donors.filter(row => row.goNoGo === 'Go').length;
     const noGoCount = state.donors.filter(row => row.goNoGo === 'No go').length;
     const highPriority = state.donors.filter(row => row.priority === 'High').length;
-    const needsResearch = state.donors.filter(row => assessmentProgress(row).complete < ASSESSMENT_FIELDS.length).length;
+    const inReview = state.donors.filter(row => !row.goNoGo).length;
     const filteredDonors = state.donors.filter(matchesFilters);
     const columnHeaders = [...GENERAL.map(field => field[1]), ...ASSESSMENT_FIELDS.map(field => field[1])];
     const headers = columnHeaders.map((label, index) => `<th scope="col" class="${index < 4 ? `sticky-${index + 1}` : ''} ${index >= GENERAL.length ? 'assessment-heading' : ''}">${esc(label)}</th>`).join('');
@@ -354,7 +354,7 @@
         <div class="card metric"><small>Go</small><strong>${goCount}</strong></div>
         <div class="card metric"><small>No go</small><strong>${noGoCount}</strong></div>
         <div class="card metric"><small>High priority</small><strong>${highPriority}</strong></div>
-        <div class="card metric"><small>Needs research</small><strong>${needsResearch}</strong></div>
+        <div class="card metric"><small>In review</small><strong>${inReview}</strong></div>
       </section>
 
       ${filtersHtml()}
