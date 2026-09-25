@@ -4,7 +4,7 @@ export const pricing = {
   currency: 'USD',
   course: {
     id: 'course', productId: 'course_planning_system', name: 'Complete Impact Course',
-    pathway: 'Planning System', regular: 8900, launch: 3900,
+    pathway: 'Planning System', regular: 7800, launch: 3900,
     billing: 'one_time', access: 'lifetime', providerPriceId: null,
     includes: [
       'Access to all eight course modules',
