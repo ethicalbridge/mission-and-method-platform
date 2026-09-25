@@ -2,6 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'mm.donor-mapping.v1';
+  const CURRENT_VERSION = 2;
   const TABS = [
     ['matrix', 'Donor matrix'],
     ['guide', 'Assessment guide'],
@@ -93,7 +94,118 @@
     ['id', uid()],
     ...ALL_FIELDS.map(([key]) => [key, ''])
   ]);
-  const blankState = () => ({ version: 1, meta: blankMeta(), donors: [] });
+  const blankState = () => ({ version: CURRENT_VERSION, meta: blankMeta(), donors: [] });
+
+  function exampleDonors() {
+    const examples = [
+      {
+        donor: 'Mama Cash',
+        fundName: 'General support grants',
+        goNoGo: 'Go',
+        priority: 'High',
+        donorType: 'Foundation',
+        interestAreas: 'Feminist movements and women’s rights',
+        restrictions: 'Review current eligibility and grant-call criteria.',
+        fundingAmount: 'Illustrative — confirm current call',
+        keyDates: 'Review annual grant cycle',
+        fundingLength: 'Confirm with current guidance',
+        website: 'https://www.mamacash.org',
+        notes: 'Example record — replace with your team’s current research.',
+        valuesAlignment: 'Yes', coreWorkSupport: 'Yes', requirementsGapFit: 'Yes',
+        innovationFit: 'Yes', coreFundingSupport: 'Yes', currentPosition: "Don't know",
+        wellPositioned: 'Yes', competitiveLandscape: "Don't know", valueForMoney: 'Yes',
+        connectedPartners: "Don't know", proposalSummary: 'Yes', proposalReadiness: "Don't know",
+        timetableStrength: 'Yes', deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
+        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: 'No',
+        newThematicGeographicRisk: 'No', governmentPartnerRisk: 'No', teamOverloadRisk: "Don't know"
+      },
+      {
+        donor: 'Black Feminist Fund',
+        fundName: 'Movement-building support',
+        goNoGo: 'Go',
+        priority: 'High',
+        donorType: 'Network',
+        interestAreas: 'Black feminist movements and organisations',
+        restrictions: 'Review current eligibility and route to application.',
+        fundingAmount: 'Illustrative — confirm current opportunity',
+        keyDates: 'Research current funding windows',
+        fundingLength: 'Confirm with current guidance',
+        website: 'https://blackfeministfund.org',
+        notes: 'Example record — intended to show how the assessment can be used.',
+        valuesAlignment: 'Yes', coreWorkSupport: 'Yes', requirementsGapFit: 'Yes',
+        innovationFit: 'Yes', coreFundingSupport: 'Yes', currentPosition: "Don't know",
+        wellPositioned: "Don't know", competitiveLandscape: "Don't know", valueForMoney: 'Yes',
+        connectedPartners: "Don't know", proposalSummary: "Don't know", proposalReadiness: "Don't know",
+        timetableStrength: "Don't know", deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
+        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: 'No',
+        newThematicGeographicRisk: 'No', governmentPartnerRisk: 'No', teamOverloadRisk: "Don't know"
+      },
+      {
+        donor: 'Global Fund for Women',
+        fundName: 'Gender justice grants',
+        goNoGo: 'Go',
+        priority: 'High',
+        donorType: 'Foundation',
+        interestAreas: 'Gender justice, human rights and movement building',
+        restrictions: 'Confirm current geographic and organisation requirements.',
+        fundingAmount: 'Illustrative — confirm current call',
+        keyDates: 'Review current grant cycle',
+        fundingLength: 'Confirm with current guidance',
+        website: 'https://www.globalfundforwomen.org',
+        notes: 'Example record — not a statement of current eligibility or funding availability.',
+        valuesAlignment: 'Yes', coreWorkSupport: 'Yes', requirementsGapFit: 'Yes',
+        innovationFit: 'Yes', coreFundingSupport: "Don't know", currentPosition: "Don't know",
+        wellPositioned: 'Yes', competitiveLandscape: "Don't know", valueForMoney: 'Yes',
+        connectedPartners: "Don't know", proposalSummary: 'Yes', proposalReadiness: "Don't know",
+        timetableStrength: 'Yes', deliveryCapacity: 'Yes', staffingCapacity: 'Yes',
+        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: 'No',
+        newThematicGeographicRisk: 'No', governmentPartnerRisk: 'No', teamOverloadRisk: 'No'
+      },
+      {
+        donor: 'All We Can',
+        fundName: 'Locally led development partnerships',
+        goNoGo: '',
+        priority: 'Medium',
+        donorType: 'Institutional donor',
+        interestAreas: 'Locally led development and international partnership',
+        restrictions: 'Research partnership model, geography and current priorities.',
+        fundingAmount: 'Research needed',
+        keyDates: 'Research current opportunities',
+        fundingLength: 'Research needed',
+        website: 'https://www.allwecan.org.uk',
+        notes: 'Example record — deliberately left under review until evidence is complete.',
+        valuesAlignment: 'Yes', coreWorkSupport: "Don't know", requirementsGapFit: "Don't know",
+        innovationFit: 'Yes', coreFundingSupport: "Don't know", currentPosition: "Don't know",
+        wellPositioned: "Don't know", competitiveLandscape: "Don't know", valueForMoney: "Don't know",
+        connectedPartners: "Don't know", proposalSummary: "Don't know", proposalReadiness: "Don't know",
+        timetableStrength: "Don't know", deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
+        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: "Don't know",
+        newThematicGeographicRisk: "Don't know", governmentPartnerRisk: "Don't know", teamOverloadRisk: "Don't know"
+      },
+      {
+        donor: 'Google.org',
+        fundName: 'Social impact grant opportunities',
+        goNoGo: '',
+        priority: 'Low',
+        donorType: 'Corporate',
+        interestAreas: 'Technology, social innovation and public benefit',
+        restrictions: 'Confirm scope, geography and invitation requirements before pursuing.',
+        fundingAmount: 'Research needed',
+        keyDates: 'Monitor public opportunities',
+        fundingLength: 'Research needed',
+        website: 'https://www.google.org',
+        notes: 'Example record — illustrative only, with no claim of eligibility or open funding.',
+        valuesAlignment: "Don't know", coreWorkSupport: "Don't know", requirementsGapFit: "Don't know",
+        innovationFit: 'Yes', coreFundingSupport: 'No', currentPosition: 'No',
+        wellPositioned: "Don't know", competitiveLandscape: "Don't know", valueForMoney: "Don't know",
+        connectedPartners: "Don't know", proposalSummary: "Don't know", proposalReadiness: "Don't know",
+        timetableStrength: "Don't know", deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
+        donorReputationalRisk: "Don't know", ethicalBridgeReputationalRisk: "Don't know", financialRisk: 'No',
+        newThematicGeographicRisk: "Don't know", governmentPartnerRisk: "Don't know", teamOverloadRisk: 'No'
+      }
+    ];
+    return examples.map(example => Object.assign(blankDonor(), example));
+  }
 
   function normaliseDonor(candidate) {
     const donor = blankDonor();
@@ -109,7 +221,7 @@
     }
     const meta = candidate.meta && typeof candidate.meta === 'object' ? candidate.meta : {};
     return {
-      version: 1,
+      version: Number(candidate.version) || 1,
       meta: {
         organisation: String(meta.organisation ?? ''),
         period: String(meta.period ?? ''),
@@ -120,14 +232,24 @@
     };
   }
 
-  let state;
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    state = saved ? normaliseState(saved) : blankState();
-  } catch {
-    state = blankState();
+  function initialState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!saved) return { ...blankState(), donors: exampleDonors() };
+      const restored = normaliseState(saved);
+      const hasMeaningfulDonor = restored.donors.some(row => ALL_FIELDS.some(([key]) => String(row[key] || '').trim()));
+      if (restored.version < CURRENT_VERSION && !hasMeaningfulDonor) {
+        return { ...restored, version: CURRENT_VERSION, donors: exampleDonors() };
+      }
+      return { ...restored, version: CURRENT_VERSION };
+    } catch {
+      return { ...blankState(), donors: exampleDonors() };
+    }
   }
+
+  let state = initialState();
   let tab = 'matrix';
+  let filters = { decision: 'all', priority: 'all', donorType: 'all', assessment: 'all' };
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -157,12 +279,44 @@
   }
 
   function assessmentSummary(row) {
+    const { yes, no, unknown, complete, total } = assessmentProgress(row);
+    return `<strong>${complete}/${total} assessed</strong><br><span>${yes} yes · ${no} no${unknown ? ` · ${unknown} unsure` : ''}</span>`;
+  }
+
+  function assessmentProgress(row) {
     const yes = ASSESSMENT_FIELDS.filter(([key]) => row[key] === 'Yes').length;
     const no = ASSESSMENT_FIELDS.filter(([key]) => row[key] === 'No').length;
     const unknown = ASSESSMENT_FIELDS.filter(([key]) => row[key] === "Don't know").length;
     const total = ASSESSMENT_FIELDS.length;
-    const complete = yes + no + unknown;
-    return `<strong>${complete}/${total} assessed</strong><br><span>${yes} yes · ${no} no${unknown ? ` · ${unknown} unsure` : ''}</span>`;
+    return { yes, no, unknown, complete: yes + no + unknown, total };
+  }
+
+  function matchesFilters(row) {
+    if (filters.decision !== 'all' && row.goNoGo !== filters.decision) return false;
+    if (filters.priority !== 'all' && row.priority !== filters.priority) return false;
+    if (filters.donorType !== 'all' && row.donorType !== filters.donorType) return false;
+    const progress = assessmentProgress(row);
+    if (filters.assessment === 'complete' && progress.complete !== progress.total) return false;
+    if (filters.assessment === 'needs-research' && !(progress.complete > 0 && progress.complete < progress.total)) return false;
+    if (filters.assessment === 'not-started' && progress.complete !== 0) return false;
+    return true;
+  }
+
+  function filterField(key, label, options) {
+    return `<label class="filter-field" for="filter-${esc(key)}"><span>${esc(label)}</span><select id="filter-${esc(key)}" data-filter="${esc(key)}" aria-controls="donor-table">${options.map(([value, optionLabel]) => `<option value="${esc(value)}" ${filters[key] === value ? 'selected' : ''}>${esc(optionLabel)}</option>`).join('')}</select></label>`;
+  }
+
+  function filtersHtml() {
+    return `<section class="filter-panel" aria-label="Donor filters">
+      <div class="filter-title"><p>FILTER DONORS</p><strong>View the right opportunities</strong><span>Use the dropdowns to focus the donor list.</span></div>
+      <fieldset><legend>Filter donor list</legend><div class="filter-row">
+        ${filterField('decision', 'Decision', [['all', 'All decisions'], ['Go', 'Go'], ['No go', 'No go'], ['', 'Not decided']])}
+        ${filterField('priority', 'Priority', [['all', 'All priorities'], ['High', 'High priority'], ['Medium', 'Medium priority'], ['Low', 'Low priority'], ['', 'Not prioritised']])}
+        ${filterField('donorType', 'Donor type', [['all', 'All donor types'], ...SELECT_OPTIONS.type.slice(1).map(value => [value, value])] )}
+        ${filterField('assessment', 'Assessment', [['all', 'All assessment progress'], ['complete', 'Fully assessed'], ['needs-research', 'Needs research'], ['not-started', 'Not started']])}
+        <button type="button" class="clear-filters" data-action="clear-filters">Clear filters</button>
+      </div></fieldset>
+    </section>`;
   }
 
   function tabsHtml() {
@@ -173,9 +327,11 @@
     const goCount = state.donors.filter(row => row.goNoGo === 'Go').length;
     const noGoCount = state.donors.filter(row => row.goNoGo === 'No go').length;
     const highPriority = state.donors.filter(row => row.priority === 'High').length;
+    const inReview = state.donors.filter(row => !row.goNoGo).length;
+    const filteredDonors = state.donors.filter(matchesFilters);
     const columnHeaders = [...GENERAL.map(field => field[1]), ...ASSESSMENT_FIELDS.map(field => field[1])];
-    const headers = columnHeaders.map((label, index) => `<th class="${index < 4 ? `sticky-${index + 1}` : ''} ${index >= GENERAL.length ? 'assessment-heading' : ''}">${esc(label)}</th>`).join('');
-    const rows = state.donors.map(row => `
+    const headers = columnHeaders.map((label, index) => `<th scope="col" class="${index < 4 ? `sticky-${index + 1}` : ''} ${index >= GENERAL.length ? 'assessment-heading' : ''}">${esc(label)}</th>`).join('');
+    const rows = filteredDonors.map(row => `
       <tr>
         ${GENERAL.map((field, index) => `<td class="${index < 4 ? `sticky-${index + 1}` : ''}">${fieldControl(row, field)}</td>`).join('')}
         ${ASSESSMENT_FIELDS.map(field => `<td>${fieldControl(row, field, true)}</td>`).join('')}
@@ -184,53 +340,53 @@
       </tr>`).join('');
 
     return `
-      <div class="toolbar">
+      <section class="workspace-summary">
         <div>
-          <h2>Donor assessment matrix</h2>
-          <p class="intro">Use this as a working donor map. The criteria mirror the Annex 2 go/no-go structure; your team keeps the final decision in the Go / No-go column.</p>
+          <p class="eyebrow">Funding workspace</p>
+          <h2>Donor Mapping</h2>
+          <p>Assess donor fit, keep research visible and make clearer go/no-go decisions.</p>
         </div>
-        <div class="actions">
-          <button type="button" data-action="add">Add donor</button>
-          <button type="button" class="light" data-action="download-csv">Download CSV</button>
-        </div>
-      </div>
+        <span>${state.donors.length} donor${state.donors.length === 1 ? '' : 's'} mapped</span>
+      </section>
 
-      <section class="metrics" aria-label="Donor mapping summary">
+      <section class="metric-strip" aria-label="Donor mapping summary">
         <div class="card metric"><small>Donors mapped</small><strong>${state.donors.length}</strong></div>
         <div class="card metric"><small>Go</small><strong>${goCount}</strong></div>
         <div class="card metric"><small>No go</small><strong>${noGoCount}</strong></div>
         <div class="card metric"><small>High priority</small><strong>${highPriority}</strong></div>
+        <div class="card metric"><small>In review</small><strong>${inReview}</strong></div>
       </section>
 
-      <section class="panel">
-        <div class="toolbar">
-          <div>
-            <h3>Mapping details</h3>
-            <p class="muted">These details are included in your backup and exports.</p>
-          </div>
-        </div>
+      ${filtersHtml()}
+
+      <details class="mapping-details">
+        <summary>Mapping details</summary>
+        <p class="muted">These details are included in your browser backup and CSV exports.</p>
         <form id="meta-form" class="form-grid">
           ${metaField('organisation', 'Organisation')}
           ${metaField('period', 'Mapping period / cycle')}
           ${metaField('preparedBy', 'Prepared by')}
           ${metaField('notes', 'Mapping notes', 'textarea')}
         </form>
-      </section>
+      </details>
 
-      <section class="panel">
-        <div class="toolbar">
+      <section class="list-panel">
+        <div class="list-heading">
           <div>
-            <h3>Donors</h3>
-            <p class="muted">Scroll horizontally to complete the strategy, likelihood, technical, capacity and risk assessments.</p>
+            <p class="eyebrow">Donor list</p>
+            <h3>Mapped donors</h3>
+            <p class="muted">Scroll horizontally to complete the full Annex 2 strategy, likelihood, technical, capacity and risk assessment.</p>
           </div>
-          <span class="muted">${ASSESSMENT_FIELDS.length} assessment criteria</span>
+          <div class="list-actions"><span class="results-count" role="status" aria-live="polite">Showing ${filteredDonors.length} of ${state.donors.length}</span><button type="button" data-action="add">Add donor</button></div>
         </div>
-        ${state.donors.length ? `<div class="table-wrap">
-          <table>
+        <p class="example-note"><strong>Example records are included.</strong> Edit or delete them, then add your own donor research. The examples contain public, illustrative information only.</p>
+        ${state.donors.length && filteredDonors.length ? `<div class="table-wrap">
+          <table id="donor-table">
+            <caption>Donor assessment matrix — showing ${filteredDonors.length} of ${state.donors.length} mapped donors</caption>
             <thead>
               <tr class="group-row">
-                <th colspan="${GENERAL.length}" class="group-general">General information</th>
-                ${GROUPS.map(group => `<th colspan="${group.fields.length}" class="${group.className}">${esc(group.label)}</th>`).join('')}
+                <th scope="colgroup" colspan="${GENERAL.length}" class="group-general">General information</th>
+                ${GROUPS.map(group => `<th scope="colgroup" colspan="${group.fields.length}" class="${group.className}">${esc(group.label)}</th>`).join('')}
                 <th rowspan="2" class="group-general">Assessment</th>
                 <th rowspan="2" class="group-general">Actions</th>
               </tr>
@@ -238,7 +394,7 @@
             </thead>
             <tbody>${rows}</tbody>
           </table>
-        </div>` : `<div class="empty"><h3>Your donor map is ready to start</h3><p>Add a donor to begin your go/no-go assessment. This template has no donor data pre-filled.</p><button type="button" data-action="add">Add first donor</button></div>`}
+        </div>` : state.donors.length ? `<div class="zero-results"><h3>No donors match these filters</h3><p>Clear the filters to see all mapped donors, or add another donor.</p><div class="actions"><button type="button" class="light" data-action="clear-filters">Clear filters</button><button type="button" data-action="add">Add donor</button></div></div>` : `<div class="empty"><h3>Your donor map is ready to start</h3><p>Add a donor to begin the go/no-go assessment.</p><button type="button" data-action="add">Add first donor</button></div>`}
       </section>`;
   }
 
@@ -344,6 +500,7 @@
     const action = button.dataset.action;
     if (action === 'add') {
       state.donors.push(blankDonor());
+      filters = { decision: 'all', priority: 'all', donorType: 'all', assessment: 'all' };
       save();
       tab = 'matrix';
       render();
@@ -359,6 +516,10 @@
     }
     if (action === 'download-backup') exportBackup();
     if (action === 'download-csv') exportCsv();
+    if (action === 'clear-filters') {
+      filters = { decision: 'all', priority: 'all', donorType: 'all', assessment: 'all' };
+      render();
+    }
     if (action === 'clear') {
       if (!confirm('Clear every donor row and mapping detail from this browser?')) return;
       state = blankState();
@@ -376,14 +537,22 @@
 
   document.addEventListener('change', async event => {
     const target = event.target;
-    if (target.dataset.row) updateRow(target);
+    if (target.dataset.filter) {
+      filters[target.dataset.filter] = target.value;
+      render();
+      return;
+    }
+    if (target.dataset.row) {
+      updateRow(target);
+      if (['goNoGo', 'priority', 'donorType'].includes(target.dataset.field) || ASSESSMENT_FIELDS.some(([key]) => key === target.dataset.field)) render();
+    }
     if (target.id !== 'import-file') return;
     const file = target.files?.[0];
     if (!file) return;
     try {
       const imported = normaliseState(JSON.parse(await file.text()));
       if (!confirm('Replace the current Donor Mapping data in this browser?')) return;
-      state = imported;
+      state = { ...imported, version: CURRENT_VERSION };
       save();
       tab = 'matrix';
       render();
