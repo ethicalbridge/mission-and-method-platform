@@ -9,11 +9,12 @@ test('the guest code grants browser access only to the completed tools',()=>{
  assert.equal(hasToolAccess(storage),false);assert.equal(grantToolAccess('wrong',storage),false);assert.equal(grantToolAccess('1234',storage),true);assert.equal(hasToolAccess(storage),true);assert.equal(store.get(TOOL_ACCESS_STORAGE_KEY),'granted');
  assert.equal(needsToolAccess('theory-of-change'),true);assert.equal(needsToolAccess('ethical-bridge-crm'),true);assert.equal(needsToolAccess('risk-register'),false);
  assert.deepEqual(invitationToolSlugs,['theory-of-change','ethical-bridge-crm']);
- assert.deepEqual(availableToolSlugs,['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy']);
+ assert.deepEqual(availableToolSlugs,['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy']);
  assert.equal(needsToolAccess('gantt'),false);
  assert.equal(needsToolAccess('donor-mapping'),false);
  assert.equal(softwareProducts.find(p=>p.slug==='theory-of-change').launchUrl,'assets/tools/Theory-of-Change-Builder.html');
  assert.equal(softwareProducts.find(p=>p.slug==='ethical-bridge-crm').launchUrl,'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/');
  assert.equal(softwareProducts.find(p=>p.slug==='donor-mapping').launchUrl,'assets/tools/Donor-Mapping.html');
  assert.equal(softwareProducts.find(p=>p.slug==='individual-giving').launchUrl,'assets/tools/Individual-Giving-and-Donor-Management.html');
+ assert.equal(softwareProducts.find(p=>p.slug==='organisation-structure').launchUrl,'assets/tools/Organisation-Structure.html');
 });
