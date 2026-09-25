@@ -12,3 +12,9 @@
 .tool-card-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.tool-card-actions .button{margin:0}
 
 .experts-card{background:#f1f7f6;border-color:#b6d1cc}.experts-card p b{color:var(--teal)}.experts-section{margin:64px 0 80px;padding:36px;border:1px solid var(--line);border-radius:18px;background:#fff;scroll-margin-top:100px}.experts-section h2{margin:12px 0;font-size:clamp(28px,3vw,40px)}.experts-section p{max-width:720px}.experts-section .button{margin-top:12px}@media(max-width:760px){.experts-section{margin:42px 0 56px;padding:24px}}
+
+/* Compact spacing on the Pricing & Packages page. */
+.pricing-page .catalog{padding-top:24px;padding-bottom:48px}
+.pricing-page .course-pricing-section{margin-top:0;padding-top:0;border-top:0}
+.pricing-page .suite-section,.pricing-page .conversion-options{margin-top:42px;padding-top:24px}
+@media(max-width:760px){.pricing-page .catalog{padding-top:18px;padding-bottom:36px}.pricing-page .suite-section,.pricing-page .conversion-options{margin-top:30px;padding-top:18px}}
