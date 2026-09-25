@@ -13,4 +13,5 @@ test('every completed tool appears once under a topic, sorted by title',()=>{
  assert.match(html,/Funding & Business Development/);
  assert.ok(html.indexOf('Strategy, KPIs & Annual Planning</h4>')<html.indexOf('Theory of Change Builder</h4>'));
  assert.ok(html.indexOf('Gantt & Project Planner</h4>')<html.indexOf('Issue & Risk Management</h4>'));
+ assert.ok(html.indexOf('Donor Mapping</h4>')<html.indexOf('Individual Giving & Donor Management</h4>'));
 });

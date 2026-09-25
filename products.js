@@ -1,13 +1,14 @@
 import {pricing} from './pricing-config.js';
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:['strategic-foundation','theory-of-change','organisation-chart','internal-systems','policies','work-plan-gantt','business-model','funding-strategy']};
 // No price, trial, subscription, or bundle is inferred from a course purchase.
-export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
+export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
 export const invitationToolSlugs=['theory-of-change','ethical-bridge-crm'];
-export const previewToolSlugs=['donor-mapping','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
+export const previewToolSlugs=['donor-mapping','individual-giving','issue-risk-management','people-check-ins-development','onboarding-compliance','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy'];
 const launchUrls={
  'theory-of-change':'assets/tools/Theory-of-Change-Builder.html',
  'ethical-bridge-crm':'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/',
  'donor-mapping':'assets/tools/Donor-Mapping.html',
+ 'individual-giving':'assets/tools/Individual-Giving-and-Donor-Management.html',
  'issue-risk-management':'assets/tools/Issue-and-Risk-Management.html',
  'people-check-ins-development':'assets/tools/People-Check-Ins-and-Development.html',
  'onboarding-compliance':'assets/tools/Onboarding-and-Compliance.html',
@@ -26,6 +27,7 @@ export const softwareProducts=[
  ['kpi-tracker','KPI Tracker','Monitoring','Teams checking progress against priorities','Keep performance measures and review decisions together.',['Measure','Target','Current value','Owner','Review date']],
  ['indicator-tracker','Indicator Tracker','Monitoring','Programme teams defining evidence','Record indicator definitions, data sources and collection responsibilities.',['Indicator','Definition','Data source','Frequency','Owner']],
  ['donor-mapping','Donor Mapping','Funding & Business Development','Fundraisers researching relevant prospects','Compare prospects by fit and keep research evidence visible.',['Organisation','Fit','Eligibility','Research source','Next action']],
+ ['individual-giving','Individual Giving & Donor Management','Funding & Business Development','Teams planning respectful relationships with individual supporters','Track received gifts, recurring and previous donors, stewardship, income, campaigns and accountable fundraising actions.',['Donor','Gift','Campaign','Action','Receipt','Follow-up']],
  ['funding-pipeline','Funding Pipeline','Funding & Business Development','Teams following funding opportunities','Track relationship stages and distinguish opportunities from commitments.',['Opportunity','Stage','Potential amount','Confirmed amount','Next action']],
  ['partner-tracker','Partner Tracker','Funding & Business Development','Teams maintaining purposeful partnerships','Keep commitments and next conversations visible without a complex CRM.',['Partner','Shared purpose','Commitment','Owner','Next action']],
  ['ethical-bridge-crm','Ethical Bridge CRM','Relationships','Teams building trusted relationships across supporters, partners and communities','Keep contacts, relationship context, agreed actions and next conversations in one focused relationship workspace.',['Person or organisation','Relationship type','Shared context','Owner','Next action']],
