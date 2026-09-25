@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A private, browser-based donor mapping and go/no-go assessment tool.">
+  <title>Donor Mapping | Mission &amp; Method</title>
+  <link rel="stylesheet" href="Donor-Mapping.css">
+</head>
+<body>
+  <header class="mast">
+    <a href="../../software.html" class="brand">MISSION <span>&amp;</span> METHOD</a>
+    <div class="mast-copy">
+      <small>Funding &amp; business development</small>
+      <h1>Donor Mapping</h1>
+      <p>Research potential donors, assess strategic fit and keep a clear go/no-go record.</p>
+    </div>
+    <div class="top-actions" aria-label="Export options">
+      <button type="button" id="download-csv">Download CSV</button>
+      <button type="button" id="download-backup" class="light">Export data backup</button>
+    </div>
+  </header>
+
+  <div class="notice">
+    This blank template saves only in this browser. Export a backup regularly and avoid entering confidential contact information.
+    <a href="../../software.html">All tools</a>
+  </div>
+
+  <main>
+    <nav id="tabs" aria-label="Donor mapping sections"></nav>
+    <div id="app"></div>
+  </main>
+
+  <footer>Mission &amp; Method · Learn → Build → Complete → Export → Use</footer>
+  <script src="Donor-Mapping.js" defer></script>
+</body>
+</html>

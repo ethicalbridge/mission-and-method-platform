@@ -8,7 +8,7 @@ export const suiteIntro=({showPricing=false}={})=>`<section class="suite-section
 const upcomingToolGroups=[
  ['Strategy & impact',[['Results & Indicator Tracking','Define indicators, data sources, collection frequency and evidence responsibilities.'],['Change Adoption Manager','Plan stakeholder engagement, readiness, communication and adoption during change.']]],
  ['Project & operations',[['Meetings, Actions & Decisions','Turn meeting notes into accountable actions and a searchable decision record.'],['Policy Management','Keep policy ownership, approvals, review dates and next actions visible.']]],
- ['Funding & partnerships',[['Donor Mapping, Engagement & Funding Tracking','Research prospects, manage engagement and track funding from first fit check through stewardship.'],['Partner Mapping & Partnership Tracking','Map partnership fit, shared commitments, responsibilities and next conversations.']]],
+ ['Funding & Business Development',[['Funding Pipeline','Track relationship stages and distinguish opportunities from commitments.'],['Partner Mapping & Partnership Tracking','Map partnership fit, shared commitments, responsibilities and next conversations.']]],
  ['Marketing & engagement',[['Marketing Campaigns & Social Media Planner','Plan campaigns, content, channels, ownership and publishing deadlines in one place.']]]
 ];
 export const toolAccessForm=(redirectUrl='')=>`<section class="tool-access" id="tool-access"><span class="eyebrow">Invitation access</span><h3>Have an access code?</h3><p>Enter it to unlock the Theory of Change Builder and Ethical Bridge CRM at no cost.</p><form data-tool-access-form${redirectUrl?` data-redirect-url="${redirectUrl}"`:''}><label for="access-code">Access code<input id="access-code" name="access-code" inputmode="numeric" autocomplete="one-time-code" required></label><button class="button" type="submit">Unlock the tools</button><p role="status" class="saved-status" data-tool-access-status></p></form></section>`;
@@ -16,6 +16,7 @@ export const availableToolGroups=[
  ['Strategy & impact',['strategy-kpis-annual-planning','strategic-objectives','theory-of-change']],
  ['Monitoring & evaluation',['meal-strategy']],
  ['Project & operations',['gantt','issue-risk-management']],
+ ['Funding & Business Development',['donor-mapping']],
  ['Relationships',['ethical-bridge-crm']],
  ['People & organisation',['people-check-ins-development','onboarding-compliance']]
 ];

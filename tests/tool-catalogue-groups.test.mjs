@@ -10,6 +10,7 @@ test('every completed tool appears once under a topic, sorted by title',()=>{
  const html=softwareCatalogue();
  assert.equal((html.match(/class="suite-tool-topic"/g)||[]).length,availableToolGroups.length);
  assert.equal((html.match(/class="suite-tool-card"/g)||[]).length,availableToolSlugs.length);
+ assert.match(html,/Funding & Business Development/);
  assert.ok(html.indexOf('Strategy, KPIs & Annual Planning</h4>')<html.indexOf('Theory of Change Builder</h4>'));
  assert.ok(html.indexOf('Gantt & Project Planner</h4>')<html.indexOf('Issue & Risk Management</h4>'));
 });
