@@ -7,3 +7,12 @@
 .experts-hero .hero-detail p:first-child{margin-top:0}
 .experts-hero .hero-actions{margin-top:22px}
 @media(max-width:800px){.experts-hero{padding:50px 0 56px}.experts-hero .container{grid-template-columns:1fr;gap:26px}.experts-hero .hero-detail{border-left:0;border-top:3px solid #ed7d4d;padding:20px 0 0}}
+.expert-position{display:inline-block;align-self:flex-start;margin:2px 0 8px;padding:5px 11px;border-radius:999px;background:#e8f2ef;color:#155852;font-size:.82rem;font-weight:800}
+.experts-main .foundation-section{padding-bottom:44px}
+.experts-main .trust-section{padding:52px 0 58px}
+.trust-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(36px,6vw,90px);align-items:start}
+.trust-section blockquote{max-width:none;margin:14px 0 0;font-size:clamp(1.65rem,2.2vw,2.1rem);line-height:1.34}
+.trust-notes{padding-top:30px}
+.trust-section .trust-belief{max-width:none;margin:0 0 24px;font-size:clamp(1.3rem,1.7vw,1.55rem);line-height:1.45;font-weight:700;color:#16303d}
+.trust-section .trust-sustain{max-width:none;margin:0;font-size:1.06rem;line-height:1.6;color:#34515b}
+@media(max-width:760px){.trust-grid{grid-template-columns:1fr;gap:20px}.trust-notes{padding-top:0}.experts-main .trust-section{padding:46px 0 52px}}
