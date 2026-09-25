@@ -75,3 +75,22 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
   .footer-links{display:none}
   .detail-hero-grid,.detail-content,.skill-tool-grid{grid-template-columns:1fr}.course-visual{max-width:400px;margin:auto}.facts-card{grid-template-columns:1fr 1fr;margin:-25px 15px 0}.facts-card>div{border:0;border-bottom:1px solid var(--line);padding:12px}.course-anchor-nav a:not(.button){display:none}.course-anchor-nav .button{margin:auto}.learning-grid{grid-template-columns:1fr}.instructor-card{position:static}.detailed-modules{padding:0 14px}.detailed-modules article>div{padding-left:10px}.detail-main h2{font-size:40px}
 }
+
+/* Keep the full site navigation visible while there is room for it. */
+.nav .brand{flex:0 0 auto;white-space:nowrap}
+@media(min-width:1181px) and (max-width:1380px){
+  .nav .nav-inner{height:70px;min-height:70px;flex-wrap:nowrap;padding:0}
+  .nav .menu{display:none}
+  .nav .nav-links{display:flex;width:auto;flex-direction:row;align-items:center;gap:8px;padding:0;font-size:12px}
+  .nav .nav-links>a,.nav .courses-dropdown>summary{padding:0}
+  .nav .nav-links .contact-link{padding:8px 10px;margin:0}
+  .nav .nav-links .account-link{border:0;margin:0;padding:0}
+  .nav .courses-dropdown{width:auto}
+  .nav .courses-dropdown-panel{position:absolute;width:310px;box-shadow:0 12px 35px #123c4826;margin:0}
+}
+@media(max-width:1180px){
+  .nav .nav-inner{height:auto;min-height:70px;align-content:center}
+  .nav .menu{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:6px 14px;border:1px solid var(--teal);border-radius:7px;color:var(--teal);background:#fff;cursor:pointer}
+  .nav .menu:hover,.nav .menu[aria-expanded="true"]{background:var(--mint)}
+  .nav .nav-links{flex-basis:100%}
+}
