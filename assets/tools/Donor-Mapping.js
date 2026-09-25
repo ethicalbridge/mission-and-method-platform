@@ -237,7 +237,8 @@
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (!saved) return { ...blankState(), donors: exampleDonors() };
       const restored = normaliseState(saved);
-      if (restored.version < CURRENT_VERSION && restored.donors.length === 0) {
+      const hasMeaningfulDonor = restored.donors.some(row => ALL_FIELDS.some(([key]) => String(row[key] || '').trim()));
+      if (restored.version < CURRENT_VERSION && !hasMeaningfulDonor) {
         return { ...restored, version: CURRENT_VERSION, donors: exampleDonors() };
       }
       return { ...restored, version: CURRENT_VERSION };
