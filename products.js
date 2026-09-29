@@ -1,13 +1,15 @@
 import {pricing} from './pricing-config.js';
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:['strategic-foundation','theory-of-change','organisation-chart','internal-systems','policies','work-plan-gantt','business-model','funding-strategy']};
 // No price, trial, subscription, or bundle is inferred from a course purchase.
-export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
+export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','donor-tracking','donor-reference-guide','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
 export const invitationToolSlugs=['theory-of-change','ethical-bridge-crm'];
-export const previewToolSlugs=['donor-mapping','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
+export const previewToolSlugs=['donor-mapping','donor-tracking','donor-reference-guide','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona'];
 const launchUrls={
  'theory-of-change':'assets/tools/Theory-of-Change-Builder.html',
  'ethical-bridge-crm':'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/',
  'donor-mapping':'assets/tools/Donor-Mapping.html',
+ 'donor-tracking':'assets/tools/Donor-Tracking.html',
+ 'donor-reference-guide':'assets/tools/Donor-Reference-Guide.html',
  'individual-giving':'assets/tools/Individual-Giving-and-Donor-Management.html',
  'issue-risk-management':'assets/tools/Issue-and-Risk-Management.html',
  'meetings-actions-decisions':'assets/tools/Meetings-Actions-and-Decisions.html',
@@ -30,6 +32,8 @@ export const softwareProducts=[
  ['kpi-tracker','KPI Tracker','Monitoring','Teams checking progress against priorities','Keep performance measures and review decisions together.',['Measure','Target','Current value','Owner','Review date']],
  ['indicator-tracker','Indicator Tracker','Monitoring','Programme teams defining evidence','Record indicator definitions, data sources and collection responsibilities.',['Indicator','Definition','Data source','Frequency','Owner']],
  ['donor-mapping','Donor Mapping','Funding & Business Development','Fundraisers researching relevant prospects','Compare prospects by fit and keep research evidence visible.',['Organisation','Fit','Eligibility','Research source','Next action']],
+ ['donor-tracking','Donor Tracking','Funding & Business Development','Teams stewarding donors and sponsors','Track donors and sponsors, received gifts, relationship history, stewardship and accountable next actions.',['Donor','Gift','Relationship','Owner','Next action']],
+ ['donor-reference-guide','Donor Reference Guide','Funding & Business Development','Teams preparing proposals and managing awards','Keep donor eligibility, funding opportunities, proposal and reporting guidance, award requirements and sources in one profile.',['Eligibility','Opportunity','Proposal','Report','Requirements']],
  ['individual-giving','Individual Giving & Donor Management','Funding & Business Development','Teams planning respectful relationships with individual supporters','Track received gifts, recurring and previous donors, stewardship, income, campaigns and accountable fundraising actions.',['Donor','Gift','Campaign','Action','Receipt','Follow-up']],
  ['funding-pipeline','Funding Pipeline','Funding & Business Development','Teams following funding opportunities','Track relationship stages and distinguish opportunities from commitments.',['Opportunity','Stage','Potential amount','Confirmed amount','Next action']],
  ['partner-tracker','Partner Tracker','Funding & Business Development','Teams maintaining purposeful partnerships','Keep commitments and next conversations visible without a complex CRM.',['Partner','Shared purpose','Commitment','Owner','Next action']],

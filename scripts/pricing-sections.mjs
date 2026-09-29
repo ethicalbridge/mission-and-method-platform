@@ -16,7 +16,7 @@ export const availableToolGroups=[
  ['Strategy & impact',['strategy-kpis-annual-planning','strategic-objectives','theory-of-change']],
  ['Monitoring & evaluation',['meal-strategy']],
  ['Project & operations',['gantt','issue-risk-management','meetings-actions-decisions']],
- ['Funding & Business Development',['donor-mapping','individual-giving']],
+ ['Funding & Business Development',['donor-mapping','donor-tracking','donor-reference-guide','individual-giving']],
  ['Relationships',['ethical-bridge-crm']],
  ['People & organisation',['people-check-ins-development','onboarding-compliance','organisation-structure']],
  ['Communications, marketing & visibility',['customer-persona']]
