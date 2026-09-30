@@ -94,3 +94,20 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
   .nav .menu:hover,.nav .menu[aria-expanded="true"]{background:var(--mint)}
   .nav .nav-links{flex-basis:100%}
 }
+
+/* Resources dropdown — mirrors courses-dropdown */
+.resources-dropdown{position:relative}
+.resources-dropdown>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 0;font-weight:750}
+.resources-dropdown>summary::-webkit-details-marker{display:none}
+.resources-dropdown.active>summary{color:var(--teal)}
+.resources-dropdown[open]>summary span{transform:rotate(180deg)}
+.resources-dropdown-panel{position:absolute;top:100%;left:-20px;width:320px;padding:14px;background:var(--cream);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 35px #123c4826;z-index:10}
+.nav-links .resources-dropdown-panel a{display:block;white-space:normal;padding:11px 12px;border-radius:8px;border-bottom:0}
+.nav-links .resources-dropdown-panel a:hover{background:var(--mint)}
+.nav-links .resources-dropdown-panel a b{display:block;font-size:15px;font-weight:850;color:var(--ink)}
+.nav-links .resources-dropdown-panel a small{display:block;margin-top:2px;font-size:12px;color:var(--muted);font-weight:600}
+@media(max-width:1180px){
+  .resources-dropdown{width:100%}
+  .resources-dropdown-panel{position:static;width:100%;box-shadow:none;margin:4px 0 8px}
+  .resources-dropdown>summary{justify-content:space-between}
+}
