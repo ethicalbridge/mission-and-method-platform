@@ -1,11 +1,194 @@
-(()=>{'use strict';const KEY='mm.gantt-project.v1',statuses=['Not started','Researched','Drafted','In progress','Blocked','Completed','Future'],levels=['Strategic objective','Subcategory','Activity','Sub-activity','Task'];const empty=()=>({project:'',year:new Date().getFullYear(),tasks:[]});let data;try{data=JSON.parse(localStorage.getItem(KEY))||empty()}catch{data=empty()}if(!Array.isArray(data.tasks))data.tasks=[];let editing=null,view='months',ownerFilter='',statusFilter='';const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),id=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+''+Math.random(),save=()=>localStorage.setItem(KEY,JSON.stringify(data)),download=(filename,content,type)=>{let u=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)},csv=s=>{let v=String(s??'');if(/^[=+@\-\t\r]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"'},date=s=>s?new Date(s+'T00:00:00'):null;
-const input=(name,label,type='text',v='',options)=>`<label>${label}${options?`<select name="${name}">${options.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select>`:`<input name="${name}" type="${type}" ${type==='number'?'step="any"':''} value="${esc(v)}">`}</label>`;
-const form=()=>{let t=data.tasks.find(x=>x.id===editing)||{};return `<section class="panel"><h2>${editing&&editing!=='new'?'Edit':'Add'} timeline item</h2><p class="intro">Group strategic objectives, then add activities beneath them. Start and finish dates drive the timeline.</p><form id="task-form"><div class="form-grid">${input('title','Activity / item', 'text',t.title)}${input('level','Level','text',t.level||'Activity',levels)}<label>Parent group or objective<select name="parentId"><option value="">No parent</option>${data.tasks.filter(x=>x.id!==editing&&['Strategic objective','Subcategory'].includes(x.level)).map(x=>`<option value="${esc(x.id)}" ${x.id===t.parentId?'selected':''}>${esc(x.title)}</option>`).join('')}</select></label>${input('owner','Responsible person / initials','text',t.owner)}${input('status','Status','text',t.status||'Not started',statuses)}${input('priority','Priority','text',t.priority||'Normal',['High','Normal','Low'])}${input('start','Start date','date',t.start)}${input('finish','Finish date','date',t.finish)}${input('progress','Progress %','number',t.progress||0)}<label>Depends on<select name="dependency"><option value="">No dependency</option>${data.tasks.filter(x=>x.id!==editing).map(x=>`<option value="${esc(x.id)}" ${x.id===t.dependency?'selected':''}>${esc(x.title)}</option>`).join('')}</select></label>${input('budget','Budget','number',t.budget)}${input('notes','Notes','text',t.notes)}</div><p class="hint">Start and finish dates must be in order. The timeline shows each item across the selected periods.</p><p class="actions"><button type="submit">Save timeline item</button><button type="button" class="secondary" id="cancel">Cancel</button></p></form></section>`};
-const fmt=dt=>dt?new Date(dt+'T00:00:00').toLocaleDateString('en',{day:'numeric',month:'short',year:'numeric'}):'—';
-const ordered=()=>{let result=[],seen=new Set();function add(t,depth=0){if(seen.has(t.id))return;seen.add(t.id);result.push({...t,depth});data.tasks.filter(x=>x.parentId===t.id).forEach(x=>add(x,depth+1))}data.tasks.filter(x=>!x.parentId||!data.tasks.some(y=>y.id===x.parentId)).forEach(x=>add(x));data.tasks.forEach(x=>add(x));return result};
-const periods=()=>view==='quarters'?Array.from({length:4},(_,i)=>({label:'Q'+(i+1),start:new Date(+data.year,i*3,1),end:new Date(+data.year,i*3+3,0)})):Array.from({length:12},(_,i)=>({label:new Date(+data.year,i,1).toLocaleString('en',{month:'short'}),start:new Date(+data.year,i,1),end:new Date(+data.year,i+1,0)}));
-const render=()=>{let ts=ordered().filter(t=>(!ownerFilter||t.owner===ownerFilter)&&(!statusFilter||t.status===statusFilter)),ps=periods(),owners=[...new Set(data.tasks.map(x=>x.owner).filter(Boolean))].sort(),today=new Date();$('#app').innerHTML=`<div class="toolbar"><div><h2>Project timeline</h2><p class="intro">Based on the supplied spreadsheet’s strategic-objective groups, activity list, status key and dated grid. The bar spans each item’s start and finish; gold shows reported progress.</p></div><div class="actions"><button id="add">Add item</button><button class="secondary" id="months">Jan–Dec</button><button class="secondary" id="quarters">Q1–Q4</button></div></div><section class="panel"><div class="form-grid"><label>Project name<input id="project" value="${esc(data.project)}"></label><label>Planning year<input id="year" type="number" value="${esc(data.year)}"></label><label>Owner<select id="owner-filter"><option value="">All owners</option>${owners.map(o=>`<option ${ownerFilter===o?'selected':''}>${esc(o)}</option>`).join('')}</select></label><label>Status<select id="status-filter"><option value="">All statuses</option>${statuses.map(s=>`<option ${statusFilter===s?'selected':''}>${s}</option>`).join('')}</select></label></div></section><div id="editor">${editing!==null?form():''}</div><section class="panel gantt-grid"><table><thead><tr><th>Strategic objective / activity</th><th>Owner</th><th>Status</th><th>Priority</th><th>Start</th><th>Finish</th><th>Days</th><th>Progress</th>${ps.map(p=>`<th class="month">${p.label}</th>`).join('')}<th>Action</th></tr></thead><tbody>${ts.map(t=>{let st=date(t.start),en=date(t.finish),days=st&&en?Math.round((en-st)/86400000)+1:'—',group=['Strategic objective','Subcategory'].includes(t.level);return `<tr class="${group?'group':''}"><td style="padding-left:${.7+t.depth*1.1}rem"><b>${esc(t.title)}</b><br><small>${esc(t.level)}</small></td><td>${esc(t.owner)}</td><td>${esc(t.status)}</td><td>${esc(t.priority)}</td><td>${fmt(t.start)}</td><td>${fmt(t.finish)}</td><td>${days}</td><td>${Math.min(100,Math.max(0,+t.progress||0))}%</td>${ps.map(p=>{let on=st&&en&&st<=p.end&&en>=p.start,now=today>=p.start&&today<=p.end;return `<td class="slot ${on?'on':''} ${now?'today':''}">${on?`<div class="fill ${t.status==='Completed'?'complete':t.status==='Blocked'?'blocked':''}" title="${esc(t.title)}: ${fmt(t.start)}–${fmt(t.finish)}"><span class="done" style="width:${Math.min(100,Math.max(0,+t.progress||0))}%"></span></div>`:''}</td>`}).join('')}<td><button class="secondary tiny" data-edit="${t.id}">Edit</button><button class="danger tiny" data-delete="${t.id}">Delete</button></td></tr>`}).join('')||`<tr><td colspan="${ps.length+9}">No timeline items yet. Add a strategic objective, then activities below it.</td></tr>`}</tbody></table></section><div class="split"><section class="panel"><h3>Status key</h3>${statuses.map(s=>`<span class="badge">${s}</span> `).join('')}</section><section class="panel"><h3>Export & reuse</h3><p>Download a CSV for Excel, export JSON as a complete backup, or print the timeline as PDF. Import a previous Gantt JSON export or strategy-project JSON to bring annual initiatives across.</p><label class="button secondary">Import JSON<input id="import" type="file" accept=".json,application/json" hidden></label></section></div>`};
-document.addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;if(b.id==='add'){editing='new';render();$('#editor').scrollIntoView({behavior:'smooth'})}else if(b.id==='cancel'){editing=null;render()}else if(b.id==='months'||b.id==='quarters'){view=b.id;render()}else if(b.dataset.edit){editing=b.dataset.edit;render();$('#editor').scrollIntoView({behavior:'smooth'})}else if(b.dataset.delete){if(!confirm('Delete this item?'))return;data.tasks=data.tasks.filter(x=>x.id!==b.dataset.delete);data.tasks.forEach(x=>{if(x.parentId===b.dataset.delete)x.parentId='';if(x.dependency===b.dataset.delete)x.dependency=''});save();render()}});
-document.addEventListener('submit',e=>{if(e.target.id!=='task-form')return;e.preventDefault();let v=Object.fromEntries(new FormData(e.target));if(!v.title.trim())return alert('Add an activity name.');if(v.start&&v.finish&&v.start>v.finish)return alert('Finish must be on or after start.');if(v.parentId===editing)return alert('An item cannot be its own parent.');let x=data.tasks.find(x=>x.id===editing);if(!x){x={id:id()};data.tasks.push(x)}Object.assign(x,v);delete x.parentName;editing=null;save();render()});
-document.addEventListener('change',async e=>{if(e.target.id==='owner-filter'){ownerFilter=e.target.value;render()}if(e.target.id==='status-filter'){statusFilter=e.target.value;render()}if(e.target.id==='project'){data.project=e.target.value;save()}if(e.target.id==='year'){data.year=+e.target.value||new Date().getFullYear();save();render()}if(e.target.id==='import'){let file=e.target.files[0];if(!file)return;try{let x=JSON.parse(await file.text()),incoming=Array.isArray(x.tasks)?x.tasks:Array.isArray(x.initiatives)?x.initiatives.map(i=>({id:i.id||id(),title:i.title,level:'Activity',owner:i.owner,status:i.status,start:i.start,finish:i.end,progress:i.progress,priority:'Normal',budget:i.budget,notes:i.notes})):null;if(!incoming)throw Error('This is not a Gantt or strategy-project JSON export.');if(!confirm('Replace the current timeline with '+incoming.length+' imported items?'))return;data={project:x.project||x.meta?.organisation||'',year:x.year||x.meta?.year||new Date().getFullYear(),tasks:incoming};save();render()}catch(err){alert('Import failed: '+err.message)}}});
-$('#csv').onclick=()=>{let fields=['level','title','owner','status','priority','start','finish','progress','dependency','budget','notes','parentId'],rows=[fields,...ordered().map(x=>fields.map(f=>x[f]??''))];download('Mission-and-Method-gantt-timeline.csv','\ufeff'+rows.map(r=>r.map(csv).join(',')).join('\r\n'),'text/csv;charset=utf-8')};$('#json').onclick=()=>download('Mission-and-Method-gantt-project.json',JSON.stringify({...data,exportedAt:new Date().toISOString()},null,2),'application/json');$('#print').onclick=()=>print();render();})();
+(()=>{'use strict';
+const S=window.MMSuite,{esc,uid,fmtDate,monthsSince,clamp,currentYear,money,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,s}=S;
+const root=document.querySelector('#app');
+const WORKBOOK='mission-method-gantt-project-planner',FILE='Mission-and-Method-gantt-project-plan';
+const TABS=['Start','Timeline','Tasks','Review','Export'];
+const LEVELS=['Strategic objective','Subcategory','Activity','Sub-activity','Task','Milestone'],GROUP_LEVELS=['Strategic objective','Subcategory'],PRIORITY=['High','Normal','Low'];
+const isGroup=t=>GROUP_LEVELS.includes(t.level);
+
+// ---------- data model (v2) ----------
+const blankTask=()=>({id:uid(),code:'',level:'Activity',parentCode:'',title:'',owner:'',status:'Planned',priority:'Normal',start:'',finish:'',progress:0,dependsOn:'',budget:'',notes:'',lastEditedBy:'',lastEditedAt:''});
+const blank=()=>({version:2,meta:{project:'',organisation:'',year:currentYear,preparedBy:'',reviewDate:'',currency:'',notes:''},tasks:[],reviews:[]});
+const STAGE={'Not started':'Planned','Researched':'In progress','Drafted':'In progress','In progress':'In progress','Blocked':'At risk','Completed':'Completed','Future':'Planned'};
+function migrateV1(v1){
+ const out=blank(),code=new Map();out.meta.project=v1.project||'';out.meta.year=Number(v1.year)||currentYear;
+ (v1.tasks||[]).forEach((t,i)=>code.set(t.id,'T'+(i+1)));
+ out.tasks=(v1.tasks||[]).map((t,i)=>{const stage=t.status&&!S.STATUSES.includes(t.status)&&STAGE[t.status]!==t.status?`Stage in the previous version: ${t.status}.`:'';return {...blankTask(),code:'T'+(i+1),level:LEVELS.includes(t.level)?t.level:'Activity',parentCode:code.get(t.parentId)||'',title:t.title||'Untitled',owner:t.owner||'',status:STAGE[t.status]||(S.STATUSES.includes(t.status)?t.status:'Planned'),priority:PRIORITY.includes(t.priority)?t.priority:'Normal',start:t.start||'',finish:t.finish||'',progress:clamp(t.progress),dependsOn:code.get(t.dependency)||'',budget:t.budget??'',notes:[t.notes,stage].filter(Boolean).join(' ')}});
+ return out;
+}
+const normalise=d=>{if(!Array.isArray(d.tasks))d.tasks=[];if(!Array.isArray(d.reviews))d.reviews=[];d.reviews.forEach(r=>{if(!Array.isArray(r.decisions))r.decisions=[]});return d};
+const storage=S.store({key:'mission-method-gantt-v2',version:2,blank,legacy:[{key:'mm.gantt-project.v1',migrate:migrateV1}],normalise});
+let db=storage.load();
+let tab='Start',dlg='',message='',view='Months',ownerFilter='',statusFilter='';
+
+// ---------- helpers ----------
+const byCode=c=>db.tasks.find(t=>t.code===c);
+const today=()=>S.today();
+const days=t=>t.start&&t.finish?Math.round((new Date(t.finish)-new Date(t.start))/86400000)+1:'';
+const children=t=>db.tasks.filter(x=>x.parentCode===t.code);
+function rollup(t){const k=children(t);if(!k.length)return clamp(t.progress);return Math.round(k.reduce((n,x)=>n+rollup(x),0)/k.length)}
+function span(t){const k=children(t);if(!k.length||(t.start&&t.finish))return [t.start,t.finish];const ds=k.map(span).filter(([a,b])=>a&&b);if(!ds.length)return [t.start,t.finish];return [ds.map(d=>d[0]).sort()[0],ds.map(d=>d[1]).sort().at(-1)]}
+const overdue=t=>!isGroup(t)&&t.finish&&t.status!=='Completed'&&t.finish<today();
+const conflict=t=>{const d=byCode(t.dependsOn);return d&&d.finish&&t.start&&t.start<=d.finish&&d.code!==t.code};
+function ordered(){const out=[],seen=new Set();const add=(t,depth)=>{if(seen.has(t.id))return;seen.add(t.id);out.push({t,depth});db.tasks.filter(x=>x.parentCode===t.code&&x.code).forEach(x=>add(x,depth+1))};db.tasks.filter(t=>!t.parentCode||!byCode(t.parentCode)).forEach(t=>add(t,0));db.tasks.forEach(t=>add(t,0));return out}
+const nextCode=()=>{const used=new Set(db.tasks.map(t=>t.code));let i=1;while(used.has('T'+i))i++;return 'T'+i};
+const leafs=()=>db.tasks.filter(t=>!isGroup(t));
+const avg=()=>{const l=leafs();return l.length?Math.round(l.reduce((n,t)=>n+clamp(t.progress),0)/l.length):0};
+function save(note='Saved in this browser.'){storage.save(db);message=note;render()}
+const flags=t=>`${overdue(t)?pill('Overdue'):''}${conflict(t)?` ${pill('Dependency clash')}`:''}`;
+
+// ---------- example ----------
+function makeExample(){
+ const d=blank(),y=d.meta.year,D=(m,dd)=>`${y}-${String(m).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+ Object.assign(d.meta,{project:`Annual plan ${y}`,organisation:'Example organisation',currency:'USD'});
+ const T=(code,level,parentCode,title,owner,start,finish,progress,status,dependsOn='',budget='')=>({...blankTask(),code,level,parentCode,title,owner,start,finish,progress,status,dependsOn,budget});
+ d.tasks=[T('ESO1','Strategic objective','','Reach more community organisations with practical training','Programme lead','','',0,'In progress'),
+  T('AP1','Activity','ESO1','Run three training cohorts','Programme lead',D(2,1),D(11,28),45,'In progress','',24000),
+  T('T1','Task','AP1','Recruit cohort 1','Programme officer',D(2,1),D(2,28),100,'Completed'),
+  T('T2','Task','AP1','Deliver cohort 1','Trainer',D(3,1),D(5,31),100,'Completed','T1'),
+  T('T3','Task','AP1','Deliver cohort 2','Trainer',D(6,1),D(8,31),80,'In progress','T2'),
+  T('M1','Milestone','AP1','Cohort 3 graduation','Programme lead',D(11,28),D(11,28),0,'Planned','T3'),
+  T('ESO2','Strategic objective','','Diversify income','Director','','',0,'At risk'),
+  T('AP3','Activity','ESO2','Apply to five new aligned funders','Director',D(1,15),D(9,15),60,'At risk','',2000),
+  T('AP4','Activity','ESO2','Individual giving pilot','Communications lead',D(7,1),D(12,15),10,'In progress','AP3',5000),
+  T('ISO1','Strategic objective','','Build reliable monitoring and learning','MEAL officer','','',0,'On track'),
+  T('AP5','Activity','ISO1','Quarterly data review routine','MEAL officer',D(1,1),D(12,31),50,'On track','',500)];
+ d.reviews=[{id:uid(),date:D(7,5),period:'Q2',reviewer:'Leadership team',summary:'Training on schedule; funder applications behind.',decisions:[{id:uid(),decision:'Start the giving pilot even if applications slip',action:'Confirm pilot budget',owner:'Director',due:D(7,20),status:'Done'}],snapshot:null}];
+ return d;
+}
+
+// ---------- views ----------
+function dashboard(){
+ const l=leafs(),late=l.filter(overdue).length,clash=l.filter(conflict).length,noOwner=l.filter(t=>!t.owner).length,soon=db.tasks.filter(t=>t.level==='Milestone'&&t.finish>=today()&&(new Date(t.finish)-new Date())/86400000<=31);
+ const last=S.sortedReviews(db.reviews)[0]?.date||'',m=monthsSince(last),budget=l.reduce((n,t)=>n+(Number(t.budget)||0),0);
+ return `<section class="panel"><span class="eyebrow">Overview · ${esc(db.meta.year)}</span><h2>Project at a glance</h2><div class="grid four">${card('Items',db.tasks.length,`${db.tasks.filter(isGroup).length} groups · ${l.length} activities and tasks`)}${card('Average progress',avg()+'%','',false,bar(avg()))}${card('Overdue',late,'Past their finish date and not completed',late>0)}${card('Since last review',m===null?'—':m+' mo',last?fmtDate(last):'No review recorded yet',m!==null&&m>3)}</div><div class="grid four" style="margin-top:12px">${card('Dependency clashes',clash,'Starts before the item it depends on finishes',clash>0)}${card('Without an owner',noOwner,'',noOwner>0)}${card('Milestones in the next 31 days',soon.length,soon.map(t=>t.title).slice(0,2).join(' · '))}${card('Budget',money(budget,db.meta.currency),'Sum of activity and task budgets')}</div></section>`;
+}
+function start(){const m=db.meta;return `${dashboard()}<div class="notice">Group work under strategic objectives, then add activities, tasks and milestones beneath them. Give each item an owner and dates; link it to the item it depends on. You can bring in the annual plan from Strategy, KPIs & Annual Planning with Import Excel. Data stays in this browser — download the Excel or JSON regularly.</div><section class="panel"><h2>Project context</h2><form data-form="meta" class="form">${field('Project or plan name','project',m.project)}${field('Organisation','organisation',m.organisation)}${field('Planning year','year',m.year,'number','min="2000" max="2200"','The timeline shows this year.')}${field('Currency','currency',m.currency,'text','maxlength="12" placeholder="e.g. USD, EUR, KES"')}${field('Prepared by','preparedBy',m.preparedBy)}${field('Next review','reviewDate',m.reviewDate,'date')}${area('Notes','notes',m.notes)}<div class="actions"><button class="button" type="submit">Save project context</button></div></form></section><section class="panel"><h2>Get started</h2><div class="actions"><button class="button" data-action="add" data-level="Strategic objective">Add objective group</button><button class="button" data-action="add">Add activity</button>${S.importButtons('Load example plan')}</div><p class="tiny">Import Excel accepts this tool's workbook (replaces everything) or a Strategy, KPIs & Annual Planning workbook (adds its objectives and annual plan).</p></section>`}
+
+function periods(){const y=Number(db.meta.year)||currentYear;return view==='Quarters'?[0,1,2,3].map(i=>({label:'Q'+(i+1),a:`${y}-${String(i*3+1).padStart(2,'0')}-01`,b:new Date(Date.UTC(y,i*3+3,0)).toISOString().slice(0,10)})):Array.from({length:12},(_,i)=>({label:new Date(y,i,1).toLocaleString(undefined,{month:'short'}),a:`${y}-${String(i+1).padStart(2,'0')}-01`,b:new Date(Date.UTC(y,i+1,0)).toISOString().slice(0,10)}))}
+function timelineTable(rows,interactive=true){
+ const ps=periods(),t0=today();
+ return `<div class="tablewrap gantt"><table><thead><tr><th>Objective / activity</th><th>Owner</th><th>Status</th>${ps.map(p=>`<th class="slot-h ${t0>=p.a&&t0<=p.b?'now':''}">${esc(p.label)}</th>`).join('')}</tr></thead><tbody>${rows.map(({t,depth})=>{const [a,b]=span(t),prog=isGroup(t)?rollup(t):clamp(t.progress);return `<tr class="${isGroup(t)?'group':''}"><td style="padding-left:${10+depth*16}px">${interactive?`<button class="link" data-action="edit" data-id="${t.id}">${esc(t.code)} · ${esc(t.title)}</button>`:`<b>${esc(t.code)}</b> · ${esc(t.title)}`}<div class="tiny">${esc(t.level)}${a?` · ${esc(fmtDate(a))} → ${esc(fmtDate(b))}`:''}</div>${interactive?flags(t):''}</td><td>${esc(t.owner||'—')}</td><td>${pill(t.status)}</td>${(()=>{const on=ps.map(p=>a&&b&&a<=p.b&&b>=p.a),first=on.indexOf(true),last=on.lastIndexOf(true),n=last-first+1;return ps.map((p,i)=>{const now=t0>=p.a&&t0<=p.b;if(!on[i])return `<td class="slot ${now?'now':''}"></td>`;if(t.level==='Milestone')return `<td class="slot ${now?'now':''}"><span class="diamond" title="${esc(t.title)}"></span></td>`;const k=i-first,fillPart=clamp((prog/100*n-k)*100);return `<td class="slot on ${now?'now':''}"><span class="fill ${i===first?'s':''} ${i===last?'e':''} ${t.status==='Completed'?'complete':overdue(t)||t.status==='At risk'?'late':''} ${isGroup(t)?'grp':''}" title="${esc(t.title)} · ${prog}%"><i style="width:${fillPart}%"></i></span></td>`}).join('')})()}</tr>`}).join('')||`<tr><td colspan="${ps.length+3}">No items yet. Add an objective group, then activities beneath it.</td></tr>`}</tbody></table></div>`;
+}
+function timelineView(){
+ const owners=[...new Set(db.tasks.map(t=>t.owner).filter(Boolean))].sort();
+ const rows=ordered().filter(({t})=>(!ownerFilter||t.owner===ownerFilter||isGroup(t))&&(!statusFilter||t.status===statusFilter||isGroup(t)));
+ return `<div class="rowhead section-head"><div><span class="eyebrow">${esc(db.meta.year)}</span><h2>Timeline ${tip('Bars run from start to finish; the darker fill shows progress. Groups roll up their items. Coral means overdue or at risk; a diamond is a milestone.')}</h2></div><div class="actions"><button class="button small ${view==='Months'?'':'secondary'}" data-action="view" data-mode="Months">Months</button><button class="button small ${view==='Quarters'?'':'secondary'}" data-action="view" data-mode="Quarters">Quarters</button><button class="button small" data-action="add">Add item</button></div></div><section class="panel"><div class="form" style="margin-bottom:12px"><label class="field"><span class="label">Owner</span><select data-filter="owner"><option value="">All owners</option>${S.opts(owners,ownerFilter)}</select></label><label class="field"><span class="label">Status</span><select data-filter="status"><option value="">All statuses</option>${S.opts(S.STATUSES,statusFilter)}</select></label></div>${timelineTable(rows)}</section>`;
+}
+function tasksView(){
+ const rows=ordered().map(({t,depth})=>`<tr class="${isGroup(t)?'group':''}"><td><b>${esc(t.code)}</b></td><td style="padding-left:${10+depth*16}px"><button class="link" data-action="edit" data-id="${t.id}">${esc(t.title||'Untitled')}</button><div class="tiny">${esc(t.level)}</div>${flags(t)}</td><td>${esc(t.owner||'—')}</td><td>${esc(fmtDate(t.start)||'—')}</td><td>${esc(fmtDate(t.finish)||'—')}</td><td>${esc(days(t))}</td><td style="min-width:110px">${isGroup(t)?rollup(t):clamp(t.progress)}%${bar(isGroup(t)?rollup(t):t.progress)}</td><td>${pill(t.status)}</td><td>${esc(t.dependsOn||'—')}</td><td>${t.budget!==''?money(t.budget):'—'}</td></tr>`);
+ return `<div class="rowhead section-head"><div><span class="eyebrow">Plan</span><h2>All items</h2><p>Codes link items together: the parent code places an item under a group, and “depends on” names the item that must finish first.</p></div><button class="button" data-action="add">Add item</button></div><section class="panel">${table(['Code','Item','Owner','Start','Finish','Days','Progress','Status','Depends on',`Budget${db.meta.currency?' ('+esc(db.meta.currency)+')':''}`],rows,'No items yet.')}</section>`;
+}
+function reviewView(){
+ const late=leafs().filter(overdue),clash=leafs().filter(conflict),risk=leafs().filter(t=>t.status==='At risk'),open=S.openDecisions(db.reviews);
+ const line=(t,why)=>`<li>${pill(why)} <b>${esc(t.code)}</b> ${esc(t.title)} · ${esc(t.owner||'no owner')}${t.finish?` · due ${esc(fmtDate(t.finish))}`:''}</li>`;
+ return `<span class="eyebrow">Progress review</span><h2>Keep the plan honest</h2><p>Check what slipped, agree what changes, and record the review. Each review keeps a snapshot of the plan.</p><div class="grid four">${card('Overdue',late.length,'',late.length>0)}${card('At risk',risk.length,'',risk.length>0)}${card('Dependency clashes',clash.length,'',clash.length>0)}${card('Open decisions',open.length)}</div><section class="panel" style="margin-top:16px"><h3>What needs attention</h3>${late.length||risk.length||clash.length?`<ul class="checks">${late.map(t=>line(t,'Overdue')).join('')}${risk.filter(t=>!overdue(t)).map(t=>line(t,'At risk')).join('')}${clash.map(t=>line(t,'Dependency clash')).join('')}</ul>`:'<p class="muted">Nothing flagged right now.</p>'}</section><section class="panel"><div class="rowhead"><div><h3>Reviews and decisions</h3><p>Record the period, what changed and each decision with an owner.</p></div><button class="button" data-action="new-review">Record a review</button></div>${S.reviewsList(db.reviews)}</section>`;
+}
+function exportView(){const m=db.meta,keep=view;view='Quarters';const t=timelineTable(ordered(),false);view=keep;return `<span class="eyebrow">Learn → build → complete → export → use</span><h2>Export your project plan</h2><p>Excel matches the Module 6 Gantt workbook exactly — you can re-import it later without losing anything. CSV is for further analysis. Print saves a PDF of the preview below.</p>${S.exportButtons()}<section class="panel"><span class="eyebrow">Mission & Method · Gantt & project plan</span><h2>${esc(m.project||'Project plan')}</h2><p>${esc(m.organisation||'Organisation not entered')} · ${esc(m.year)} · Prepared by ${esc(m.preparedBy||'—')} · ${avg()}% average progress</p>${t}</section>`}
+
+// ---------- dialogs ----------
+function taskDialog(t,level){
+ const isNew=!t;t=t||{...blankTask(),code:nextCode(),level:level||'Activity',start:`${db.meta.year}-01-01`,finish:`${db.meta.year}-12-31`};
+ const parents=db.tasks.filter(x=>isGroup(x)||['Activity','Sub-activity'].includes(x.level)).filter(x=>x.id!==t.id).map(x=>[x.code,`${x.code} · ${x.title}`]);
+ const deps=db.tasks.filter(x=>x.id!==t.id&&!isGroup(x)).map(x=>[x.code,`${x.code} · ${x.title}`]);
+ return modal(`${isNew?'Add':'Edit'} ${t.level.toLowerCase()}`,`<form data-form="task" data-id="${esc(isNew?'':t.id)}" class="form">${field('Code','code',t.code,'text','required','Short and unique, e.g. T4, AP2 or ESO1. Changing it updates links to it.')}${select('Level','level',LEVELS,t.level)}${field('Item','title',t.title,'text','required')}${select('Parent group','parentCode',parents,t.parentCode,'','No parent')}${field('Owner','owner',t.owner)}${select('Status','status',S.STATUSES,t.status)}${select('Priority','priority',PRIORITY,t.priority)}${field('Start','start',t.start,'date')}${field('Finish','finish',t.finish,'date')}${field('Progress (%)','progress',t.progress,'number','min="0" max="100"','For groups, progress is calculated from the items beneath.')}${select('Depends on','dependsOn',deps,t.dependsOn,'The item that must finish before this one starts.','No dependency')}${field(`Budget${db.meta.currency?' ('+db.meta.currency+')':''}`,'budget',t.budget,'number','min="0"')}${area('Notes','notes',t.notes)}${formEnd('Save item',{deleteId:isNew?'':t.id,deleteLabel:'Delete item'})}</form>`);
+}
+
+// ---------- saving ----------
+const fail=t=>{message=t;render();return false};
+function submit(form){
+ const kind=form.dataset.form,d=S.formData(form),id=form.dataset.id;
+ if(kind==='meta'){db.meta={...db.meta,...d,year:Number(d.year)||currentYear};return save('Project context saved.')}
+ if(kind==='task'){
+  const t0=db.tasks.find(x=>x.id===id),code=s(d.code).toUpperCase().replace(/\s+/g,'');
+  if(!/^[A-Z0-9][A-Z0-9.\-]*$/.test(code))return fail('Use a short code with letters and numbers, such as T4 or AP2.');
+  if(db.tasks.some(x=>x!==t0&&x.code===code))return fail(`${code} is already used.`);
+  if(d.start&&d.finish&&d.finish<d.start)return fail('The finish date must be on or after the start date.');
+  if(d.parentCode===code||d.dependsOn===code)return fail('An item cannot be its own parent or depend on itself.');
+  let p=byCode(d.parentCode);while(p){if(p.code===code)return fail('That parent is already beneath this item.');p=byCode(p.parentCode)}
+  const t=t0||blankTask();
+  if(t0&&t0.code!==code)db.tasks.forEach(x=>{if(x.parentCode===t0.code)x.parentCode=code;if(x.dependsOn===t0.code)x.dependsOn=code});
+  Object.assign(t,{code,level:d.level,title:s(d.title),parentCode:d.parentCode,owner:s(d.owner),status:d.status,priority:d.priority,start:d.start,finish:d.level==='Milestone'&&d.start&&!d.finish?d.start:d.finish,progress:clamp(d.progress),dependsOn:d.dependsOn,budget:s(d.budget),notes:s(d.notes)});
+  S.stamp(t);if(!t0)db.tasks.push(t);dlg='';return save(`${code} saved.${conflict(t)?' Note: it starts before the item it depends on finishes.':''}`);
+ }
+ if(kind==='review'){const created=S.saveReview(db.reviews,id,d,()=>({meta:S.clone(db.meta),tasks:S.clone(db.tasks)}));dlg='';return save(created?'Review and snapshot saved.':'Review updated.')}
+}
+
+// ---------- Excel: the Module 6 Gantt workbook ----------
+const META={project:'Project',organisation:'Organisation',year:'Planning year',currency:'Currency',preparedBy:'Prepared by',reviewDate:'Next review',notes:'Notes'};
+const TASK={code:'Code',level:'Level',parentCode:'Parent code',title:'Item',owner:'Owner',status:'Status',priority:'Priority',start:'Start',finish:'Finish',progress:'Progress %',dependsOn:'Depends on',budget:'Budget',notes:'Notes',lastEditedBy:'Last edited by',lastEditedAt:'Last edited at'};
+function workbook(withData){
+ return S.buildXlsx([
+  S.readmeSheet(['Mission & Method — Gantt & Project Planner workbook (Module 6)','This workbook holds your project timeline. It matches the Gantt & Project Planner tool one-to-one.','','How to use','1. Meta — project name, planning year and currency.','2. Tasks — one row per item. Level is Strategic objective, Subcategory, Activity, Sub-activity, Task or Milestone.','   Parent code places an item under a group; Depends on names the item that must finish first.','   Dates are YYYY-MM-DD. Status is Planned, In progress, On track, At risk, Completed or Paused.','3. Reviews and Decisions — one row per review (R1, R2 …) and one row per decision linked to its review.','','Round-trip with the tool','Download the blank template, complete it in Excel, then use Import Excel workbook in the tool. Export from the tool to get an updated workbook back.','','_schema — do not edit; the tool uses it to recognise the workbook.']),
+  S.metaSheet(Object.entries(META).map(([k,l])=>[l,withData?db.meta[k]:''])),
+  {name:'Tasks',headerRows:[0],rows:[Object.values(TASK),...(withData?ordered().map(({t})=>Object.keys(TASK).map(k=>t[k]??'')):[])]},
+  ...S.reviewSheets(db.reviews,withData),
+  S.schemaSheet(WORKBOOK,2)
+ ]);
+}
+function fromWorkbook(sheets){
+ const out=blank();
+ if(S.findSheet(sheets,['Annual plan'])){ // a Strategy, KPIs & Annual Planning workbook
+  const objs=S.rowsToObjects(S.findSheet(sheets,['Objectives']),{group:'Type',code:'Code',title:'Title',owner:'Owner',status:'Status'}).filter(r=>s(r.code));
+  const plan=S.rowsToObjects(S.findSheet(sheets,['Annual plan']),{code:'Code',objectiveCode:'Objective code',title:'Initiative',owner:'Owner',start:'Start',end:'End',status:'Status',progress:'Progress %',budget:'Planned budget',notes:'Annual outcome'}).filter(r=>s(r.title));
+  const meta=S.metaFromSheet(S.findSheet(sheets,['Meta']),{organisation:'Organisation',planName:'Plan title',year:'Planning year',currency:'Currency'});
+  return {fromAnnualPlan:true,meta,tasks:[...objs.map(o=>({...blankTask(),code:s(o.code).toUpperCase(),level:'Strategic objective',title:s(o.title),owner:s(o.owner),status:S.STATUSES.includes(s(o.status))?s(o.status):'Planned'})),...plan.map((p,i)=>({...blankTask(),code:(s(p.code)||'AP'+(i+1)).toUpperCase(),level:'Activity',parentCode:s(p.objectiveCode).toUpperCase(),title:s(p.title),owner:s(p.owner),start:s(p.start),finish:s(p.end),status:S.STATUSES.includes(s(p.status))?s(p.status):'Planned',progress:clamp(p.progress),budget:s(p.budget),notes:s(p.notes)}))]};
+ }
+ const m=S.metaFromSheet(S.findSheet(sheets,['Meta']),META);Object.keys(m).forEach(k=>{if(s(m[k])!=='')out.meta[k]=k==='year'?Number(m[k]):s(m[k])});
+ out.tasks=S.rowsToObjects(S.findSheet(sheets,['Tasks']),TASK).filter(r=>s(r.title)||s(r.code)).map((r,i)=>{const t={...blankTask()};Object.keys(TASK).forEach(k=>t[k]=s(r[k]));t.code=(t.code||'T'+(i+1)).toUpperCase();t.parentCode=t.parentCode.toUpperCase();t.dependsOn=t.dependsOn.toUpperCase();if(!LEVELS.includes(t.level))t.level='Activity';if(!S.STATUSES.includes(t.status))t.status=STAGE[t.status]||'Planned';if(!PRIORITY.includes(t.priority))t.priority='Normal';t.progress=clamp(t.progress);return t});
+ out.reviews=S.reviewsFromSheets(sheets);
+ return out;
+}
+function mergeAnnualPlan(n){
+ const added=n.tasks.filter(t=>!byCode(t.code)).length,updated=n.tasks.length-added;
+ if(!confirm(`Strategy, KPIs & Annual Planning workbook found.\n• ${added} item(s) will be added\n• ${updated} item(s) with the same code will be updated\n\nOther items and reviews stay as they are. Continue?`))return;
+ n.tasks.forEach(t=>{const cur=byCode(t.code);if(cur)Object.assign(cur,{level:t.level,parentCode:t.parentCode,title:t.title,owner:t.owner,start:t.start,finish:t.finish,status:t.status,progress:t.progress,budget:t.budget});else db.tasks.push(t)});
+ if(!db.meta.organisation&&n.meta.organisation)db.meta.organisation=s(n.meta.organisation);if(!db.meta.project&&n.meta.planName)db.meta.project=s(n.meta.planName);if(!db.meta.currency&&n.meta.currency)db.meta.currency=s(n.meta.currency);
+ tab='Timeline';save(`Annual plan imported (${added} added, ${updated} updated).`);
+}
+
+// ---------- wiring ----------
+function render(){
+ const views={'Start':start,'Timeline':timelineView,'Tasks':tasksView,'Review':reviewView,'Export':exportView};
+ root.innerHTML=S.shell({eyebrow:'Project management · Gantt & project planner',title:'Gantt & Project Planner',intro:'Plan objectives, activities, tasks and milestones on one timeline, with owners, dependencies, progress and budget, and review the plan as it moves.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=6&lesson=timeline',label:'Review Module Six'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ S.bind(root,app);
+ root.querySelectorAll('[data-filter]').forEach(x=>x.addEventListener('change',()=>{if(x.dataset.filter==='owner')ownerFilter=x.value;else statusFilter=x.value;render()}));
+}
+const app={
+ tab(t){tab=t;message='';render();root.querySelector('#main')?.focus()},
+ submit,
+ async importXlsx(file){try{const n=fromWorkbook(await S.parseXlsx(file));if(n.fromAnnualPlan){if(!n.tasks.length)throw new Error('The annual plan workbook has no objectives or initiatives yet.');return mergeAnnualPlan(n)}if(!n.tasks.length)throw new Error('No items were found. Use the template from this tool or a Strategy, KPIs & Annual Planning workbook.');if(!confirm(`Import preview:\n• ${n.tasks.length} items (${n.tasks.filter(isGroup).length} groups)\n• ${n.reviews.length} reviews\n\nThis will replace the current data in this browser. Continue?`))return;db=n;tab='Start';save('Excel workbook imported.')}catch(e){message='Import failed: '+e.message;render()}},
+ async importJson(file){try{const o=JSON.parse(await file.text());let n=null;
+  if(o.version===2&&Array.isArray(o.tasks))n=o;else if(Array.isArray(o.tasks))n=migrateV1(o);
+  else if(Array.isArray(o.initiatives)){const plan=o.initiatives.map((x,i)=>({...blankTask(),code:(x.code||'AP'+(i+1)).toUpperCase(),level:'Activity',parentCode:x.objectiveCode||'',title:x.title||'',owner:x.owner||'',start:x.start||'',finish:x.end||'',status:S.STATUSES.includes(x.status)?x.status:(STAGE[x.status]||'Planned'),progress:clamp(x.progress),budget:x.budget??''}));const groups=(o.objectives||[]).filter(g=>g.code).map(g=>({...blankTask(),code:g.code,level:'Strategic objective',title:g.title||'',owner:g.owner||''}));return mergeAnnualPlan({meta:{organisation:o.meta?.organisation,planName:o.meta?.planName,currency:o.meta?.currency},tasks:[...groups,...plan]})}
+  if(!n)throw new Error('This is not a Gantt or annual plan backup.');
+  if(!confirm('Replace the current browser data with this backup?'))return;storage.save(normalise({...blank(),...n,meta:{...blank().meta,...n.meta},version:2}));db=storage.load();tab='Start';save('Backup imported.')}catch(e){message='Import failed: '+e.message;render()}},
+ action(el){
+  const a=el.dataset.action,id=el.dataset.id,open=h=>{dlg=h;render()};
+  if(a==='close'){dlg='';render();return}
+  if(a==='add')return open(taskDialog(null,el.dataset.level));
+  if(a==='edit'){const t=db.tasks.find(x=>x.id===id);if(t)open(taskDialog(t));return}
+  if(a==='new-review')return open(S.reviewDialog(null,'What changed since the last review?'));
+  if(a==='edit-review'){const r=db.reviews.find(x=>x.id===id);if(r)open(S.reviewDialog(r,'What changed since the last review?'));return}
+  if(a==='add-row')return S.addDecisionRow(root,x=>app.action(x));
+  if(a==='remove-row'){el.closest('.action-row')?.remove();return}
+  if(a==='view'){view=el.dataset.mode;render();return}
+  if(a==='delete'){
+   const kind=el.closest('form')?.dataset.form;
+   if(kind==='review'){if(!confirm('Delete this review and its decisions?'))return;db.reviews=db.reviews.filter(r=>r.id!==id);dlg='';return save('Review deleted.')}
+   const t=db.tasks.find(x=>x.id===id);if(!t)return;const kids=children(t).length,deps=db.tasks.filter(x=>x.dependsOn===t.code).length;
+   if(!confirm(`Delete ${t.code}?${kids?` ${kids} item(s) beneath it will move up a level.`:''}${deps?` ${deps} item(s) will lose their dependency on it.`:''}`))return;
+   db.tasks.forEach(x=>{if(x.parentCode===t.code)x.parentCode=t.parentCode||'';if(x.dependsOn===t.code)x.dependsOn=''});db.tasks=db.tasks.filter(x=>x!==t);dlg='';return save(`${t.code} deleted.`);
+  }
+  if(a==='load-example'){if(db.tasks.length&&!confirm('Replace the current plan with the example? Download a backup first if you need it.'))return;db=makeExample();tab='Timeline';save('Example loaded. Replace it with your own plan.');return}
+  try{
+   if(a==='download-template'){S.download(`${FILE}-TEMPLATE.xlsx`,workbook(false),S.XLSX_TYPE);message='Template downloaded. Complete it in Excel, then use Import Excel workbook to bring it back.';render();return}
+   if(a==='xlsx'){S.download(`${FILE}.xlsx`,workbook(true),S.XLSX_TYPE);return}
+  }catch(e){message=e.message;render();return}
+  if(a==='export-json'){S.download(`${FILE}-backup.json`,JSON.stringify({...db,exportedAt:new Date().toISOString()},null,2),'application/json');return}
+  if(a==='csv'){const keys=Object.keys(TASK).slice(0,13);S.download(`${FILE}.csv`,S.csv([keys.map(k=>TASK[k]),...ordered().map(({t})=>keys.map(k=>t[k]??''))]),'text/csv;charset=utf-8');return}
+  if(a==='print')window.print();
+ }
+};
+render();
+})();

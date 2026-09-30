@@ -76,6 +76,35 @@ function shell({eyebrow,title,intro,module,tabs,active,message,content,modal:m='
 const importButtons=(exampleLabel)=>`${exampleLabel?`<button class="button secondary" type="button" data-action="load-example">${esc(exampleLabel)}</button>`:''}<label class="button secondary">Import Excel workbook<input type="file" id="xlsx-import" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label><label class="button secondary">Import JSON<input id="import" type="file" accept=".json,application/json" hidden></label>`;
 const exportButtons=()=>`<div class="actions no-print" style="margin-bottom:15px"><button class="button" type="button" data-action="xlsx">Download Excel workbook</button><button class="button secondary" type="button" data-action="csv">Download CSV</button><button class="button secondary" type="button" data-action="print">Print / save PDF</button><button class="button secondary" type="button" data-action="export-json">Backup JSON</button></div>`;
 
+// ---------- reviews and decisions (same in every tool) ----------
+const PERIODS=['Monthly','Q1','Q2','Q3','Q4','Six-monthly','Annual'];
+const decisionRow=(d,i)=>`<div class="action-row"><input name="d_decision_${i}" value="${esc(d.decision)}" placeholder="Decision or adjustment" aria-label="Decision"><input name="d_owner_${i}" value="${esc(d.owner||'')}" placeholder="Owner" aria-label="Owner"><input name="d_due_${i}" value="${esc(d.due||'')}" type="date" aria-label="Due date"><select name="d_status_${i}" aria-label="Status">${opts(DECISION_STATUSES,d.status||'Open')}</select><button type="button" class="button small danger" data-action="remove-row">Remove</button><input name="d_action_${i}" value="${esc(d.action||'')}" placeholder="Next action" aria-label="Next action" style="grid-column:1/-1"></div>`;
+function reviewDialog(r,summaryLabel='What did the review show?'){
+ r=r||{id:'',date:today(),period:'Q'+(Math.floor(new Date().getMonth()/3)+1),reviewer:editorName(),summary:'',decisions:[]};
+ return modal(r.id?'Edit review':'Record a review',`<form data-form="review" data-id="${esc(r.id)}" class="form">${field('Review date','date',r.date,'date','required')}${select('Period','period',PERIODS,r.period)}${field('Reviewer(s)','reviewer',r.reviewer)}${area(summaryLabel,'summary',r.summary)}<div class="field full"><span class="label"><b>Decisions</b>${tip('Each decision needs an owner and a date, so it can be followed up at the next review.')}</span><div id="rows">${(r.decisions||[]).map(decisionRow).join('')||'<p class="muted">No decisions yet.</p>'}</div><button type="button" class="button small secondary" data-action="add-row" style="margin-top:8px;justify-self:start">+ Add decision</button></div>${formEnd(r.id?'Save review':'Save review and snapshot',{deleteId:r.id,deleteLabel:'Delete review'})}</form>`,r.id?'':'Saving also keeps a snapshot of the whole plan as it stands today.');
+}
+function readReview(d){
+ const decisions=Object.keys(d).map(k=>k.match(/^d_decision_(\d+)$/)?.[1]).filter(i=>i!=null&&(s(d['d_decision_'+i])||s(d['d_action_'+i]))).map(i=>({id:uid(),decision:s(d['d_decision_'+i]),action:s(d['d_action_'+i]),owner:s(d['d_owner_'+i]),due:d['d_due_'+i]||'',status:d['d_status_'+i]||'Open'}));
+ return {date:d.date||today(),period:d.period||'',reviewer:s(d.reviewer),summary:s(d.summary),decisions};
+}
+// Save a submitted review form into list; snapshot() returns the data to keep with a new review.
+function saveReview(list,id,d,snapshot){const v=readReview(d),r=list.find(x=>x.id===id);if(r){Object.assign(r,v);return false}list.unshift({id:uid(),...v,snapshot:snapshot()});return true}
+const sortedReviews=list=>[...list].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+const openDecisions=list=>list.flatMap(r=>(r.decisions||[]).filter(d=>d.status!=='Done').map(d=>({...d,review:r})));
+const reviewsList=list=>list.length?sortedReviews(list).map(r=>`<div class="item"><div class="rowhead"><div><b>${esc(fmtDate(r.date))} · ${esc(r.period||'Review')}</b> <span class="tiny">${esc(r.reviewer||'')}</span></div><div class="row-actions"><button class="link" data-action="edit-review" data-id="${r.id}">Edit</button></div></div><p>${esc(r.summary||'')}</p>${(r.decisions||[]).length?table(['Decision','Next action','Owner','Due','Status'],r.decisions.map(d=>`<tr><td>${esc(d.decision)}</td><td>${esc(d.action||'—')}</td><td>${esc(d.owner||'—')}</td><td>${esc(fmtDate(d.due)||'—')}</td><td>${pill(d.status)}</td></tr>`),''):''}</div>`).join(''):empty('No reviews yet. Hold your first at the end of the month or quarter.');
+function addDecisionRow(root,onAction){const list=root.querySelector('#rows');if(!list)return;list.querySelector('.muted')?.remove();list.insertAdjacentHTML('beforeend',decisionRow({decision:'',action:'',owner:'',due:'',status:'Open'},Date.now()));const row=list.lastElementChild;row.querySelector('input')?.focus();row.querySelector('[data-action]').addEventListener('click',e=>onAction(e.currentTarget))}
+const REVIEW_COLS={code:'Review',date:'Date',period:'Period',reviewer:'Reviewer',summary:'Summary',snapshot:'Snapshot JSON'};
+const DECISION_COLS={review:'Review',decision:'Decision',action:'Next action',owner:'Owner',due:'Due',status:'Status'};
+function reviewSheets(list,withData,summaryHeader='Summary'){
+ const rs=withData?[...list].sort((a,b)=>String(a.date).localeCompare(String(b.date))):[];
+ return [{name:'Reviews',headerRows:[0],rows:[Object.values({...REVIEW_COLS,summary:summaryHeader}),...rs.map((r,i)=>['R'+(i+1),r.date,r.period||'',r.reviewer||'',r.summary||'',r.snapshot?JSON.stringify(r.snapshot):''])]},
+  {name:'Decisions',headerRows:[0],rows:[Object.values(DECISION_COLS),...rs.flatMap((r,i)=>(r.decisions||[]).map(d=>['R'+(i+1),d.decision,d.action,d.owner,d.due,d.status]))]}];
+}
+function reviewsFromSheets(sheets,summaryHeader='Summary'){
+ const decs=rowsToObjects(findSheet(sheets,['Decisions']),DECISION_COLS);
+ return sortedReviews(rowsToObjects(findSheet(sheets,['Reviews']),{...REVIEW_COLS,summary:summaryHeader}).filter(r=>s(r.date)).map(r=>{let snapshot=null;try{snapshot=r.snapshot?JSON.parse(String(r.snapshot)):null}catch{}return {id:uid(),date:s(r.date),period:s(r.period),reviewer:s(r.reviewer),summary:s(r.summary),snapshot,decisions:decs.filter(d=>s(d.review)===s(r.code)&&(s(d.decision)||s(d.action))).map(d=>({id:uid(),decision:s(d.decision),action:s(d.action),owner:s(d.owner),due:s(d.due),status:DECISION_STATUSES.includes(s(d.status))?s(d.status):'Open'}))}}));
+}
+
 // ---------- files ----------
 function download(name,body,type){const url=URL.createObjectURL(new Blob([body],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 // CSV with protection against spreadsheet formula injection.
@@ -160,5 +189,6 @@ const formData=form=>Object.fromEntries(new FormData(form));
 window.MMSuite={esc,uid,now,today,currentYear,clamp,clone,fmtDate,monthsSince,num,money,s,
  STATUSES,ACTION_STATUSES,DECISION_STATUSES,store,editorName,askEditor,stamp,edited,
  opts,tip,field,area,select,pill,bar,card,empty,modal,formEnd,table,shell,importButtons,exportButtons,
+ PERIODS,decisionRow,reviewDialog,readReview,saveReview,sortedReviews,openDecisions,reviewsList,addDecisionRow,reviewSheets,reviewsFromSheets,
  download,csv,XLSX_TYPE,buildXlsx,readmeSheet,schemaSheet,metaSheet,parseXlsx,findSheet,rowsToObjects,metaFromSheet,bind,formData};
 })();

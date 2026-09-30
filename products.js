@@ -26,7 +26,7 @@ const launchUrls={
 };
 export const softwareProducts=[
  ['theory-of-change','Theory of Change Builder','Strategy','Teams testing their impact logic','Map the changes you expect and record the assumptions behind them.',['Pathway step','Type','Expected change','Assumption','Evidence']],
- ['gantt','Gantt & Project Planner','Project management','Project leads planning a timeline','Group strategic objectives and activities, assign owners and status, and track dated work on an exportable timeline.',['Task','Owner','Start','Finish','Dependency']],
+ ['gantt','Gantt & Project Planner','Project management','Project leads planning a timeline','Plan objectives, activities, tasks and milestones on one timeline with owners, dependencies, progress and budget. Excel round-trip with the Module 6 Gantt workbook, and imports your annual plan.',['Task','Owner','Start','Finish','Dependency']],
  ['policy-management','Policy Management','Organisation','Teams maintaining organisational policies','Track policy owners, review dates and approval status.',['Policy','Owner','Review date','Status','Next action']],
  ['donor-mapping','Donor Mapping','Funding & Business Development','Fundraisers researching relevant prospects','Compare prospects by fit and keep research evidence visible.',['Organisation','Fit','Eligibility','Research source','Next action']],
  ['donor-tracking','Donor Tracking','Funding & Business Development','Teams stewarding donors and sponsors','Track donors and sponsors, received gifts, relationship history, stewardship and accountable next actions.',['Donor','Gift','Relationship','Owner','Next action']],

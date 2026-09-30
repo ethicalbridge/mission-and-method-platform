@@ -100,3 +100,25 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:800px){.grid.three{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.split{grid-template-columns:1fr}.shell{padding:13px}.grid,.grid.three,.grid.four,.form{grid-template-columns:1fr}.field.full{grid-column:auto}.top{align-items:start}}
 @media print{.preview,.top,.nav,.hero .toolbar,.button,.link,.modal,.no-print{display:none!important}.shell{max-width:none;padding:0}.panel,.card{box-shadow:none;break-inside:avoid}body{background:white}}
+/* timeline (Gantt) */
+.gantt table{min-width:980px}
+.gantt th:first-child,.gantt td:first-child{position:sticky;left:0;z-index:2;background:#fff;min-width:260px;max-width:340px}
+.gantt th:first-child{background:var(--deep);z-index:3}
+.gantt th.slot-h{text-align:center;min-width:52px}
+.gantt th.slot-h.now{background:var(--teal)}
+.gantt td.slot{padding:10px 3px;text-align:center;min-width:52px;border-left:1px solid #edf2ef}
+.gantt td.slot.now{background:#fff8e6}
+.gantt tr.group td{background:#eef6f1;font-weight:800}
+.gantt tr.group td:first-child{background:#eef6f1}
+.gantt td.slot.on{padding-left:0;padding-right:0}
+.gantt .fill{display:block;height:14px;background:#b9d8cf;overflow:hidden}
+.gantt .fill.s{border-radius:99px 0 0 99px;margin-left:3px}.gantt .fill.e{border-radius:0 99px 99px 0;margin-right:3px}.gantt .fill.s.e{border-radius:99px}
+.gantt .fill i{display:block;height:100%;background:var(--teal)}
+.gantt .fill.grp{height:9px;background:#cbd9d4}
+.gantt .fill.grp i{background:var(--deep)}
+.gantt .fill.complete i{background:#2f7a52}
+.gantt .fill.late{background:#f3d0c6}
+.gantt .fill.late i{background:var(--coral)}
+.gantt .diamond{display:inline-block;width:13px;height:13px;background:var(--coral);transform:rotate(45deg)}
+tr.group td{background:#f3f8f5}
+@media print{.gantt table{min-width:0;font-size:10px}.gantt td:first-child{position:static}}
