@@ -26,15 +26,15 @@
         <h1>Run your work in <em>one place.</em></h1>
         <p class="lead">The Ethical Bridge Software Suite brings the tools your team needs — strategy, projects, funding, people, communications — into one connected workspace where course outputs become working plans.</p>
         <div class="status-bar">
-          <small>WHAT'S LIVE TODAY</small>
-          <p>Free browser tools you can use now, saved on your own device. Multi-user cloud plans open after the security and privacy review.</p>
+          <small>ACCESS &amp; AVAILABILITY</small>
+          <p>Every tool in the suite opens with a single access code — shared with pilot partners and founding-cohort organisations. Multi-user cloud plans open publicly after the security and privacy review.</p>
         </div>
         <div class="actions">
-          <a class="btn-primary" href="#tools">
-            Browse the tools
+          <a class="btn-primary" href="#tool-access">
+            Enter access code
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
           </a>
-          <a class="btn-ghost" href="#plans">See plans</a>
+          <a class="btn-ghost" href="pricing.html">See pricing &amp; packages</a>
         </div>
       </div>
       <div class="sw-stats">
@@ -47,8 +47,8 @@
           <p>Plan once, use everywhere. Course outputs open as working plans.</p>
         </div>
         <div class="cell sun">
-          <b>$0</b><small>to start</small>
-          <p>Free browser tools now. Paid plans coming.</p>
+          <b>Code</b><small>to unlock</small>
+          <p>Access code opens the whole suite — see pricing to get one.</p>
         </div>
         <div class="cell">
           <b>4</b><small>country bands</small>
@@ -58,67 +58,6 @@
     </div>
   </section>
 
-  <!-- Plans -->
-  <section class="sw-section" id="plans">
-    <div class="container">
-      <div class="head">
-        <div class="eyebrow">SUITE PLANS</div>
-        <h2>Free today. Multi-user plans after security review.</h2>
-        <p>Every tool works on the free plan as a browser preview saved on your device. Paid plans add cloud saving, sharing, reports and automation — they open only after the security and privacy review passes.</p>
-      </div>
-      <div class="sw-plans">
-        <article class="live">
-          <span class="badge live">Available now</span>
-          <h3>Free</h3>
-          <div class="price"><b>$0</b><small>forever</small></div>
-          <ul>
-            <li>All 17 browser tools</li>
-            <li>Saved on your own device</li>
-            <li>One user</li>
-            <li>Export anything, any time</li>
-          </ul>
-          <a class="cta primary" href="#tools">Use free tools</a>
-        </article>
-        <article>
-          <span class="badge coming">Coming</span>
-          <h3>Starter</h3>
-          <div class="price"><b>$15</b><small>/ month</small></div>
-          <ul>
-            <li>Everything in Free</li>
-            <li>Cloud saving &amp; sync</li>
-            <li>One user, private workspace</li>
-            <li>Advanced exports</li>
-          </ul>
-          <a class="cta ghost" href="#security">After security review</a>
-        </article>
-        <article>
-          <span class="badge coming">Coming</span>
-          <h3>Team</h3>
-          <div class="price"><b>$29</b><small>/ month</small></div>
-          <ul>
-            <li>Everything in Starter</li>
-            <li>Up to 5 users</li>
-            <li>Shared data across tools</li>
-            <li>Reports &amp; dashboards</li>
-          </ul>
-          <a class="cta ghost" href="#security">After security review</a>
-        </article>
-        <article>
-          <span class="badge coming">Coming</span>
-          <h3>Organisation</h3>
-          <div class="price"><b>$69</b><small>/ month</small></div>
-          <ul>
-            <li>Everything in Team</li>
-            <li>Up to 20 users</li>
-            <li>Automation &amp; workflows</li>
-            <li>Onboarding call</li>
-          </ul>
-          <a class="cta ghost" href="#security">After security review</a>
-        </article>
-      </div>
-      <p style="text-align:center;margin-top:24px;font-size:14px;color:var(--muted)">Paid-plan prices are working assumptions to test. Multi-user plans open once the security and privacy review passes. <a href="pricing.html" style="color:var(--teal);font-weight:800">See country pricing bands →</a></p>
-    </div>
-  </section>
 
   <!-- Access code -->
   <section class="sw-section alt" id="tool-access">
@@ -127,13 +66,13 @@
         <div class="body">
           <div style="font-size:12px;font-weight:900;letter-spacing:.14em;color:var(--ink);opacity:.7;margin-bottom:10px">INVITATION ACCESS</div>
           <h3>Have an access code?</h3>
-          <p>Enter it to unlock the <strong>Theory of Change Builder</strong> and <strong>Ethical Bridge CRM</strong> at no cost. Codes are shared with pilot partners and founding-cohort organisations.</p>
-          <small>No code? These tools open publicly after the security review.</small>
+          <p>Enter it to unlock <strong>every tool in the Impact Suite</strong> at no cost. Codes are shared with pilot partners and founding-cohort organisations.</p>
+          <small>No code? <a href="pricing.html" style="color:var(--teal);font-weight:800;text-decoration:underline">See pricing &amp; packages →</a></small>
         </div>
         <form data-tool-access-form>
           <label for="access-code">Access code</label>
           <input id="access-code" name="access-code" inputmode="numeric" autocomplete="one-time-code" required placeholder="Enter your code">
-          <button type="submit">Unlock the tools</button>
+          <button type="submit">Unlock all tools</button>
           <p role="status" class="saved-status" data-tool-access-status></p>
         </form>
       </div>
@@ -155,21 +94,21 @@
           <h3>Strategy &amp; impact <small>3 tools</small></h3>
           <div class="sw-tools">
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Strategic Objectives</h4>
               <p>Build separate external and internal strategic objectives, with actions, owners, progress and review decisions.</p>
-              <a class="open" href="assets/tools/Strategic-Objectives.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Strategic Objectives" data-tool-destination="assets/tools/Strategic-Objectives.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Strategy, KPIs &amp; Annual Planning</h4>
               <p>Connect priorities, objectives, measures, results, initiatives and review decisions in one exportable workspace.</p>
-              <a class="open" href="assets/tools/Strategy-KPIs-and-Annual-Planning.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Strategy KPIs and Annual Planning" data-tool-destination="assets/tools/Strategy-KPIs-and-Annual-Planning.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
               <span class="status invite">Invitation access</span>
               <h4>Theory of Change Builder</h4>
-              <p>Map the changes you expect and record the assumptions behind them. Requires an access code.</p>
+              <p>Map the changes you expect and record the assumptions behind them.</p>
               <a class="open" data-tool-access-link data-preserve-label data-tool-name="Theory of Change Builder" data-tool-destination="assets/tools/Theory-of-Change-Builder.html" href="#tool-access">Unlock →</a>
             </article>
           </div>
@@ -179,10 +118,10 @@
           <h3>Monitoring &amp; evaluation <small>1 tool</small></h3>
           <div class="sw-tools">
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>MEAL Strategy</h4>
               <p>Design a monitoring, evaluation, accountability and learning approach that connects to your Theory of Change.</p>
-              <a class="open" href="assets/tools/MEAL-Strategy.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="MEAL Strategy" data-tool-destination="assets/tools/MEAL-Strategy.html" href="#tool-access">Unlock with access code →</a>
             </article>
           </div>
         </div>
@@ -191,22 +130,22 @@
           <h3>Project &amp; operations <small>3 tools</small></h3>
           <div class="sw-tools">
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Gantt &amp; Project Planner</h4>
               <p>Sequence deliverables, tasks and owners into a realistic timeline. Course outputs plug in here.</p>
-              <a class="open" href="assets/tools/Gantt-Project-Planner.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Gantt Project Planner" data-tool-destination="assets/tools/Gantt-Project-Planner.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Issue &amp; Risk Management</h4>
               <p>Track issues, risks, mitigations and owners with a clear escalation path.</p>
-              <a class="open" href="assets/tools/Issue-and-Risk-Management.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Issue and Risk Management" data-tool-destination="assets/tools/Issue-and-Risk-Management.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Meetings, Actions &amp; Decisions</h4>
               <p>Run meetings that end with decisions and owned actions, not just notes.</p>
-              <a class="open" href="assets/tools/Meetings-Actions-and-Decisions.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Meetings Actions and Decisions" data-tool-destination="assets/tools/Meetings-Actions-and-Decisions.html" href="#tool-access">Unlock with access code →</a>
             </article>
           </div>
         </div>
@@ -215,28 +154,28 @@
           <h3>Funding &amp; business development <small>4 tools</small></h3>
           <div class="sw-tools">
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Donor Mapping</h4>
               <p>Map prospective donors and partners against your funding strategy.</p>
-              <a class="open" href="assets/tools/Donor-Mapping.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Donor Mapping" data-tool-destination="assets/tools/Donor-Mapping.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Donor Tracking</h4>
               <p>Track cultivation, applications, agreements and reporting for each funder.</p>
-              <a class="open" href="assets/tools/Donor-Tracking.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Donor Tracking" data-tool-destination="assets/tools/Donor-Tracking.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Donor Reference Guide</h4>
               <p>Keep a working reference of funder priorities, deadlines and touchpoints.</p>
-              <a class="open" href="assets/tools/Donor-Reference-Guide.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Donor Reference Guide" data-tool-destination="assets/tools/Donor-Reference-Guide.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Individual Giving</h4>
               <p>Manage individual supporters, contributions and stewardship in one place.</p>
-              <a class="open" href="assets/tools/Individual-Giving-and-Donor-Management.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Individual Giving and Donor Management" data-tool-destination="assets/tools/Individual-Giving-and-Donor-Management.html" href="#tool-access">Unlock with access code →</a>
             </article>
           </div>
         </div>
@@ -247,7 +186,7 @@
             <article>
               <span class="status invite">Invitation access</span>
               <h4>Ethical Bridge CRM</h4>
-              <p>Manage all your organisation's relationships in one CRM — partners, funders, beneficiaries, staff. Requires an access code.</p>
+              <p>Manage all your organisation's relationships in one CRM — partners, funders, beneficiaries, staff.</p>
               <a class="open" data-tool-access-link data-preserve-label data-tool-name="Ethical Bridge CRM" data-tool-destination="https://ethical-bridge-crm.open-pike-3973.chatgpt.site/" href="#tool-access">Unlock →</a>
             </article>
           </div>
@@ -257,22 +196,22 @@
           <h3>People &amp; organisation <small>3 tools</small></h3>
           <div class="sw-tools">
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Organisation Structure</h4>
               <p>Design roles, reporting lines and decision rights before adding job titles.</p>
-              <a class="open" href="assets/tools/Organisation-Structure.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Organisation Structure" data-tool-destination="assets/tools/Organisation-Structure.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Onboarding &amp; Staff Compliance</h4>
               <p>Standardise onboarding steps, checks and induction materials for every new hire.</p>
-              <a class="open" href="assets/tools/Onboarding-and-Compliance.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Onboarding and Compliance" data-tool-destination="assets/tools/Onboarding-and-Compliance.html" href="#tool-access">Unlock with access code →</a>
             </article>
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>People Check-Ins &amp; Development</h4>
               <p>Log one-to-ones, development conversations and growth plans for each team member.</p>
-              <a class="open" href="assets/tools/People-Check-Ins-and-Development.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="People Check Ins and Development" data-tool-destination="assets/tools/People-Check-Ins-and-Development.html" href="#tool-access">Unlock with access code →</a>
             </article>
           </div>
         </div>
@@ -281,10 +220,10 @@
           <h3>Communications, marketing &amp; visibility <small>1 tool</small></h3>
           <div class="sw-tools">
             <article>
-              <span class="status preview">Interactive preview</span>
+              <span class="status invite">Invitation access</span>
               <h4>Customer Persona Builder</h4>
               <p>Turn what you know about the people you serve into working personas your team can plan from.</p>
-              <a class="open" href="assets/tools/Customer-Persona-Builder.html">Open →</a>
+              <a class="open" data-tool-access-link data-tool-name="Customer Persona Builder" data-tool-destination="assets/tools/Customer-Persona-Builder.html" href="#tool-access">Unlock with access code →</a>
             </article>
           </div>
         </div>
