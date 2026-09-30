@@ -15,23 +15,24 @@
 .pc-hero .rules span{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:13px;font-weight:700}
 
 /* -------- Sections -------- */
-.pc-section{padding:88px 0;background:var(--cream)}
+.pc-section{padding:64px 0;background:var(--cream)}
 .pc-section.alt{background:#fff}
 .pc-section.dark{background:var(--deep);color:#fff}
 .pc-section.dark h2,.pc-section.dark h3{color:#fff}
 .pc-section.dark p{color:#c3d4d7}
-.pc-section .head{margin-bottom:36px;max-width:860px}
+.pc-section .head{margin-bottom:28px;max-width:860px}
 .pc-section .head .eyebrow{color:var(--teal);font-size:13px;font-weight:900;letter-spacing:.14em}
 .pc-section.dark .head .eyebrow{color:var(--sun)}
 .pc-section .head h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(36px,4.2vw,50px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 16px}
 .pc-section .head p{font-size:17px;line-height:1.6;color:var(--muted);margin:0}
 .pc-section.dark .head p{color:#c3d4d7}
 
-/* -------- 5 offer cards -------- */
-.pc-four{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:12px}
-.pc-four article{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:10px;position:relative;min-height:460px}
+/* -------- 4 offer cards -------- */
+.pc-four{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:12px}
+.pc-four article{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:10px;position:relative;min-height:520px}
 .pc-four article.featured{background:var(--deep);color:#fff;border-color:var(--deep);transform:translateY(-8px);box-shadow:0 20px 40px rgba(4,22,30,.15)}
-.pc-four article.free-first{background:var(--mint);border-color:#c7dfd3}
+.pc-four .explain{font-size:13px;line-height:1.55;color:var(--muted);margin:6px 0 2px;padding:12px 0;border-top:1px solid #ede8dd;border-bottom:1px solid #ede8dd}
+.pc-four article.featured .explain{color:#c3d4d7;border-color:rgba(255,255,255,.15)}
 .pc-four article.featured p{color:#c3d4d7}
 .pc-four article.featured h3{color:#fff}
 .pc-four .flag{position:absolute;top:-12px;left:24px;padding:5px 12px;border-radius:999px;background:var(--sun);color:var(--ink);font-size:11px;font-weight:900;letter-spacing:.08em}
@@ -145,7 +146,7 @@
 
 /* -------- Responsive -------- */
 @media(max-width:1100px){
-  .pc-four{grid-template-columns:1fr 1fr 1fr}
+  .pc-four{grid-template-columns:1fr 1fr}
   .pc-four article.featured{transform:none}
   .pc-detail{grid-template-columns:1fr;gap:28px}
   .pc-build{grid-template-columns:1fr;padding:32px}
@@ -153,7 +154,7 @@
   .pc-band-grid>div:nth-child(5n+4),.pc-band-grid>div:nth-child(5n+5){display:none}
 }
 @media(max-width:800px){
-  .pc-four{grid-template-columns:1fr 1fr}
+  .pc-four{grid-template-columns:1fr}
 }
 @media(max-width:700px){
   .pc-section{padding:56px 0}
