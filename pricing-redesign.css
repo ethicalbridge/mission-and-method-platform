@@ -55,30 +55,36 @@
 .pc-four article.featured .cta:hover{background:#cd5b39;color:#fff}
 
 /* -------- We build it for you (concierge) -------- */
-.pc-build{background:linear-gradient(120deg,var(--sun) 55%,#f5b74d 100%);border-radius:28px;padding:44px 48px;display:grid;grid-template-columns:1.35fr 1fr;gap:44px;align-items:center;position:relative;overflow:hidden}
+.pc-build{background:linear-gradient(120deg,var(--sun) 55%,#f5b74d 100%);border-radius:28px;padding:44px 48px;display:grid;grid-template-columns:1.2fr 1fr;gap:44px;align-items:center;position:relative;overflow:hidden}
 .pc-build:before{content:"";position:absolute;right:-100px;bottom:-100px;width:300px;height:300px;border-radius:50%;background:rgba(229,111,74,.25)}
 .pc-build>div{position:relative}
 .pc-build .stamp{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--ink);color:var(--sun);font-size:11px;font-weight:900;letter-spacing:.12em;margin-bottom:14px}
 .pc-build h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(32px,3.5vw,44px);line-height:1.05;color:var(--ink);margin:0 0 14px}
 .pc-build p{font-size:17px;line-height:1.6;color:#3a2810;margin:0 0 18px}
-.pc-build .checklist{display:flex;flex-direction:column;gap:8px;margin:0 0 24px;padding:0;list-style:none}
-.pc-build .checklist li{font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:flex-start;gap:10px;line-height:1.4}
-.pc-build .checklist li:before{content:"";width:16px;height:10px;margin-top:6px;flex-shrink:0;border-left:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(-45deg)}
 .pc-build .actions{display:flex;flex-wrap:wrap;gap:12px}
 .pc-build .b1{display:inline-flex;align-items:center;height:54px;padding:0 26px;border-radius:999px;background:var(--ink);color:#fff;font-weight:800;font-size:15px}
 .pc-build .b1:hover{background:#0a1e29;color:#fff}
 .pc-build .b2{display:inline-flex;align-items:center;height:54px;padding:0 24px;border-radius:999px;border:1.5px solid var(--ink);color:var(--ink);font-weight:800;font-size:15px}
 .pc-build .b2:hover{background:var(--ink);color:#fff}
-.pc-build .card{background:#fff;border-radius:20px;padding:26px}
-.pc-build .card b{display:block;font-family:'DM Serif Display',Georgia,serif;font-size:32px;color:var(--ink);line-height:1;margin-bottom:4px}
-.pc-build .card small{display:block;font-size:12px;font-weight:900;letter-spacing:.12em;color:var(--coral);margin-bottom:16px;text-transform:uppercase}
-.pc-build .card ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px}
-.pc-build .card ul li{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;padding-bottom:12px;border-bottom:1px solid #ede8dd}
-.pc-build .card ul li:last-child{border-bottom:0;padding-bottom:0}
-.pc-build .card ul li b{font:800 14px/1.3 'Nunito Sans',sans-serif;color:var(--ink);margin:0;display:block}
-.pc-build .card ul li span{font-family:'DM Serif Display',Georgia,serif;font-size:18px;color:var(--teal);flex-shrink:0}
-.pc-build .card ul li>div{max-width:70%}
-.pc-build .card ul li em{display:block;font-style:normal;font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+
+/* Focused right card: only the Tailored foundation package */
+.pc-build .card{background:#fff;border-radius:20px;padding:28px}
+.pc-build .card .num{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--coral);text-transform:uppercase}
+.pc-build .card h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:28px;line-height:1.15;color:var(--ink);margin:6px 0 12px}
+.pc-build .card .price{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.pc-build .card .price b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:38px;line-height:1;color:var(--ink)}
+.pc-build .card .price small{font-size:13px;color:var(--muted);font-weight:700}
+.pc-build .card .quick{font-size:14px;line-height:1.5;color:var(--muted);margin:0 0 20px;border-bottom:1px solid #ede8dd;padding-bottom:20px}
+.pc-build .card details{margin:0}
+.pc-build .card details summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:14px;font-weight:800;color:var(--teal)}
+.pc-build .card details summary::-webkit-details-marker{display:none}
+.pc-build .card details summary:after{content:"+";font-size:20px;font-weight:400;color:var(--teal);transition:transform .2s}
+.pc-build .card details[open] summary:after{content:"−"}
+.pc-build .card details .body{padding:12px 0 4px}
+.pc-build .card details ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+.pc-build .card details ul li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;color:var(--ink)}
+.pc-build .card details ul li:before{content:"";width:14px;height:9px;margin-top:5px;flex-shrink:0;border-left:2.2px solid var(--teal);border-bottom:2.2px solid var(--teal);transform:rotate(-45deg)}
+.pc-build .card .other{display:block;margin-top:14px;font-size:13px;font-weight:800;color:var(--teal)}
 
 /* -------- Country bands -------- */
 .pc-bands{background:#fff;border:1px solid var(--line);border-radius:22px;padding:36px;margin-top:12px}
