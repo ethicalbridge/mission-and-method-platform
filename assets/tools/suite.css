@@ -72,7 +72,31 @@ th{background:var(--deep);color:#fff}
 .modal{position:fixed;inset:0;background:#123c4899;display:grid;place-items:center;padding:15px;z-index:30}
 .modalbox{background:var(--cream);border-radius:16px;padding:22px;width:min(960px,100%);max-height:94vh;overflow:auto;box-shadow:0 20px 55px #123c4840}
 .modalbox .form{margin-top:14px}
+/* shared additions for every Impact Suite tool */
+.actions{justify-content:flex-start}
+.field .label{display:flex;align-items:center;gap:2px}
+.field .tip{margin-left:4px}
+:focus-visible{outline:3px solid #f8ca68;outline-offset:2px}
+.pill.bad{background:#fbe1dc;color:#8a2f22}
+.hero .toolbar{justify-content:flex-start;margin-top:6px}
+.modalbox .rowhead{margin-bottom:4px}
+.modalbox .rowhead h2{margin:0}
+.section-head{margin:4px 0 14px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;font-size:13px}
+.kv b{color:var(--deep)}
+.map-node{border-left:4px solid var(--teal);padding:10px 14px;margin:8px 0;background:#f5f9f6;border-radius:0 10px 10px 0}
+.map-node .map-node{margin-left:18px;border-color:var(--sun);background:#fff}
+.map-node .map-node .map-node{border-color:var(--coral)}
+.cal td,.cal th{text-align:center;padding:8px 6px}
+.cal td:first-child,.cal th:first-child,.cal td:nth-child(2),.cal th:nth-child(2){text-align:left}
+.cal .on{display:block;height:12px;border-radius:99px;background:var(--teal)}
+.cal .on.late{background:var(--coral)}
+details summary{cursor:pointer;font-weight:800;color:var(--deep)}
+.checks{margin:6px 0;padding-left:18px}
+.checks li{margin:3px 0;color:var(--muted)}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
 @media(max-width:900px){.grid.four{grid-template-columns:repeat(2,1fr)}.indicator-grid{grid-template-columns:1fr 1fr}.action-row{grid-template-columns:1fr;gap:5px}}
 @media(max-width:800px){.grid.three{grid-template-columns:1fr 1fr}}
-@media(max-width:650px){.shell{padding:13px}.grid,.grid.three,.grid.four,.form{grid-template-columns:1fr}.field.full{grid-column:auto}.top{align-items:start}}
+@media(max-width:650px){.split{grid-template-columns:1fr}.shell{padding:13px}.grid,.grid.three,.grid.four,.form{grid-template-columns:1fr}.field.full{grid-column:auto}.top{align-items:start}}
 @media print{.preview,.top,.nav,.hero .toolbar,.button,.link,.modal,.no-print{display:none!important}.shell{max-width:none;padding:0}.panel,.card{box-shadow:none;break-inside:avoid}body{background:white}}
