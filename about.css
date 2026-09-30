@@ -1,0 +1,151 @@
+/* about.css — About page redesign
+   Loaded after styles.css / mission.css / learning.css / professional.css.
+   Uses tokens from mission.css: --deep, --coral, --teal, --sun, --mint, --cream, --ink, --muted, --line, --paper
+*/
+
+/* -------- Hero -------- */
+.ab-hero{background:var(--deep);color:#fff;padding:90px 0 96px;position:relative;overflow:hidden}
+.ab-hero:before{content:"";position:absolute;right:-160px;top:-160px;width:560px;height:560px;border-radius:50%;background:var(--coral);opacity:.9;z-index:0}
+.ab-hero:after{content:"";position:absolute;right:280px;top:120px;width:56px;height:56px;border-radius:50%;background:var(--sun);opacity:.95;z-index:0}
+.ab-hero .container{position:relative;z-index:1;max-width:960px}
+.ab-hero .tag{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(248,202,104,.18);color:var(--sun);font-size:12px;font-weight:900;letter-spacing:.12em;margin-bottom:22px}
+.ab-hero h1{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(48px,6vw,84px);line-height:1.02;letter-spacing:-.02em;margin:0 0 24px}
+.ab-hero h1 em{font-style:italic;color:var(--sun);font-weight:400}
+.ab-hero .lead{font-size:20px;line-height:1.6;color:#d4e2e3;max-width:640px;margin:0}
+.ab-hero .promise{margin-top:32px;padding:22px 28px;background:rgba(255,255,255,.06);border-left:3px solid var(--sun);border-radius:0 12px 12px 0;max-width:640px}
+.ab-hero .promise small{display:block;font-size:11px;letter-spacing:.14em;font-weight:900;color:var(--sun);margin-bottom:6px}
+.ab-hero .promise p{margin:0;font-size:17px;line-height:1.55;color:#fff}
+
+/* -------- Section shell -------- */
+.ab-section{padding:96px 0;background:var(--cream)}
+.ab-section.alt{background:#fff}
+.ab-section.dark{background:var(--deep);color:#fff}
+.ab-section.dark h2,.ab-section.dark h3{color:#fff}
+.ab-section.dark .eyebrow{color:var(--sun)}
+.ab-section.dark p{color:#c3d4d7}
+.ab-section .head{margin-bottom:44px;max-width:820px}
+.ab-section .head .eyebrow{color:var(--teal);font-size:13px;font-weight:900;letter-spacing:.14em}
+.ab-section .head h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(38px,4.5vw,54px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 18px}
+.ab-section .head p{font-size:18px;line-height:1.6;color:var(--muted);margin:0}
+
+/* -------- The problem: 4 gaps -------- */
+.ab-gaps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:12px}
+.ab-gaps article{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.ab-gaps .n{font-family:'DM Serif Display',Georgia,serif;font-size:26px;color:var(--coral);line-height:1}
+.ab-gaps h3{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.01em;margin:0}
+.ab-gaps .gap{font-size:14px;line-height:1.5;color:var(--muted);margin:0}
+.ab-gaps .fix{margin-top:auto;padding-top:12px;border-top:1px solid #ede8dd;font-size:14px;line-height:1.5;color:var(--ink);font-weight:700}
+.ab-gaps .fix small{display:block;font-size:11px;font-weight:900;letter-spacing:.1em;color:var(--teal);margin-bottom:4px}
+
+/* -------- Purpose / mission / vision -------- */
+.ab-triple{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:12px}
+.ab-triple article{background:var(--mint);border-radius:20px;padding:32px}
+.ab-triple article.coral{background:#ffe4d2}
+.ab-triple article.sun{background:#ffedbd}
+.ab-triple small{display:block;font-size:12px;font-weight:900;letter-spacing:.14em;color:#0f5a55;margin-bottom:14px}
+.ab-triple article.coral small{color:#b0492a}
+.ab-triple article.sun small{color:#8a6a1e}
+.ab-triple p{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;line-height:1.3;color:var(--ink);margin:0}
+
+/* -------- Three pillars -------- */
+.ab-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:12px}
+.ab-pillars article{background:#1a4b58;border:1px solid #2b5e6a;border-radius:22px;padding:32px;display:flex;flex-direction:column;gap:14px;min-height:340px}
+.ab-pillars .n{font-family:'DM Serif Display',Georgia,serif;font-size:42px;color:var(--sun);line-height:1;display:flex;align-items:baseline;gap:12px}
+.ab-pillars .n span{font:900 12px/1 'Nunito Sans',sans-serif;color:var(--sun);letter-spacing:.14em;text-transform:uppercase}
+.ab-pillars h3{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0;color:#fff}
+.ab-pillars article>p{font-size:15px;line-height:1.6;color:#c3d4d7;margin:0}
+.ab-pillars .contents{margin-top:auto;padding-top:16px;border-top:1px solid #2b5e6a;font-size:13px;line-height:1.55;color:#a8bfc3}
+.ab-pillars .contents b{display:block;color:var(--sun);font-size:11px;font-weight:900;letter-spacing:.12em;margin-bottom:6px}
+
+/* -------- The method (3 phases -> 8 outputs pipeline) -------- */
+.ab-method{background:#fff;border:1px solid var(--line);border-radius:22px;padding:36px;margin-top:12px}
+.ab-method h3{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:20px;margin:0 0 20px}
+.ab-phases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.ab-phases>div{background:var(--cream);border-radius:14px;padding:22px;border-top:3px solid var(--coral)}
+.ab-phases>div b{font-family:'DM Serif Display',Georgia,serif;font-size:32px;color:var(--coral);line-height:1;display:block}
+.ab-phases>div small{display:block;font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--teal);margin:6px 0 10px}
+.ab-phases>div p{font-size:15px;line-height:1.5;color:var(--ink);font-weight:700;margin:0}
+.ab-phases>div p em{display:block;font-style:normal;font-size:13px;font-weight:600;color:var(--muted);margin-top:4px}
+.ab-outputs-strip{display:flex;flex-wrap:wrap;gap:8px}
+.ab-outputs-strip span{background:var(--mint);color:#0f5a55;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:700}
+.ab-outputs-strip span b{color:var(--teal);margin-right:6px}
+
+/* -------- Values -------- */
+.ab-values{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:12px}
+.ab-values article{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;text-align:left;display:flex;flex-direction:column;gap:10px}
+.ab-values .ico{width:44px;height:44px;border-radius:12px;background:var(--mint);display:grid;place-items:center;color:var(--teal)}
+.ab-values h3{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:17px;margin:0}
+.ab-values p{font-size:14px;line-height:1.5;color:var(--muted);margin:0}
+
+/* -------- Founder -------- */
+.ab-founder{display:grid;grid-template-columns:420px 1fr;gap:72px;align-items:center;margin-top:12px}
+.ab-founder .portrait{position:relative;height:500px}
+.ab-founder .portrait:before{content:"";position:absolute;left:-14px;top:-14px;width:400px;height:480px;border-radius:200px 200px 22px 22px;background:var(--teal)}
+.ab-founder .portrait img{position:relative;width:400px;height:480px;object-fit:cover;object-position:top;border-radius:200px 200px 22px 22px;background:#efeae0;display:block}
+.ab-founder .quote{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-style:italic;font-size:clamp(28px,3.2vw,40px);line-height:1.2;margin:0 0 22px;color:var(--ink)}
+.ab-founder .body p{font-size:17px;line-height:1.7;color:var(--muted);margin:0 0 16px;max-width:640px}
+.ab-founder .sig{display:flex;align-items:center;gap:22px;padding-top:12px;margin-top:8px;border-top:1px solid var(--line)}
+.ab-founder .sig b{display:block;font-size:17px;font-weight:800}
+.ab-founder .sig small{font-size:14px;color:var(--muted);font-weight:700}
+.ab-founder .sig a{margin-left:auto;font-size:15px;font-weight:800;color:var(--teal)}
+
+/* -------- Ecosystem -------- */
+.ab-eco{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:12px}
+.ab-eco article{background:#fff;border:1px solid var(--line);border-radius:22px;padding:32px;display:flex;flex-direction:column;gap:12px;position:relative}
+.ab-eco article.here{background:var(--deep);color:#fff;border-color:var(--deep)}
+.ab-eco article.here p{color:#c3d4d7}
+.ab-eco article.here .role{color:var(--sun)}
+.ab-eco article.upcoming .role{color:#b0492a}
+.ab-eco .flag{position:absolute;top:-12px;left:24px;padding:5px 12px;border-radius:999px;background:var(--sun);color:var(--ink);font-size:11px;font-weight:900;letter-spacing:.08em}
+.ab-eco h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:28px;line-height:1.1;margin:0}
+.ab-eco .role{font-size:12px;font-weight:900;letter-spacing:.12em;color:var(--teal);text-transform:uppercase}
+.ab-eco article p{font-size:15px;line-height:1.6;color:var(--muted);margin:0}
+.ab-eco article a{margin-top:auto;padding-top:12px;font-size:14px;font-weight:800;color:var(--teal)}
+.ab-eco article.here a{color:var(--sun)}
+
+/* -------- Roadmap -------- */
+.ab-road{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:12px;position:relative}
+.ab-road article{background:#1a4b58;border:1px solid #2b5e6a;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:10px}
+.ab-road article.now{background:#f8ca68;border-color:#f8ca68;color:var(--ink)}
+.ab-road article.now .yr{color:#b0492a}
+.ab-road article.now .h{color:var(--ink)}
+.ab-road article.now p{color:#2a1a12}
+.ab-road .yr{font-size:11px;font-weight:900;letter-spacing:.12em;color:var(--sun);text-transform:uppercase}
+.ab-road .h{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:19px;color:#fff;letter-spacing:-.01em;margin:0}
+.ab-road article p{font-size:14px;line-height:1.55;color:#c3d4d7;margin:0}
+.ab-road .badge{display:inline-flex;align-items:center;gap:6px;margin-top:auto;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:#fff;font-size:11px;font-weight:800;letter-spacing:.05em;align-self:flex-start}
+.ab-road article.now .badge{background:#102e3b;color:#fff}
+
+/* -------- Trust commitments -------- */
+.ab-trust{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:12px}
+.ab-trust article{background:#fff;border:2px solid var(--coral);border-radius:16px;padding:24px}
+.ab-trust h3{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:17px;color:var(--coral);margin:0 0 8px}
+.ab-trust p{font-size:14px;line-height:1.55;color:var(--muted);margin:0}
+
+/* -------- Final CTA -------- */
+.ab-cta{background:var(--coral);border-radius:28px;padding:56px;color:var(--ink);display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;position:relative;overflow:hidden;margin-top:12px}
+.ab-cta:before{content:"";position:absolute;right:-90px;top:-90px;width:280px;height:280px;border-radius:50%;background:var(--sun)}
+.ab-cta>div{position:relative}
+.ab-cta h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(34px,3.5vw,46px);line-height:1.05;color:var(--ink);margin:0 0 14px}
+.ab-cta p{font-size:17px;line-height:1.6;color:#2a1a12;margin:0;max-width:520px}
+.ab-cta .row{display:flex;flex-direction:column;gap:10px;position:relative}
+.ab-cta .b1{display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 28px;border-radius:999px;background:var(--ink);color:#fff;font-weight:800;font-size:15px}
+.ab-cta .b2{display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 24px;border-radius:999px;border:1.5px solid var(--ink);color:var(--ink);font-weight:800;font-size:15px}
+
+/* -------- Responsive -------- */
+@media(max-width:1100px){
+  .ab-gaps,.ab-values{grid-template-columns:1fr 1fr}
+  .ab-pillars,.ab-triple,.ab-eco,.ab-trust,.ab-road,.ab-phases{grid-template-columns:1fr 1fr}
+  .ab-founder{grid-template-columns:1fr;gap:40px}
+  .ab-founder .portrait{height:auto;max-width:340px;margin:auto}
+  .ab-founder .portrait:before,.ab-founder .portrait img{width:100%;height:auto;aspect-ratio:5/6}
+}
+@media(max-width:700px){
+  .ab-section{padding:64px 0}
+  .ab-hero{padding:60px 0 66px}
+  .ab-hero:before{width:280px;height:280px;right:-140px;top:-140px}
+  .ab-hero:after{display:none}
+  .ab-gaps,.ab-pillars,.ab-triple,.ab-values,.ab-eco,.ab-trust,.ab-road,.ab-phases{grid-template-columns:1fr}
+  .ab-cta{grid-template-columns:1fr;padding:32px}
+  .ab-method{padding:24px}
+}
