@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
 // Tools rebuilt on the shared Impact Suite kit. Add each tool here as it is migrated.
-const standardTools=['Strategic-Objectives','Strategy-KPIs-and-Annual-Planning'];
+const standardTools=['Strategic-Objectives','Strategy-KPIs-and-Annual-Planning','Gantt-Project-Planner'];
 
 test('standard tools load the shared kit in the right order',()=>{
  for(const tool of standardTools){
