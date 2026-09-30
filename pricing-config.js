@@ -22,7 +22,7 @@ export const pricing = {
     id: 'software', productId: 'software_suite', name: 'Ethical Bridge Software Suite',
     monthly: 1500, annual: 9000, pricesAreExamples: true,
     providerPriceIds: { monthly: null, annual: null },
-    toolSlugs: ['strategic-planning','theory-of-change','work-plan','gantt','policy-management','risk-register','kpi-tracker','indicator-tracker','donor-mapping','funding-pipeline','partner-tracker','ethical-bridge-crm'],
+    toolSlugs: ['strategic-objectives','strategy-kpis-annual-planning','theory-of-change','gantt','policy-management','issue-risk-management','meal-strategy','donor-mapping','donor-tracking','partner-tracker','ethical-bridge-crm'],
     includes: ['Access to the software tools listed in the Suite catalogue as they become available', 'Choose monthly or annual billing', 'Separate tools that work independently of each other'],
     availability: 'Software is in development. Local demos are available; cloud saving, collaboration, reporting and automation are planned.'
   },
