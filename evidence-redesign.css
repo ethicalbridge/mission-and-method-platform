@@ -236,28 +236,202 @@ body.evidence-page .library-lesson-heading a:hover{
   background:var(--mint,#d9eee8) !important;
 }
 
-/* ---------- Resource cards grid ---------- */
+/* ---------- Resource list (compact, click-to-expand) ---------- */
 body.evidence-page .reading-list{
-  display:grid !important;
-  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  gap:16px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
   margin:0 !important;
 }
 body.evidence-page .reading-list article.resource-card{
   background:#fff !important;
   border:1px solid #ede8dd !important;
-  border-radius:16px !important;
-  padding:22px !important;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  border-radius:12px !important;
+  padding:0 !important;
+  display:block !important;
+  cursor:pointer;
+  transition:border-color .15s ease, box-shadow .15s ease;
   position:relative;
+  overflow:hidden;
 }
 body.evidence-page .reading-list article.resource-card:hover{
-  transform:translateY(-2px);
   border-color:var(--teal,#16746e);
-  box-shadow:0 12px 36px rgba(13,44,58,.08);
+  box-shadow:0 4px 16px rgba(13,44,58,.06);
+}
+body.evidence-page .reading-list article.resource-card.expanded{
+  border-color:var(--teal,#16746e);
+  box-shadow:0 10px 32px rgba(13,44,58,.1);
+}
+
+/* Compact header row (always visible) */
+body.evidence-page .resource-header{
+  display:grid;
+  grid-template-columns:auto 1fr auto auto;
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+}
+body.evidence-page .resource-header .resource-title-block{
+  min-width:0;
+}
+body.evidence-page .resource-header h3{
+  font-family:'Nunito Sans',sans-serif !important;
+  font-weight:800 !important;
+  font-size:15px !important;
+  line-height:1.3 !important;
+  letter-spacing:-.005em !important;
+  color:var(--ink,#16303d) !important;
+  margin:0 !important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.evidence-page .resource-header .resource-meta{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-size:12px;
+  color:var(--muted,#5d7079);
+  font-weight:700;
+  margin-top:2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.evidence-page .resource-header .resource-publisher{
+  color:var(--muted,#5d7079);
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.evidence-page .resource-header .resource-category-inline{
+  color:var(--coral,#e56f4a);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+body.evidence-page .resource-header .resource-category-inline:before{
+  content:"·";
+  margin:0 6px;
+  color:#d8dfd9;
+}
+body.evidence-page .resource-header .resource-header-tags{
+  display:flex;
+  gap:6px;
+}
+body.evidence-page .resource-header .resource-expand{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#f4efe4;
+  color:var(--teal,#16746e);
+  display:grid;
+  place-items:center;
+  font-size:16px;
+  font-weight:400;
+  transition:transform .2s ease, background .15s ease;
+}
+body.evidence-page article.resource-card.expanded .resource-expand{
+  transform:rotate(45deg);
+  background:var(--teal,#16746e);
+  color:#fff;
+}
+
+/* Expandable body */
+body.evidence-page .resource-body{
+  display:none;
+  padding:0 18px 18px 18px;
+  border-top:1px solid #f0ebde;
+  padding-top:14px;
+  animation:evExpand .2s ease;
+}
+body.evidence-page article.resource-card.expanded .resource-body{
+  display:block;
+}
+@keyframes evExpand{
+  from{opacity:0;transform:translateY(-4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Hide the original top-level card elements — the JS moves them */
+body.evidence-page .resource-card > .resource-card-top,
+body.evidence-page .resource-card > .resource-category,
+body.evidence-page .resource-card > h3,
+body.evidence-page .resource-card > p.subtle,
+body.evidence-page .resource-card > p:not(.subtle):not(.resource-category):not(.resource-use),
+body.evidence-page .resource-card > .resource-use,
+body.evidence-page .resource-card > .resource-tags,
+body.evidence-page .resource-card > .resource-actions{
+  display:none !important;
+}
+
+/* Inside body: description, best moment, tags, actions */
+body.evidence-page .resource-body p{
+  font-size:14px !important;
+  line-height:1.55 !important;
+  color:var(--ink,#16303d) !important;
+  margin:0 0 12px !important;
+}
+body.evidence-page .resource-body .resource-use{
+  background:#fbf8f1 !important;
+  border-left:3px solid var(--sun,#f8ca68) !important;
+  padding:10px 12px !important;
+  border-radius:0 8px 8px 0 !important;
+  font-size:13px !important;
+  line-height:1.5 !important;
+  color:var(--ink,#16303d) !important;
+  margin:0 0 12px !important;
+}
+body.evidence-page .resource-body .resource-use b{
+  color:#8a5a10 !important;
+  font-weight:800 !important;
+  display:block;
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-bottom:2px;
+}
+body.evidence-page .resource-body .resource-tags{
+  display:flex !important;
+  flex-wrap:wrap;
+  gap:6px !important;
+  margin:0 0 12px !important;
+}
+body.evidence-page .resource-body .resource-tags span{
+  font-size:11px;
+  padding:3px 10px;
+  background:#f4efe4;
+  border-radius:999px;
+  color:var(--muted,#5d7079);
+  font-weight:700;
+}
+body.evidence-page .resource-body .resource-actions{
+  display:flex !important;
+  gap:14px !important;
+  padding-top:12px;
+  border-top:1px solid #f0ebde;
+  margin:0;
+}
+body.evidence-page .resource-body .resource-actions a{
+  font-size:13px !important;
+  font-weight:800 !important;
+  color:var(--teal,#16746e) !important;
+  text-decoration:none !important;
+}
+body.evidence-page .resource-body .resource-actions a:hover{
+  color:var(--coral,#e56f4a) !important;
+}
+
+/* Mobile compact header */
+@media(max-width:700px){
+  body.evidence-page .resource-header{
+    grid-template-columns:1fr auto;
+    gap:8px;
+  }
+  body.evidence-page .resource-header .resource-header-tags{
+    display:none;
+  }
+  body.evidence-page .resource-header h3{white-space:normal}
 }
 
 /* Top row: type + level pills */
