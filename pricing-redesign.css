@@ -84,7 +84,8 @@
 .pc-four article.featured .cta:hover{background:#cd5b39;color:#fff}
 
 /* -------- We build it for you (concierge) -------- */
-.pc-build{background:linear-gradient(120deg,var(--sun) 55%,#f5b74d 100%);border-radius:28px;padding:44px 48px;display:grid;grid-template-columns:1.2fr 1fr;gap:44px;align-items:center;position:relative;overflow:hidden}
+.pc-build{background:linear-gradient(120deg,var(--sun) 55%,#f5b74d 100%);border-radius:28px;padding:44px 48px;display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start;position:relative;overflow:hidden}
+.pc-build>div:first-child{padding-top:6px}
 .pc-build:before{content:"";position:absolute;right:-100px;bottom:-100px;width:300px;height:300px;border-radius:50%;background:rgba(229,111,74,.25)}
 .pc-build>div{position:relative}
 .pc-build .stamp{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--ink);color:var(--sun);font-size:11px;font-weight:900;letter-spacing:.12em;margin-bottom:14px}
@@ -96,14 +97,15 @@
 .pc-build .b2{display:inline-flex;align-items:center;height:54px;padding:0 24px;border-radius:999px;border:1.5px solid var(--ink);color:var(--ink);font-weight:800;font-size:15px}
 .pc-build .b2:hover{background:var(--ink);color:#fff}
 
-/* Focused right card: only the Tailored foundation package */
-.pc-build .card{background:#fff;border-radius:20px;padding:28px}
+/* Right column: Tailored foundation + Our Support stacked */
+.pc-build .pc-side{display:flex;flex-direction:column;gap:16px}
+.pc-build .card{background:#fff;border-radius:20px;padding:26px}
 .pc-build .card .num{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--coral);text-transform:uppercase}
-.pc-build .card h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:28px;line-height:1.15;color:var(--ink);margin:6px 0 12px}
+.pc-build .card h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:24px;line-height:1.15;color:var(--ink);margin:6px 0 10px}
 .pc-build .card .price{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
 .pc-build .card .price b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:38px;line-height:1;color:var(--ink)}
 .pc-build .card .price small{font-size:13px;color:var(--muted);font-weight:700}
-.pc-build .card .quick{font-size:14px;line-height:1.5;color:var(--muted);margin:0 0 20px;border-bottom:1px solid #ede8dd;padding-bottom:20px}
+.pc-build .card .quick{font-size:14px;line-height:1.5;color:var(--muted);margin:0 0 16px;border-bottom:1px solid #ede8dd;padding-bottom:16px}
 .pc-build .card details{margin:0}
 .pc-build .card details summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:14px;font-weight:800;color:var(--teal)}
 .pc-build .card details summary::-webkit-details-marker{display:none}
