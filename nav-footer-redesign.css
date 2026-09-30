@@ -1,0 +1,227 @@
+/* Nav + Footer redesign — cleaner, tighter, more modern.
+   Loads after every other stylesheet via app.js so it wins. */
+
+/* ---------- Top nav ---------- */
+nav.nav{
+  background:rgba(251,248,241,.92);
+  backdrop-filter:saturate(140%) blur(8px);
+  -webkit-backdrop-filter:saturate(140%) blur(8px);
+  border-bottom:1px solid rgba(22,48,61,.08);
+  box-shadow:0 1px 0 rgba(22,48,61,.02);
+}
+nav.nav .nav-inner{height:62px}
+nav.nav .brand{font-size:19px;font-weight:850;letter-spacing:-.04em;color:var(--ink)}
+nav.nav .brand span{color:var(--teal)}
+
+nav.nav .nav-links{gap:6px;font-size:14px;font-weight:700}
+nav.nav .nav-links > a,
+nav.nav .nav-links .courses-dropdown > summary,
+nav.nav .nav-links .resources-dropdown > summary,
+nav.nav .nav-links .nav-dropdown > summary{
+  padding:8px 12px;
+  border-radius:8px;
+  color:var(--ink);
+  transition:background .15s ease, color .15s ease;
+  border:0 !important;
+}
+nav.nav .nav-links > a:hover,
+nav.nav .nav-links .nav-dropdown > summary:hover{
+  background:rgba(22,48,61,.06);
+  color:var(--ink);
+}
+nav.nav .nav-links > a.active{
+  color:var(--teal);
+  background:transparent;
+  border-bottom:0 !important;
+  position:relative;
+}
+nav.nav .nav-links > a.active::after{
+  content:"";
+  position:absolute;
+  left:12px;right:12px;bottom:3px;
+  height:2px;
+  background:var(--teal);
+  border-radius:2px;
+}
+
+/* Contact — plain link, not a pill */
+nav.nav .nav-links .contact-link{
+  padding:8px 12px !important;
+  border:0 !important;
+  border-radius:8px !important;
+  color:var(--ink) !important;
+  background:transparent !important;
+  font-weight:700 !important;
+}
+nav.nav .nav-links .contact-link:hover{
+  background:rgba(22,48,61,.06) !important;
+  color:var(--ink) !important;
+}
+nav.nav .nav-links .contact-link.active{
+  color:var(--teal) !important;
+  background:transparent !important;
+}
+
+/* Sign in — small teal pill, the real CTA */
+nav.nav .nav-links .account-link{
+  margin-left:6px;
+  padding:8px 16px !important;
+  border-radius:999px !important;
+  background:var(--teal) !important;
+  color:#fff !important;
+  font-weight:800 !important;
+  font-size:13px !important;
+  border:1px solid var(--teal) !important;
+  transition:background .15s ease;
+}
+nav.nav .nav-links .account-link:hover{
+  background:#155852 !important;
+  border-color:#155852 !important;
+  color:#fff !important;
+}
+
+/* Preview banner — condensed, uppercase micro-label */
+.preview-note{
+  background:rgba(229,111,74,.08) !important;
+  border-bottom:1px solid rgba(229,111,74,.15) !important;
+  color:#8f4a2c !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  letter-spacing:.02em !important;
+  padding:6px 20px !important;
+  text-align:center !important;
+}
+
+/* ---------- Footer ---------- */
+.site-footer{
+  background:#0f2b37;
+  color:#d4e1e2;
+  font-family:'Nunito Sans',system-ui,sans-serif;
+}
+
+/* Map: brand column + 3 link columns (was 4) */
+.site-footer .footer-map{
+  display:grid;
+  grid-template-columns:1.6fr repeat(4,1fr);
+  gap:36px;
+  padding:44px 0 30px !important;
+}
+.site-footer .footer-map h3{
+  font-size:10px !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase;
+  color:#f8ca68 !important;
+  font-weight:900;
+  margin:0 0 12px !important;
+}
+.site-footer .footer-map > div:not(:first-child){
+  display:flex;
+  flex-direction:column;
+  gap:8px !important;
+}
+.site-footer .footer-map a,
+.site-footer .footer-map button{
+  color:#a7bcc0 !important;
+  font-size:13px !important;
+  font-weight:500;
+  transition:color .15s ease;
+}
+.site-footer .footer-map a:hover,
+.site-footer .footer-map button:hover{color:#f8ca68 !important}
+
+/* Brand column */
+.site-footer .footer-brand-column .brand{
+  color:#fff !important;
+  font-size:22px !important;
+  font-weight:850;
+  letter-spacing:-.04em;
+  margin-bottom:12px;
+}
+.site-footer .footer-brand-column p{
+  color:#8ea3a7 !important;
+  font-size:12px !important;
+  line-height:1.55 !important;
+  max-width:240px !important;
+  margin:0 0 14px !important;
+}
+.site-footer .ethical-link{
+  color:#f8ca68 !important;
+  font-weight:700 !important;
+  font-size:12px !important;
+}
+
+/* Contact strip — subtler, less shouty */
+.site-footer .footer-contact{
+  border-top:1px solid rgba(255,255,255,.08) !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+  padding:20px 0 !important;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+.site-footer .footer-contact span{
+  color:#8ea3a7 !important;
+  font-size:10px !important;
+  text-transform:uppercase;
+  letter-spacing:.14em !important;
+  font-weight:800;
+}
+.site-footer .footer-contact b{
+  color:#fff !important;
+  display:block !important;
+  margin-top:4px !important;
+  font-size:16px !important;
+  font-weight:700 !important;
+  font-family:'DM Serif Display',serif !important;
+}
+.site-footer .footer-contact-button{
+  display:inline-flex;
+  align-items:center;
+  padding:10px 18px !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  border:1px solid #f8ca68 !important;
+  color:#f8ca68 !important;
+  font-weight:800 !important;
+  font-size:13px !important;
+  white-space:nowrap;
+  transition:background .15s ease, color .15s ease;
+}
+.site-footer .footer-contact-button:hover{
+  background:#f8ca68 !important;
+  color:#0f2b37 !important;
+}
+
+/* Bottom line */
+.site-footer .footer-bottom{
+  padding:16px 0 22px !important;
+  color:#6b8085 !important;
+  font-size:11px !important;
+  font-weight:600;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+/* ---------- Mobile ---------- */
+@media(max-width:900px){
+  .site-footer .footer-map{
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+    padding:32px 0 22px !important;
+  }
+  .site-footer .footer-brand-column{grid-column:1/-1;margin-bottom:6px}
+  .site-footer .footer-contact{
+    flex-direction:column;
+    align-items:flex-start;
+    padding:18px 0 !important;
+  }
+  .site-footer .footer-contact-button{width:100%;justify-content:center}
+}
+@media(max-width:560px){
+  nav.nav .nav-inner{height:auto;min-height:56px !important}
+  .site-footer .footer-map{grid-template-columns:1fr}
+  .site-footer .footer-brand-column{grid-column:auto}
+}
