@@ -160,6 +160,22 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:900px){.example-mv,.example-objectives{grid-template-columns:1fr}.example-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.example-chain{grid-template-columns:1fr}}
 @media print{.example-box{display:none}}
+/* Integration-note band — "How this tool connects to the suite" */
+.integ-box{background:#f0f6f3;border:1px solid #c7d9d1;border-radius:14px;padding:12px 16px;margin:0 0 14px}
+.integ-summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:2px 0;outline:none}
+.integ-summary::-webkit-details-marker{display:none}
+.integ-summary::marker{content:''}
+.integ-summary::before{content:'▸';color:var(--teal);font-size:12px;transition:transform .15s;display:inline-block}
+.integ-box[open] .integ-summary::before{transform:rotate(90deg)}
+.integ-pill{display:inline-block;padding:3px 10px;border-radius:99px;background:var(--deep);color:#fff;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.integ-title{font-weight:900;color:var(--deep);font-size:14px}
+.integ-body{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+.integ-col h4{margin:0 0 6px;font:900 11px/1 'Nunito Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.integ-list{margin:0;padding-left:16px;color:var(--ink)}
+.integ-list li{margin:4px 0;font-size:12.5px;line-height:1.4}
+.integ-list a{color:var(--teal);font-weight:800}
+.integ-empty{margin:0;font-size:12px;color:var(--muted);font-style:italic}
+@media(max-width:800px){.integ-body{grid-template-columns:1fr}}
 /* Interactive workspace (Theory of Change Start tab — the green box IS the tool) */
 .work-box{background:linear-gradient(180deg,#f4faf5,#fdfffd);border:1px solid #bddfcb;border-radius:16px;padding:18px 22px 22px;margin:0 0 20px;box-shadow:0 6px 23px #123c4809}
 .work-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
@@ -196,6 +212,44 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 .work-extra>summary{cursor:pointer;font-weight:800;color:var(--deep);font-size:13px;padding:6px 0}
 .work-extra .work-meta{margin-top:10px;margin-bottom:0}
 .link.danger{color:#983b2d}
+/* MEAL indicator rows (quarterly tracking matrix) */
+.work-imports{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.work-imports .button:disabled{opacity:.55;cursor:not-allowed}
+.work-indicators{display:grid;gap:12px}
+.meal-row{background:#fff;border:1px solid #bddfcb;border-radius:12px;padding:12px 14px}
+.meal-row-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed #d6e2dc}
+.meal-src{display:inline-block;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.meal-src.src-kpi{background:#d6ebe3;color:#116b68}
+.meal-src.src-toc{background:#fff1d0;color:#8a6a2b}
+.meal-src.src-manual{background:#e9eded;color:#536874}
+.meal-code{color:var(--deep);font:900 14px/1 'Nunito Sans',sans-serif;letter-spacing:.04em}
+.meal-objective{color:var(--muted);font-size:12px;flex:1;min-width:140px}
+.meal-objective .eyebrow{color:var(--teal);margin-right:4px}
+.meal-objective .inline-field{display:inline-flex;align-items:center;gap:4px}
+.meal-objective .inline-field>span{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.meal-objective .inline-field select,.meal-objective .inline-field input{padding:4px 6px;font-size:12px;min-width:90px}
+.meal-row-main,.meal-row-meta{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.meal-row-main .meal-field.flex2{grid-column:span 1}
+.meal-field{display:block;background:#f5f9f6;border:1px solid #d6e2dc;border-radius:8px;padding:6px 10px}
+.meal-field>span{display:block;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:3px}
+.meal-field input,.meal-field textarea{border:0;background:transparent;width:100%;padding:0;font:inherit;color:var(--ink);line-height:1.4}
+.meal-field textarea{min-height:48px;resize:vertical}
+.meal-field:focus-within{border-color:var(--teal);background:#fff}
+.meal-matrix{display:grid;gap:4px;margin:10px 0 12px;background:#f5f9f6;border:1px solid #d6e2dc;border-radius:10px;padding:8px}
+.meal-mrow{display:grid;grid-template-columns:88px repeat(4,minmax(0,1fr));gap:6px;align-items:center}
+.meal-mhead{font:900 10px/1 'Nunito Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.meal-mhead>div{text-align:center;padding:2px 0}
+.meal-mlabel{font:900 11px/1 'Nunito Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--deep);padding:4px 0 4px 4px}
+.meal-mrow input{width:100%;padding:5px 7px;border:1px solid #d6e2dc;border-radius:6px;font-size:13px;text-align:right;background:#fff}
+.meal-mrow input:focus{border-color:var(--teal);outline:0;background:#fff}
+.meal-mdiff{border-top:1px dashed #d6e2dc;padding-top:6px;margin-top:2px}
+.meal-diff-cell{text-align:center;padding:5px;font-size:13px;font-weight:800;color:var(--muted)}
+.meal-diff-cell .diff-cell{display:inline-block;padding:2px 8px;border-radius:6px}
+.meal-diff-cell .diff-cell.positive{background:#dcefe3;color:#246046}
+.meal-diff-cell .diff-cell.negative{background:#fbe1dc;color:#8a2f22}
+.meal-diff-cell .diff-cell.zero{background:#eef1ef;color:#536874}
+@media(max-width:1000px){.meal-row-main,.meal-row-meta{grid-template-columns:1fr 1fr}.meal-mrow{grid-template-columns:72px repeat(4,minmax(0,1fr))}}
+@media(max-width:700px){.meal-row-main,.meal-row-meta{grid-template-columns:1fr}.meal-mrow{grid-template-columns:60px repeat(2,minmax(0,1fr));gap:4px}.meal-mhead>div:nth-child(4),.meal-mhead>div:nth-child(5){display:none}}
 @media(max-width:1200px){.work-chain{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:800px){.work-meta{grid-template-columns:1fr}}
 @media(max-width:700px){.work-chain{grid-template-columns:1fr 1fr}}

@@ -281,5 +281,38 @@ const cleanupStaleExample=(d,flagKey,blankFn)=>{
  return d;
 };
 
-window.MMExample={org,external,internal,strategicObjectives,theoryOfChange,strategyKpis,renderBox,renderUserBox,bindLive,cleanupStaleExample};
+// ---------- Integration notes — "How this tool connects to the suite" ----------
+// Rendered as a small, consistent band on each tool's Start tab so users see
+// exactly what flows in and what flows out, and where the tool sits in the journey.
+const integrationData={
+ 'strategic-objectives':{step:1,label:'Step 1 of 5 · Strategic objectives',pulls:[],pushes:[['theory-of-change','Theory of Change pulls these objectives as pathway starts.'],['strategy-kpis','Strategy KPIs attaches KPIs to each ESO/ISO.'],['meal-strategy','MEAL Strategy inherits the objective list through KPIs.'],['gantt','Gantt & Project Planner groups initiatives by objective.']]},
+ 'theory-of-change':{step:2,label:'Step 2 of 5 · Theory of Change',pulls:[['strategic-objectives','Pulls objectives from Strategic Objectives (dropdown in each pathway). Problem, outcome and impact pre-fill from the selected ESO.']],pushes:[['strategy-kpis','Strategy KPIs reads the impact goal and the three pathways to anchor measurement.'],['meal-strategy','MEAL Strategy imports outcome- and impact-level indicators from each pathway.'],['gantt','Gantt turns each pathway output into a plannable work-stream.']]},
+ 'strategy-kpis':{step:3,label:'Step 3 of 5 · Strategy, KPIs & annual planning',pulls:[['strategic-objectives','Pulls ESOs and ISOs — each KPI is linked to one by code.'],['theory-of-change','Pulls the impact goal and uses pathway outcomes to shape KPIs.']],pushes:[['meal-strategy','MEAL Strategy inherits every KPI with its quarterly targets as the tracking matrix.'],['gantt','Gantt imports each initiative with its dates, owner and budget as a timeline bar.']]},
+ 'meal-strategy':{step:4,label:'Step 4 of 5 · MEAL Strategy',pulls:[['strategic-objectives','Reads the objective list to group indicators.'],['strategy-kpis','Imports every KPI with its quarterly targets — this is the backbone of the MEAL matrix.'],['theory-of-change','Imports outcome- and impact-level indicators from each pathway.']],pushes:[['issue-risk','Issue & Risk Management can log issues against any indicator here.']]},
+ 'gantt':{step:5,label:'Step 5 of 5 · Gantt & project planner',pulls:[['strategic-objectives','Reads objectives to group tasks and bars.'],['strategy-kpis','Imports every initiative with its start, end, owner, budget and status.'],['theory-of-change','Reads pathway outputs so tasks can be tied back to a pathway.']],pushes:[['issue-risk','Issue & Risk Management can log issues against any task or milestone here.']]},
+ 'issue-risk':{step:0,label:'Cross-cutting · Issue & risk management',pulls:[['strategic-objectives','Any ESO/ISO can carry its own risk register.'],['theory-of-change','Each pathway can hold assumption and risk rows.'],['strategy-kpis','Each KPI can log a risk-to-target.'],['meal-strategy','Each indicator can log data-quality issues.'],['gantt','Each task or milestone can log a delivery risk.']],pushes:[]}
+};
+const toolHrefs={
+ 'strategic-objectives':'Strategic-Objectives.html',
+ 'theory-of-change':'Theory-of-Change-Builder.html',
+ 'strategy-kpis':'Strategy-KPIs-and-Annual-Planning.html',
+ 'meal-strategy':'MEAL-Strategy.html',
+ 'gantt':'Gantt-Project-Planner.html',
+ 'issue-risk':'Issue-and-Risk-Management.html'
+};
+const toolTitles={
+ 'strategic-objectives':'Strategic Objectives',
+ 'theory-of-change':'Theory of Change',
+ 'strategy-kpis':'Strategy KPIs',
+ 'meal-strategy':'MEAL Strategy',
+ 'gantt':'Gantt & Project Planner',
+ 'issue-risk':'Issue & Risk Management'
+};
+const renderIntegration=tool=>{
+ const d=integrationData[tool];if(!d) return '';
+ const line=(items,verb)=>items.length?`<ul class="integ-list">${items.map(([k,desc])=>`<li><a href="${esc(toolHrefs[k])}"><b>${esc(toolTitles[k])}</b></a> — ${esc(desc)}</li>`).join('')}</ul>`:`<p class="integ-empty">${verb}</p>`;
+ return `<details class="integ-box" open><summary class="integ-summary"><span class="integ-pill">${esc(d.label)}</span><span class="integ-title">How this tool connects to the rest of the suite</span></summary><div class="integ-body"><div class="integ-col"><h4>↙ What this tool reads from others</h4>${line(d.pulls,'This is the first step — nothing to pull yet. Objectives created here are the join key for every tool that follows.')}</div><div class="integ-col"><h4>↗ What this tool feeds into</h4>${line(d.pushes,'This tool reads from the others; no onward hand-off.')}</div></div></details>`;
+};
+
+window.MMExample={org,external,internal,strategicObjectives,theoryOfChange,strategyKpis,renderBox,renderUserBox,bindLive,cleanupStaleExample,renderIntegration};
 })();

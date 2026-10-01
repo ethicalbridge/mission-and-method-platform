@@ -85,7 +85,7 @@ function dashboard(){
 }
 
 function startView(){
- return `${window.MMExample?.renderBox?.('theory-of-change')||''}${workspaceView()}`;
+ return `${window.MMExample?.renderIntegration?.('theory-of-change')||''}${window.MMExample?.renderBox?.('theory-of-change')||''}${workspaceView()}`;
 }
 
 // Interactive workspace — the green box IS the tool. Meta fields and

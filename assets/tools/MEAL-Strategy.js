@@ -1,44 +1,337 @@
+/* MEAL Strategy — Step 4 of the Impact Suite.
+   Monitoring, Evaluation, Accountability & Learning. Imports KPIs from the Strategy KPIs
+   tool and outcome/impact indicators from the Theory of Change, tracks planned vs actual
+   per quarter, and records review decisions. All data stays in this browser.
+*/
 (()=>{'use strict';
-const KEY='mm.meal-strategy.v2',MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],TABS=[['setup','Document details'],['matrix','All objectives'],['reviews','Review & learning'],['quality','Quality check'],['exports','Export']];
-const blank=()=>({meta:{organisation:'',project:'',year:new Date().getFullYear(),preparedBy:'',version:'1.0',location:'',notes:''},objectives:[],indicators:[],reviews:[]});
-const reference=()=>JSON.parse(JSON.stringify(window.MEAL_REFERENCE||blank()));
-let state,seeded=false;try{state=JSON.parse(localStorage.getItem(KEY))||JSON.parse(localStorage.getItem('mm.meal-strategy.v1'))}catch{state=null}if(!state||(!state.objectives?.length&&!state.indicators?.length)){const previous=state;state=reference();if(previous?.meta?.organisation)state.meta.organisation=previous.meta.organisation;seeded=true}for(const k of Object.keys(blank()))if(!(k in state))state[k]=blank()[k];
-let tab=seeded?'objective:eso-1':'matrix',editingObjective=null,editingIndicator=null,editingReview=null,objectiveForm=false,indicatorForm=false,reviewForm=false,objectiveFilter=seeded?'eso-1':'';
-const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),uid=()=>crypto.randomUUID?.()||String(Date.now())+Math.random(),save=()=>localStorage.setItem(KEY,JSON.stringify(state));
-const info=(label,help)=>` <button type="button" class="help" data-help="${esc(help)}" title="${esc(help)}" aria-label="About ${esc(label)}: ${esc(help)}">i</button>`;
-const f=(key,label,value='',type='text',help='',options)=>`<label>${esc(label)}${help?info(label,help):''}${options?`<select name="${key}"><option value="">Select…</option>${options.map(o=>`<option value="${esc(o)}" ${value===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`:type==='textarea'?`<textarea name="${key}">${esc(value)}</textarea>`:`<input name="${key}" type="${type}" value="${esc(value)}" ${type==='number'?'step="any"':''}>`}</label>`;
-const linkField=(name,label,selected)=>`<label>${label}<select name="${name}"><option value="">Select objective…</option>${state.objectives.map(x=>`<option value="${esc(x.id)}" ${selected===x.id?'selected':''}>${esc(x.code||'Objective')} · ${esc(x.title)}</option>`).join('')}</select></label>`;
-const objectiveName=id=>{const x=state.objectives.find(x=>x.id===id);return x?`${x.code||'Objective'} · ${x.title}`:'Unlinked objective'};
-const monthArray=x=>Array.from({length:12},(_,i)=>x?.[i]??'');
-const hasNum=v=>v!==''&&v!==null&&v!==undefined&&Number.isFinite(+v);
-const annual=(indicator,kind)=>{let manual=indicator[kind+'Year'];if(indicator.aggregation==='Manual')return hasNum(manual)?+manual:null;let nums=monthArray(indicator[kind]).filter(hasNum).map(Number);if(!nums.length)return indicator['source'+kind[0].toUpperCase()+kind.slice(1)+'Y1Zero']?0:null;if(indicator.aggregation==='Average')return nums.reduce((a,b)=>a+b,0)/nums.length;if(indicator.aggregation==='Latest')return nums.at(-1);return nums.reduce((a,b)=>a+b,0)};
-const difference=(indicator,month)=>{let p=month==='year'?annual(indicator,'planned'):monthArray(indicator.planned)[month],a=month==='year'?annual(indicator,'actual'):monthArray(indicator.actual)[month];return hasNum(p)&&hasNum(a)?+(+a-(+p)).toFixed(4):null};
-const fmt=n=>n===null||n===undefined?'—':Number(n).toLocaleString(undefined,{maximumFractionDigits:2});
-const objectiveFormHtml=()=>{let x=state.objectives.find(x=>x.id===editingObjective)||{};return `<form id="objective-form" class="panel"><h3>${editingObjective?'Edit':'Add'} strategic objective</h3><div class="form-grid">${f('code','Reference',x.code,'text','Use a short label such as ESO1 so each strategy objective is easy to find.')}${f('title','Strategic objective',x.title,'text','Describe the change or result that this group of indicators supports.')}${f('description','Description / intended result',x.description,'textarea','Explain what success under this objective would mean.')}${f('owner','Objective lead',x.owner)}</div><p class="actions"><button type="submit">Save objective</button><button type="button" class="light" data-action="cancel-objective">Cancel</button></p></form>`};
-const indicatorFormHtml=()=>{let x=state.indicators.find(x=>x.id===editingIndicator)||{};return `<form id="indicator-form" class="panel"><h3>${editingIndicator?'Edit':'Add'} indicator</h3><p class="intro">One row represents one measurement. Planned and actual values are entered in the monthly matrix.</p><div class="form-grid">${linkField('objectiveId','Strategic objective',x.objectiveId||objectiveFilter)}${f('data','Data to be collected',x.data,'textarea','Specify the information to gather, such as registrations, feedback or participation records.')}${f('source','Data source',x.source,'text','Name the system, survey, register or document where this information comes from.')}${f('manager','Data manager',x.manager,'text','Name the person or role responsible for collecting and checking the data.')}${f('timing','Timing / frequency',x.timing,'text','How often should this data be collected or reviewed? For example monthly, quarterly or annually.')}${f('indicator','Indicator',x.indicator,'text','State a measurable sign of progress, such as number of verified organisations or percentage reporting satisfaction.')}${f('unit','Unit',x.unit,'text','Examples: people, organisations, percentage, US dollars.')}${f('aggregation','Year 1 calculation',x.aggregation||'Sum','text','Sum adds monthly counts; average uses reported months; latest takes the latest reported month; manual lets you enter Year 1 yourself. Choose based on how the indicator is defined.',['Sum','Average','Latest','Manual'])}${f('baseline','Baseline',x.baseline,'number','The starting value before the planned change. This does not replace the monthly target.')}${f('definition','Definition / calculation',x.definition,'textarea','Explain exactly what is counted, included, excluded or divided.')}${f('disaggregation','Disaggregation',x.disaggregation,'text','Optional groups to report separately, such as region, gender or partner type. Avoid identifiable personal data.')}${f('verification','Verification / evidence',x.verification,'text','Where can a reviewer verify the result?')}${f('notes','Notes',x.notes,'textarea')}</div><p class="actions"><button type="submit">Save indicator</button><button type="button" class="light" data-action="cancel-indicator">Cancel</button></p></form>`};
-const reviewFormHtml=()=>{let x=state.reviews.find(x=>x.id===editingReview)||{};return `<form id="review-form" class="panel"><h3>${editingReview?'Edit':'Add'} review decision</h3><div class="form-grid">${f('date','Review date',x.date,'date')}${linkField('objectiveId','Strategic objective',x.objectiveId||objectiveFilter)}${f('finding','What does the evidence show?',x.finding,'textarea','Describe the result or gap and refer to the source.')}${f('feedback','Community or stakeholder feedback',x.feedback,'textarea','Record themes and response actions without identifying individuals.')}${f('learning','What did we learn?',x.learning,'textarea','What explanation, uncertainty or lesson should inform the next cycle?')}${f('decision','Decision / adjustment',x.decision,'textarea','State the management decision taken after reviewing the evidence.')}${f('action','Next action',x.action)}${f('owner','Action owner',x.owner)}${f('due','Due date',x.due,'date')}${f('status','Status',x.status||'Open','text','Track whether the agreed action was completed.',['Open','In progress','Done'])}</div><p class="actions"><button type="submit">Save review</button><button type="button" class="light" data-action="cancel-review">Cancel</button></p></form>`};
-const tabsHtml=()=>[...TABS.slice(0,2),...state.objectives.map(x=>['objective:'+x.id,x.code||'Objective']),...TABS.slice(2)].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}">${esc(label)}</button>`).join('');
-const setup=()=>`<div class="toolbar"><div><h2>Strategy setup</h2><p class="intro">Add the project context and strategic objectives from your existing plan. Your workbook grouped indicators by objective; this tool does the same.</p></div></div><form id="meta-form" class="panel"><h3>Document details</h3><div class="form-grid">${f('organisation','Organisation',state.meta.organisation)}${f('project','Project / programme',state.meta.project)}${f('year','Planning year',state.meta.year,'number')}${f('location','Country / location',state.meta.location)}${f('preparedBy','Prepared by',state.meta.preparedBy)}${f('version','Version',state.meta.version)}${f('notes','Strategy notes',state.meta.notes,'textarea')}</div><p><button type="submit">Save details</button></p></form><div class="toolbar"><h3>Strategic objectives</h3><button data-action="new-objective">Add objective</button></div>${objectiveForm?objectiveFormHtml():''}<section class="panel">${state.objectives.length?`<div class="table-wrap"><table><thead><tr><th>Reference</th><th>Objective</th><th>Lead</th><th>Indicators</th><th>Actions</th></tr></thead><tbody>${state.objectives.map(x=>`<tr><td>${esc(x.code)}</td><td><strong>${esc(x.title)}</strong><br><span class="muted">${esc(x.description)}</span></td><td>${esc(x.owner)}</td><td>${state.indicators.filter(i=>i.objectiveId===x.id).length}</td><td><div class="mini-actions"><button class="light" data-action="edit-objective" data-id="${x.id}">Edit</button><button class="danger" data-action="delete-objective" data-id="${x.id}">Delete</button></div></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Add your first strategic objective to begin the MEAL strategy.</div>'}</section>`;
-const setupWithReference=()=>setup()+`<section class="panel"><h3>Attached workbook</h3><p>The starting strategy follows <strong>MEAL strategy SRL 011125.xlsx</strong>: ESO 1, ESO 2 and ESO 3 with their original indicator rows. Restoring it replaces edits in this browser, so export a backup first if you need to keep them.</p><div class="actions"><button class="light" data-action="restore-reference">Restore attached workbook</button><button class="light" data-action="start-blank">Start a blank strategy</button></div></section>`;
-const editCell=(i,kind,m)=>`<input type="number" step="any" aria-label="${kind} ${MONTHS[m]} for ${esc(i.indicator)}" data-indicator="${i.id}" data-kind="${kind}" data-month="${m}" value="${esc(monthArray(i[kind])[m])}">`;
-const matrixTable=(objective,mode)=>{let indicators=state.indicators.filter(i=>i.objectiveId===objective.id),head=`<thead><tr><th>Objective</th><th>Data to be collected</th><th>Data source</th><th>Data manager</th><th>Timing</th><th>Indicator</th>${MONTHS.map(m=>`<th class="month">${m}</th>`).join('')}<th>Y1</th>${mode==='planned'?'<th>Actions</th>':''}</tr></thead>`;let rows=indicators.map((i,rowIndex)=>`<tr><td>${rowIndex===0?esc(objectiveName(objective.id)):''}</td><td>${esc(i.data)}</td><td>${esc(i.source)}</td><td>${esc(i.manager)}</td><td>${esc(mode==='planned'?i.timing:(i['source'+mode[0].toUpperCase()+mode.slice(1)+'Timing']??i.timing))}</td><td><strong>${esc(i.indicator)}</strong>${i.unit?`<br><small>${esc(i.unit)}</small>`:''}</td>${MONTHS.map((_,m)=>mode==='difference'?`<td class="variance ${difference(i,m)===null?'':difference(i,m)<0?'negative':difference(i,m)>0?'positive':'zero'}">${fmt(difference(i,m))}</td>`:`<td>${editCell(i,mode,m)}</td>`).join('')}<td class="year">${mode==='difference'?fmt(difference(i,'year')):i.aggregation==='Manual'?`<input type="number" step="any" aria-label="${mode} Year 1 for ${esc(i.indicator)}" data-indicator="${i.id}" data-kind="${mode}" data-year="true" value="${esc(i[mode+'Year']??'')}">`:fmt(annual(i,mode))}</td>${mode==='planned'?`<td><div class="mini-actions"><button class="light" data-action="edit-indicator" data-id="${i.id}">Edit</button><button class="danger" data-action="delete-indicator" data-id="${i.id}">Delete</button></div></td>`:''}</tr>`).join('');return `<div class="section-heading ${mode}">${mode}</div><div class="table-wrap"><table class="matrix">${head}<tbody>${rows||`<tr><td colspan="${mode==='planned'?20:19}">No indicators under this objective yet.</td></tr>`}</tbody></table></div>`};
-const matrix=()=>`<div class="toolbar"><div><h2>MEAL matrix</h2><p class="intro">Loaded from MEAL strategy SRL 011125.xlsx: ESO 1, ESO 2 and ESO 3 with their original indicator rows. Each objective has Planned, Actual and Difference tables. Difference is Actual − Planned. Blank cells stay blank until both values exist; zero is treated as a real result. A positive or negative gap is not automatically good or bad.</p></div><div class="actions"><button data-action="new-indicator">Add indicator</button><button class="light" data-action="export-xlsx">Download Excel</button></div></div><section class="panel"><label>Show objective<select id="objective-filter"><option value="">All objectives</option>${state.objectives.map(x=>`<option value="${x.id}" ${objectiveFilter===x.id?'selected':''}>${esc(objectiveName(x.id))}</option>`).join('')}</select></label></section>${indicatorForm?indicatorFormHtml():''}${state.objectives.filter(x=>!objectiveFilter||x.id===objectiveFilter).map(x=>`<section class="panel"><h3>${esc(objectiveName(x.id))}</h3><p class="muted">${esc(x.description)}</p>${['planned','actual','difference'].map(mode=>matrixTable(x,mode)).join('')}</section>`).join('')||'<div class="empty">Add a strategic objective in Strategy setup, then add indicators here.</div>'}`;
-const reviews=()=>`<div class="toolbar"><div><h2>Review & learning</h2><p class="intro">A MEAL strategy is useful when evidence leads to a decision. Record findings, stakeholder feedback, learning and the action that follows.</p></div><button data-action="new-review">Add review decision</button></div>${reviewForm?reviewFormHtml():''}<section class="panel">${state.reviews.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Objective</th><th>Finding</th><th>Learning</th><th>Decision / action</th><th>Owner / due</th><th>Status</th><th>Actions</th></tr></thead><tbody>${state.reviews.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(objectiveName(x.objectiveId))}</td><td>${esc(x.finding)}${x.feedback?`<br><small>Feedback: ${esc(x.feedback)}</small>`:''}</td><td>${esc(x.learning)}</td><td>${esc(x.decision)}<br><small>${esc(x.action)}</small></td><td>${esc(x.owner)}<br>${esc(x.due)}</td><td>${esc(x.status)}</td><td><div class="mini-actions"><button class="light" data-action="edit-review" data-id="${x.id}">Edit</button><button class="danger" data-action="delete-review" data-id="${x.id}">Delete</button></div></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No reviews recorded yet. Add one after reviewing planned and actual results.</div>'}</section>`;
-const checks=()=>{let issues=[];if(!state.meta.organisation)issues.push('Add the organisation name to identify the strategy.');if(!state.objectives.length)issues.push('Add at least one strategic objective.');for(const i of state.indicators){let label=i.indicator||'Unnamed indicator';for(const [key,desc] of [['objectiveId','link it to an objective'],['data','describe the data to collect'],['source','name the data source'],['manager','assign a data manager'],['timing','state the collection timing'],['indicator','write a measurable indicator'],['definition','define the calculation or counting rule']])if(!i[key])issues.push(`${label}: ${desc}.`);if(monthArray(i.planned).every(v=>!hasNum(v))&&!hasNum(i.plannedYear))issues.push(`${label}: enter at least one planned target.`);if(i.unit?.includes('%')&&i.aggregation==='Sum')issues.push(`${label}: a percentage may need Latest, Average or Manual for Year 1 rather than Sum.`)}return issues};
-const quality=()=>`<h2>Quality check</h2><p class="intro">Review completeness before sharing. These suggestions do not prevent export; you can keep a draft while details are being agreed.</p><div class="grid"><section class="card metric"><small>Strategic objectives</small><strong>${state.objectives.length}</strong></section><section class="card metric"><small>Indicators</small><strong>${state.indicators.length}</strong></section><section class="card metric"><small>Actual values entered</small><strong>${state.indicators.reduce((n,i)=>n+monthArray(i.actual).filter(hasNum).length,0)}</strong></section><section class="card metric"><small>Review decisions</small><strong>${state.reviews.length}</strong></section></div><section class="panel"><h3>${checks().length?'Suggestions to resolve':'Ready for review'}</h3>${checks().length?`<ul class="checks">${checks().map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p>The core structure is complete. Check evidence quality and the meaning of each result before sharing.</p>'}</section>`;
-const exportsView=()=>`<h2>Export your MEAL strategy</h2><p class="intro">Download a workbook shaped around your objectives and the Planned, Actual and Difference sections. CSV is useful for other systems. A JSON backup preserves every field for reimport. Print this page to PDF if you need a review copy.</p><section class="panel grid"><div><h3>Excel workbook</h3><p>One worksheet per strategic objective, with the twelve months and Year 1 results.</p><button data-action="export-xlsx">Download Excel (.xlsx)</button></div><div><h3>Structured data</h3><p>Export the full project for backup or a flat indicator table for analysis.</p><div class="actions"><button class="light" data-action="export-json">Project backup (.json)</button><button class="light" data-action="export-csv">Indicator matrix (.csv)</button></div></div><div><h3>Review copy</h3><p>Print the active section or save it as PDF from your browser.</p><button class="light" data-action="print">Print / PDF</button></div></section><section class="panel"><h3>Import a project backup</h3><p>Import replaces the current project in this browser. Export your current data first if you need to keep it.</p><label class="button light">Choose JSON backup<input id="import-file" type="file" accept=".json,application/json" hidden></label></section>`;
-const render=()=>{$('#tabs').innerHTML=tabsHtml();$('#app').innerHTML=tab==='setup'?setupWithReference():(tab==='matrix'||tab.startsWith('objective:'))?matrix():tab==='reviews'?reviews():tab==='quality'?quality():exportsView()};
-document.addEventListener('click',e=>{let t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;if(tab==='matrix')objectiveFilter='';else if(tab.startsWith('objective:'))objectiveFilter=tab.slice(10);render();return}let b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action,id=b.dataset.id;if(a==='restore-reference'){if(!confirm('Replace the current MEAL strategy with the attached workbook content?'))return;state=reference();objectiveFilter='eso-1';tab='objective:eso-1';save()}else if(a==='start-blank'){if(!confirm('Replace the current MEAL strategy with a blank one?'))return;state=blank();objectiveFilter='';tab='setup';save()}else if(a==='new-objective'){objectiveForm=true;editingObjective=null;tab='setup'}else if(a==='edit-objective'){objectiveForm=true;editingObjective=id;tab='setup'}else if(a==='cancel-objective'){objectiveForm=false;editingObjective=null}else if(a==='delete-objective'){if(state.indicators.some(i=>i.objectiveId===id))return alert('Move or delete indicators under this objective first.');if(!confirm('Delete this objective?'))return;state.objectives=state.objectives.filter(x=>x.id!==id);save()}else if(a==='new-indicator'){if(!state.objectives.length)return alert('Add a strategic objective first.');indicatorForm=true;editingIndicator=null;tab=objectiveFilter?'objective:'+objectiveFilter:'matrix'}else if(a==='edit-indicator'){indicatorForm=true;editingIndicator=id;tab='matrix'}else if(a==='cancel-indicator'){indicatorForm=false;editingIndicator=null}else if(a==='delete-indicator'){if(!confirm('Delete this indicator and all its monthly values?'))return;state.indicators=state.indicators.filter(x=>x.id!==id);save()}else if(a==='new-review'){reviewForm=true;editingReview=null;tab='reviews'}else if(a==='edit-review'){reviewForm=true;editingReview=id;tab='reviews'}else if(a==='cancel-review'){reviewForm=false;editingReview=null}else if(a==='delete-review'){if(!confirm('Delete this review decision?'))return;state.reviews=state.reviews.filter(x=>x.id!==id);save()}else if(a==='export-json')backup();else if(a==='export-csv')csvExport();else if(a==='export-xlsx')xlsxExport();else if(a==='print')print();render()});
-document.addEventListener('submit',e=>{let form=e.target;if(!['meta-form','objective-form','indicator-form','review-form'].includes(form.id))return;e.preventDefault();let v=Object.fromEntries(new FormData(form));if(form.id==='meta-form'){state.meta={...state.meta,...v}}else{let type=form.id.replace('-form',''),key=type==='objective'?'objectives':type==='indicator'?'indicators':'reviews',edit=type==='objective'?editingObjective:type==='indicator'?editingIndicator:editingReview,x=state[key].find(x=>x.id===edit);if(type==='objective'&&!v.title.trim())return alert('Add an objective title.');if(type==='indicator'&&(!v.objectiveId||!v.indicator.trim()))return alert('Link an objective and name the indicator.');if(!x){x={id:uid()};state[key].push(x)}Object.assign(x,v);if(type==='indicator'){x.planned=monthArray(x.planned);x.actual=monthArray(x.actual)}if(type==='objective'){objectiveForm=false;editingObjective=null}else if(type==='indicator'){indicatorForm=false;editingIndicator=null}else{reviewForm=false;editingReview=null}}save();render()});
-document.addEventListener('change',async e=>{let t=e.target;if(t.id==='objective-filter'){objectiveFilter=t.value;tab=objectiveFilter?'objective:'+objectiveFilter:'matrix';render();return}if(t.dataset.indicator){let i=state.indicators.find(x=>x.id===t.dataset.indicator);if(!i)return;let v=t.value;if(v!==''&&!Number.isFinite(+v))return alert('Enter a number or leave the cell blank.');if(t.dataset.year)i[t.dataset.kind+'Year']=v;else{i[t.dataset.kind]=monthArray(i[t.dataset.kind]);i[t.dataset.kind][+t.dataset.month]=v}save();render();return}if(t.id==='import-file'){let file=t.files[0];if(!file)return;try{let s=JSON.parse(await file.text());if(!s.meta||!Array.isArray(s.objectives)||!Array.isArray(s.indicators)||!Array.isArray(s.reviews))throw Error('Not a MEAL strategy backup');if(!confirm('Replace the current MEAL strategy in this browser?'))return;state=s;save();tab='setup';render()}catch(err){alert('Import failed: '+err.message)}}});
-const download=(name,content,mime)=>{let url=URL.createObjectURL(new Blob([content],{type:mime})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)};
-const safeName=()=>String(state.meta.project||state.meta.organisation||'MEAL-strategy').replace(/[^a-z0-9_-]+/gi,'-').slice(0,60);
-const backup=()=>download(`${safeName()}-MEAL-backup.json`,JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2),'application/json');
-const csvCell=x=>{let s=String(x??'');if(/^[=+@\-\t\r]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"'};
-const exportRows=()=>{let head=['Objective','Data to be collected','Data source','Data manager','Timing','Indicator','Unit','View',...MONTHS,'Y1'];let rows=[head];for(const o of state.objectives)for(const mode of ['planned','actual','difference'])for(const i of state.indicators.filter(x=>x.objectiveId===o.id))rows.push([objectiveName(o.id),i.data,i.source,i.manager,i.timing,i.indicator,i.unit,mode,...MONTHS.map((_,m)=>mode==='difference'?difference(i,m)??'':monthArray(i[mode])[m]),mode==='difference'?difference(i,'year')??'':annual(i,mode)??'']);return rows};
-const csvExport=()=>download(`${safeName()}-MEAL-matrix.csv`,'\ufeff'+exportRows().map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8');
-const workbookSheets=()=>{let sheets=[],header=['Objective','Data to be Collected','Data Source','Data Manager','Timing','Indicator',...MONTHS.map(m=>m.toUpperCase()),'Y1'];for(const o of state.objectives){let items=state.indicators.filter(i=>i.objectiveId===o.id),rows=[[],['Monitoring Evaluation and Accountability Satrategy (MEAL)'],[],['PLANNED'],[],header],objectiveLabel=o.sourceObjective||`${o.code||'Objective'}\n${o.title}`;const sectionRows=mode=>items.map((i,j)=>[j===0?objectiveLabel:'',i.data,i.source,i.manager,(mode==='planned'?i.timing:(i['source'+mode[0].toUpperCase()+mode.slice(1)+'Timing']??i.timing)),i.indicator,...MONTHS.map((_,m)=>mode==='difference'?difference(i,m)??'':hasNum(monthArray(i[mode])[m])?+monthArray(i[mode])[m]:''),mode==='difference'?difference(i,'year')??'':annual(i,mode)??'']);rows.push(...sectionRows('planned'),[],['ACTUAL'],[],header,...sectionRows('actual'),[],['DIFFERENCE'],[],header,...sectionRows('difference'));sheets.push({name:(o.sourceSheet||o.code||o.title||'Objective').slice(0,31),rows})}if(!sheets.length)sheets.push({name:'MEAL strategy',rows:[['Mission & Method · MEAL Strategy'],['Add a strategic objective and indicator in the tool.']]});if(state.reviews.length)sheets.push({name:'Review decisions',rows:[['Date','Objective','Finding','Stakeholder feedback','Learning','Decision','Next action','Owner','Due','Status'],...state.reviews.map(x=>[x.date,objectiveName(x.objectiveId),x.finding,x.feedback,x.learning,x.decision,x.action,x.owner,x.due,x.status])]});return sheets};
-const workbookWithFormulas=()=>{let sheets=workbookSheets();const col=n=>String.fromCharCode(65+n);for(let s=0;s<state.objectives.length;s++){let objective=state.objectives[s],items=state.indicators.filter(i=>i.objectiveId===objective.id),n=items.length,rows=sheets[s].rows;items.forEach((item,j)=>{let pi=6+j,ai=10+n+j,di=14+2*n+j,pr=pi+1,ar=ai+1,agg=item.aggregation||'Sum';for(const [index,kind,rowNumber] of [[pi,'planned',pr],[ai,'actual',ar]])if(agg!=='Manual'){let range=`G${rowNumber}:R${rowNumber}`,sourceZero=item['source'+kind[0].toUpperCase()+kind.slice(1)+'Y1Zero'],formula=agg==='Average'?`IF(COUNT(${range})=0,"",AVERAGE(${range}))`:agg==='Latest'?`IFERROR(LOOKUP(2,1/(ISNUMBER(${range})),${range}),"")`:sourceZero?`SUM(${range})`:`IF(COUNT(${range})=0,"",SUM(${range}))`;rows[index][18]={formula,cached:annual(item,kind)}}for(let c=6;c<=18;c++){let letter=col(c),p=`${letter}${pr}`,a=`${letter}${ar}`;rows[di][c]={formula:`IF(AND(ISNUMBER(${p}),ISNUMBER(${a})),${a}-${p},"")`,cached:c===18?difference(item,'year'):difference(item,c-6)}}})}return sheets};
-const xlsxExport=()=>download(`${safeName()}-MEAL-strategy.xlsx`,window.MEALXLSX.build(workbookWithFormulas()),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-$('#download-xlsx').onclick=xlsxExport;$('#download-backup').onclick=backup;save();render();
+const S=window.MMSuite;if(!S){console.error('MMSuite missing');return}
+const {esc,uid,now,today,currentYear,clone,fmtDate,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,shell,importButtons,exportButtons,download,csv,XLSX_TYPE,buildXlsx,readmeSheet,schemaSheet,metaSheet,parseXlsx,findSheet,rowsToObjects,metaFromSheet,bind,formData,stamp,edited,editorName,clamp,s,STATUSES}=S;
+
+const KEY='mission-method-meal-strategy-v3',LEGACY=['mm.meal-strategy.v2','mm.meal-strategy.v1'];
+const SO_KEY='mission-method-strategic-objectives-v2',SK_KEY='mission-method-strategy-kpis-v2',TOC_KEY='mission-method-theory-of-change-v2';
+const TABS=['Start','Reviews & learning','Quality check','Export'];
+const SOURCES=['kpi','toc','manual'];
+const DIRECTIONS=['Increase','Decrease','Maintain'];
+const RSTATUS=['Open','In progress','Done'];
+
+const blankIndicator=()=>({id:uid(),source:'manual',sourceId:'',code:'',objectiveCode:'',name:'',definition:'',unit:'',baseline:'',target:'',dataSource:'',manager:'',frequency:'Quarterly',verification:'',disaggregation:'',direction:'Increase',q1Planned:'',q1Actual:'',q2Planned:'',q2Actual:'',q3Planned:'',q3Actual:'',q4Planned:'',q4Actual:'',notes:'',lastEditedBy:'',lastEditedAt:''});
+const blankReview=()=>({id:uid(),date:today(),indicatorCode:'',objectiveCode:'',finding:'',feedback:'',learning:'',decision:'',action:'',owner:'',due:'',status:'Open',lastEditedBy:'',lastEditedAt:''});
+const blankMeta=()=>({organisation:'',project:'',year:currentYear,from:currentYear,to:currentYear+2,preparedBy:'',location:'',notes:''});
+const blank=()=>({version:3,meta:blankMeta(),indicators:[],reviews:[]});
+
+function migrateV2(v){const out=blank();try{out.meta={...out.meta,...(v.meta||{})};const objCode=new Map();(v.objectives||[]).forEach((o,i)=>objCode.set(o.id,o.code||'OBJ'+(i+1)));(v.indicators||[]).forEach((i,n)=>{const code='MEAL'+(n+1);const monthToQ=m=>{const arr=Array.isArray(m)?m:[];const q=[0,0,0,0];for(let k=0;k<12;k++){const v=Number(arr[k]);if(!isNaN(v)&&arr[k]!=='')q[Math.floor(k/3)]+=v}return q};const p=monthToQ(i.planned),a=monthToQ(i.actual);out.indicators.push({...blankIndicator(),code,objectiveCode:objCode.get(i.objectiveId)||'',name:i.indicator||'',definition:i.definition||'',unit:i.unit||'',baseline:i.baseline??'',target:i.target??'',dataSource:i.source||'',manager:i.manager||'',frequency:i.timing||'Quarterly',verification:i.verification||'',disaggregation:i.disaggregation||'',q1Planned:p[0]||'',q2Planned:p[1]||'',q3Planned:p[2]||'',q4Planned:p[3]||'',q1Actual:a[0]||'',q2Actual:a[1]||'',q3Actual:a[2]||'',q4Actual:a[3]||'',notes:i.notes||''})});(v.reviews||[]).forEach(r=>out.reviews.push({...blankReview(),date:r.date||today(),objectiveCode:objCode.get(r.objectiveId)||'',finding:r.finding||'',feedback:r.feedback||'',learning:r.learning||'',decision:r.decision||'',action:r.action||'',owner:r.owner||'',due:r.due||'',status:RSTATUS.includes(r.status)?r.status:'Open'}))}catch(e){console.warn('MEAL migrate failed',e)}return out}
+
+const storage=S.store({key:KEY,version:3,blank,legacy:LEGACY.map(k=>({key:k,migrate:migrateV2})),normalise:d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.meal-cleanup-v3',blank)||d;if(!Array.isArray(d.indicators))d.indicators=[];if(!Array.isArray(d.reviews))d.reviews=[];return d}});
+let db=storage.load(),tab='Start',dlg='',message='';
+const root=document.querySelector('#app');
+const persist=d=>{storage.save(d);};
+
+// ---------- Cross-tool readers ----------
+const readStore=k=>{try{const raw=localStorage.getItem(k);if(!raw)return null;const o=JSON.parse(raw);return o&&typeof o==='object'?o:null}catch{return null}};
+const readSO=()=>readStore(SO_KEY);
+const readSK=()=>readStore(SK_KEY);
+const readToC=()=>readStore(TOC_KEY);
+const soObjCount=()=>(readSO()?.objectives||[]).length;
+const skKpiCount=()=>(readSK()?.kpis||[]).length;
+const tocIndicatorCount=()=>(readToC()?.indicators||[]).length;
+
+// ---------- Views ----------
+function workspaceView(){
+ const m=db.meta;
+ const so=readSO(),sk=readSK(),toc=readToC();
+ const soObjs=(so?.objectives||[]).map(o=>({code:o.code,title:o.title,full:`${o.code} · ${o.title}`}));
+ const haveKPIs=skKpiCount(),haveToCIndicators=tocIndicatorCount(),haveSOObjs=soObjCount();
+ const importedKpiCount=db.indicators.filter(i=>i.source==='kpi').length;
+ const importedTocCount=db.indicators.filter(i=>i.source==='toc').length;
+ return `<section class="work-box" id="meal-workspace">
+  <div class="work-head">
+   <span class="work-badge">Your workspace</span>
+   <input class="work-org" data-field="organisation" value="${esc(m.organisation)}" placeholder="Add your organisation name →" aria-label="Organisation name">
+   <span class="work-status" id="work-status"></span>
+  </div>
+  <p class="work-hint">Edit anywhere — everything saves automatically. Pull your KPIs and ToC indicators in, then record actuals quarter by quarter.</p>
+  <div class="work-meta">
+   <label class="work-field"><span>Project / programme</span><input data-field="project" value="${esc(m.project)}" placeholder="e.g. 2026 annual plan"></label>
+   <label class="work-field"><span>Planning year</span><input data-field="year" type="number" value="${esc(m.year)}" min="2000" max="2200"></label>
+   <label class="work-field"><span>Prepared by</span><input data-field="preparedBy" value="${esc(m.preparedBy)}" placeholder="Your name or team"></label>
+   <label class="work-field"><span>Country or location</span><input data-field="location" value="${esc(m.location)}" placeholder="e.g. Kenya"></label>
+   <label class="work-field full"><span>Strategy notes</span><textarea data-field="notes" placeholder="Context for this MEAL plan — audience, review rhythm, data-protection notes.">${esc(m.notes)}</textarea></label>
+  </div>
+  <div class="work-sect-head">
+   <h3>Indicators — the backbone of your MEAL plan</h3>
+   <p class="tiny">Pull quarterly KPIs from Strategy KPIs and outcome/impact indicators from Theory of Change, then add any MEAL-only indicators you need. Each row tracks planned vs actual per quarter; difference is calculated automatically.</p>
+  </div>
+  <div class="work-imports">
+   <button class="button ${haveKPIs?'':'secondary'}" data-action="import-kpis" ${haveKPIs?'':'disabled'}>${haveKPIs?`↙ Import ${haveKPIs} KPI${haveKPIs===1?'':'s'} from Strategy KPIs${importedKpiCount?` (${importedKpiCount} already here)`:''}`:'↙ No KPIs found — open Strategy KPIs first'}</button>
+   <button class="button ${haveToCIndicators?'secondary':'secondary'}" data-action="import-toc" ${haveToCIndicators?'':'disabled'}>${haveToCIndicators?`↙ Import ${haveToCIndicators} indicator${haveToCIndicators===1?'':'s'} from Theory of Change${importedTocCount?` (${importedTocCount} already here)`:''}`:'↙ No ToC indicators found'}</button>
+   <button class="button secondary" data-action="add-indicator-row">+ Add MEAL-only indicator</button>
+  </div>
+  <div class="work-indicators">${db.indicators.length?db.indicators.map((ind,i)=>indicatorRowHtml(ind,i,soObjs)).join(''):'<p class="example-empty">No indicators yet. Click a button above to pull KPIs from Strategy KPIs, pathway indicators from the Theory of Change, or add a MEAL-only indicator manually.</p>'}</div>
+  <details class="work-extra"><summary>About MEAL · Monitoring · Evaluation · Accountability · Learning</summary>
+   <ul style="font-size:13px;line-height:1.5;color:var(--muted);padding-left:18px;margin:8px 0 0">
+    <li><b>Monitoring</b> — routine data collection against indicators (planned vs actual columns below).</li>
+    <li><b>Evaluation</b> — reasoning about whether change happened (Review &amp; learning tab).</li>
+    <li><b>Accountability</b> — making results visible to those your work affects (Review tab records feedback).</li>
+    <li><b>Learning</b> — turning each review into a decision for the next cycle.</li>
+   </ul>
+  </details>
+ </section>`;
+}
+
+function indicatorRowHtml(ind,i,soObjs){
+ const srcLabel=ind.source==='kpi'?'From KPIs':ind.source==='toc'?'From ToC':'MEAL-only';
+ const srcClass=ind.source==='kpi'?'src-kpi':ind.source==='toc'?'src-toc':'src-manual';
+ const diff=(q,p=null,a=null)=>{const P=p??Number(ind['q'+q+'Planned']),A=a??Number(ind['q'+q+'Actual']);if(isNaN(P)||isNaN(A)||ind['q'+q+'Planned']===''||ind['q'+q+'Actual']==='')return '—';const d=+(A-P).toFixed(2);const cls=d===0?'zero':d>0?'positive':'negative';return `<span class="diff-cell ${cls}">${d>0?'+':''}${d}</span>`};
+ const options=soObjs.map(o=>[o.code,o.full]);
+ const isLocked=ind.source!=='manual';
+ return `<article class="meal-row" data-row-id="${esc(ind.id)}">
+  <div class="meal-row-head">
+   <span class="meal-src ${srcClass}">${esc(srcLabel)}</span>
+   <strong class="meal-code">${esc(ind.code||'—')}</strong>
+   <span class="meal-objective">${isLocked?'<span class="eyebrow">Objective</span> '+esc(ind.objectiveCode||'—'):`<label class="inline-field"><span>Objective</span>${options.length?`<select data-field="objectiveCode" data-rid="${esc(ind.id)}"><option value="">—</option>${options.map(([v,l])=>`<option value="${esc(v)}" ${v===ind.objectiveCode?'selected':''}>${esc(l)}</option>`).join('')}</select>`:`<input data-field="objectiveCode" data-rid="${esc(ind.id)}" value="${esc(ind.objectiveCode)}" placeholder="ESO1">`}</label>`}</span>
+   <div class="row-actions"><button class="link" data-action="edit-indicator-full" data-id="${esc(ind.id)}">Full edit</button><button class="link danger" data-action="delete-indicator-row" data-id="${esc(ind.id)}">Delete</button></div>
+  </div>
+  <div class="meal-row-main">
+   <label class="meal-field flex2"><span>Indicator name</span><textarea data-field="name" data-rid="${esc(ind.id)}" placeholder="What is measured" ${isLocked?'readonly':''}>${esc(ind.name)}</textarea></label>
+   <label class="meal-field"><span>Unit</span><input data-field="unit" data-rid="${esc(ind.id)}" value="${esc(ind.unit)}" placeholder="e.g. people"></label>
+   <label class="meal-field"><span>Baseline</span><input data-field="baseline" data-rid="${esc(ind.id)}" value="${esc(ind.baseline)}" placeholder="0"></label>
+   <label class="meal-field"><span>Annual target</span><input data-field="target" data-rid="${esc(ind.id)}" value="${esc(ind.target)}" placeholder="100"></label>
+  </div>
+  <div class="meal-matrix">
+   <div class="meal-mrow meal-mhead"><div></div><div>Q1</div><div>Q2</div><div>Q3</div><div>Q4</div></div>
+   <div class="meal-mrow"><div class="meal-mlabel">Planned</div>${[1,2,3,4].map(q=>`<div><input data-field="q${q}Planned" data-rid="${esc(ind.id)}" type="number" step="any" value="${esc(ind['q'+q+'Planned'])}" placeholder="—" aria-label="Q${q} planned"></div>`).join('')}</div>
+   <div class="meal-mrow"><div class="meal-mlabel">Actual</div>${[1,2,3,4].map(q=>`<div><input data-field="q${q}Actual" data-rid="${esc(ind.id)}" type="number" step="any" value="${esc(ind['q'+q+'Actual'])}" placeholder="—" aria-label="Q${q} actual"></div>`).join('')}</div>
+   <div class="meal-mrow meal-mdiff"><div class="meal-mlabel">Difference</div>${[1,2,3,4].map(q=>`<div class="meal-diff-cell">${diff(q)}</div>`).join('')}</div>
+  </div>
+  <div class="meal-row-meta">
+   <label class="meal-field"><span>Data source</span><input data-field="dataSource" data-rid="${esc(ind.id)}" value="${esc(ind.dataSource)}" placeholder="System, survey or register"></label>
+   <label class="meal-field"><span>Data manager</span><input data-field="manager" data-rid="${esc(ind.id)}" value="${esc(ind.manager)}" placeholder="Who collects it"></label>
+   <label class="meal-field"><span>Verification</span><input data-field="verification" data-rid="${esc(ind.id)}" value="${esc(ind.verification)}" placeholder="Where a reviewer verifies"></label>
+   <label class="meal-field"><span>Disaggregation</span><input data-field="disaggregation" data-rid="${esc(ind.id)}" value="${esc(ind.disaggregation)}" placeholder="Groups to report separately"></label>
+  </div>
+ </article>`;
+}
+
+function reviewsView(){
+ const rows=db.reviews.map(r=>`<tr><td>${esc(fmtDate(r.date))}</td><td>${esc(r.objectiveCode||'—')}${r.indicatorCode?' · '+esc(r.indicatorCode):''}</td><td><b>${esc(r.finding||'—')}</b>${r.feedback?`<br><small>Feedback: ${esc(r.feedback)}</small>`:''}</td><td>${esc(r.learning||'—')}</td><td>${esc(r.decision||'—')}${r.action?`<br><small>Next: ${esc(r.action)}</small>`:''}</td><td>${esc(r.owner||'—')}<br><small>${esc(fmtDate(r.due)||'')}</small></td><td>${pill(r.status||'Open')}</td><td><div class="row-actions"><button class="link" data-action="edit-review" data-id="${esc(r.id)}">Edit</button><button class="link danger" data-action="delete-review" data-id="${esc(r.id)}">Delete</button></div></td></tr>`);
+ return `<div class="rowhead section-head"><div><h2>Review &amp; learning</h2><p>A MEAL plan is useful when evidence leads to a decision. Each review records what the data shows, what was heard from stakeholders, what you learned, and the decision that follows.</p></div><button class="button" data-action="new-review">+ Record a review</button></div>${table(['Date','Objective / indicator','Finding','Learning','Decision &amp; next action','Owner &amp; due','Status',''],rows,'No reviews yet. Record one at the end of a quarter when planned-vs-actual data is available.')}`;
+}
+
+function qualityView(){
+ const inds=db.indicators;
+ const issues=[];
+ if(!db.meta.organisation)issues.push('Add the organisation name so the strategy can be identified.');
+ if(!inds.length)issues.push('No indicators yet — pull KPIs from Strategy KPIs or add a MEAL-only indicator.');
+ inds.forEach(i=>{
+  const lbl=i.code||i.name||'Unnamed indicator';
+  if(!i.name)issues.push(`${lbl}: write a measurable indicator name.`);
+  if(!i.unit)issues.push(`${lbl}: name the unit of measure.`);
+  if(!i.dataSource)issues.push(`${lbl}: name the data source.`);
+  if(!i.manager)issues.push(`${lbl}: assign a data manager.`);
+  if(!i.target)issues.push(`${lbl}: set an annual target.`);
+  const planned=[1,2,3,4].some(q=>i['q'+q+'Planned']!=='');
+  if(!planned)issues.push(`${lbl}: enter at least one quarterly planned value.`);
+ });
+ const actualsCount=inds.reduce((n,i)=>n+[1,2,3,4].filter(q=>i['q'+q+'Actual']!=='').length,0);
+ return `<div class="rowhead section-head"><div><h2>Quality check</h2><p>Review completeness before sharing or exporting. These suggestions do not block export — a draft is fine while details are being agreed.</p></div></div>
+  <div class="grid four">${card('Indicators',inds.length,'Total being tracked')}${card('From KPIs',inds.filter(i=>i.source==='kpi').length,'Imported from Strategy KPIs')}${card('From ToC',inds.filter(i=>i.source==='toc').length,'Imported from Theory of Change')}${card('Actuals entered',actualsCount,'Quarterly cells with a value')}</div>
+  <section class="panel"><h3>${issues.length?'Suggestions to resolve ('+issues.length+')':'Ready for review'}</h3>${issues.length?`<ul class="checks">${issues.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p>The core structure is complete. Check evidence quality and the meaning of each result before sharing.</p>'}</section>`;
+}
+
+function exportView(){
+ return `${exportButtons()}<section class="panel"><h2>What the Excel workbook contains</h2><ul style="font-size:13px;line-height:1.5"><li>Read me — how to use the workbook offline</li><li>Meta — organisation, year, prepared by</li><li>Indicators — every indicator with baseline, target, quarterly planned/actual and calculated difference</li><li>Reviews — every review with findings, learning and decisions</li><li>_schema — field list for round-trip import</li></ul></section>`;
+}
+
+// ---------- Review modal ----------
+function reviewModal(r){
+ const isNew=!r;r=r||blankReview();
+ const indOptions=db.indicators.map(i=>[i.code,`${i.code} · ${i.name||'untitled'}`]);
+ const objOptions=[...new Set(db.indicators.map(i=>i.objectiveCode).filter(Boolean))].map(c=>[c,c]);
+ return modal(isNew?'Record a review':'Edit review',`<form data-form="review" data-id="${esc(r.id||'')}" class="form">
+  ${field('Review date','date',r.date,'date','required')}
+  ${objOptions.length?select('Objective (optional)','objectiveCode',objOptions,r.objectiveCode,'','Not linked'):field('Objective (optional)','objectiveCode',r.objectiveCode)}
+  ${indOptions.length?select('Indicator (optional)','indicatorCode',indOptions,r.indicatorCode,'The specific indicator this review concerns.','Not linked'):field('Indicator (optional)','indicatorCode',r.indicatorCode)}
+  ${area('What does the evidence show?','finding',r.finding,'Describe the result or gap and reference the source.')}
+  ${area('Community or stakeholder feedback','feedback',r.feedback,'Themes heard — avoid naming individuals.')}
+  ${area('What did we learn?','learning',r.learning,'Explanation, uncertainty or lesson for the next cycle.')}
+  ${area('Decision or adjustment','decision',r.decision,'What was decided after reviewing the evidence.')}
+  ${field('Next action','action',r.action,'text','','What happens next.')}
+  ${field('Action owner','owner',r.owner)}
+  ${field('Due date','due',r.due,'date')}
+  ${select('Status','status',RSTATUS,r.status||'Open')}
+  ${formEnd(isNew?'Save review':'Save review',{deleteId:isNew?'':r.id,deleteLabel:'Delete review'})}
+ </form>`);
+}
+
+// ---------- Actions ----------
+function action(el){
+ const a=el.dataset.action,id=el.dataset.id;
+ if(a==='close'){dlg='';render();return}
+ if(a==='add-indicator-row'){
+  const i={...blankIndicator(),code:'MEAL'+(db.indicators.filter(x=>x.source==='manual').length+1),source:'manual'};
+  db.indicators.push(i);persist(db);render();return;
+ }
+ if(a==='delete-indicator-row'){
+  if(!confirm('Delete this indicator? Cannot be undone.'))return;
+  db.indicators=db.indicators.filter(i=>i.id!==id);persist(db);render();return;
+ }
+ if(a==='import-kpis'){importKPIs();return}
+ if(a==='import-toc'){importToC();return}
+ if(a==='new-review'){dlg=reviewModal();render();return}
+ if(a==='edit-review'){const r=db.reviews.find(x=>x.id===id);if(r){dlg=reviewModal(r);render()}return}
+ if(a==='delete-review'){if(!confirm('Delete this review? Cannot be undone.'))return;db.reviews=db.reviews.filter(r=>r.id!==id);persist(db);message='Review deleted.';render();return}
+ if(a==='delete'){
+  if(!confirm('Delete this review? Cannot be undone.'))return;
+  db.reviews=db.reviews.filter(r=>r.id!==id);
+  persist(db);dlg='';message='Review deleted.';render();return;
+ }
+ if(a==='edit-indicator-full'){alert('Full edit coming shortly — for now, edit any field inline in the workspace.');return}
+ if(a==='xlsx'){try{download('Mission-and-Method-MEAL-strategy.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){downloadCsv();return}
+ if(a==='print'){window.print();return}
+ if(a==='export-json'){download('Mission-and-Method-MEAL-strategy.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Mission-and-Method-MEAL-strategy-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+}
+
+function submit(form){
+ const kind=form.dataset.form,d=formData(form);
+ if(kind==='review'){
+  const existing=db.reviews.find(r=>r.id===form.dataset.id);
+  const r=existing||{...blankReview()};
+  Object.assign(r,{date:d.date,objectiveCode:d.objectiveCode||'',indicatorCode:d.indicatorCode||'',finding:s(d.finding),feedback:s(d.feedback),learning:s(d.learning),decision:s(d.decision),action:s(d.action),owner:s(d.owner),due:d.due||'',status:d.status||'Open'});
+  stamp(r);
+  if(!existing)db.reviews.push(r);
+  persist(db);dlg='';message='Review saved.';render();return;
+ }
+}
+
+// ---------- Importers ----------
+function importKPIs(){
+ const sk=readSK();if(!sk||!sk.kpis?.length){message='No KPIs found in Strategy KPIs. Open that tool first.';render();return}
+ const existing=new Set(db.indicators.filter(i=>i.source==='kpi').map(i=>i.sourceId||i.code));
+ let added=0,updated=0;
+ sk.kpis.forEach(k=>{
+  const found=db.indicators.find(i=>i.source==='kpi'&&(i.sourceId===k.id||i.code===k.code));
+  const base={source:'kpi',sourceId:k.id,code:k.code||'',objectiveCode:k.objectiveCode||'',name:k.name||'',definition:k.definition||'',unit:k.unit||'',baseline:String(k.baseline||''),target:String(k.target||''),dataSource:k.source||'',manager:k.dataOwner||k.owner||'',frequency:k.frequency||'Quarterly',direction:k.direction||'Increase',q1Planned:String(k.q1||''),q2Planned:String(k.q2||''),q3Planned:String(k.q3||''),q4Planned:String(k.q4||'')};
+  if(found){Object.assign(found,base);stamp(found);updated++}
+  else{const i={...blankIndicator(),...base};stamp(i);db.indicators.push(i);added++}
+ });
+ // Also pull dated actuals from sk.results back into actual quarters
+ (sk.results||[]).forEach(r=>{
+  const i=db.indicators.find(x=>x.source==='kpi'&&x.code===r.kpiCode);if(!i)return;
+  const d=new Date(r.date);if(isNaN(d))return;
+  const q=Math.floor(d.getMonth()/3)+1;const key='q'+q+'Actual';
+  if(i[key]===''||i[key]==null)i[key]=String(r.value);
+ });
+ persist(db);message=`KPIs imported — ${added} added, ${updated} refreshed, actuals seeded from Strategy KPIs results.`;render();
+}
+
+function importToC(){
+ const toc=readToC();if(!toc||!toc.indicators?.length){message='No indicators found in the Theory of Change. Open that tool first.';render();return}
+ const paths=new Map();(toc.pathways||[]).forEach((p,idx)=>paths.set(p.id,{objective:p.objective||`Pathway ${idx+1}`,idx}));
+ let added=0,updated=0;
+ toc.indicators.forEach((ind,idx)=>{
+  const code='TOC'+(idx+1);
+  const found=db.indicators.find(i=>i.source==='toc'&&(i.sourceId===ind.id||i.code===code));
+  const pw=paths.get(ind.pathwayId);
+  const objCode=(pw?.objective||'').split(' · ')[0]||'';
+  const base={source:'toc',sourceId:ind.id,code,objectiveCode:objCode,name:ind.name||'',definition:ind.definition||'',unit:ind.unit||'',baseline:String(ind.baseline||''),target:String(ind.target||''),dataSource:ind.source||'',manager:ind.owner||'',frequency:ind.frequency||'Quarterly',verification:ind.verification||'',notes:ind.notes||''};
+  if(found){Object.assign(found,base);stamp(found);updated++}
+  else{const i={...blankIndicator(),...base};stamp(i);db.indicators.push(i);added++}
+ });
+ persist(db);message=`ToC indicators imported — ${added} added, ${updated} refreshed.`;render();
+}
+
+// ---------- Excel round-trip ----------
+function buildWorkbook(withData){
+ const sheets=[
+  readmeSheet('MEAL Strategy',[
+   'This workbook holds a MEAL strategy exported from the Mission & Method platform.',
+   'Indicators are the quarterly tracking rows — planned and actual per quarter, difference calculated.',
+   'Review decisions capture what you learned from the data and what you decided to change.',
+   'Importing this workbook back to the tool updates every row by code. Changing codes creates new rows.'
+  ]),
+  metaSheet(db.meta),
+  {name:'Indicators',rows:[
+   ['Code','Source','Objective','Name','Unit','Baseline','Target','Data source','Data manager','Verification','Frequency','Direction','Q1 planned','Q1 actual','Q1 difference','Q2 planned','Q2 actual','Q2 difference','Q3 planned','Q3 actual','Q3 difference','Q4 planned','Q4 actual','Q4 difference','Notes'],
+   ...(withData?db.indicators.map(i=>[i.code,i.source,i.objectiveCode,i.name,i.unit,i.baseline,i.target,i.dataSource,i.manager,i.verification,i.frequency,i.direction,i.q1Planned,i.q1Actual,qDiff(i,1),i.q2Planned,i.q2Actual,qDiff(i,2),i.q3Planned,i.q3Actual,qDiff(i,3),i.q4Planned,i.q4Actual,qDiff(i,4),i.notes]):[])
+  ]},
+  {name:'Reviews',rows:[
+   ['Date','Objective','Indicator','Finding','Feedback','Learning','Decision','Next action','Owner','Due','Status'],
+   ...(withData?db.reviews.map(r=>[r.date,r.objectiveCode,r.indicatorCode,r.finding,r.feedback,r.learning,r.decision,r.action,r.owner,r.due,r.status]):[])
+  ]},
+  schemaSheet({Indicators:'code,source,objectiveCode,name,unit,baseline,target,dataSource,manager,verification,frequency,direction,q1Planned,q1Actual,q1Diff,q2Planned,q2Actual,q2Diff,q3Planned,q3Actual,q3Diff,q4Planned,q4Actual,q4Diff,notes',Reviews:'date,objectiveCode,indicatorCode,finding,feedback,learning,decision,action,owner,due,status'})
+ ];
+ return buildXlsx(sheets);
+}
+function qDiff(i,q){const p=Number(i['q'+q+'Planned']),a=Number(i['q'+q+'Actual']);if(isNaN(p)||isNaN(a)||i['q'+q+'Planned']===''||i['q'+q+'Actual']==='')return '';return +(a-p).toFixed(2)}
+function downloadCsv(){
+ const rows=[['Code','Source','Objective','Name','Unit','Baseline','Target','Q1 planned','Q1 actual','Q2 planned','Q2 actual','Q3 planned','Q3 actual','Q4 planned','Q4 actual'],...db.indicators.map(i=>[i.code,i.source,i.objectiveCode,i.name,i.unit,i.baseline,i.target,i.q1Planned,i.q1Actual,i.q2Planned,i.q2Actual,i.q3Planned,i.q3Actual,i.q4Planned,i.q4Actual])];
+ download('Mission-and-Method-MEAL-matrix.csv',csv(rows),'text/csv;charset=utf-8');
+}
+
+// ---------- Live editing wiring (same pattern as ToC workspace) ----------
+function wireWorkspace(root){
+ const box=root.querySelector('#meal-workspace');if(!box)return;
+ const status=box.querySelector('#work-status');
+ let timer;const setStatus=t=>{if(status)status.textContent=t};
+ const schedule=()=>{setStatus('Saving…');clearTimeout(timer);timer=setTimeout(()=>{persist(db);setStatus('✓ Saved');setTimeout(()=>setStatus(''),1500)},400)};
+ // Meta inputs (no data-rid, no indicator row)
+ box.querySelectorAll('.work-meta [data-field]').forEach(el=>el.addEventListener('input',()=>{const k=el.dataset.field;db.meta[k]=el.type==='number'?(el.value===''?'':Number(el.value)):el.value;schedule()}));
+ // Indicator row fields
+ box.querySelectorAll('[data-rid]').forEach(el=>{
+  el.addEventListener('input',()=>{
+   const rid=el.dataset.rid,f=el.dataset.field;
+   const i=db.indicators.find(x=>x.id===rid);if(!i)return;
+   i[f]=el.value;stamp(i);schedule();
+   // If a quarterly value changed, update that row's difference cell in place
+   if(/^q[1-4](Planned|Actual)$/.test(f)){
+    const q=f[1];
+    const row=el.closest('.meal-row');if(!row)return;
+    const diffCells=row.querySelectorAll('.meal-diff-cell');
+    const cell=diffCells[Number(q)-1];if(!cell)return;
+    const p=Number(i['q'+q+'Planned']),a=Number(i['q'+q+'Actual']);
+    if(i['q'+q+'Planned']===''||i['q'+q+'Actual']===''||isNaN(p)||isNaN(a)){cell.innerHTML='—';return}
+    const d=+(a-p).toFixed(2),cls=d===0?'zero':d>0?'positive':'negative';
+    cell.innerHTML=`<span class="diff-cell ${cls}">${d>0?'+':''}${d}</span>`;
+   }
+  });
+ });
+}
+
+// ---------- Render ----------
+const app={tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:file=>importXlsxFile(file),importJson:file=>importJsonFile(file)};
+
+async function importXlsxFile(file){
+ try{
+  const data=await parseXlsx(await file.arrayBuffer());
+  const indRows=rowsToObjects(findSheet(data,'Indicators'));
+  const revRows=rowsToObjects(findSheet(data,'Reviews'));
+  const meta=metaFromSheet(findSheet(data,'Meta'));
+  if(meta)Object.assign(db.meta,meta);
+  if(indRows?.length){
+   db.indicators=indRows.map(r=>({...blankIndicator(),code:r.Code||r.code||'',source:(r.Source||r.source||'manual').toLowerCase(),objectiveCode:r.Objective||r.objectiveCode||'',name:r.Name||r.name||'',unit:r.Unit||r.unit||'',baseline:String(r.Baseline||''),target:String(r.Target||''),dataSource:r['Data source']||r.dataSource||'',manager:r['Data manager']||r.manager||'',verification:r.Verification||r.verification||'',frequency:r.Frequency||r.frequency||'Quarterly',direction:r.Direction||r.direction||'Increase',q1Planned:String(r['Q1 planned']||r.q1Planned||''),q1Actual:String(r['Q1 actual']||r.q1Actual||''),q2Planned:String(r['Q2 planned']||r.q2Planned||''),q2Actual:String(r['Q2 actual']||r.q2Actual||''),q3Planned:String(r['Q3 planned']||r.q3Planned||''),q3Actual:String(r['Q3 actual']||r.q3Actual||''),q4Planned:String(r['Q4 planned']||r.q4Planned||''),q4Actual:String(r['Q4 actual']||r.q4Actual||''),notes:r.Notes||r.notes||''}));
+  }
+  if(revRows?.length){
+   db.reviews=revRows.map(r=>({...blankReview(),date:r.Date||r.date||today(),objectiveCode:r.Objective||r.objectiveCode||'',indicatorCode:r.Indicator||r.indicatorCode||'',finding:r.Finding||r.finding||'',feedback:r.Feedback||r.feedback||'',learning:r.Learning||r.learning||'',decision:r.Decision||r.decision||'',action:r['Next action']||r.action||'',owner:r.Owner||r.owner||'',due:r.Due||r.due||'',status:r.Status||r.status||'Open'}));
+  }
+  persist(db);message='Excel imported.';render();
+ }catch(e){message='Excel import failed: '+e.message;render()}
+}
+async function importJsonFile(file){
+ try{const d=JSON.parse(await file.text());if(!d||typeof d!=='object'||d.version!==3)throw new Error('Not a MEAL Strategy v3 backup');db=d;persist(db);message='JSON imported.';render()}catch(e){message='JSON import failed: '+e.message;render()}
+}
+
+function render(){
+ const views={'Start':startView,'Reviews & learning':reviewsView,'Quality check':qualityView,'Export':exportView};
+ root.innerHTML=shell({eyebrow:'Delivery & learning · MEAL Strategy',title:'MEAL Strategy',intro:'Monitoring, Evaluation, Accountability and Learning. Pull KPIs from Strategy KPIs, pull indicators from the Theory of Change, track planned vs actual per quarter, and record the decisions that follow each review.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=4',label:'Review Module Four'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ bind(root,app);
+ if(tab==='Start')wireWorkspace(root);
+}
+
+function startView(){
+ return `${window.MMExample?.renderIntegration?.('meal-strategy')||''}${workspaceView()}`;
+}
+
+persist(db);render();
 })();
