@@ -112,6 +112,35 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:800px){.grid.three{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.split{grid-template-columns:1fr}.shell{padding:13px}.grid,.grid.three,.grid.four,.form{grid-template-columns:1fr}.field.full{grid-column:auto}.top{align-items:start}}
 @media print{.preview,.top,.nav,.hero .toolbar,.button,.link,.modal,.no-print{display:none!important}.shell{max-width:none;padding:0}.panel,.card{box-shadow:none;break-inside:avoid}body{background:white}}
+/* shared worked example box (top of each tool's Start tab) */
+.example-box{background:linear-gradient(180deg,#fff8ea,#fffcf5);border:1px dashed #e4c789;border-radius:16px;padding:14px 18px 18px;margin:0 0 18px}
+.example-box[open]{padding-bottom:18px}
+.example-summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 0;outline:none}
+.example-summary::-webkit-details-marker{display:none}
+.example-summary::marker{display:none;content:''}
+.example-summary::before{content:'▸';display:inline-block;transition:transform .15s;color:#8a6a2b;font-size:12px}
+.example-box[open] .example-summary::before{transform:rotate(90deg)}
+.example-badge{display:inline-block;padding:3px 10px;border-radius:99px;background:var(--sun);color:#5c3f06;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.example-title{font-weight:900;color:var(--deep);font-size:15px}
+.example-intro{font-size:13px;color:var(--muted);margin:8px 0 10px}
+.example-mv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 12px}
+.example-mv>div{background:#fff;border:1px solid #ead6b7;border-radius:10px;padding:10px 12px}
+.example-mv b{display:block;color:var(--deep);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.example-mv p{margin:0;color:var(--ink);font-size:13px;font-weight:400;line-height:1.4}
+.example-objectives{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.example-eso{background:#fff;border:1px solid #ead6b7;border-radius:10px;padding:12px}
+.example-eso h4{margin:0 0 2px;font:900 14px/1.3 'Nunito Sans',sans-serif;color:var(--deep)}
+.example-eso .lbl{display:block;font:900 10px/1 'Nunito Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-top:9px}
+.example-eso .val{font-size:13px;color:var(--ink);margin:3px 0 0;line-height:1.4}
+.example-chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:4px 0 8px}
+.example-chain .step{background:#fff;border:1px solid #ead6b7;border-radius:10px;padding:10px}
+.example-chain .step b{font:900 10px/1 'Nunito Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:5px}
+.example-chain .step p{margin:0;font-size:12px;line-height:1.4;color:var(--ink)}
+.example-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.example-foot .tiny{color:var(--muted)}
+@media(max-width:900px){.example-mv,.example-objectives{grid-template-columns:1fr}.example-chain{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.example-chain{grid-template-columns:1fr}}
+@media print{.example-box{display:none}}
 /* timeline (Gantt) */
 .gantt table{min-width:980px}
 .gantt th:first-child,.gantt td:first-child{position:sticky;left:0;z-index:2;background:#fff;min-width:260px;max-width:340px}

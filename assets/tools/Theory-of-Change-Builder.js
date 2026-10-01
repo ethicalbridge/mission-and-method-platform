@@ -85,7 +85,7 @@ function dashboard(){
 
 function startView(){
  const m=db.meta;
- return `${journeyPanel()}${dashboard()}
+ return `${window.MMExample?.renderBox?.('theory-of-change')||''}${journeyPanel()}${dashboard()}
   <div class="notice">A Theory of Change explains how your work contributes to the change you want. Build it level by level: Input → Activity → Output → Outcome → Impact, with the assumptions that must hold between each step.</div>
   <section class="panel"><h2>Project details</h2>
    <form data-form="meta" class="form">
@@ -110,7 +110,7 @@ function startView(){
    <div class="actions">
     ${soReady()?`<button class="button" data-action="import-so-direct">Bring in objectives from Strategic Objectives (${soObjectives().length})</button>`:''}
     <button class="button ${soReady()?'secondary':''}" data-action="add-pathway">Add pathway</button>
-    <button class="button secondary" data-action="load-example">Load Ethical Bridge example</button>
+    <button class="button secondary" data-action="load-example">Load worked example</button>
     ${importButtons('')}
    </div>
   </section>`;
@@ -299,7 +299,7 @@ function action(el){
  }
  if(a==='load-example'){
   if((db.pathways.length>1||db.pathways.some(p=>p.output||p.outcome))&&!confirm('Replace current pathways with an example?'))return;
-  db=window.MMExample?.ethicalBridge?.theoryOfChange?.()||exampleDb();persist(db);message='Example loaded (Ethical Bridge case — same across the Impact Suite).';render();return;
+  db=window.MMExample?.theoryOfChange?.()||exampleDb();persist(db);message='Example loaded (Harvest Learning Foundation — the same worked example runs across the Impact Suite).';render();return;
  }
  if(a==='download-template'){try{download('Mission-and-Method-theory-of-change-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE);message='Template downloaded.';render()}catch(e){message='Template failed: '+e.message;render()}return}
  if(a==='export-json'){download('Mission-and-Method-theory-of-change.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}

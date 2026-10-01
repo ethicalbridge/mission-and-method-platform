@@ -1,72 +1,75 @@
-/* Mission & Method — shared example dataset.
-   One organisation (Ethical Bridge) walks through every tool so users
-   see how the same case flows: strategic objectives → theory of change
-   → KPIs & annual planning → MEAL → gantt → donor tools.
+/* Mission & Method — shared worked example.
+   One fictional organisation (Harvest Learning Foundation) is shown as a
+   worked example in every tool, so users can see what a filled-in workspace
+   looks like with the real field structure. Each tool displays an inline
+   example reference box at the top of its Start tab (window.MMExample.renderBox).
+   The Load button in that box populates the full workspace with the example.
 
-   Each tool's "Load example" button reads from window.MMExample.
-   Objectives use the same ESO/ISO codes everywhere so cross-tool
-   integration (import / round-trip) joins the data correctly. */
+   ESO/ISO codes stay consistent across tools, so the cross-tool imports
+   (Strategic Objectives → Theory of Change → Strategy KPIs) all join. */
 (()=>{'use strict';
 const now=()=>new Date().toISOString();
 const today=()=>new Date().toISOString().slice(0,10);
 const year=new Date().getFullYear();
-const uid=prefix=>`${prefix||'id'}-${globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2)}`;
+const uid=prefix=>`${prefix||'id'}-${(globalThis.crypto&&globalThis.crypto.randomUUID?globalThis.crypto.randomUUID():Math.random().toString(36).slice(2))}`;
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 
-// ---------- Shared organisation profile ----------
+// ---------- Shared organisation profile (fictional) ----------
 const org={
- organisation:'Ethical Bridge (example)',
- country:'Global',
+ organisation:'Harvest Learning Foundation (example)',
+ country:'East Africa',
  dates:`${year}–${year+3}`,
- preparedBy:'Example team',
+ preparedBy:'Example leadership team',
  version:'0.1',
- notes:'This is a shared example used across every Impact Suite tool so you can see how the same case flows through strategic objectives, theory of change and annual planning. Replace it with your own work when you are ready.',
- mission:'Connect people, organisations and opportunities that contribute to ethical, inclusive and sustainable change.',
- vision:'A globally connected ethical ecosystem where local organisations and communities can thrive.',
- values:'Ethics\nTransparency\nCommunity empowerment\nSustainability'
+ notes:'This is a shared worked example used across every Impact Suite tool so you can see what a completed workspace looks like. Delete it before saving your own work.',
+ mission:'Equip rural youth with practical skills in sustainable agriculture, numeracy and entrepreneurship so they can build livelihoods at home.',
+ vision:'Rural communities where every young person has the skills, confidence and networks to build a thriving life.',
+ values:'Learning\nDignity\nPartnership\nEvidence',
+ impactGoal:'Rural communities retain and grow young talent that drives productive, climate-adapted local economies.'
 };
 
 // ---------- External Strategic Objectives (ESOs) ----------
 const external=[
  {
   code:'ESO1',
-  title:'Build a global hub to connect with ethical organisations',
-  rationale:'Ethical local organisations often lack visibility and access to international networks. There is limited awareness and connection between global actors and grassroots changemakers.',
-  desiredChange:'Local ethical organisations gain global recognition and access to new collaborations. Enhanced trust and engagement between local and international actors, leading to stronger partnerships.',
-  impactStatement:'A globally connected ethical ecosystem empowering local organisations and amplifying social, environmental and economic justice movements.',
-  actions:['Develop and launch a searchable digital hub','Publish transparent, verified organisation profiles','Build outreach to grassroots organisations in under-represented regions'],
-  owner:'Director',
+  title:'Equip 5,000 rural youth with practical livelihood skills',
+  rationale:'Rural youth face few pathways to sustainable livelihoods: schools cover theory, few teach practical agriculture, numeracy or entrepreneurship, and migration to cities often leads to precarious work.',
+  desiredChange:'Young people graduate ready to earn a living locally in agriculture, trades or small business, with the confidence and networks to sustain it.',
+  impactStatement:'Rural communities retain young talent that drives productive, climate-adapted local economies.',
+  actions:['Co-design the curriculum with 20 farmer-mentors elected by their communities','Deliver 60 cohorts across 15 districts over three years','Build a graduate alumni network that keeps learning alive'],
+  owner:'Programme director',
   priority:'High'
  },
  {
   code:'ESO2',
-  title:'Promote ethical opportunities across borders',
-  rationale:'Access to ethical and impactful opportunities remains fragmented and geographically limited. Many individuals struggle to find pathways to contribute meaningfully to social and environmental change.',
-  desiredChange:'Increased participation in ethical employment and volunteering worldwide. Greater inclusion and diversity in global impact initiatives.',
-  impactStatement:'A world where ethical and sustainable work becomes the norm, driving inclusive global progress and shared prosperity.',
-  actions:['Curate and publish ethical employment, volunteering and internship opportunities','Help people assess fit, ethics and safeguards for each opportunity','Connect applicants with responsible organisations'],
-  owner:'Programme lead',
+  title:'Build five demonstration farms as community learning hubs',
+  rationale:'Classroom learning only sticks when learners see methods working in the field; without local demonstration sites, graduates revert to inherited practices and gains fade.',
+  desiredChange:'Every participating district has a working demonstration farm where learners, farmers and partners see, test and adapt sustainable methods year-round.',
+  impactStatement:'Districts have visible, trusted centres of practice that keep improving as communities use them.',
+  actions:['Secure land partnerships with five district authorities','Design each farm with regional agronomists and lead farmers','Run quarterly open days in every operating hub'],
+  owner:'Field operations lead',
   priority:'High'
  },
  {
   code:'ESO3',
-  title:'Multiply our impact: diversify funding and build long-term partnerships',
-  rationale:'Reliance on limited funding sources and short-term partnerships restricts growth, innovation and organisational resilience.',
-  desiredChange:'Increased financial resilience through diversified income sources and long-term strategic partnerships that strengthen innovation, collaboration and organisational sustainability.',
-  impactStatement:'A resilient and financially sustainable organisation powered by diversified revenue streams and trusted long-term partnerships, enabling Ethical Bridge to scale its mission and create lasting systemic impact.',
-  actions:['Map and cultivate aligned funders across multiple regions','Launch an individual giving pathway','Secure three multi-year strategic partnerships'],
-  owner:'Fundraising lead',
-  priority:'High'
+  title:'Grow a mentor network that sustains learning after graduation',
+  rationale:'Short training programmes rarely change long-term outcomes on their own; graduates need peer and expert support to apply, adapt and persist with new methods.',
+  desiredChange:'Every graduate stays connected to a trained mentor and peer group for at least twelve months after their cohort ends.',
+  impactStatement:'Graduates keep applying what they learned, improve their methods year on year and feed knowledge back into the next cohorts.',
+  actions:['Train 150 mentors drawn from alumni and local experts','Run monthly peer-circle gatherings in each district','Measure one-year application and income effects for every cohort'],
+  owner:'Alumni & mentorship lead',
+  priority:'Medium'
  }
 ];
 
 // ---------- Internal Strategic Objectives (ISOs) ----------
 const internal=[
- {code:'ISO1',title:'Strengthen governance and ethical foundations',rationale:'Trust in the hub depends on strong governance, clear decision rights and transparent ethics.',desiredChange:'Governance, policies and ethical standards that match the trust the hub asks for.',actions:['Finalise governance code and decision framework','Publish ethics and verification standards','Hold quarterly board reviews'],owner:'Board chair',priority:'High'},
- {code:'ISO2',title:'Build a learning culture',rationale:'The hub must adapt as it learns from users; a learning culture makes that possible.',desiredChange:'Routines that turn evidence into decisions across the team.',actions:['Monthly data review','Quarterly reflection sessions','Public learning notes'],owner:'MEAL officer',priority:'Medium'},
- {code:'ISO3',title:'Invest in digital and operational infrastructure',rationale:'A reliable hub needs reliable systems behind it.',desiredChange:'Secure, accessible platforms and the operations to maintain them.',actions:['Platform security review','Accessibility audit (WCAG 2.2)','Operations playbook'],owner:'Operations lead',priority:'Medium'}
+ {code:'ISO1',title:'Strengthen governance and safeguarding',rationale:'A programme working with young people needs airtight safeguarding and clear decision rights to earn and keep community trust.',desiredChange:'Policies, board routines and reporting lines that match the responsibility we have taken on.',actions:['Adopt and publish an updated safeguarding code','Hold quarterly board decision reviews','Publish an annual accountability report'],owner:'Board chair',priority:'High'},
+ {code:'ISO2',title:'Build a learning and measurement culture',rationale:'The programme must adapt as it learns from each cohort; measurement is how that adaptation happens.',desiredChange:'Routines that turn results into decisions across the team every quarter.',actions:['Monthly data review','Quarterly cohort reflection sessions','Public learning briefs'],owner:'MEAL officer',priority:'Medium'},
+ {code:'ISO3',title:'Build operational and digital infrastructure',rationale:'A distributed programme needs reliable systems to track learners, finances and partners over the long term.',desiredChange:'Secure, accessible systems that staff can run day to day without heroics.',actions:['Deploy a learner-tracking platform','Document finance processes end-to-end','Operations playbook maintained quarterly'],owner:'Operations manager',priority:'Medium'}
 ];
 
-// ---------- Strategic Objectives (Module 1 tool) ----------
+// ---------- Data builders (populate a tool's full workspace) ----------
 const strategicObjectives=()=>{
  const makeObj=(o,group)=>({
   id:uid('obj'),group,code:o.code,title:o.title,
@@ -79,45 +82,43 @@ const strategicObjectives=()=>{
  });
  return {
   version:2,
-  meta:{organisation:org.organisation,planName:'Ethical Bridge strategic objectives (example)',from:year,to:year+3,mission:org.mission,vision:org.vision,values:org.values,preparedBy:org.preparedBy,reviewDate:'',notes:org.notes},
+  meta:{organisation:org.organisation,planName:'Harvest Learning Foundation strategic objectives (example)',from:year,to:year+3,mission:org.mission,vision:org.vision,values:org.values,preparedBy:org.preparedBy,reviewDate:'',notes:org.notes},
   objectives:[...external.map(o=>makeObj(o,'External')),...internal.map(o=>makeObj(o,'Internal'))],
   reviews:[]
  };
 };
 
-// ---------- Theory of Change (Module 2 tool) ----------
 const theoryOfChange=()=>{
  const makePathway=o=>({
   id:uid('pw'),
   objective:`${o.code} · ${o.title}`,
   description:o.rationale,
   problem:o.rationale,
-  input:o.code==='ESO1'?'Digital development, content and partnership expertise; staff capacity; funding; IT infrastructure; verification standards; outreach capability.':o.code==='ESO2'?'Opportunity curation team; communications; partner organisations in multiple regions; publishing platform; safeguarding standards.':'Fundraising expertise; partnership strategy; grant management; individual giving platform; donor stewardship capacity.',
-  activity:o.code==='ESO1'?'Build the platform, verify organisations, create profiles and run outreach with grassroots partners.':o.code==='ESO2'?'Curate opportunities, assess safeguards, publish accessible listings and support applicants.':'Map aligned funders, cultivate strategic partnerships, launch individual giving and steward donors.',
-  output:o.code==='ESO1'?'An operational digital hub with verified organisation profiles and transparent data.':o.code==='ESO2'?'Published ethical opportunities with clear safeguards; applicants matched with responsible organisations.':'A diversified funding pipeline, individual giving channel and three strategic partnerships live.',
-  intermediateOutcome:o.code==='ESO1'?'International actors can discover and assess trustworthy local organisations by cause, location and impact.':o.code==='ESO2'?'More people find safe, purpose-led opportunities across borders.':'Reduced funder concentration and growing engagement from individual supporters.',
+  input:o.code==='ESO1'?'Field educators and master trainers; co-designed curriculum; cohort funding; teaching materials; mobile phones for follow-up.':o.code==='ESO2'?'Agronomy expertise; demonstration land secured with district authorities; infrastructure budget; farming inputs; staff for day-to-day operation.':'Alumni leadership; mentor training; small stipend budget; a simple matching platform; evaluation support.',
+  activity:o.code==='ESO1'?'Deliver 60 cohorts across 15 districts, each 12 weeks long, combining classroom and field work and ending with a graduation portfolio.':o.code==='ESO2'?'Build and operate five demonstration farms, each co-designed with lead farmers, with quarterly open days for the surrounding community.':'Train 150 mentors drawn from alumni and local experts; match each graduate to a mentor and a peer circle; convene the network monthly.',
+  output:o.code==='ESO1'?'5,000 youth graduate with portfolios documenting applied skills in agriculture, numeracy and small-business basics.':o.code==='ESO2'?'Five operational demonstration farms with full seasonal rotations and documented learning open to any neighbour.':'A mentor network of 150 active mentors and twelve-month peer circles for every graduating cohort.',
+  intermediateOutcome:o.code==='ESO1'?'Graduates apply at least three new methods on their own land or in local employment within six months.':o.code==='ESO2'?'Neighbours of each demonstration farm start adopting one or more featured practices and ask for training.':'Graduates stay engaged, adapt methods together and bring neighbours into the network.',
   outcome:o.desiredChange,
   impact:o.impactStatement,
-  assumptions:o.code==='ESO1'?'Local organisations are willing to maintain accurate profiles.\nFunders and partners trust the verification process.':o.code==='ESO2'?'Local organisations welcome international visibility.\nPublished opportunities meet safeguarding standards.':'Donor relationships can be sustained over multiple years.\nPartners stay aligned with the mission.',
-  risks:o.code==='ESO1'?'Insufficient participation from local organisations.\nVerification process cannot scale.':o.code==='ESO2'?'Safeguarding issues emerge in a listed opportunity.\nCultural fit is weaker than expected.':'Over-dependence on any single new donor.\nMission drift to chase funding.',
-  evidence:'Validated with user research, partner feedback and platform usage data.',
+  assumptions:o.code==='ESO1'?'Community-elected mentors are willing to co-design the curriculum.\nFamilies allow young people to attend full cohorts.':o.code==='ESO2'?'District authorities honour multi-year land agreements.\nClimate conditions do not make demonstration cycles unworkable.':'Graduates value staying connected after cohorts end.\nMentors can commit sustained time with a small stipend.',
+  risks:o.code==='ESO1'?'Cohort attendance drops if the curriculum does not feel practical.\nSeasonal labour demands pull learners away.':o.code==='ESO2'?'Land arrangements break down with new local leadership.\nA bad season undermines trust in demonstrated methods.':'Mentors burn out without recognition.\nGraduates in distant locations fall out of touch.',
+  evidence:'Validated with learner surveys, mentor feedback and six-month follow-up visits.',
   lastEditedBy:'Example',lastEditedAt:now()
  });
  return {
   version:2,
-  meta:{organisation:org.organisation,name:'Ethical Bridge theory of change (example)',country:org.country,dates:org.dates,preparedBy:org.preparedBy,version:org.version,notes:org.notes,mission:org.mission,vision:org.vision,values:org.values,impactGoal:'A globally connected ethical ecosystem that strengthens local change efforts.',problem:'Ethical local organisations often lack visibility and access to international networks; opportunities to contribute ethically are fragmented and donor sources are concentrated.',description:'If Ethical Bridge combines digital development, verification standards, partnerships and outreach to build a trusted digital hub, publishes safe ethical opportunities and diversifies its funding and partnerships, then local organisations gain visibility, individuals find meaningful ways to contribute and the organisation becomes financially resilient — provided assumptions on participation, safeguarding and donor relationships hold.',objectives:external.map(o=>`${o.code} · ${o.title}`)},
+  meta:{organisation:org.organisation,name:'Harvest Learning Foundation theory of change (example)',country:org.country,dates:org.dates,preparedBy:org.preparedBy,version:org.version,notes:org.notes,mission:org.mission,vision:org.vision,values:org.values,impactGoal:org.impactGoal,problem:'Rural youth leave school without the practical skills they need to build a livelihood at home, and the demonstration sites and peer networks that could help are missing.',description:'If Harvest Learning Foundation trains 5,000 rural youth with a practical livelihoods curriculum, builds five demonstration farms as community learning hubs and grows a mentor network that stays with graduates for twelve months, then young people will apply new methods, communities will see them working and knowledge will keep spreading — provided assumptions on community support, land agreements and mentor engagement hold.',objectives:external.map(o=>`${o.code} · ${o.title}`)},
   pathways:external.map(makePathway),
   indicators:[
-   {id:uid('ind'),pathwayId:'',level:'outcome',name:'Verified organisations active on the hub',definition:'Local organisations with a complete, verified profile accessed internationally in the last 90 days.',baseline:'0',target:'250',unit:'organisations',source:'Hub analytics',frequency:'Quarterly',owner:'Platform lead',verification:'Platform logs + verification register',notes:'',lastEditedBy:'Example',lastEditedAt:now()},
-   {id:uid('ind'),pathwayId:'',level:'outcome',name:'International connections facilitated',definition:'Connections initiated between an international actor and a local verified organisation.',baseline:'0',target:'500',unit:'connections',source:'Hub analytics',frequency:'Quarterly',owner:'Platform lead',verification:'Platform logs',notes:'',lastEditedBy:'Example',lastEditedAt:now()},
-   {id:uid('ind'),pathwayId:'',level:'outcome',name:'People taking up ethical opportunities',definition:'Applicants placed into ethical employment, volunteering or internship positions through the platform.',baseline:'0',target:'1200',unit:'people',source:'Partner reporting',frequency:'Quarterly',owner:'Programme lead',verification:'Partner reports + follow-up survey',notes:'',lastEditedBy:'Example',lastEditedAt:now()},
-   {id:uid('ind'),pathwayId:'',level:'outcome',name:'Share of income from largest donor',definition:'Income from the single largest donor divided by total income.',baseline:'72%',target:'45%',unit:'%',source:'Management accounts',frequency:'Quarterly',owner:'Fundraising lead',verification:'Audited accounts',notes:'Decrease is the direction of change.',lastEditedBy:'Example',lastEditedAt:now()}
+   {id:uid('ind'),pathwayId:'',level:'outcome',name:'Youth graduating with a full skills portfolio',definition:'Learners completing the 12-week cohort and submitting a portfolio graded as complete.',baseline:'0',target:'5000',unit:'graduates',source:'Programme records',frequency:'Quarterly',owner:'Programme director',verification:'Portfolio archive + facilitator sign-off',notes:'',lastEditedBy:'Example',lastEditedAt:now()},
+   {id:uid('ind'),pathwayId:'',level:'outcome',name:'Operating demonstration farms',definition:'Demonstration farms running a full seasonal cycle with public open days.',baseline:'0',target:'5',unit:'farms',source:'Field operations register',frequency:'Quarterly',owner:'Field operations lead',verification:'Farm-visit reports',notes:'',lastEditedBy:'Example',lastEditedAt:now()},
+   {id:uid('ind'),pathwayId:'',level:'outcome',name:'Graduates still active with their mentor after 12 months',definition:'Graduates reporting monthly contact with a mentor or peer circle 12 months after cohort end.',baseline:'0',target:'70%',unit:'% of cohort',source:'Follow-up survey',frequency:'Semi-annual',owner:'Alumni & mentorship lead',verification:'Survey + sampling calls',notes:'',lastEditedBy:'Example',lastEditedAt:now()},
+   {id:uid('ind'),pathwayId:'',level:'outcome',name:'Graduates earning locally within 12 months',definition:'Graduates in paid work, self-employment or farming improvements earning above the regional median at 12 months.',baseline:'22%',target:'60%',unit:'% of cohort',source:'Follow-up survey + partner reports',frequency:'Semi-annual',owner:'MEAL officer',verification:'Survey + spot-check interviews',notes:'',lastEditedBy:'Example',lastEditedAt:now()}
   ],
   snapshots:[]
  };
 };
 
-// ---------- Strategy, KPIs & Annual Planning (Module 6 tool) ----------
 const strategyKpis=()=>{
  const makeObj=(o,group)=>({
   id:uid('obj'),group,code:o.code,title:o.title,
@@ -132,10 +133,10 @@ const strategyKpis=()=>{
   status:'Active',notes:'',lastEditedBy:'Example',lastEditedAt:now()
  });
  const kpis=[
-  K('KPI1','ESO1','Verified organisations active on the hub',0,250,[60,130,200,250],'Platform lead','Local organisations with a complete, verified profile accessed internationally in the last 90 days.','Hub analytics'),
-  K('KPI2','ESO1','International connections facilitated',0,500,[80,220,380,500],'Platform lead','Connections initiated between an international actor and a local verified organisation.','Hub analytics'),
-  K('KPI3','ESO2','People taking up ethical opportunities',0,1200,[200,500,900,1200],'Programme lead','Applicants placed into ethical employment, volunteering or internship positions through the platform.','Partner reporting'),
-  K('KPI4','ESO3','Largest donor share of total income',72,45,[68,60,52,45],'Fundraising lead','Income from the single largest donor divided by total income.','Management accounts','Decrease','Percentage'),
+  K('KPI1','ESO1','Youth graduating with full skills portfolio',0,5000,[800,2100,3600,5000],'Programme director','Learners completing the 12-week cohort with a portfolio graded as complete.','Programme records'),
+  K('KPI2','ESO1','Graduates earning locally within 12 months',22,60,[25,35,48,60],'MEAL officer','Graduates in paid work, self-employment or improved farming at 12 months.','Follow-up survey','Increase','Percentage'),
+  K('KPI3','ESO2','Operating demonstration farms',0,5,[1,2,4,5],'Field operations lead','Demonstration farms running a full seasonal cycle with open days.','Field operations register'),
+  K('KPI4','ESO3','Graduates active with mentor after 12 months',0,70,[20,40,60,70],'Alumni & mentorship lead','Graduates with monthly mentor contact at 12 months after cohort end.','Follow-up survey','Increase','Percentage'),
   K('KPI5','ISO1','Quarterly board reviews completed with a decisions summary',0,4,[1,2,3,4],'Board chair','Board reviews that start from the KPI summary and produce documented decisions.','Board minutes')
  ];
  const todayIso=today();
@@ -149,31 +150,38 @@ const strategyKpis=()=>{
   lastEditedBy:'Example',lastEditedAt:now()
  });
  const initiatives=[
-  I('AP1','ESO1','KPI1','Launch the verified-organisations hub beta','Platform lead',1,9,45000,16000,45,'In progress'),
-  I('AP2','ESO1','KPI2','Partner outreach in three new regions','Partnerships lead',3,12,22000,8000,35,'In progress'),
-  I('AP3','ESO2','KPI3','Opportunity curation and safeguarding review','Programme lead',2,12,18000,6500,40,'On track'),
-  I('AP4','ESO3','KPI4','Diversify funding — grants, individuals, partnerships','Fundraising lead',1,12,12000,4000,55,'At risk'),
+  I('AP1','ESO1','KPI1','Launch three new cohorts in two new districts','Programme director',2,10,38000,15000,42,'In progress'),
+  I('AP2','ESO1','KPI2','12-month graduate follow-up study','MEAL officer',3,12,8000,2500,30,'On track'),
+  I('AP3','ESO2','KPI3','Open the second and third demonstration farms','Field operations lead',1,12,120000,52000,45,'In progress'),
+  I('AP4','ESO3','KPI4','Train and match 50 new mentors','Alumni & mentorship lead',2,11,14000,5000,35,'On track'),
   I('AP5','ISO1','KPI5','Board decision routine (quarterly)','Board chair',1,12,1500,500,50,'On track')
  ];
  return {
   version:2,
-  meta:{organisation:org.organisation,planName:`Ethical Bridge annual plan (example) · ${year}`,year,from:year,to:year+3,mission:org.mission,vision:org.vision,values:org.values,impactGoal:'A globally connected ethical ecosystem that strengthens local change efforts.',preparedBy:org.preparedBy,reviewDate:'',currency:'USD',green:95,yellow:75,notes:org.notes},
+  meta:{organisation:org.organisation,planName:`Harvest Learning Foundation annual plan (example) · ${year}`,year,from:year,to:year+3,mission:org.mission,vision:org.vision,values:org.values,impactGoal:org.impactGoal,preparedBy:org.preparedBy,reviewDate:'',currency:'USD',green:95,yellow:75,notes:org.notes},
   objectives,
   kpis,
   results,
   initiatives,
-  reviews:[{id:uid('rev'),date:`${year}-${String(Math.max(1,qNow-1)*3+1).padStart(2,'0')}-05`,period:`Q${Math.max(1,qNow-1)}`,reviewer:'Leadership team',summary:'Hub beta making good progress; funder concentration still high.',decisions:[{id:uid('d'),decision:'Accelerate individual giving pilot','action':'Draft pilot plan',owner:'Fundraising lead',due:`${year}-${String(qNow*3).padStart(2,'0')}-30`,status:'In progress'}],snapshot:null}]
+  reviews:[{id:uid('rev'),date:`${year}-${String(Math.max(1,qNow-1)*3+1).padStart(2,'0')}-05`,period:`Q${Math.max(1,qNow-1)}`,reviewer:'Leadership team',summary:'Cohort delivery on plan; demonstration-farm build slower than hoped due to land-agreement delays.',decisions:[{id:uid('d'),decision:'Add a second site surveyor',action:'Hire a surveyor on a three-month contract',owner:'Field operations lead',due:`${year}-${String(qNow*3).padStart(2,'0')}-30`,status:'In progress'}],snapshot:null}]
  };
 };
 
-window.MMExample={
- ethicalBridge:{
-  org,
-  external,
-  internal,
-  strategicObjectives,
-  theoryOfChange,
-  strategyKpis
+// ---------- Reference box (shown at the top of each tool's Start tab) ----------
+const mv=()=>`<div class="example-mv"><div><b>Mission</b><p>${esc(org.mission)}</p></div><div><b>Vision</b><p>${esc(org.vision)}</p></div><div><b>Values</b><p>${esc(org.values.split('\n').join(' · '))}</p></div></div>`;
+const esoCard=o=>`<article class="example-eso"><h4>${esc(o.code)} · ${esc(o.title)}</h4><span class="lbl">Why this matters</span><p class="val">${esc(o.rationale)}</p><span class="lbl">Change we want</span><p class="val">${esc(o.desiredChange)}</p><span class="lbl">Owner</span><p class="val">${esc(o.owner)} · priority ${esc(o.priority)}</p></article>`;
+const foot=label=>`<div class="example-foot"><button class="button secondary small" type="button" data-action="load-example">${esc(label)}</button><span class="tiny">The Load button replaces the current workspace with this example.</span></div>`;
+const head=()=>`<summary class="example-summary"><span class="example-badge">Example</span><span class="example-title">${esc(org.organisation)} — click to expand or collapse</span></summary><p class="example-intro">A fictional rural-youth skills NGO shown as a worked example in every Impact Suite tool, so you can see what a completed workspace looks like with real content in every field. Edit or delete freely — the Load button below adds the full example to your workspace.</p>`;
+
+const renderBox=tool=>{
+ if(tool==='strategic-objectives') return `<details class="example-box" open>${head()}${mv()}<p class="tiny" style="margin:8px 0 6px"><b>Three external objectives (what changes in the world):</b></p><div class="example-objectives">${external.map(esoCard).join('')}</div><p class="tiny" style="margin:10px 0 0"><b>Plus three internal objectives</b> (${internal.map(i=>i.code+' · '+i.title.toLowerCase()).join('; ')}).</p>${foot('Load this example into my workspace')}</details>`;
+ if(tool==='theory-of-change'){
+  const o=external[0];
+  return `<details class="example-box" open>${head()}${mv()}<p class="tiny" style="margin:6px 0 2px"><b>Impact goal:</b> ${esc(org.impactGoal)}</p><p class="tiny" style="margin:0 0 8px"><b>Pathway shown (${esc(o.code)} of 3):</b> ${esc(o.title)}</p><div class="example-chain"><div class="step"><b>Input</b><p>Field educators; co-designed curriculum; cohort funding; teaching materials.</p></div><div class="step"><b>Activity</b><p>Deliver 60 cohorts across 15 districts over three years.</p></div><div class="step"><b>Output</b><p>5,000 youth graduate with portfolios of applied skills.</p></div><div class="step"><b>Outcome</b><p>${esc(o.desiredChange)}</p></div><div class="step"><b>Impact</b><p>${esc(o.impactStatement)}</p></div></div><p class="tiny" style="margin:4px 0 0"><b>Full example adds three pathways</b> (one per ESO) with assumptions, risks and four outcome indicators.</p>${foot('Load this example into my workspace')}</details>`;
  }
+ if(tool==='strategy-kpis') return `<details class="example-box" open>${head()}${mv()}<p class="tiny" style="margin:4px 0 8px"><b>How this reads in the tool:</b> objectives come from Strategic Objectives; each gets one to three KPIs; each KPI gets quarterly targets and dated results; initiatives are the work that moves them.</p><div class="example-objectives"><article class="example-eso"><h4>KPI1 · Youth graduating with full skills portfolio</h4><span class="lbl">Linked to</span><p class="val">ESO1 · Equip 5,000 rural youth with practical livelihood skills</p><span class="lbl">Baseline → Annual target</span><p class="val">0 → 5,000 graduates</p><span class="lbl">Quarterly targets</span><p class="val">Q1 800 · Q2 2,100 · Q3 3,600 · Q4 5,000</p><span class="lbl">Owner</span><p class="val">Programme director · source: programme records</p></article><article class="example-eso"><h4>KPI3 · Operating demonstration farms</h4><span class="lbl">Linked to</span><p class="val">ESO2 · Build five demonstration farms as community learning hubs</p><span class="lbl">Baseline → Annual target</span><p class="val">0 → 5 farms</p><span class="lbl">Quarterly targets</span><p class="val">Q1 1 · Q2 2 · Q3 4 · Q4 5</p><span class="lbl">Owner</span><p class="val">Field operations lead · source: field operations register</p></article><article class="example-eso"><h4>KPI4 · Graduates active with mentor after 12 months</h4><span class="lbl">Linked to</span><p class="val">ESO3 · Grow a mentor network that sustains learning</p><span class="lbl">Baseline → Annual target</span><p class="val">0 → 70%</p><span class="lbl">Quarterly targets</span><p class="val">Q1 20% · Q2 40% · Q3 60% · Q4 70%</p><span class="lbl">Owner</span><p class="val">Alumni & mentorship lead · source: follow-up survey</p></article></div><p class="tiny" style="margin:10px 0 0"><b>Full example adds</b> five KPIs, example quarterly results to date, five initiatives and one board-review entry.</p>${foot('Load this example into my workspace')}</details>`;
+ return '';
 };
+
+window.MMExample={org,external,internal,strategicObjectives,theoryOfChange,strategyKpis,renderBox};
 })();
