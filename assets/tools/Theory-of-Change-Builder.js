@@ -85,36 +85,74 @@ function dashboard(){
 }
 
 function startView(){
+ return `${window.MMExample?.renderBox?.('theory-of-change')||''}${workspaceView()}`;
+}
+
+// Interactive workspace — the green box IS the tool. Meta fields and
+// pathway rows are edited inline, saved live as the user types.
+function workspaceView(){
  const m=db.meta;
- return `${window.MMExample?.renderBox?.('theory-of-change')||''}${window.MMExample?.renderUserBox?.('theory-of-change',db)||''}
-  <div class="notice">A Theory of Change explains how your work contributes to the change you want. Build it level by level: <b>Objective → Problem → Input → Output → Outcome → Impact</b>, with the assumptions that must hold between each step. The objective pulls from the Strategic Objectives tool.</div>
-  <section class="panel"><h2>Project details</h2>
-   <form data-form="meta" class="form">
-    ${field('Organisation name','organisation',m.organisation)}
-    ${field('Project / plan name','name',m.name)}
-    ${field('Country or location','country',m.country)}
-    ${field('Dates','dates',m.dates)}
-    ${field('Prepared by','preparedBy',m.preparedBy)}
-    ${field('Version','version',m.version)}
-    ${area('Mission (from Module 1)','mission',m.mission)}
-    ${area('Vision (from Module 1)','vision',m.vision)}
-    ${area('Values (from Module 1)','values',m.values)}
-    ${area('Impact goal — the broader change this contributes to','impactGoal',m.impactGoal)}
-    ${area('Problem — the situation this project addresses','problem',m.problem)}
-    ${area('Description — plain-language summary of the whole pathway','description',m.description)}
-    ${area('Objectives — one per line','objectives',(m.objectives||[]).join('\n'),'The specific changes this project is working toward. Imported from Strategic Objectives if available.')}
-    ${area('Notes','notes',m.notes)}
-    <div class="actions field full"><button class="button" type="submit">Save project details</button></div>
-   </form>
-  </section>
-  <section class="panel"><h2>Get started</h2>
-   <div class="actions">
-    ${soReady()?`<button class="button" data-action="import-so-direct">Bring in objectives from Strategic Objectives (${soObjectives().length})</button>`:''}
-    <button class="button ${soReady()?'secondary':''}" data-action="add-pathway">Add pathway</button>
-    <button class="button secondary" data-action="load-example">Load worked example</button>
-    ${importButtons('')}
+ const so=readSO();
+ const soObjs=(so?.objectives||[]).map(o=>({code:o.code||'',title:o.title||'',full:`${o.code||''} · ${o.title||''}`.replace(/^ · /,''),rationale:o.rationale||'',desiredChange:o.desiredChange||'',impact:o.impactStatement||''}));
+ const taken=new Set(db.pathways.map(p=>p.objective).filter(Boolean));
+ const unlinked=soObjs.filter(o=>!taken.has(o.full));
+ return `<section class="work-box" id="toc-workspace">
+  <div class="work-head">
+   <span class="work-badge">Your workspace</span>
+   <input class="work-org" data-field="organisation" value="${esc(m.organisation)}" placeholder="Add your organisation name →" aria-label="Organisation name">
+   <span class="work-status" id="work-status"></span>
+  </div>
+  <p class="work-hint">Edit anywhere — everything saves automatically. The example above is for reference; this is your workspace.</p>
+  <div class="work-meta">
+   <label class="work-field"><span>Mission</span><textarea data-field="mission" placeholder="What you do, and for whom.">${esc(m.mission)}</textarea></label>
+   <label class="work-field"><span>Vision</span><textarea data-field="vision" placeholder="The future you work towards.">${esc(m.vision)}</textarea></label>
+   <label class="work-field"><span>Values</span><textarea data-field="values" placeholder="One value per line.">${esc(m.values)}</textarea></label>
+   <label class="work-field full"><span>Impact goal</span><textarea data-field="impactGoal" placeholder="The broader, long-term change this theory of change contributes to.">${esc(m.impactGoal)}</textarea></label>
+  </div>
+  <div class="work-sect-head">
+   <h3>Pathways — one per strategic objective</h3>
+   <p class="tiny">Pick an objective from Strategic Objectives for each row and the problem, outcome and impact pre-fill from it. Open <b>Full edit</b> on a row to add assumptions, risks and evidence.</p>
+  </div>
+  <div class="work-pathways">${db.pathways.map((p,i)=>pathwayRowHtml(p,i,soObjs)).join('')||'<p class="example-empty">No pathways yet — click "Add a pathway" below.</p>'}</div>
+  <div class="work-add">
+   <button class="button" data-action="add-pathway-row">+ Add a pathway${unlinked.length?` (${unlinked.length} unused objective${unlinked.length===1?'':'s'} available)`:''}</button>
+   ${!so?'<span class="tiny" style="margin-left:12px">Tip: open <a href="Strategic-Objectives.html">Strategic Objectives</a> first so your ESO/ISO list appears in the dropdown.</span>':''}
+  </div>
+  <details class="work-extra">
+   <summary>More project details — country, dates, prepared by, notes</summary>
+   <div class="work-meta">
+    <label class="work-field"><span>Project / plan name</span><input data-field="name" value="${esc(m.name)}" placeholder="e.g. 2026 theory of change"></label>
+    <label class="work-field"><span>Country or location</span><input data-field="country" value="${esc(m.country)}" placeholder="e.g. Kenya"></label>
+    <label class="work-field"><span>Dates</span><input data-field="dates" value="${esc(m.dates)}" placeholder="e.g. 2026–2029"></label>
+    <label class="work-field"><span>Prepared by</span><input data-field="preparedBy" value="${esc(m.preparedBy)}" placeholder="Your name or team"></label>
+    <label class="work-field"><span>Version</span><input data-field="version" value="${esc(m.version)}" placeholder="e.g. 0.1"></label>
+    <label class="work-field full"><span>Notes</span><textarea data-field="notes" placeholder="Any context about this plan.">${esc(m.notes)}</textarea></label>
    </div>
-  </section>`;
+  </details>
+ </section>`;
+}
+
+function pathwayRowHtml(p,i,soObjs){
+ const options=soObjs.map(o=>[o.full,o.full]);
+ if(p.objective&&!options.some(x=>x[0]===p.objective))options.push([p.objective,p.objective]);
+ const soMap=Object.fromEntries(soObjs.map(o=>[o.full,{problem:o.rationale,outcome:o.desiredChange,impact:o.impact}]));
+ return `<article class="work-pathway" data-pathway-id="${esc(p.id)}">
+  <div class="work-pathway-head">
+   <span class="eyebrow">Pathway ${i+1}</span>
+   <div class="row-actions">
+    <button type="button" class="link" data-action="edit-pathway" data-id="${esc(p.id)}">Full edit</button>
+    <button type="button" class="link danger" data-action="delete-pathway-row" data-id="${esc(p.id)}">Delete</button>
+   </div>
+  </div>
+  <div class="work-chain">
+   <label class="chain-cell"><span class="chain-label">Objective</span>${options.length?`<select data-field="objective" data-pid="${esc(p.id)}" data-so-objectives="${esc(JSON.stringify(soMap))}"><option value="">— pick an objective —</option>${options.map(([v,l])=>`<option value="${esc(v)}" ${v===p.objective?'selected':''}>${esc(l)}</option>`).join('')}</select>`:`<textarea data-field="objective" data-pid="${esc(p.id)}" placeholder="Pick an objective (open Strategic Objectives first)">${esc(p.objective)}</textarea>`}</label>
+   <label class="chain-cell"><span class="chain-label">Problem</span><textarea data-field="problem" data-pid="${esc(p.id)}" placeholder="What this pathway addresses">${esc(p.problem)}</textarea></label>
+   <label class="chain-cell"><span class="chain-label">Input</span><textarea data-field="input" data-pid="${esc(p.id)}" placeholder="Resources needed">${esc(p.input)}</textarea></label>
+   <label class="chain-cell"><span class="chain-label">Output</span><textarea data-field="output" data-pid="${esc(p.id)}" placeholder="Immediate product or service">${esc(p.output)}</textarea></label>
+   <label class="chain-cell"><span class="chain-label">Outcome</span><textarea data-field="outcome" data-pid="${esc(p.id)}" placeholder="Change this pathway brings about">${esc(p.outcome)}</textarea></label>
+   <label class="chain-cell"><span class="chain-label">Impact</span><textarea data-field="impact" data-pid="${esc(p.id)}" placeholder="Broader long-term change">${esc(p.impact)}</textarea></label>
+  </div>
+ </article>`;
 }
 
 function pathwaysView(){
@@ -276,8 +314,8 @@ function render(){
   importXlsx:file=>importXlsx(file),
   importJson:file=>importJson(file)
  });
- if(tab==='Start')window.MMExample?.bindLive?.(root,db,'theory-of-change');
- // Auto-fill problem/outcome/impact when objective is picked (pulls from Strategic Objectives)
+ if(tab==='Start')wireWorkspace(root);
+ // Auto-fill problem/outcome/impact when objective is picked in the pathway modal
  const objSel=root.querySelector('form[data-form="pathway"] select[name="objective"]');
  if(objSel&&objSel.dataset.soObjectives){
   objSel.addEventListener('change',()=>{
@@ -290,6 +328,55 @@ function render(){
    }
   });
  }
+}
+
+// Wire inline editing in the interactive workspace (Start tab).
+// Saves on every input, debounced by 400 ms. Status strip shows "Saving…" / "Saved".
+function wireWorkspace(root){
+ const box=root.querySelector('#toc-workspace');if(!box)return;
+ const status=box.querySelector('#work-status');
+ let timer,lastSaveAt=0;
+ const setStatus=t=>{if(status)status.textContent=t};
+ const schedule=()=>{
+  setStatus('Saving…');
+  clearTimeout(timer);
+  timer=setTimeout(()=>{
+   persist(db);lastSaveAt=Date.now();
+   setStatus('✓ Saved');
+   setTimeout(()=>{if(Date.now()-lastSaveAt>=1200)setStatus('')},1500);
+  },400);
+ };
+ // Meta fields (organisation, mission, vision, values, impactGoal, name, country, dates, preparedBy, version, notes)
+ box.querySelectorAll('[data-field]:not([data-pid])').forEach(el=>{
+  el.addEventListener('input',()=>{const k=el.dataset.field;db.meta[k]=el.value;stamp(db.meta);schedule()});
+ });
+ // Pathway fields (textareas + selects per row)
+ box.querySelectorAll('[data-pid]').forEach(el=>{
+  const update=()=>{
+   const pid=el.dataset.pid,f=el.dataset.field;
+   const p=db.pathways.find(x=>x.id===pid);if(!p)return;
+   p[f]=el.value;
+   if(f==='objective'&&p.objective&&!db.meta.objectives.includes(p.objective))db.meta.objectives.push(p.objective);
+   stamp(p);schedule();
+  };
+  el.addEventListener('input',update);
+  if(el.tagName==='SELECT'){
+   el.addEventListener('change',()=>{
+    update();
+    // Pre-fill problem / outcome / impact for this row from the picked ESO (only when empty)
+    let map={};try{map=JSON.parse(el.dataset.soObjectives||'{}')}catch{}
+    const data=map[el.value];if(!data)return;
+    const row=el.closest('.work-pathway');if(!row)return;
+    const pid=el.dataset.pid;const p=db.pathways.find(x=>x.id===pid);if(!p)return;
+    ['problem','outcome','impact'].forEach(f=>{
+     if(!data[f])return;
+     const t=row.querySelector(`[data-field="${f}"]`);
+     if(t&&!String(t.value||'').trim()){t.value=data[f];p[f]=data[f]}
+    });
+    stamp(p);schedule();
+   });
+  }
+ });
 }
 
 // ---------- Actions ----------
@@ -309,6 +396,8 @@ function action(el){
   db.indicators=db.indicators.filter(i=>i.id!==id);
   persist(db);modal_html='';message='Deleted.';render();return;
  }
+ if(a==='add-pathway-row'){db.pathways.push({...blankPathway()});persist(db);render();return}
+ if(a==='delete-pathway-row'){const id=el.dataset.id;if(!confirm('Delete this pathway? Cannot be undone.'))return;db.pathways=db.pathways.filter(p=>p.id!==id);db.indicators=db.indicators.filter(i=>i.pathwayId!==id);persist(db);render();return}
  if(a==='import-so-direct'){
   const so=readSO();if(!so||!so.objectives?.length){message='No Strategic Objectives found. Open that tool first.';render();return}
   const objectives=so.objectives.map(o=>`${o.code} · ${o.title}`);
