@@ -298,7 +298,10 @@ const integrationData={
  'policy':{step:0,label:'Compliance · Policy management',pulls:[['org-structure','Policy owners come from the role library.'],['issue-risk','A policy breach can be logged as an issue; a policy gap can be logged as a risk.']],pushes:[['org-structure','Policies acknowledged by each staff member feed into onboarding compliance.']]},
  'onboarding':{step:0,label:'People · Onboarding & staff compliance',pulls:[['org-structure','The new hire fills a role from the role library.'],['policy','Required policy acknowledgements come from the policy register.']],pushes:[['org-structure','Completed hires become active role holders.']]},
  'checkins':{step:0,label:'People · Check-ins & development',pulls:[['org-structure','Each team member is a role holder.'],['strategic-objectives','Development goals can be tied to specific ESOs.'],['strategy-kpis','Individual contribution to KPIs can be reviewed here.']],pushes:[['meetings','1:1 decisions and actions can flow into the shared Meetings register.']]},
- 'marketing':{step:0,label:'Communications · Marketing & social planner',pulls:[['strategic-objectives','Posts can be tagged with the ESO they advance.'],['strategy-kpis','Fundraising campaigns feed Strategy KPIs KPIs like supporter count and donor acquisition.'],['theory-of-change','Comms narrative anchors in the Theory of Change impact goal.']],pushes:[['meetings','Comms performance reviews feed back into the leadership cadence.']]}
+ 'marketing':{step:0,label:'Communications · Marketing & social planner',pulls:[['strategic-objectives','Posts can be tagged with the ESO they advance.'],['strategy-kpis','Fundraising campaigns feed Strategy KPIs KPIs like supporter count and donor acquisition.'],['theory-of-change','Comms narrative anchors in the Theory of Change impact goal.'],['personas','Posts can be targeted at a specific persona for voice, channel and CTA.']],pushes:[['meetings','Comms performance reviews feed back into the leadership cadence.']]},
+ 'personas':{step:0,label:'Communications · Audience personas',pulls:[['strategic-objectives','Each persona can be mapped to the ESO(s) they are most relevant to.']],pushes:[['marketing','Posts can be targeted at a specific persona to pick the right voice, channel and CTA.'],['individual-giving','Supporter stewardship can be shaped around the persona a donor matches.']]},
+ 'individual-giving':{step:0,label:'Funding · Individual giving & supporter management',pulls:[['donor-mapping','Individual donors flagged as "Qualified" or "Engaged" can be imported as supporters.'],['personas','Each supporter can be matched to a persona for stewardship tone and channel.'],['strategic-objectives','Giving can be designated to a specific ESO.']],pushes:[['donor-tracking','Regular-giving commitments and major gifts feed the overall funding picture per ESO.']]},
+ 'donor-reference':{step:0,label:'Funding · Donor reference guide',pulls:[['donor-mapping','Qualified prospects can carry a full reference profile here.'],['donor-tracking','Active grant donors can carry contract, reporting and policy requirements for easy lookup.']],pushes:[]}
 };
 const toolHrefs={
  'strategic-objectives':'Strategic-Objectives.html',
@@ -314,7 +317,10 @@ const toolHrefs={
  'policy':'Policy-Management.html',
  'onboarding':'Onboarding-and-Compliance.html',
  'checkins':'People-Check-Ins-and-Development.html',
- 'marketing':'Marketing-and-Social-Planner.html'
+ 'marketing':'Marketing-and-Social-Planner.html',
+ 'personas':'Customer-Persona-Builder.html',
+ 'individual-giving':'Individual-Giving-and-Donor-Management.html',
+ 'donor-reference':'Donor-Reference-Guide.html'
 };
 const toolTitles={
  'strategic-objectives':'Strategic Objectives',
@@ -330,7 +336,10 @@ const toolTitles={
  'policy':'Policy Management',
  'onboarding':'Onboarding & Staff Compliance',
  'checkins':'People Check-ins & Development',
- 'marketing':'Marketing & Social Planner'
+ 'marketing':'Marketing & Social Planner',
+ 'personas':'Audience Personas',
+ 'individual-giving':'Individual Giving',
+ 'donor-reference':'Donor Reference Guide'
 };
 const renderIntegration=tool=>{
  const d=integrationData[tool];if(!d) return '';
