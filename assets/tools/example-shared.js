@@ -294,7 +294,10 @@ const integrationData={
  'meetings':{step:0,label:'Cross-cutting · Meetings, actions & decisions',pulls:[['strategic-objectives','Agenda items can be about any ESO/ISO.'],['theory-of-change','Review a pathway, decide its next step.'],['strategy-kpis','Review KPI progress, decide an initiative pivot.'],['meal-strategy','Review quarterly actuals, log a learning decision.'],['gantt','Any Gantt task can be the subject of a meeting action.'],['issue-risk','A meeting can approve a risk mitigation.']],pushes:[['gantt','Gantt reads actions as external links against each task — nothing is auto-created, so no duplicate editing.']]},
  'org-structure':{step:0,label:'Foundation · Organisation structure',pulls:[['strategic-objectives','Owners you set on each ESO/ISO are summarised here against their role.'],['strategy-kpis','KPI owners and initiative owners are counted against each role.'],['meal-strategy','MEAL indicator owners (data managers) are counted against each role.'],['gantt','Gantt task owners are counted against each role — see where capacity concentrates.']],pushes:[['strategic-objectives','Owner dropdowns in every tool pull names from the role library here.'],['meetings','Attendees and action owners can come from the role library.']]},
  'donor-mapping':{step:0,label:'Funding · Donor mapping (prospect side)',pulls:[['strategic-objectives','Alignment scoring maps each donor against your ESOs — fit is the first qualification question.'],['theory-of-change','Donors whose priorities match your impact goal rise to the top of the pipeline.']],pushes:[['donor-tracking','Qualified donors move from mapping into the active pipeline for cultivation and application.']]},
- 'donor-tracking':{step:0,label:'Funding · Donor tracking (relationship side)',pulls:[['donor-mapping','Qualified prospects promoted from mapping become grants in cultivation here.'],['strategic-objectives','Each grant can be tied to the ESOs it funds, so leadership can see which objectives are funded and which are at risk.'],['strategy-kpis','Grants can be tied to specific initiatives — the budget side of annual planning.']],pushes:[['strategy-kpis','Awarded grants feed the funding picture for Strategy KPIs initiatives.']]}
+ 'donor-tracking':{step:0,label:'Funding · Donor tracking (relationship side)',pulls:[['donor-mapping','Qualified prospects promoted from mapping become grants in cultivation here.'],['strategic-objectives','Each grant can be tied to the ESOs it funds, so leadership can see which objectives are funded and which are at risk.'],['strategy-kpis','Grants can be tied to specific initiatives — the budget side of annual planning.']],pushes:[['strategy-kpis','Awarded grants feed the funding picture for Strategy KPIs initiatives.']]},
+ 'policy':{step:0,label:'Compliance · Policy management',pulls:[['org-structure','Policy owners come from the role library.'],['issue-risk','A policy breach can be logged as an issue; a policy gap can be logged as a risk.']],pushes:[['org-structure','Policies acknowledged by each staff member feed into onboarding compliance.']]},
+ 'onboarding':{step:0,label:'People · Onboarding & staff compliance',pulls:[['org-structure','The new hire fills a role from the role library.'],['policy','Required policy acknowledgements come from the policy register.']],pushes:[['org-structure','Completed hires become active role holders.']]},
+ 'checkins':{step:0,label:'People · Check-ins & development',pulls:[['org-structure','Each team member is a role holder.'],['strategic-objectives','Development goals can be tied to specific ESOs.'],['strategy-kpis','Individual contribution to KPIs can be reviewed here.']],pushes:[['meetings','1:1 decisions and actions can flow into the shared Meetings register.']]}
 };
 const toolHrefs={
  'strategic-objectives':'Strategic-Objectives.html',
@@ -306,7 +309,10 @@ const toolHrefs={
  'meetings':'Meetings-Actions-and-Decisions.html',
  'org-structure':'Organisation-Structure.html',
  'donor-mapping':'Donor-Mapping.html',
- 'donor-tracking':'Donor-Tracking.html'
+ 'donor-tracking':'Donor-Tracking.html',
+ 'policy':'Policy-Management.html',
+ 'onboarding':'Onboarding-and-Compliance.html',
+ 'checkins':'People-Check-Ins-and-Development.html'
 };
 const toolTitles={
  'strategic-objectives':'Strategic Objectives',
@@ -318,7 +324,10 @@ const toolTitles={
  'meetings':'Meetings, Actions & Decisions',
  'org-structure':'Organisation Structure',
  'donor-mapping':'Donor Mapping',
- 'donor-tracking':'Donor Tracking'
+ 'donor-tracking':'Donor Tracking',
+ 'policy':'Policy Management',
+ 'onboarding':'Onboarding & Staff Compliance',
+ 'checkins':'People Check-ins & Development'
 };
 const renderIntegration=tool=>{
  const d=integrationData[tool];if(!d) return '';

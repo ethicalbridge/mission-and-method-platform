@@ -1,135 +1,226 @@
+/* Onboarding & Staff Compliance — new-hire checklist with compliance items.
+   Each new hire has a checklist of steps (admin, equipment, training, policy
+   acknowledgement, buddy intro, etc.) with owner + due + status. Policies to
+   acknowledge are pulled from the Policy Management tool.
+*/
+(()=>{'use strict';
+const S=window.MMSuite;if(!S){console.error('MMSuite missing');return}
+const {esc,uid,now,today,currentYear,fmtDate,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,shell,importButtons,exportButtons,download,csv,XLSX_TYPE,buildXlsx,readmeSheet,schemaSheet,metaSheet,parseXlsx,findSheet,rowsToObjects,metaFromSheet,bind,formData,stamp,edited,editorName,clamp,s}=S;
+
+const KEY='mission-method-onboarding-v2';
+const ORG_KEY='mission-method-org-structure-v2',POLICY_KEY='mission-method-policy-v2';
+const TABS=['Start','New hires','Templates','Export'];
+const STAGES=['Pre-start','Week 1','Month 1','Probation','Ongoing','Complete'];
+const STEP_STATUS=['Not started','In progress','Done','N/A','Blocked'];
+const STEP_CATEGORIES=['Admin / contracts','Right-to-work / safeguarding','Equipment & accounts','Policy acknowledgement','Training','Buddy & intros','Performance setup','Benefits & payroll','Other'];
+
+const blankHire=()=>({id:uid(),code:'',name:'',roleCode:'',roleTitle:'',department:'',startDate:'',manager:'',buddy:'',status:'Pre-start',steps:[],notes:'',lastEditedBy:'',lastEditedAt:''});
+const blankStep=()=>({id:uid(),title:'',category:'Admin / contracts',owner:'',due:'',status:'Not started',notes:''});
+const blankMeta=()=>({organisation:'',year:currentYear,preparedBy:'',defaultTemplate:'standard',notes:''});
+const blank=()=>({version:2,meta:blankMeta(),hires:[],templates:defaultTemplates()});
+
+function defaultTemplates(){
+ return [{
+  id:'standard',name:'Standard new-hire template',description:'Baseline 24-step onboarding plan for any role.',
+  steps:[
+   ['Signed offer letter','Admin / contracts','HR','Pre-start'],
+   ['Right-to-work check completed','Right-to-work / safeguarding','HR','Pre-start'],
+   ['Reference checks returned','Right-to-work / safeguarding','HR','Pre-start'],
+   ['Safeguarding check / DBS completed','Right-to-work / safeguarding','HR','Pre-start'],
+   ['Employment contract signed','Admin / contracts','HR','Pre-start'],
+   ['Payroll setup','Benefits & payroll','Finance','Pre-start'],
+   ['Email account + logins created','Equipment & accounts','IT','Pre-start'],
+   ['Laptop + equipment allocated','Equipment & accounts','IT','Week 1'],
+   ['Welcome message to team','Buddy & intros','Manager','Week 1'],
+   ['Day 1 induction meeting','Buddy & intros','Manager','Week 1'],
+   ['Buddy assigned','Buddy & intros','Manager','Week 1'],
+   ['Code of conduct acknowledged','Policy acknowledgement','HR','Week 1'],
+   ['Safeguarding policy acknowledged','Policy acknowledgement','HR','Week 1'],
+   ['Data protection training completed','Training','HR','Week 1'],
+   ['Health & safety induction','Training','Operations','Week 1'],
+   ['Introductions across departments','Buddy & intros','Manager','Month 1'],
+   ['First objectives set with manager','Performance setup','Manager','Month 1'],
+   ['Development plan drafted','Performance setup','Manager','Month 1'],
+   ['Benefits enrolment confirmed','Benefits & payroll','HR','Month 1'],
+   ['All mandatory policies acknowledged','Policy acknowledgement','HR','Month 1'],
+   ['Role-specific training completed','Training','Manager','Probation'],
+   ['Mid-probation review','Performance setup','Manager','Probation'],
+   ['End-of-probation review and confirmation','Performance setup','Manager','Probation'],
+   ['Transition to ongoing check-in cadence','Performance setup','Manager','Ongoing']
+  ]
+ }];
+}
+
+const storage=S.store({key:KEY,version:2,blank,legacy:[],normalise:d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.onboarding-cleanup-v2',blank)||d;if(!Array.isArray(d.hires))d.hires=[];if(!Array.isArray(d.templates)||!d.templates.length)d.templates=defaultTemplates();return d}});
+let db=storage.load(),tab='Start',dlg='',message='',editing={id:null,buffer:null};
 const root=document.querySelector('#app');
-const KEY='mission-method-onboarding-v1';
-const today=()=>new Date().toISOString().slice(0,10);
-const plus=(day,n)=>{const d=new Date(`${day}T12:00:00`);d.setDate(d.getDate()+Number(n||0));return d.toISOString().slice(0,10)};
-const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const safeLink=x=>{try{const u=new URL(x);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}};
-const id=()=>globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
-const fmt=s=>s?new Date(`${s}T12:00:00`).toLocaleDateString('en',{day:'numeric',month:'short',year:'numeric'}):'—';
-const opts=(values,current)=>values.map(([value,label])=>`<option value="${esc(value)}" ${value===current?'selected':''}>${esc(label)}</option>`).join('');
-const field=(label,name,value='',type='text',extra='')=>`<label class="field">${label}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;
-const textarea=(label,name,value='')=>`<label class="field full">${label}<textarea name="${name}">${esc(value)}</textarea></label>`;
-const select=(label,name,values,current)=>`<label class="field">${label}<select name="${name}">${opts(values,current)}</select></label>`;
-const tip=text=>`<span class="tip"><button type="button" aria-label="More information">i</button><span>${esc(text)}</span></span>`;
-const sections=['Before day one','Organisation','Role and team','People','Policies and conduct','Procedures and systems','Role-specific learning','Wellbeing and support','Goals and feedback'];
-const sectionHelp={
- 'Before day one':'Prepare a welcome, contract, equipment, accounts, accessibility arrangements, first-day schedule and buddy introduction before the start date. HR or the manager confirms completion.',
- 'Organisation':'Explain the mission, values, strategy, structure, programmes, countries, funding and key contacts. Link the actual documents and ask the new joiner to discuss what they mean for the role.',
- 'Role and team':'Clarify job responsibilities, decision rights, priorities, workflows, meetings and handover. The manager owns these conversations.',
- 'People':'Make introductions to colleagues, HR, finance, IT, programme and safeguarding contacts where relevant.',
- 'Policies and conduct':'Assign only applicable policies. A document being opened is not completion; request an acknowledgement, course evidence or verification.',
- 'Procedures and systems':'Show how to use leave, timesheets, expenses, approvals, document storage, communication and reporting systems.',
- 'Role-specific learning':'Assign relevant training, briefings, shadowing, donor requirements and field protocols. Record completion evidence.',
- 'Wellbeing and support':'Explain working hours, workload, support contacts and safe ways to raise concerns. Do not store sensitive adjustment details in this preview.',
- 'Goals and feedback':'Agree early assignments, learning goals, manager check-ins and 30/60/90-day expectations. Carry open actions forward at review.'
-};
-const checkTypes=['Task','Course','Policy acknowledgement','Briefing','Certification','External learning'];
-const roles=['HR','Manager','Buddy','Joiner','Task owner'];
-const task=(title,section,offset,owner='Manager',type='Task',how='',renewDays=0,verify=false)=>({id:id(),title,section,offset,owner,type,how,link:'',duration:'',rule:type==='Task'?'Owner confirms completion':type==='Policy acknowledgement'?'Recorded acknowledgement':'Evidence of completion',renewDays,verify,scope:'All'});
-const baseTasks=[
- task('Welcome message and first-day agenda','Before day one',-7,'HR','Task','Send a welcome note with arrival or login details and an agenda.'),
- task('Contract, paperwork and access','Before day one',-3,'HR','Task','Confirm paperwork, equipment, accounts and accessibility arrangements without storing private details here.'),
- task('Introduce buddy','Before day one',-2,'Manager','Task','Introduce the buddy and explain their first-week support role.'),
- task('First-day welcome and team introductions','People',0,'Buddy','Task','Welcome the joiner; introduce colleagues and practical ways of working.'),
- task('Buddy check-in: day one','People',0,'Buddy','Task','Ask what is clear, what is confusing and what needs follow-up.'),
- task('Buddy check-in: first week','People',4,'Buddy','Task','Help with practical questions and flag any unresolved blocker.'),
- task('Buddy handover to manager','People',7,'Buddy','Task','Confirm remaining questions; the manager keeps responsibility for role expectations.'),
- task('Mission, values, programmes and key contacts','Organisation',5,'Manager','Briefing','Review the organisation and how this role contributes.',0,false),
- task('Strategic Plan','Organisation',30,'Manager','Briefing','Read and discuss current priorities.'),
- task('Theory of Change','Organisation',30,'Manager','Briefing','Discuss the results pathway and assumptions.'),
- task('Communication Strategy & Guidelines','Organisation',30,'Task owner','Briefing','Review voice, approvals and communication channels.'),
- task('Social media strategy','Organisation',30,'Task owner','Briefing','Review only when the role works on external channels.'),
- task('MEAL Strategy','Role-specific learning',30,'Task owner','Briefing','Discuss evidence, accountability and learning duties.'),
- task('Data Protection Policy','Policies and conduct',30,'Joiner','Policy acknowledgement','Read the current approved policy and record acknowledgement.',365,true),
- task('Data Protection Strategy','Policies and conduct',30,'Joiner','Policy acknowledgement','Review applicable data handling responsibilities.',365,true),
- task('DP - Consent Guidance','Policies and conduct',30,'Joiner','Policy acknowledgement','Discuss how consent is collected and recorded.',365,true),
- task('DP - Impact Assessment Guidance','Policies and conduct',30,'Task owner','Briefing','Use if the role designs data collection or systems.'),
- task('Anti-corruption policy','Policies and conduct',30,'Joiner','Policy acknowledgement','Acknowledge the current policy and reporting route.',365,true),
- task('Code of Conduct','Policies and conduct',30,'Joiner','Policy acknowledgement','Acknowledge the current code; clarify questions with HR.',365,true),
- task('Safeguarding Policy','Policies and conduct',30,'Joiner','Policy acknowledgement','Complete role-relevant safeguarding learning and acknowledgement.',365,true),
- task('Issue tracker','Procedures and systems',30,'Task owner','Briefing','Practise recording and escalating an issue.'),
- task('Donor mapping','Role-specific learning',30,'Task owner','Briefing','Review current donor prospects if relevant.'),
- task('Donor tracking','Role-specific learning',30,'Task owner','Briefing','Review pipeline and stewardship responsibilities if relevant.'),
- task('Sources of Income Strategy','Organisation',30,'Manager','Briefing','Explain the organisation’s funding approach.'),
- task('Partnership strategy and policy','Organisation',30,'Manager','Briefing','Discuss partner principles and approvals.'),
- task('Role priorities and decision authority','Role and team',7,'Manager','Task','Discuss the job description, current priorities and decisions the person can make.'),
- task('Leave, expenses and incident reporting','Procedures and systems',14,'Task owner','Briefing','Show the systems and escalation routes used by this role.'),
- task('Working patterns and support','Wellbeing and support',7,'Manager','Task','Explain hours, workload, support channels and safe ways to raise concerns.'),
- task('30-day goals review','Goals and feedback',30,'Manager','Task','Review first assignments and learning goals.'),
- task('60-day goals review','Goals and feedback',60,'Manager','Task','Review progress, support needs and open actions.'),
- task('90-day onboarding review','Goals and feedback',90,'Manager','Task','Record outcomes and carry forward unfinished actions.')
-];
-// The source checklist contains Issue tracker twice; retain it once in this starter template.
-const starter=(name,kind,extra=[])=>({id:id(),name,kind,version:1,tasks:[...baseTasks.map(x=>({...x,id:id()})),...extra]});
-function seed(){const employee=starter('Employee · reference checklist','Employee');const templates=[employee,starter('Volunteer','Volunteer'),starter('Intern','Intern'),starter('Consultant','Consultant'),starter('Manager','Manager',[task('Management authority and approvals','Role and team',14,'Manager','Briefing','Review delegation and people responsibilities.')]),starter('Remote staff','Remote staff',[task('Remote access and communication norms','Procedures and systems',7,'Task owner','Briefing','Test remote access and clarify response norms.')]),starter('Field-based staff','Field-based staff',[task('Field safety and security briefing','Role-specific learning',7,'Task owner','Course','Complete before field travel.',180,true)]),starter('Board member','Board member',[task('Board duties and conflicts','Policies and conduct',14,'HR','Policy acknowledgement','Discuss governance, fiduciary duties and conflicts.',365,true)])];
- const person={id:id(),name:'Sam Rivera',role:'Programme Officer',team:'Programmes',country:'Kenya',start:plus(today(),-10),contract:'Employee',arrangement:'Hybrid',manager:'Alex Morgan',buddy:'Leila Okafor',buddyDays:7};
- const db={version:1,organisation:'Example NGO',people:[person],templates,plans:[],records:[],events:[]};const plan=createPlan(db,person,employee);
- for(const title of ['Welcome message and first-day agenda','Contract, paperwork and access','First-day welcome and team introductions','Buddy check-in: day one']){const t=plan.tasks.find(x=>x.title===title);t.status='Completed';t.completed=plus(today(),-8)}
- const policy=plan.tasks.find(x=>x.title==='Code of Conduct');policy.status='Awaiting verification';policy.completed=plus(today(),-5);policy.evidence='Example acknowledgement · sample reference';const record=db.records.find(x=>x.taskId===policy.id);Object.assign(record,{status:'Awaiting verification',completed:policy.completed,evidence:policy.evidence});
- return db;
+const persist=d=>storage.save(d);
+function save(note=''){storage.save(db);if(note)message=note;render()}
+
+const readStore=k=>{try{const r=localStorage.getItem(k);if(!r)return null;const o=JSON.parse(r);return o&&typeof o==='object'?o:null}catch{return null}};
+const roleList=()=>(readStore(ORG_KEY)?.roles||[]).filter(r=>r.title);
+const policyList=()=>(readStore(POLICY_KEY)?.policies||[]).filter(p=>p.status==='Approved'&&(p.ackScope==='All staff'||p.ackScope==='All staff + board'||p.ackScope==='Specific roles'));
+const nextCode=()=>{const nums=db.hires.map(h=>Number(String(h.code||'').replace(/\D/g,''))).filter(n=>!isNaN(n));return 'H'+(Math.max(0,...nums)+1)};
+const stepsFromTemplate=(tplId)=>{const t=db.templates.find(x=>x.id===tplId)||db.templates[0];return (t.steps||[]).map(([title,cat,owner,stage])=>({...blankStep(),title,category:cat,owner,notes:'Due by: '+stage}))};
+const stepsPolicyAck=()=>policyList().map(p=>({...blankStep(),title:`Acknowledge policy: ${p.title}`,category:'Policy acknowledgement',owner:'HR',notes:`${p.code} · v${p.version}`}));
+const isOverdue=d=>d&&d<today();
+const progress=h=>{if(!h.steps.length)return 0;const done=h.steps.filter(s=>s.status==='Done').length;const applicable=h.steps.filter(s=>s.status!=='N/A').length;return applicable?Math.round(100*done/applicable):0};
+
+function startView(){
+ const m=db.meta;
+ const totalHires=db.hires.length;
+ const inProgress=db.hires.filter(h=>h.status!=='Complete').length;
+ const overdueSteps=db.hires.flatMap(h=>h.steps.filter(st=>st.status!=='Done'&&st.status!=='N/A'&&isOverdue(st.due))).length;
+ const policies=policyList().length;
+ return `${window.MMExample?.renderIntegration?.('onboarding')||''}
+  <section class="work-box">
+   <div class="work-head">
+    <span class="work-badge">Your workspace</span>
+    <input class="work-org" data-field="organisation" value="${esc(m.organisation)}" placeholder="Add your organisation name →" aria-label="Organisation name">
+    <span class="work-status" id="work-status"></span>
+   </div>
+   <p class="work-hint">Standardised onboarding and compliance for every new hire. Each hire gets a checklist from the template library plus any policy acknowledgements pulled live from Policy Management.</p>
+   <div class="work-meta">
+    <label class="work-field"><span>Planning year</span><input data-field="year" type="number" value="${esc(m.year)}" min="2000" max="2200"></label>
+    <label class="work-field"><span>Prepared by</span><input data-field="preparedBy" value="${esc(m.preparedBy)}" placeholder="Your name or team"></label>
+    <label class="work-field full"><span>Notes</span><textarea data-field="notes">${esc(m.notes)}</textarea></label>
+   </div>
+   <div class="grid four" style="margin:14px 0 10px">
+    ${card('Hires on file',totalHires,'All time')}
+    ${card('Still onboarding',inProgress,'Pre-start through probation')}
+    ${card('Steps overdue',overdueSteps,'Across all open hires',overdueSteps>0)}
+    ${card('Policies to acknowledge',policies,'Approved + all-staff scope')}
+   </div>
+   <div class="work-sect-head">
+    <h3>Get started</h3>
+    <p class="tiny">The <b>Standard template</b> has 24 steps covering admin, right-to-work, equipment, policies, training and performance setup. Policy acknowledgements for approved all-staff policies are auto-added to every new hire.</p>
+   </div>
+   <div class="actions">
+    <button class="button" data-action="new-hire">+ Add a new hire</button>
+    <a class="button secondary" href="#" data-tab="New hires">Go to new hires →</a>
+    <a class="button secondary" href="#" data-tab="Templates">Templates →</a>
+   </div>
+  </section>`;
 }
-function createPlan(target,person,template){const plan={id:id(),personId:person.id,templateId:template.id,templateName:template.name,templateVersion:template.version,created:today(),status:'Active',tasks:template.tasks.map(t=>({...t,id:id(),sourceId:t.id,due:plus(person.start,t.offset),status:'Assigned',completed:'',evidence:'',verified:'',verifiedBy:'',notes:''})),review:'',carryForward:''};target.plans.push(plan);plan.tasks.filter(t=>t.type!=='Task').forEach(t=>target.records.push(recordFromTask(plan,person,t)));target.events.push({at:today(),text:`Onboarding plan created for ${person.name} from ${template.name} v${template.version}.`});return plan;}
-const recordFromTask=(plan,person,t)=>({id:id(),personId:person.id,planId:plan.id,taskId:t.id,title:t.title,type:t.type,why:t.how,scope:t.scope,assigned:today(),due:t.due,completed:'',verified:'',verifiedBy:'',evidence:'',expiry:'',renewDays:Number(t.renewDays)||0,verify:!!t.verify,status:'Assigned',renewalOf:'',owner:t.owner});
-let db;try{db=JSON.parse(localStorage.getItem(KEY))||seed()}catch{db=seed()}
-if(!db?.templates||!db?.people||!db?.plans||!db?.records)db=seed();
-let role='HR',view='Home',selectedPerson=db.people[0]?.id||'',notice='',printSection='';
-const person=()=>db.people.find(x=>x.id===selectedPerson)||db.people[0];
-const plan=()=>db.plans.find(x=>x.personId===person()?.id);
-const recs=(p=person())=>db.records.filter(r=>r.personId===p?.id);
-const canEdit=()=>['HR','Manager'].includes(role);
-const canTask=t=>role==='HR'||role==='Manager'||role===t.owner||(role==='Task owner'&&t.owner==='Task owner');
-const pct=items=>items.length?Math.round(items.filter(x=>['Completed','Verified'].includes(x.status)).length/items.length*100):0;
-const status=x=>{if(x.status==='Verified')return 'Verified';if(x.status==='Awaiting verification')return 'Awaiting verification';if(x.status==='Completed')return x.expiry&&x.expiry<today()?'Expired':'Completed';if(x.status==='In progress')return x.due&&x.due<today()?'Overdue':'In progress';return x.due&&x.due<today()?'Overdue':x.status};
-const pill=s=>`<span class="pill ${['Overdue','Expired'].includes(s)?'warn':['Assigned','In progress'].includes(s)?'dim':''}">${esc(s)}</span>`;
-function save(message='Saved.'){localStorage.setItem(KEY,JSON.stringify(db));notice=message;render()}
-function log(text){db.events.push({at:new Date().toISOString(),text})}
-function currentTasks(){const p=plan();return p?p.tasks:[]}
-function visibleTasks(){const all=currentTasks();return role==='Buddy'?all.filter(t=>t.owner==='Buddy'):role==='Joiner'?all.filter(t=>t.owner==='Joiner'||t.type!=='Task'):role==='Task owner'?all.filter(t=>t.owner==='Task owner'):all}
-function stats(){const p=plan();const rs=recs();return `<div class="grid three"><div class="card"><span class="eyebrow">Onboarding</span><div class="metric">${pct(p?.tasks||[])}%</div><p>${p?.tasks.filter(t=>['Completed','Verified'].includes(t.status)).length||0} of ${p?.tasks.length||0} tasks complete</p><div class="bar"><i style="width:${pct(p?.tasks||[])}%"></i></div></div><div class="card"><span class="eyebrow">Compliance</span><div class="metric">${rs.filter(r=>status(r)==='Verified'||(!r.verify&&status(r)==='Completed')).length}/${rs.length}</div><p>Current completed requirements</p></div><div class="card"><span class="eyebrow">Action needed</span><div class="metric">${rs.filter(r=>['Overdue','Expired','Awaiting verification'].includes(status(r))).length}</div><p>Overdue, expired or awaiting verification</p></div></div>`}
-function hero(){return `<header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="toolbar"><a href="../../software.html">← Software Suite</a><label class="field">Preview as <select id="role">${opts(roles.map(x=>[x,x]),role)}</select></label></div></header><div class="hero"><span class="eyebrow">People & organisation · interactive preview</span><h1>Onboarding & staff compliance</h1><p>Prepare a personal induction plan, support a first-week buddy, and keep a continuing record of required learning and policy acknowledgements. Start from an editable template based on your onboarding checklist.</p><div class="toolbar"><label class="field">Selected person <select id="person">${opts(db.people.map(p=>[p.id,`${p.name} · ${p.role}`]),selectedPerson)}</select></label><button class="button secondary" data-act="export-json">Download data backup</button></div></div>`}
-function nav(){return `<nav class="nav" aria-label="Tool sections">${['Home','Onboarding plan','Learning & compliance','Templates','Reports'].map(x=>`<button type="button" data-view="${x}" class="${view===x?'active':''}">${x}</button>`).join('')}</nav>`}
-function home(){const p=person(),pl=plan(),tasks=visibleTasks().filter(t=>!['Completed','Verified'].includes(t.status)).sort((a,b)=>(a.due||'').localeCompare(b.due||''));return `<div class="notice warn">This is a browser-only preview. The role switch shows proposed views but does not enforce secure access. Do not enter private personnel details, certificates or adjustment requests.</div>${role==='HR'?'<div class="actions" style="margin-bottom:15px"><button class="button" data-act="person">Add person</button><button class="button secondary" data-act="new-plan">Assign or replace plan</button></div>':''}${stats()}<div class="grid" style="margin-top:15px"><section class="panel"><h2>${role==='Joiner'?'What to do next':role==='Buddy'?'Your buddy actions':role==='Task owner'?'Your assigned actions':'Next actions'}</h2>${tasks.slice(0,7).map(t=>`<div class="item"><div class="rowhead"><b>${esc(t.title)}</b>${pill(status(t))}</div><p>${esc(t.section)} · Due ${fmt(t.due)} · ${esc(t.owner)}</p><button class="link" data-view="Onboarding plan">Open plan →</button></div>`).join('')||'<p class="empty">No open actions in this view.</p>'}</section><section class="panel"><h2>${esc(p?.name||'Person')}’s induction</h2><p>${esc(p?.role||'')} · ${esc(p?.team||'')} · ${esc(p?.country||'')} · Started ${fmt(p?.start)}</p><p><b>Manager:</b> ${esc(p?.manager||'—')}<br><b>Buddy:</b> ${esc(p?.buddy||'—')} for ${esc(p?.buddyDays||7)} days from the start date.</p><p><b>Plan:</b> ${esc(pl?.templateName||'Not assigned')} ${pl?`(snapshot of v${pl.templateVersion})`:''}</p><h3>First-week buddy prompts ${tip('The buddy welcomes the joiner, makes introductions, explains everyday working practices, answers practical questions and flags unresolved blockers. The manager owns priorities and performance.')}</h3><p>Day one: What do you need today? · Midweek: What is still confusing? · End of week: What should the manager follow up?</p>${role==='Buddy'?`<label class="field">Unresolved question or blocker<textarea id="buddy-blocker" placeholder="Describe a practical blocker without sensitive personal details"></textarea></label><button class="button secondary" data-act="flag-blocker">Flag for manager</button>`:''}${(pl?.blockers||[]).map(b=>`<p class="notice warn"><b>Buddy flagged:</b> ${esc(b.text)} <span class="tiny">${fmt(b.at)}</span></p>`).join('')}</section></div>`}
-function taskRow(t){const r=db.records.find(x=>x.taskId===t.id),state=status(t),link=safeLink(t.link);return `<article class="item"><div class="rowhead"><div><b>${esc(t.title)}</b> ${pill(state)}<p>${esc(t.how||'Add instructions for this activity.')} ${link?`<a href="${esc(link)}" target="_blank" rel="noopener noreferrer">Open resource ↗</a>`:''}</p><span class="tiny">Owner: ${esc(t.owner)} · Due: ${fmt(t.due)} · ${esc(t.type)}${t.duration?` · ${esc(t.duration)}`:''}</span></div><div class="actions">${canTask(t)?`<button class="button small secondary" data-act="edit-task" data-id="${t.id}">Edit</button>`:''}</div></div>${r?`<p class="tiny">Completion rule: ${esc(t.rule)}. ${t.verify?'Verifier approval required.':'Owner confirms completion.'}</p>`:''}${canTask(t)?`<form class="form task-update" data-form="task-status" data-id="${t.id}">${select('Progress','status',[['Assigned','Assigned'],['In progress','In progress'],['Completed','Completed']],['Verified','Awaiting verification'].includes(t.status)?'Completed':t.status)}${field('Evidence reference or completion note','evidence',t.evidence||'')}<div class="actions"><button class="button small" type="submit">Save progress</button>${r?.status==='Awaiting verification'&&['HR','Manager'].includes(role)?`<button class="button small secondary" type="button" data-act="verify" data-id="${r.id}">Verify</button>`:''}</div></form>`:''}</article>`}
-function planView(){const p=person(),pl=plan();if(!pl)return `<div class="panel"><h2>No onboarding plan</h2><p>HR can assign a snapshot of an editable template.</p>${canEdit()?'<button class="button" data-act="new-plan">Assign a plan</button>':''}</div>`;return `<div class="rowhead"><div><span class="eyebrow">Individual plan</span><h2>${esc(p.name)}</h2><p>${esc(pl.templateName)} · Snapshot v${pl.templateVersion} · Created ${fmt(pl.created)}</p></div><div class="actions">${canEdit()?'<button class="button secondary" data-act="add-task">Add plan task</button>':''}<button class="button secondary" data-act="print-plan">Download plan PDF</button><button class="button secondary" data-act="csv-tasks">Tasks CSV</button></div></div><div class="notice">Template edits never change this plan. Edit an individual task here, or assign a new plan if you need an updated template.</div>${sections.concat([...new Set(pl.tasks.map(t=>t.section))].filter(s=>!sections.includes(s))).map(s=>{const items=visibleTasks().filter(t=>t.section===s);return items.length?`<section class="panel"><div class="rowhead"><h3>${esc(s)} ${tip(sectionHelp[s]||'Add instructions, a responsible owner and a due date. Record evidence before marking complete.')}</h3><b>${pct(items)}% complete</b></div><div class="bar"><i style="width:${pct(items)}%"></i></div>${items.map(taskRow).join('')}</section>`:''}).join('')}${canEdit()?`<section class="panel"><h3>End-of-onboarding review ${tip('Manager and joiner review progress together. Record a non-sensitive summary and carry every unfinished action into normal work tracking.')}</h3><form data-form="review" class="form">${textarea('Review summary','review',pl.review)}${textarea('Open actions carried forward','carryForward',pl.carryForward)}${select('Plan status','status',[['Active','Active'],['Reviewed','Reviewed']],pl.status)}<button class="button" type="submit">Save review</button></form></section>`:''}`}
-function complianceRow(r){const s=status(r);return `<tr><td><b>${esc(r.title)}</b><br><span class="tiny">${esc(r.type)} · ${esc(r.scope||'Individual')}</span></td><td>${esc(r.why||'—')}</td><td>${esc(r.owner||'—')}</td><td>${fmt(r.due)}</td><td>${pill(s)}<br><span class="tiny">Completed ${fmt(r.completed)}<br>Verified ${fmt(r.verified)} by ${esc(r.verifiedBy||'—')}<br>Expires ${fmt(r.expiry)}</span></td><td>${esc(r.evidence||'—')}</td><td>${['HR','Manager'].includes(role)&&s==='Awaiting verification'?`<button class="link" data-act="verify" data-id="${r.id}">Verify</button>`:''}</td></tr>`}
-function compliance(){const p=person();let records=recs(p);const filter=document.querySelector('#record-filter')?.value||'All';if(filter!=='All')records=records.filter(r=>status(r)===filter);return `<div class="rowhead"><div><span class="eyebrow">Continues beyond onboarding</span><h2>Learning & compliance</h2><p>Training, policy acknowledgements and renewals remain in the person’s history after induction.</p></div><div class="actions"><button class="button secondary" data-act="add-learning">Add outside learning</button><button class="button secondary" data-act="print-compliance">Download compliance PDF</button><button class="button secondary" data-act="csv-compliance">Compliance CSV</button></div></div><div class="notice">Opening a link or enrolling in a course does not count as completion. Record evidence; a verifier must approve requirements marked for verification. Expired items generate a new renewal action while the prior record stays in history.</div><div class="panel"><div class="rowhead filters"><h3>${esc(p.name)} · ${records.length} records</h3><label class="field">Filter status<select id="record-filter">${opts(['All','Assigned','In progress','Completed','Awaiting verification','Verified','Overdue','Expired'].map(x=>[x,x]),filter)}</select></label></div><div class="tablewrap"><table><thead><tr><th>Requirement</th><th>Why it applies</th><th>Owner</th><th>Due</th><th>Completion & renewal</th><th>Evidence reference</th><th>Action</th></tr></thead><tbody>${records.map(complianceRow).join('')}</tbody></table></div></div><section class="panel"><h3>External courses and future LMS links</h3><p>Each task can link to an external course. Record the actual completion and evidence here. This preview has no LMS connection or automated email reminders; upcoming and overdue actions appear in the home and report views.</p></section>`}
-function templateTaskRow(t){return `<div class="item"><div class="rowhead"><div><b>${esc(t.title)}</b><p>${esc(t.section)} · ${esc(t.owner)} · ${t.offset<0?`${Math.abs(t.offset)} days before start`:`Day ${t.offset}`} · ${esc(t.type)} · ${esc(t.scope||'All')}</p><span class="tiny">${esc(t.how||'')}</span></div><button class="button small secondary" data-act="edit-template-task" data-id="${t.id}">Edit</button></div></div>`}
-function templates(){if(role!=='HR')return '<div class="panel"><h2>Editable templates</h2><p>HR can adapt master templates. Existing plans keep their own snapshot.</p></div>';const t=db.templates.find(x=>x.id===selectedTemplate)||db.templates[0];return `<div class="rowhead"><div><span class="eyebrow">Master templates</span><h2>Adapt the process</h2><p>Start from the reference checklist, then tailor tasks to role, location, programme and policy.</p></div><button class="button secondary" data-act="copy-template">Duplicate template</button></div><section class="panel"><label class="field">Template<select id="template-select">${opts(db.templates.map(x=>[x.id,`${x.name} · v${x.version}`]),t.id)}</select></label><p class="tiny">Source: your Onboarding checklist.xlsx. The duplicate Issue tracker row was combined into one task. Added first-week buddy actions and 30/60/90-day reviews.</p><div class="actions"><button class="button" data-act="add-template-task">Add requirement</button><button class="button secondary" data-act="new-section">Add a section</button></div>${t.tasks.map(templateTaskRow).join('')}</section>`}
-let reportFilters={team:'All',country:'All',role:'All',requirement:'All'};
-function reports(){
- if(!['HR','Manager'].includes(role))return '<div class="panel"><h2>Reports</h2><p>This overview is intended for HR and managers. Switch roles to review the preview.</p></div>';
- const choices=(key,values)=>`<label class="field">${key}<select data-report-filter="${key.toLowerCase()}">${opts(['All',...new Set(values.filter(Boolean))].map(x=>[x,x]),reportFilters[key.toLowerCase()])}</select></label>`;
- const people=db.people.filter(p=>(role==='HR'||p.team===person()?.team)&&(reportFilters.team==='All'||p.team===reportFilters.team)&&(reportFilters.country==='All'||p.country===reportFilters.country)&&(reportFilters.role==='All'||p.role===reportFilters.role));
- const shown=people.filter(p=>reportFilters.requirement==='All'||recs(p).some(r=>r.title===reportFilters.requirement));
- const rows=shown.map(p=>{const pl=db.plans.find(x=>x.personId===p.id),rs=recs(p).filter(r=>reportFilters.requirement==='All'||r.title===reportFilters.requirement);return `<tr><td>${esc(p.name)}</td><td>${esc(p.team)} · ${esc(p.country)}</td><td>${pct(pl?.tasks||[])}%</td><td>${rs.filter(r=>status(r)==='Overdue').length}</td><td>${rs.filter(r=>status(r)==='Expired').length}</td><td>${rs.filter(r=>status(r)==='Awaiting verification').length}</td><td>${rs.filter(r=>r.expiry&&r.expiry>=today()&&r.expiry<=plus(today(),30)).length}</td></tr>`});
- return `<div class="rowhead"><div><span class="eyebrow">HR & manager overview</span><h2>Onboarding and compliance report</h2></div><div class="actions"><button class="button secondary" data-act="print-report">Print / save PDF</button><button class="button secondary" data-act="csv-report">Report CSV</button></div></div><div class="notice warn">Preview reporting is not permission-controlled. A live service needs sign-in, authorised access, audit controls and secure document storage before using real staff records.</div><section class="panel"><div class="form filters">${choices('Team',db.people.map(p=>p.team))}${choices('Country',db.people.map(p=>p.country))}${choices('Role',db.people.map(p=>p.role))}${choices('Requirement',db.records.map(r=>r.title))}</div><div class="tablewrap"><table><thead><tr><th>Person</th><th>Team & location</th><th>Onboarding</th><th>Overdue</th><th>Expired</th><th>To verify</th><th>Renewal in 30 days</th></tr></thead><tbody>${rows.join('')}</tbody></table></div></section><section class="panel"><h3>Activity history</h3>${db.events.slice().reverse().slice(0,25).map(e=>`<div class="item"><span class="tiny">${esc(e.at)}</span> · ${esc(e.text)}</div>`).join('')}</section>`
+
+function hiresView(){
+ const sorted=[...db.hires].sort((a,b)=>(b.startDate||'').localeCompare(a.startDate||''));
+ const rows=sorted.map(h=>{
+  const pct=progress(h);
+  const overdueSteps=h.steps.filter(st=>st.status!=='Done'&&st.status!=='N/A'&&isOverdue(st.due)).length;
+  return `<tr><td><b>${esc(h.code)}</b></td><td><b>${esc(h.name||'Untitled')}</b>${h.roleTitle?`<br><small>${esc(h.roleTitle)}</small>`:''}</td><td>${esc(h.department||'—')}</td><td>${esc(fmtDate(h.startDate)||'—')}</td><td>${esc(h.manager||'—')}</td><td>${pill(h.status)}</td><td><b>${pct}%</b>${bar(pct)}${overdueSteps?`<br><small class="pill bad" style="font-size:9px">${overdueSteps} overdue</small>`:''}</td><td><div class="row-actions"><button class="link" data-action="edit-hire" data-id="${esc(h.id)}">Open</button></div></td></tr>`;
+ });
+ return `<div class="rowhead section-head"><div><h2>New hires</h2><p>Open any hire to see and tick off their checklist. Progress is calculated as done ÷ applicable (N/A steps don't count).</p></div><button class="button" data-action="new-hire">+ Add a new hire</button></div>
+  ${table(['Code','Name / role','Department','Start date','Manager','Status','Progress',''],rows,'No hires yet.')}`;
 }
-let selectedTemplate=db.templates[0]?.id||'';
-function starterGuides(){return `<section class="panel" style="margin-top:15px"><h2>Starter agendas & prompts</h2><div class="grid"><div><h3>First day</h3><p>Welcome and practical access · buddy introduction · team introductions · manager meeting on the role and first priorities · time for questions.</p><h3>First week</h3><p>Walk through everyday systems and policies · meet key contacts · complete role-specific briefings · buddy check-in · manager follow-up on blockers.</p></div><div><h3>Manager’s first meeting</h3><p>What success looks like · decision authority · first assignments · support and working preferences · when and how to raise concerns.</p><h3>30 / 60 / 90-day goals</h3><p><b>30:</b> understand the role and complete essential learning. <b>60:</b> deliver an agreed assignment with feedback. <b>90:</b> review outcomes, support needs and next goals. Edit the plan tasks to make these specific.</p></div></div></section>`}
-function dialog(title,body,buttons='<button class="button" type="submit">Save</button>'){return `<div class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="modalbox"><div class="rowhead"><h2>${esc(title)}</h2><button class="button secondary" data-act="close">Close</button></div>${body}${buttons}</div></div>`}
-let modal='';
-function render(){const content=view==='Home'?home()+starterGuides():view==='Onboarding plan'?planView():view==='Learning & compliance'?compliance():view==='Templates'?templates():reports();root.innerHTML=`<div class="shell">${hero()}${nav()}<main id="main">${notice?`<div class="notice" role="status">${esc(notice)}</div>`:''}${content}</main><footer class="tiny">Saved in this browser · Export your work regularly · Mission & Method</footer></div>${modal}`;bind()}
-function taskForm(t,mode){const isTemplate=mode==='template';return `<form data-form="${isTemplate?'template-task':'plan-task'}" data-id="${esc(t?.id||'')}" class="form">${field('Subject or document / activity','title',t?.title||'','text','required')}${select('Section','section',[...new Set([...sections,...(db.templates.find(x=>x.id===selectedTemplate)?.tasks.map(y=>y.section)||[]),...(plan()?.tasks.map(y=>y.section)||[])])].map(x=>[x,x]),t?.section||sections[0])}${select('By whom / owner','owner',roles.map(x=>[x,x]),t?.owner||'Manager')}${isTemplate?field('When: days from start (negative = before)','offset',t?.offset??0,'number'):field('Due date','due',t?.due||today(),'date')}${select('Activity type','type',checkTypes.map(x=>[x,x]),t?.type||'Task')}${field('Duration / time needed','duration',t?.duration||'')}${textarea('How: instructions and completion rule','how',t?.how||'')}${field('Resource or course URL','link',t?.link||'','url')}${field('Completion rule','rule',t?.rule||'Owner confirms completion')}${field('Renew after days (0 = no renewal)','renewDays',t?.renewDays||0,'number','min="0"')}${select('Verification required','verify',[['false','No'],['true','Yes']],String(t?.verify||false))}${field('Applies to role / team / country / programme','scope',t?.scope||'All')}<div class="actions"><button class="button" type="submit">Save ${isTemplate?'template requirement':'plan task'}</button>${t?`<button class="button danger" type="button" data-act="delete-${isTemplate?'template':'plan'}-task" data-id="${t.id}">Remove</button>`:''}</div></form>`}
-function openModal(kind,identifier=''){if(kind==='new-plan'){modal=dialog('Assign onboarding plan',`<form data-form="plan"><p>Choose a template. A copy is saved for this person so later master edits do not change their plan.</p><label class="field">Template<select name="templateId">${opts(db.templates.map(t=>[t.id,t.name]),db.templates[0].id)}</select></label><p class="tiny">If a plan already exists, export it before replacing it.</p><button class="button" type="submit">Assign plan</button></form>`,'');}
- else if(kind==='person'){modal=dialog('Add person',`<form data-form="person" class="form">${field('Name','name','','text','required')}${field('Role / job title','role','','text','required')}${field('Team','team')}${field('Country / location','country')}${field('Start date','start',today(),'date','required')}${select('Contract type','contract',['Employee','Volunteer','Intern','Consultant','Board member'].map(x=>[x,x]),'Employee')}${field('Working arrangement','arrangement')}${field('Manager','manager')}${field('Buddy','buddy')}${field('Buddy period, days','buddyDays',7,'number','min="1"')}<button class="button" type="submit">Add person</button></form>`,'');}
- else if(kind==='add-learning'){modal=dialog('Record outside learning',`<form data-form="outside" class="form">${field('Activity / course','title','','text','required')}${select('Type','type',checkTypes.slice(1).map(x=>[x,x]),'External learning')}${field('Assigned date','assigned',today(),'date')}${field('Due date','due',today(),'date')}${field('Completion date','completed','','date')}${field('Evidence reference','evidence')}${field('Verifier / owner','owner',person().manager)}${field('Renew after days','renewDays',0,'number','min="0"')}${textarea('Why it applies','why','Relevant to this role or programme.')}${select('Verification required','verify',[['true','Yes'],['false','No']],'true')}<button class="button" type="submit">Save learning record</button></form>`,'');}
- else{const isTemplate=kind.includes('template'),t=isTemplate?db.templates.find(x=>x.id===selectedTemplate)?.tasks.find(x=>x.id===identifier):plan()?.tasks.find(x=>x.id===identifier);modal=dialog(t?'Edit requirement':'Add requirement',taskForm(t,isTemplate?'template':'plan'),'');}render()}
-function updateTask(t,desired,evidence){if(desired==='Completed'){if(t.type!=='Task'&&!String(evidence||'').trim()){notice='Add a completion or evidence reference before marking this learning requirement complete.';render();return}t.completed=today();t.evidence=String(evidence||'').trim();t.status=t.verify?'Awaiting verification':'Completed';const r=db.records.find(x=>x.taskId===t.id);if(r){r.completed=t.completed;r.evidence=t.evidence;r.status=t.status;if(!r.verify&&r.renewDays)r.expiry=plus(r.completed,r.renewDays);}}else{t.status=desired;t.completed='';t.evidence=String(evidence||'').trim();const r=db.records.find(x=>x.taskId===t.id);if(r){r.status=desired;r.completed='';r.verified='';r.expiry='';r.evidence=t.evidence;}}log(`${t.title}: ${t.status} for ${person().name}.`);save('Progress saved. The compliance record was updated.');}
-function syncTaskRecord(t){let r=db.records.find(x=>x.taskId===t.id);if(t.type==='Task'){if(r)db.records=db.records.filter(x=>x.id!==r.id);return}if(!r){r=recordFromTask(plan(),person(),t);db.records.push(r)}Object.assign(r,{title:t.title,type:t.type,why:t.how,scope:t.scope,owner:t.owner,due:t.due,renewDays:Number(t.renewDays)||0,verify:!!t.verify});}
-function checkRenewals(){let n=0;for(const r of [...db.records]){if(r.expiry&&r.expiry<today()&&!db.records.some(x=>x.renewalOf===r.id)){r.status='Expired';db.records.push({...r,id:id(),taskId:'',assigned:today(),due:today(),completed:'',verified:'',verifiedBy:'',evidence:'',expiry:'',status:'Assigned',renewalOf:r.id});log(`${r.title}: renewal assigned to ${db.people.find(p=>p.id===r.personId)?.name||'person'}.`);n++}}if(n)localStorage.setItem(KEY,JSON.stringify(db))}
-checkRenewals();
-function exportFile(name,text,type){const blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
-const csv=rows=>'\uFEFF'+rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\r\n');
-function downloadCSV(which){const p=person(),pl=plan();let rows,name;if(which==='tasks'){name='onboarding-tasks';rows=[['Person','Section','Subject or document','How','By whom','When / due','Duration','Type','Status','Completion date','Evidence reference','Verification date'],...(pl?.tasks||[]).map(t=>[p.name,t.section,t.title,t.how,t.owner,t.due,t.duration,t.type,status(t),t.completed,t.evidence,t.verified])]}else if(which==='compliance'){name='learning-compliance';rows=[['Person','Role','Team','Country','Requirement','Type','Why / applicability','Assigned','Due','Completed','Verified','Verified by','Expiry','Status','Evidence reference','Renewal of'],...recs().map(r=>[p.name,p.role,p.team,p.country,r.title,r.type,r.why,r.assigned,r.due,r.completed,r.verified,r.verifiedBy,r.expiry,status(r),r.evidence,r.renewalOf])]}else{name='organisation-report';rows=[['Person','Role','Team','Country','Onboarding %','Overdue','Expired','Awaiting verification','Renewal next 30 days'],...db.people.map(q=>{const rs=recs(q),pl=db.plans.find(x=>x.personId===q.id);return[q.name,q.role,q.team,q.country,pct(pl?.tasks||[]),rs.filter(r=>status(r)==='Overdue').length,rs.filter(r=>status(r)==='Expired').length,rs.filter(r=>status(r)==='Awaiting verification').length,rs.filter(r=>r.expiry&&r.expiry<=plus(today(),30)&&r.expiry>=today()).length]})]}exportFile(`Mission-and-Method-${name}.csv`,csv(rows),'text/csv;charset=utf-8')}
-function printView(which){printSection=which;const original=view;view=which==='plan'?'Onboarding plan':which==='compliance'?'Learning & compliance':'Reports';modal='';render();window.print();view=original;setTimeout(render,200)}
-function formData(form){return Object.fromEntries(new FormData(form))}
-function submit(form){const kind=form.dataset.form,d=formData(form),identifier=form.dataset.id||'';if(kind==='person'&&role==='HR'){const p={id:id(),...d,buddyDays:Number(d.buddyDays)||7};db.people.push(p);selectedPerson=p.id;modal='';view='Home';save('Person added. Assign an onboarding plan next.');return}
- if(kind==='plan'&&canEdit()){const p=person(),t=db.templates.find(x=>x.id===d.templateId);if(!t)return;if(plan()&&!confirm('Replace the current plan? Export it first if you need a copy.'))return;db.plans=db.plans.filter(x=>x.personId!==p.id);db.records=db.records.filter(x=>x.personId!==p.id||x.planId==='');createPlan(db,p,t);modal='';view='Onboarding plan';save('Plan assigned from a template snapshot.');return}
- if(kind==='task-status'){const t=plan()?.tasks.find(x=>x.id===identifier);if(t&&canTask(t))updateTask(t,d.status,d.evidence);return}
- if(kind==='review'&&canEdit()){Object.assign(plan(),{review:d.review,carryForward:d.carryForward,status:d.status});log(`Onboarding review saved for ${person().name}.`);save('Review and carry-forward actions saved.');return}
- if(kind==='outside'){const p=person(),completed=d.completed||'',r={id:id(),personId:p.id,planId:'',taskId:'',title:d.title,type:d.type,why:d.why,scope:'Individual',assigned:d.assigned,due:d.due,completed,verified:'',verifiedBy:'',evidence:d.evidence,expiry:'',renewDays:Number(d.renewDays)||0,verify:d.verify==='true',status:completed?(d.verify==='true'?'Awaiting verification':'Completed'):'Assigned',renewalOf:'',owner:d.owner};if(completed&&!d.evidence.trim()){notice='Provide an evidence reference for completed learning.';render();return}if(completed&&!r.verify&&r.renewDays)r.expiry=plus(completed,r.renewDays);db.records.push(r);log(`External learning recorded for ${p.name}: ${r.title}.`);modal='';save('Learning added to the continuing record.');return}
- if(kind==='template-task'&&role==='HR'){const t=db.templates.find(x=>x.id===selectedTemplate),old=t?.tasks.find(x=>x.id===identifier);if(!t)return;const item={...(old||{id:id()}),...d,offset:Number(d.offset)||0,renewDays:Number(d.renewDays)||0,verify:d.verify==='true'};if(old)Object.assign(old,item);else t.tasks.push(item);t.version++;log(`Template ${t.name} updated to v${t.version}; existing plans unchanged.`);modal='';save('Template updated. Existing plans retain their snapshot.');return}
- if(kind==='plan-task'&&canEdit()){const pl=plan(),old=pl?.tasks.find(x=>x.id===identifier);if(!pl)return;const item={...(old||{id:id(),sourceId:'',status:'Assigned',completed:'',evidence:'',verified:'',verifiedBy:'',notes:''}),...d,renewDays:Number(d.renewDays)||0,verify:d.verify==='true'};if(old)Object.assign(old,item);else pl.tasks.push(item);syncTaskRecord(item);log(`Plan task ${item.title} updated for ${person().name}.`);modal='';save('Plan task and compliance assignment saved.');return}}
-function action(el){const act=el.dataset.act,identifier=el.dataset.id||'';if(act==='close'){modal='';render();return}if(act==='new-plan'||act==='person'||act==='add-learning'||act==='add-task'||act==='edit-task'||act==='add-template-task'||act==='edit-template-task'){openModal(act,identifier);return}if(act==='flag-blocker'&&role==='Buddy'){const text=root.querySelector('#buddy-blocker')?.value.trim();if(!text)return;const pl=plan();pl.blockers||=[];pl.blockers.push({at:today(),text});log(`Buddy flagged a blocker for ${person().name}.`);save('Blocker flagged for the manager.');return}if(act==='verify'&&['HR','Manager'].includes(role)){const r=db.records.find(x=>x.id===identifier);if(!r||r.status!=='Awaiting verification')return;r.status='Verified';r.verified=today();r.verifiedBy=role;const t=plan()?.tasks.find(x=>x.id===r.taskId);if(t){t.status='Verified';t.verified=r.verified;t.verifiedBy=role}if(r.renewDays)r.expiry=plus(r.verified,r.renewDays);log(`${r.title} verified for ${person().name}.`);save('Requirement verified; renewal date calculated.');return}if(act==='copy-template'&&role==='HR'){const t=db.templates.find(x=>x.id===selectedTemplate),copy=structuredClone(t);copy.id=id();copy.name=`${t.name} copy`;copy.version=1;copy.tasks.forEach(x=>x.id=id());db.templates.push(copy);selectedTemplate=copy.id;save('Template duplicated. Edit it to suit a new role or context.');return}if(act==='new-section'&&role==='HR'){const name=prompt('New section name');if(!name?.trim())return;const t=db.templates.find(x=>x.id===selectedTemplate);t.tasks.push(task('New requirement',name.trim(),7));t.version++;save('Section added with an editable starter requirement.');return}if(act==='delete-template-task'&&role==='HR'){const t=db.templates.find(x=>x.id===selectedTemplate);if(!confirm('Remove this task from the master template? Existing plans will keep it.'))return;t.tasks=t.tasks.filter(x=>x.id!==identifier);t.version++;modal='';save('Template task removed; existing plans unchanged.');return}if(act==='delete-plan-task'&&canEdit()){const pl=plan();if(!confirm('Remove this task from this plan?'))return;pl.tasks=pl.tasks.filter(x=>x.id!==identifier);db.records=db.records.filter(x=>x.taskId!==identifier);modal='';save('Plan task removed.');return}if(act==='csv-tasks')downloadCSV('tasks');if(act==='csv-compliance')downloadCSV('compliance');if(act==='csv-report')downloadCSV('report');if(act==='export-json')exportFile('Mission-and-Method-onboarding-backup.json',JSON.stringify(db,null,2),'application/json');if(act==='print-plan')printView('plan');if(act==='print-compliance')printView('compliance');if(act==='print-report')printView('report')}
-function bind(){root.querySelector('#role')?.addEventListener('change',e=>{role=e.target.value;notice='Role changed for preview. Access is simulated, not secure.';view='Home';render()});root.querySelector('#person')?.addEventListener('change',e=>{selectedPerson=e.target.value;render()});root.querySelector('#template-select')?.addEventListener('change',e=>{selectedTemplate=e.target.value;render()});root.querySelectorAll('[data-report-filter]').forEach(x=>x.addEventListener('change',e=>{reportFilters[e.target.dataset.reportFilter]=e.target.value;render()}));root.querySelector('#record-filter')?.addEventListener('change',e=>{const value=e.target.value;root.querySelector('tbody').innerHTML=recs().filter(r=>value==='All'||status(r)===value).map(complianceRow).join('')});root.querySelectorAll('[data-view]').forEach(x=>x.addEventListener('click',()=>{view=x.dataset.view;notice='';render()}));root.querySelectorAll('[data-act]').forEach(x=>x.addEventListener('click',()=>action(x)));root.querySelectorAll('[data-form]').forEach(x=>x.addEventListener('submit',e=>{e.preventDefault();submit(e.currentTarget)}))}
-render();
+
+function templatesView(){
+ const rows=db.templates.map(t=>`<tr><td><b>${esc(t.name)}</b></td><td>${esc(t.description||'')}</td><td>${t.steps.length} steps</td><td>${t.id==='standard'?'<span class="pill dim">built-in</span>':''}</td></tr>`);
+ const stdRows=db.templates[0].steps.map(([title,cat,owner,stage])=>`<tr><td>${esc(title)}</td><td>${pill(cat)}</td><td>${esc(owner)}</td><td>${pill(stage)}</td></tr>`);
+ return `<div class="rowhead section-head"><div><h2>Onboarding templates</h2><p>The baseline template is applied to every new hire. Policy acknowledgements are added automatically from Policy Management.</p></div></div>
+  <section class="panel">${table(['Template','Description','Steps',''],rows,'')}</section>
+  <section class="panel"><h3>Standard template detail</h3>${table(['Step','Category','Default owner','Default stage'],stdRows,'')}</section>`;
+}
+
+function exportViewPanel(){return `${exportButtons()}<section class="panel"><h2>What the Excel workbook contains</h2><ul style="font-size:13px;line-height:1.5"><li>Hires — one row per hire with their checklist flattened</li><li>Meta — organisation / year</li><li>_schema — field list for round-trip import</li></ul></section>`}
+
+function hireModal(h){
+ const isNew=!h;h=h||blankHire();
+ const roles=roleList();
+ const rolesOpts=roles.map(r=>[r.code,`${r.code} · ${r.title}`]);
+ const stepRow=(st,i)=>`<div class="mad-row" data-row-kind="step" data-row-id="${esc(st.id)}">
+   <label class="mad-f mad-f-wide"><span>Step</span><textarea data-field="title" data-rid="${esc(st.id)}">${esc(st.title)}</textarea></label>
+   <label class="mad-f"><span>Category</span><select data-field="category" data-rid="${esc(st.id)}">${STEP_CATEGORIES.map(c=>`<option ${st.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+   <label class="mad-f"><span>Owner</span><input data-field="owner" data-rid="${esc(st.id)}" value="${esc(st.owner)}"></label>
+   <label class="mad-f mad-f-narrow"><span>Due</span><input type="date" data-field="due" data-rid="${esc(st.id)}" value="${esc(st.due)}"></label>
+   <label class="mad-f mad-f-narrow"><span>Status</span><select data-field="status" data-rid="${esc(st.id)}">${STEP_STATUS.map(s=>`<option ${st.status===s?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
+   <button type="button" class="link danger" data-action="remove-step" data-id="${esc(st.id)}">Remove</button>
+  </div>`;
+ return modal(isNew?'Add new hire':'Edit hire',`<form data-form="hire" data-id="${esc(h.id||'')}" class="form">
+  <div class="form-grid-top">
+   ${field('Code','code',h.code||nextCode(),'text','required')}
+   ${field('Name','name',h.name,'text','required')}
+   ${field('Start date','startDate',h.startDate,'date')}
+  </div>
+  ${rolesOpts.length?select('Role (from Organisation Structure)','roleCode',rolesOpts,h.roleCode,'Links to a role in the role library.','No role selected'):field('Role title','roleTitle',h.roleTitle)}
+  <div class="form-grid-top">
+   ${field('Department','department',h.department)}
+   ${field('Manager','manager',h.manager)}
+   ${field('Buddy','buddy',h.buddy)}
+  </div>
+  ${select('Status','status',STAGES,h.status||'Pre-start')}
+  ${isNew?'<p class="tiny" style="grid-column:1/-1;margin:4px 0">On save, this hire will be loaded with the Standard template steps plus any approved all-staff policy acknowledgements from Policy Management.</p>':''}
+  ${isNew?'':`<h3 class="form-section">Checklist · ${h.steps.length} steps · ${progress(h)}% complete</h3>
+  <div class="mad-rows" id="ob-steps">${h.steps.map(stepRow).join('')||'<p class="muted" style="grid-column:1/-1">No steps.</p>'}</div>
+  <div style="grid-column:1/-1"><button type="button" class="button small secondary" data-action="add-step">+ Add step</button> <button type="button" class="button small secondary" data-action="refresh-policies">↻ Refresh policy acknowledgements</button></div>`}
+  ${area('Notes','notes',h.notes)}
+  ${formEnd('Save hire',{deleteId:isNew?'':h.id,deleteLabel:'Delete hire'})}
+ </form>`);
+}
+
+function action(el){
+ const a=el.dataset.action,id=el.dataset.id,tabTarget=el.dataset.tab;
+ if(tabTarget){tab=tabTarget;dlg='';message='';render();return}
+ if(a==='close'){dlg='';editing={id:null,buffer:null};render();return}
+ if(a==='new-hire'){const h={...blankHire(),code:nextCode()};editing={id:null,buffer:h};dlg=hireModal(h);render();return}
+ if(a==='edit-hire'){const h=db.hires.find(x=>x.id===id);if(h){editing={id:h.id,buffer:JSON.parse(JSON.stringify(h))};dlg=hireModal(editing.buffer);render()}return}
+ if(a==='add-step'||a==='remove-step'||a==='refresh-policies'){
+  syncBuffer(root);
+  if(a==='add-step')editing.buffer.steps.push(blankStep());
+  if(a==='remove-step'){if(!confirm('Remove this step?'))return;editing.buffer.steps=editing.buffer.steps.filter(st=>st.id!==id)}
+  if(a==='refresh-policies'){const existing=new Set(editing.buffer.steps.map(st=>st.title));stepsPolicyAck().forEach(st=>{if(!existing.has(st.title))editing.buffer.steps.push(st)});message='Policy acknowledgements refreshed from Policy Management.'}
+  dlg=hireModal(editing.buffer);render();return;
+ }
+ if(a==='delete'){const h=db.hires.find(x=>x.id===id);if(!h||!confirm('Delete this hire record and their checklist?'))return;db.hires=db.hires.filter(x=>x.id!==id);dlg='';editing={id:null,buffer:null};save('Hire deleted.');return}
+ if(a==='xlsx'){try{download('Mission-and-Method-onboarding.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){downloadCsv();return}
+ if(a==='print'){window.print();return}
+ if(a==='export-json'){download('Mission-and-Method-onboarding.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Mission-and-Method-onboarding-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+}
+
+function syncBuffer(root){
+ if(!editing.buffer)return;
+ const form=root.querySelector('form[data-form="hire"]');if(!form)return;
+ const d=formData(form);
+ Object.assign(editing.buffer,{code:s(d.code),name:s(d.name),roleCode:s(d.roleCode),roleTitle:s(d.roleTitle),department:s(d.department),startDate:d.startDate||'',manager:s(d.manager),buddy:s(d.buddy),status:d.status||'Pre-start',notes:s(d.notes)});
+ if(editing.buffer.roleCode){const r=roleList().find(x=>x.code===editing.buffer.roleCode);if(r){editing.buffer.roleTitle=r.title;if(!editing.buffer.department)editing.buffer.department=r.department||''}}
+ root.querySelectorAll('#ob-steps .mad-row').forEach(row=>{const rid=row.dataset.rowId;const st=editing.buffer.steps.find(x=>x.id===rid);if(!st)return;row.querySelectorAll('[data-field]').forEach(el=>{st[el.dataset.field]=el.value})});
+}
+
+function submit(form){
+ if(form.dataset.form!=='hire')return;
+ syncBuffer(root);
+ const buf=editing.buffer;
+ const existing=db.hires.find(h=>h.id===buf.id);
+ if(!existing&&!buf.steps.length){buf.steps=[...stepsFromTemplate('standard'),...stepsPolicyAck()]}
+ stamp(buf);
+ if(existing)Object.assign(existing,buf);else db.hires.push(buf);
+ editing={id:null,buffer:null};dlg='';save('Hire saved.');
+}
+
+function buildWorkbook(withData){
+ const sheets=[
+  readmeSheet('Onboarding & Staff Compliance',['Standardised onboarding plus policy-acknowledgement tracking.']),
+  metaSheet(db.meta),
+  {name:'Hires',rows:[['Code','Name','Role','Department','Start','Manager','Buddy','Status','Progress %','Notes'],...(withData?db.hires.map(h=>[h.code,h.name,h.roleTitle,h.department,h.startDate,h.manager,h.buddy,h.status,progress(h),h.notes]):[])]},
+  {name:'Steps',rows:[['Hire code','Step','Category','Owner','Due','Status','Notes'],...(withData?db.hires.flatMap(h=>h.steps.map(st=>[h.code,st.title,st.category,st.owner,st.due,st.status,st.notes])):[])]},
+  schemaSheet({Hires:'code,name,roleTitle,department,startDate,manager,buddy,status,notes',Steps:'hireCode,title,category,owner,due,status,notes'})
+ ];
+ return buildXlsx(sheets);
+}
+function downloadCsv(){const rows=[['Hire','Name','Step','Category','Owner','Due','Status'],...db.hires.flatMap(h=>h.steps.map(st=>[h.code,h.name,st.title,st.category,st.owner,st.due,st.status]))];download('Mission-and-Method-onboarding.csv',csv(rows),'text/csv;charset=utf-8')}
+async function importXlsxFile(file){try{const data=await parseXlsx(await file.arrayBuffer());const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);const hRows=rowsToObjects(findSheet(data,'Hires'));const sRows=rowsToObjects(findSheet(data,'Steps'));if(hRows?.length){db.hires=hRows.map(r=>({...blankHire(),code:r.Code||'',name:r.Name||'',roleTitle:r.Role||'',department:r.Department||'',startDate:r.Start||'',manager:r.Manager||'',buddy:r.Buddy||'',status:r.Status||'Pre-start',notes:r.Notes||''}));const byCode=new Map(db.hires.map(h=>[h.code,h]));(sRows||[]).forEach(r=>{const h=byCode.get(r['Hire code']);if(!h)return;h.steps.push({...blankStep(),title:r.Step||'',category:r.Category||'Other',owner:r.Owner||'',due:r.Due||'',status:r.Status||'Not started',notes:r.Notes||''})})}save('Excel imported.')}catch(e){message='Excel import failed: '+e.message;render()}}
+async function importJsonFile(file){try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}}
+
+function wireStart(root){const box=root.querySelector('.work-box');if(!box)return;const status=box.querySelector('#work-status');let timer;const schedule=()=>{if(status)status.textContent='Saving…';clearTimeout(timer);timer=setTimeout(()=>{persist(db);if(status){status.textContent='✓ Saved';setTimeout(()=>status.textContent='',1500)}},400)};box.querySelectorAll('.work-meta [data-field],.work-head [data-field]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.field;db.meta[k]=el.type==='number'?(el.value===''?'':Number(el.value)):el.value;schedule()})})}
+
+function render(){
+ const views={'Start':startView,'New hires':hiresView,'Templates':templatesView,'Export':exportViewPanel};
+ root.innerHTML=shell({eyebrow:'People · Onboarding & staff compliance',title:'Onboarding & Staff Compliance',intro:'Standardised onboarding steps, right-to-work checks, policy acknowledgements and probation reviews for every new hire. Policies to acknowledge are pulled live from Policy Management.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=onboarding',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ bind(root,{tab:t=>{tab=t;message='';dlg='';editing={id:null,buffer:null};render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
+ wireStart(root);
+}
+
+persist(db);render();
+})();
