@@ -170,7 +170,7 @@ const strategyKpis=()=>{
 // ---------- Reference box (shown at the top of each tool's Start tab) ----------
 const mv=()=>`<div class="example-mv"><div><b>Mission</b><p>${esc(org.mission)}</p></div><div><b>Vision</b><p>${esc(org.vision)}</p></div><div><b>Values</b><p>${esc(org.values.split('\n').join(' · '))}</p></div></div>`;
 const esoCard=o=>`<article class="example-eso"><h4>${esc(o.code)} · ${esc(o.title)}</h4><span class="lbl">Why this matters</span><p class="val">${esc(o.rationale)}</p><span class="lbl">Change we want</span><p class="val">${esc(o.desiredChange)}</p><span class="lbl">Owner</span><p class="val">${esc(o.owner)} · priority ${esc(o.priority)}</p></article>`;
-const foot=label=>`<div class="example-foot"><button class="button secondary small" type="button" data-action="load-example">${esc(label)}</button><span class="tiny">The Load button replaces the current workspace with this example.</span></div>`;
+const foot=label=>`<div class="example-foot"><button class="button secondary small" type="button" data-action="load-example">${esc(label)}</button></div><p class="example-warn"><b>Heads up:</b> Loading this example replaces everything already in your workspace. Back up with "Backup JSON" first if you need to keep what's there.</p>`;
 const head=()=>`<summary class="example-summary"><span class="example-badge">Example</span><span class="example-title">${esc(org.organisation)} — click to expand or collapse</span></summary><p class="example-intro">A fictional rural-youth skills NGO shown as a worked example in every Impact Suite tool, so you can see what a completed workspace looks like with real content in every field. Edit or delete freely — the Load button below adds the full example to your workspace.</p>`;
 
 const renderBox=tool=>{
@@ -183,5 +183,47 @@ const renderBox=tool=>{
  return '';
 };
 
-window.MMExample={org,external,internal,strategicObjectives,theoryOfChange,strategyKpis,renderBox};
+// ---------- Your-workspace box (mirrors the example, filled with user data) ----------
+const dash=s=>s&&String(s).trim()?esc(s):'<span class="val-empty">— to fill</span>';
+const myMv=m=>`<div class="example-mv">
+ <div><b>Mission</b><p>${dash(m.mission)}</p></div>
+ <div><b>Vision</b><p>${dash(m.vision)}</p></div>
+ <div><b>Values</b><p>${m.values&&String(m.values).trim()?esc(String(m.values).split('\n').filter(x=>x.trim()).join(' · ')):'<span class="val-empty">— to fill</span>'}</p></div>
+</div>`;
+const myEsoCard=o=>`<article class="example-eso"><h4>${esc(o.code||'—')} · ${esc(o.title||'Untitled objective')}</h4><span class="lbl">Why this matters</span><p class="val">${dash(o.rationale)}</p><span class="lbl">Change we want</span><p class="val">${dash(o.desiredChange)}</p><span class="lbl">Owner</span><p class="val">${esc(o.owner||'—')} · priority ${esc(o.priority||'—')}</p></article>`;
+const myHead=(m,hint)=>`<div class="example-summary"><span class="example-badge mine">Your workspace</span><span class="example-title">${esc(m.organisation||'Add your organisation name →')}</span></div><p class="example-intro">${esc(hint)}</p>`;
+
+const renderUserBox=(tool,db)=>{
+ if(!db||!db.meta) return '';
+ const m=db.meta;
+ const anyMeta=(m.organisation||m.mission||m.vision||m.values||m.planName||m.name||m.impactGoal||'').trim();
+ const anyData=(db.objectives&&db.objectives.length)||(db.pathways&&db.pathways.length)||(db.kpis&&db.kpis.length)||(db.indicators&&db.indicators.length)||(db.initiatives&&db.initiatives.length);
+ if(!anyMeta&&!anyData) return '';
+ if(tool==='strategic-objectives'){
+  const ext=(db.objectives||[]).filter(o=>o.group==='External');
+  const int=(db.objectives||[]).filter(o=>o.group==='Internal');
+  const cards=ext.length?ext.map(myEsoCard).join(''):'<p class="example-empty">No external objectives yet — add your first ESO below.</p>';
+  const isoLine=int.length?`<p class="tiny" style="margin:10px 0 0"><b>Plus ${int.length} internal objective${int.length===1?'':'s'}:</b> ${int.map(i=>esc(i.code||'—')+' · '+esc((i.title||'untitled').toLowerCase())).join('; ')}.</p>`:'<p class="tiny" style="margin:10px 0 0"><b>No internal objectives yet.</b> Add governance, learning or operations foundations below.</p>';
+  return `<section class="example-box mine">${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — a quick view of what your strategic objectives look like together.')}${myMv(m)}<p class="tiny" style="margin:8px 0 6px"><b>Your external objectives (${ext.length}):</b></p><div class="example-objectives">${cards}</div>${isoLine}</section>`;
+ }
+ if(tool==='theory-of-change'){
+  const paths=db.pathways||[];
+  const first=paths[0];
+  const chain=first?`<p class="tiny" style="margin:6px 0 2px"><b>Impact goal:</b> ${dash(m.impactGoal)}</p><p class="tiny" style="margin:0 0 8px"><b>Pathway shown (1 of ${paths.length}):</b> ${esc(first.objective||'Untitled pathway')}</p><div class="example-chain"><div class="step"><b>Input</b><p>${dash(first.input)}</p></div><div class="step"><b>Activity</b><p>${dash(first.activity)}</p></div><div class="step"><b>Output</b><p>${dash(first.output)}</p></div><div class="step"><b>Outcome</b><p>${dash(first.outcome)}</p></div><div class="step"><b>Impact</b><p>${dash(first.impact)}</p></div></div>`:'<p class="example-empty">No pathways yet — add your first pathway below.</p>';
+  const others=paths.length>1?`<p class="tiny" style="margin:4px 0 0"><b>Other pathways:</b> ${paths.slice(1).map(p=>esc(p.objective||'untitled')).join('; ')}.</p>`:'';
+  return `<section class="example-box mine">${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — a quick view of your theory of change in one place.')}${myMv(m)}${chain}${others}</section>`;
+ }
+ if(tool==='strategy-kpis'){
+  const kpis=db.kpis||[];
+  const shown=kpis.slice(0,3);
+  const qLine=k=>['q1','q2','q3','q4'].map((q,i)=>`Q${i+1} ${esc(k[q]||'—')}`).join(' · ');
+  const cards=shown.length?shown.map(k=>`<article class="example-eso"><h4>${esc(k.code||'—')} · ${esc(k.name||'Untitled KPI')}</h4><span class="lbl">Linked to</span><p class="val">${esc(k.objectiveCode||'—')}</p><span class="lbl">Baseline → Annual target</span><p class="val">${esc(k.baseline||'—')} → ${esc(k.target||'—')}</p><span class="lbl">Quarterly targets</span><p class="val">${qLine(k)}</p><span class="lbl">Owner</span><p class="val">${esc(k.owner||'—')} · source: ${esc(k.source||'—')}</p></article>`).join(''):'<p class="example-empty">No KPIs yet — add your first KPI below.</p>';
+  const extra=kpis.length>3?`<p class="tiny" style="margin:8px 0 0">Plus ${kpis.length-3} more KPI${kpis.length-3===1?'':'s'}.</p>`:'';
+  const inits=(db.initiatives||[]).length;
+  return `<section class="example-box mine">${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — a quick view of your plan at a glance.')}${myMv(m)}<p class="tiny" style="margin:4px 0 8px"><b>Your KPIs (${kpis.length}) · initiatives (${inits}):</b></p><div class="example-objectives">${cards}</div>${extra}</section>`;
+ }
+ return '';
+};
+
+window.MMExample={org,external,internal,strategicObjectives,theoryOfChange,strategyKpis,renderBox,renderUserBox};
 })();

@@ -40,6 +40,7 @@ function migrateV1(v1){
 }
 
 const {load,save:persist}=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{
+ if(d.meta&&/Ethical Bridge \(example\)/i.test(d.meta.organisation||'')) return blank();
  if(!Array.isArray(d.pathways))d.pathways=[];
  if(!Array.isArray(d.indicators))d.indicators=[];
  if(!Array.isArray(d.snapshots))d.snapshots=[];
@@ -85,7 +86,7 @@ function dashboard(){
 
 function startView(){
  const m=db.meta;
- return `${window.MMExample?.renderBox?.('theory-of-change')||''}${journeyPanel()}${dashboard()}
+ return `${window.MMExample?.renderBox?.('theory-of-change')||''}${window.MMExample?.renderUserBox?.('theory-of-change',db)||''}
   <div class="notice">A Theory of Change explains how your work contributes to the change you want. Build it level by level: Input → Activity → Output → Outcome → Impact, with the assumptions that must hold between each step.</div>
   <section class="panel"><h2>Project details</h2>
    <form data-form="meta" class="form">

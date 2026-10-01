@@ -138,6 +138,16 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 .example-chain .step p{margin:0;font-size:12px;line-height:1.4;color:var(--ink)}
 .example-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
 .example-foot .tiny{color:var(--muted)}
+.example-warn{display:block;background:#fff1e5;border:1px solid #f0d6b7;color:#88452b;border-radius:10px;padding:9px 12px;margin:10px 0 0;font-size:12px;line-height:1.4}
+.example-warn b{color:#6e3620}
+/* "Your workspace" mirror variant — same shape, teal/mint accent */
+.example-box.mine{background:linear-gradient(180deg,#f4faf5,#fdfffd);border:1px solid #bddfcb;border-style:solid}
+.example-box.mine>.example-summary{padding:4px 0}
+.example-box.mine .example-badge.mine{background:var(--teal);color:#fff}
+.example-box.mine .example-mv>div,.example-box.mine .example-eso,.example-box.mine .example-chain .step{border-color:#bddfcb}
+.example-box.mine .example-eso .lbl,.example-box.mine .example-chain .step b{color:var(--deep)}
+.val-empty{color:#a7b5af;font-style:italic;font-size:12px}
+.example-empty{background:#f5f9f6;border:1px dashed #bddfcb;color:#536874;border-radius:10px;padding:12px;margin:6px 0 0;font-size:13px;text-align:center}
 @media(max-width:900px){.example-mv,.example-objectives{grid-template-columns:1fr}.example-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.example-chain{grid-template-columns:1fr}}
 @media print{.example-box{display:none}}
