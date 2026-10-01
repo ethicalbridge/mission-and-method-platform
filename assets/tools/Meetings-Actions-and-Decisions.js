@@ -1,67 +1,325 @@
+/* Meetings, Actions & Decisions — cross-cutting facilitation tool.
+   Each meeting record holds: agenda, decisions (go into a rolling register),
+   and actions (also go into a rolling register, each one optionally linked to
+   an item from any other suite tool — objective, pathway, KPI, indicator,
+   Gantt task, risk — or described in free text). Actions are READ by the
+   Gantt tool as external links against each task; nothing auto-syncs, so no
+   duplicate editing.
+*/
 (()=>{'use strict';
+const S=window.MMSuite;if(!S){console.error('MMSuite missing');return}
+const {esc,uid,now,today,currentYear,fmtDate,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,shell,importButtons,exportButtons,download,csv,XLSX_TYPE,buildXlsx,readmeSheet,schemaSheet,metaSheet,parseXlsx,findSheet,rowsToObjects,metaFromSheet,bind,formData,stamp,edited,editorName,clamp,s}=S;
+
+const KEY='mission-method-meetings-v2',LEGACY='mission-method-meetings-v1';
+const SO_KEY='mission-method-strategic-objectives-v2',TOC_KEY='mission-method-theory-of-change-v2',SK_KEY='mission-method-strategy-kpis-v2',MEAL_KEY='mission-method-meal-strategy-v3',GANTT_KEY='mission-method-gantt-v2',RISK_KEY='mission-method-issue-risk-v2';
+const TABS=['Start','Meetings','Actions register','Decisions register','Export'];
+const MTYPES=['Board','Leadership','Team','Project review','Partner','Workshop','Other'];
+const ASTATUS=['Open','In progress','Done','Blocked','Cancelled'];
+const DSTATUS=['Pending','Approved','Rescinded'];
+
+const blankMeeting=()=>({id:uid(),code:'',title:'',date:today(),type:'Team',facilitator:'',attendees:'',apologies:'',location:'',agenda:'',notes:'',decisions:[],actions:[],createdAt:now(),lastEditedBy:'',lastEditedAt:''});
+const blankDecision=()=>({id:uid(),text:'',context:'',decidedBy:'',status:'Approved'});
+const blankAction=()=>({id:uid(),text:'',owner:'',due:'',status:'Open',linkSource:'manual',linkRef:'',linkText:''});
+const blankMeta=()=>({organisation:'',project:'',year:currentYear,preparedBy:'',notes:''});
+const blank=()=>({version:2,meta:blankMeta(),meetings:[]});
+
+function migrateV1(v1){
+ const out=blank();
+ try{
+  if(v1?.meta)Object.assign(out.meta,v1.meta);
+  (v1?.meetings||[]).forEach((m,i)=>{
+   const nm={...blankMeeting(),code:m.code||'M'+(i+1),title:m.title||'',date:m.date||today(),type:MTYPES.includes(m.type)?m.type:'Team',facilitator:m.facilitator||'',attendees:m.attendees||'',apologies:m.apologies||'',location:m.location||'',agenda:m.agenda||'',notes:m.notes||''};
+   nm.decisions=(m.decisions||[]).map(d=>({...blankDecision(),text:d.text||d.decision||'',context:d.context||'',decidedBy:d.decidedBy||d.by||'',status:DSTATUS.includes(d.status)?d.status:'Approved'}));
+   nm.actions=(m.actions||[]).map(a=>({...blankAction(),text:a.text||a.action||'',owner:a.owner||'',due:a.due||'',status:ASTATUS.includes(a.status)?a.status:'Open',linkText:a.linkText||a.linkedTo||''}));
+   out.meetings.push(nm);
+  });
+ }catch(e){console.warn('meetings migrate failed',e)}
+ return out;
+}
+
+const storage=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.meetings-cleanup-v2',blank)||d;if(!Array.isArray(d.meetings))d.meetings=[];d.meetings.forEach(m=>{if(!Array.isArray(m.decisions))m.decisions=[];if(!Array.isArray(m.actions))m.actions=[]});return d}});
+let db=storage.load(),tab='Start',dlg='',message='';
 const root=document.querySelector('#app');
-const KEY='mission-method-meetings-actions-decisions-v1';
-const sections=['Overview','Meetings','Actions','Decisions','Reports & export'];
-const iso=()=>new Date().toISOString().slice(0,10);
-const shift=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
-const uid=()=>globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmt=d=>d?new Date(`${d}T12:00:00`).toLocaleDateString('en',{day:'numeric',month:'short',year:'numeric'}):'—';
-const nl=v=>esc(v||'—').replaceAll('\n','<br>');
-const options=(values,current)=>values.map(([value,label])=>`<option value="${esc(value)}" ${String(value)===String(current)?'selected':''}>${esc(label)}</option>`).join('');
-const statuses={meeting:['Planned','Held','Cancelled'],action:['Not started','In progress','Blocked','Completed'],decision:['Proposed','Approved','Superseded']};
-function sample(){const m1='sample-meeting-1',m2='sample-meeting-2',a1='sample-action-1';return {version:1,meta:{organisation:'Example Community Organisation',project:'Community Programme',preparedBy:'Sample team'},meetings:[
-{id:m1,title:'Monthly programme review',date:shift(-7),time:'10:00',format:'Hybrid',location:'Community room / online',facilitator:'Alex Morgan',noteTaker:'Sam Rivera',participants:'Alex Morgan, Sam Rivera, Jordan Lee',purpose:'Review delivery progress, resolve barriers and agree next steps.',agenda:'1. Progress against milestones\n2. Community feedback\n3. Budget and next actions',discussion:'The first activity reached the planned group. The team needs a clearer feedback form before the next visit.',status:'Held',nextMeeting:shift(21)},
-{id:m2,title:'Partner planning conversation',date:shift(12),time:'14:00',format:'Online',location:'Video call',facilitator:'Jordan Lee',noteTaker:'Alex Morgan',participants:'Jordan Lee, Alex Morgan, partner representative',purpose:'Agree the scope and responsibilities for a joint community session.',agenda:'1. Shared objectives\n2. Roles and safeguarding\n3. Timeline',discussion:'',status:'Planned',nextMeeting:''}],actions:[
-{id:a1,meetingId:m1,title:'Revise the community feedback form',owner:'Sam Rivera',due:shift(5),priority:'High',status:'In progress',notes:'Bring a short draft to the next team check-in.',completedAt:''},
-{id:'sample-action-2',meetingId:m1,title:'Confirm transport arrangements',owner:'Jordan Lee',due:shift(10),priority:'Medium',status:'Not started',notes:'Check accessibility requirements.',completedAt:''}],decisions:[
-{id:'sample-decision-1',meetingId:m1,title:'Use a shorter feedback form at the next activity',rationale:'Participants asked for a quicker way to share feedback.',decisionMaker:'Programme team',date:shift(-7),status:'Approved',owner:'Sam Rivera',reviewDate:shift(30),actionId:a1,notes:'Review response rate after one month.'}]};}
-function empty(){return {version:1,meta:{organisation:'',project:'',preparedBy:''},meetings:[],actions:[],decisions:[]}}
-function load(){try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved?.version===1&&Array.isArray(saved.meetings)&&Array.isArray(saved.actions)&&Array.isArray(saved.decisions))return saved}catch{}return sample()}
-let db=load(),tab='Overview',meetingId=db.meetings[0]?.id||'',modal='',notice='',actionFilter='All',decisionFilter='All',reportMeeting='all';
-const meeting=id=>db.meetings.find(x=>x.id===id),meetingName=id=>meeting(id)?.title||'Unlinked action';
-const linkedActions=id=>db.actions.filter(x=>x.meetingId===id),linkedDecisions=id=>db.decisions.filter(x=>x.meetingId===id);
-const overdue=x=>x.status!=='Completed'&&x.due&&x.due<iso();
-function persist(message){try{localStorage.setItem(KEY,JSON.stringify(db));notice=message;render()}catch{notice='This browser could not save the change. Export a backup before leaving.';render()}}
-const badge=(value)=>`<span class="pill ${['Blocked','Cancelled','Superseded'].includes(value)?'warn':['Proposed','Not started','Planned'].includes(value)?'dim':''}">${esc(value)}</span>`;
-const button=(label,act,id='',cls='secondary')=>`<button type="button" class="button ${cls}" data-act="${act}" data-id="${esc(id)}">${label}</button>`;
-function shell(){return `<div class="shell"><aside class="sidebar"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="sidebar-label">Meetings, Actions & Decisions<span>Project & operations</span></div><nav class="nav" aria-label="Tool sections">${sections.map((name,i)=>`<button type="button" data-tab="${esc(name)}" class="${tab===name?'active':''}" ${tab===name?'aria-current="page"':''}><span class="nav-index" aria-hidden="true">${String(i+1).padStart(2,'0')}</span><span>${esc(name)}</span></button>`).join('')}</nav><a class="suite-link" href="../../software.html">← Impact Tools</a></aside><div class="workspace"><header class="hero"><span class="eyebrow">Project & operations · interactive preview</span><h1>Meetings, Actions & Decisions</h1><p>Prepare a purposeful meeting, capture what was discussed, assign follow-through and keep a traceable record of decisions.</p><div class="toolbar"><span class="pill">Saved in this browser · exportable records</span>${button('Download backup','backup')}</div></header><main id="main">${notice?`<div class="notice" role="status">${esc(notice)}</div>`:''}${content()}</main><footer class="footer">Mission & Method · Export your work regularly. This preview is not a secure shared record.</footer></div></div>${modal}`}
-function content(){return tab==='Overview'?overview():tab==='Meetings'?meetingsView():tab==='Actions'?actionsView():tab==='Decisions'?decisionsView():reportsView()}
-function stat(label,value,detail=''){return `<div class="card"><span class="eyebrow">${esc(label)}</span><div class="metric">${esc(value)}</div><p>${esc(detail)}</p></div>`}
-function overview(){const open=db.actions.filter(x=>x.status!=='Completed'),due=open.filter(overdue),upcoming=db.meetings.filter(x=>x.status==='Planned'&&x.date>=iso()).sort((a,b)=>a.date.localeCompare(b.date)),proposed=db.decisions.filter(x=>x.status==='Proposed');return `<section><div class="rowhead"><div><span class="eyebrow">One connected workflow</span><h2>From discussion to delivery</h2><p>Meetings produce an agenda and minutes. Actions identify who will do what by when. Decisions preserve what was agreed and why.</p></div>${button('Plan a meeting','new-meeting','','')}</div><div class="grid four">${stat('Meetings',db.meetings.length,'Planned and held')}${stat('Open actions',open.length,'Named owner and due date')}${stat('Overdue actions',due.length,due.length?'Needs follow-up':'Nothing overdue')}${stat('Proposed decisions',proposed.length,'Awaiting confirmation')}</div><div class="grid" style="margin-top:15px"><article class="panel"><h3>Next meetings</h3>${upcoming.length?upcoming.slice(0,4).map(x=>`<div class="item"><b>${esc(x.title)}</b> · ${fmt(x.date)} ${esc(x.time||'')}<p>${esc(x.purpose||'Purpose not recorded')}</p><button class="text-button" data-act="select-meeting" data-id="${esc(x.id)}">Open meeting →</button></div>`).join(''):'<div class="empty">No upcoming meetings yet.</div>'}</article><article class="panel"><h3>Follow-up needing attention</h3>${due.length?due.slice(0,5).map(x=>`<div class="item"><b>${esc(x.title)}</b> · ${esc(x.owner||'Owner missing')}<p>Due ${fmt(x.due)} · ${esc(meetingName(x.meetingId))}</p></div>`).join(''):'<div class="empty">No overdue actions. Check that owners and dates are current.</div>'}<div class="actions">${button('Review actions','go-actions')}</div></article></div><div class="notice">A useful meeting record states its purpose, agenda, participants and notes. Every action needs an owner and due date; every decision needs a rationale and decision maker.</div></section>`}
-function quality(m){const actions=linkedActions(m.id),decisions=linkedDecisions(m.id);return [['Clear purpose',!!m.purpose],['Agenda or discussion topics',!!m.agenda],['Participants recorded',!!m.participants],['Discussion notes after the meeting',m.status!=='Held'||!!m.discussion],['Actions have owners and due dates',actions.every(a=>!!a.owner&&!!a.due)],['Decisions have rationale and decision maker',decisions.every(d=>!!d.rationale&&!!d.decisionMaker)]].map(([label,done])=>`<li class="${done?'done':''}">${esc(label)}</li>`).join('')}
-function meetingsView(){const sorted=[...db.meetings].sort((a,b)=>b.date.localeCompare(a.date));if(!meeting(meetingId))meetingId=sorted[0]?.id||'';const m=meeting(meetingId);return `<section><div class="rowhead"><div><span class="eyebrow">Prepare · record · follow up</span><h2>Meetings</h2><p>Keep the agenda and minutes together, then connect actions and decisions to the conversation that produced them.</p></div>${button('Add meeting','new-meeting','','')}</div><div class="split"><div><div class="panel">${sorted.length?sorted.map(x=>`<div class="item"><div class="rowhead"><div><b>${esc(x.title)}</b><p>${fmt(x.date)} · ${esc(x.time||'Time not set')} · ${esc(x.format||'Format not set')}</p></div>${badge(x.status)}</div><p>${esc(x.purpose||'Purpose not recorded')}</p><button class="text-button" data-act="select-meeting" data-id="${esc(x.id)}">View record →</button></div>`).join(''):'<div class="empty">No meetings yet. Add one to begin.</div>'}</div></div><div>${m?`<article class="panel"><div class="rowhead"><h3>${esc(m.title)}</h3>${badge(m.status)}</div><p>${fmt(m.date)} ${esc(m.time||'')} · ${esc(m.format||'')} ${m.location?'· '+esc(m.location):''}</p><p><b>Facilitator:</b> ${esc(m.facilitator||'—')}<br><b>Notes by:</b> ${esc(m.noteTaker||'—')}<br><b>Participants:</b> ${esc(m.participants||'—')}</p><h3>Purpose</h3><p class="detail-block">${nl(m.purpose)}</p><h3>Agenda</h3><p class="detail-block">${nl(m.agenda)}</p><h3>Discussion & minutes</h3><p class="detail-block">${nl(m.discussion)}</p><p><b>Next meeting:</b> ${fmt(m.nextMeeting)}</p><div class="actions">${button('Edit meeting','edit-meeting',m.id)}${button('Add action','new-action',m.id)}${button('Record decision','new-decision',m.id)}${button('Preview minutes','meeting-report',m.id)}</div></article><article class="panel"><h3>Linked follow-through</h3><b>Actions</b>${linkedActions(m.id).length?linkedActions(m.id).map(a=>`<div class="item">${esc(a.title)} · ${esc(a.owner||'Owner missing')} · ${fmt(a.due)} ${badge(a.status)}</div>`).join(''):'<p>No actions recorded.</p>'}<b>Decisions</b>${linkedDecisions(m.id).length?linkedDecisions(m.id).map(d=>`<div class="item">${esc(d.title)} · ${badge(d.status)}</div>`).join(''):'<p>No decisions recorded.</p>'}</article><article class="panel"><h3>Record quality</h3><p>Use this checklist before sharing the minutes.</p><ul class="checklist">${quality(m)}</ul></article>`:'<div class="panel empty">Select a meeting to view its agenda, minutes and follow-through.</div>'}</div></div></section>`}
-function actionsView(){const rows=[...db.actions].filter(x=>actionFilter==='All'||x.status===actionFilter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));return `<section><div class="rowhead"><div><span class="eyebrow">Accountability</span><h2>Action register</h2><p>Assign each task to one owner, set a due date and update its status. Overdue actions remain visible until completed.</p></div>${button('Add action','new-action','','')}</div><div class="panel"><div class="filters"><label class="field">Status<select id="action-filter">${options([['All','All'],...statuses.action.map(x=>[x,x])],actionFilter)}</select></label></div><div class="tablewrap"><table><thead><tr><th>Action</th><th>Meeting</th><th>Owner</th><th>Due</th><th>Priority</th><th>Status</th><th>Follow-up</th><th></th></tr></thead><tbody>${rows.map(a=>`<tr><td><b>${esc(a.title)}</b></td><td>${esc(meetingName(a.meetingId))}</td><td>${esc(a.owner||'—')}</td><td>${fmt(a.due)} ${overdue(a)?'<span class="pill warn">Overdue</span>':''}</td><td>${esc(a.priority)}</td><td>${badge(a.status)}</td><td>${esc(a.notes||'—')}</td><td>${button('Edit','edit-action',a.id,'secondary small')}</td></tr>`).join('')||'<tr><td colspan="8">No actions match this filter.</td></tr>'}</tbody></table></div></div></section>`}
-function decisionsView(){const rows=[...db.decisions].filter(x=>decisionFilter==='All'||x.status===decisionFilter).sort((a,b)=>b.date.localeCompare(a.date));return `<section><div class="rowhead"><div><span class="eyebrow">Institutional memory</span><h2>Decision register</h2><p>Record the decision, its rationale, who approved it and when it should be reviewed. Link implementation to an action where useful.</p></div>${button('Record decision','new-decision','','')}</div><div class="panel"><div class="filters"><label class="field">Status<select id="decision-filter">${options([['All','All'],...statuses.decision.map(x=>[x,x])],decisionFilter)}</select></label></div><div class="tablewrap"><table><thead><tr><th>Decision</th><th>Meeting</th><th>Date</th><th>Decision maker</th><th>Owner</th><th>Status</th><th>Review</th><th></th></tr></thead><tbody>${rows.map(d=>`<tr><td><b>${esc(d.title)}</b><p>${esc(d.rationale||'Rationale missing')}</p></td><td>${esc(meetingName(d.meetingId))}</td><td>${fmt(d.date)}</td><td>${esc(d.decisionMaker||'—')}</td><td>${esc(d.owner||'—')}</td><td>${badge(d.status)}</td><td>${fmt(d.reviewDate)}</td><td>${button('Edit','edit-decision',d.id,'secondary small')}</td></tr>`).join('')||'<tr><td colspan="8">No decisions match this filter.</td></tr>'}</tbody></table></div></div></section>`}
-function reportTable(headers,rows){return `<div class="tablewrap"><table><thead><tr>${headers.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(row=>`<tr>${row.map(v=>`<td>${esc(v??'')}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${headers.length}">Nothing recorded.</td></tr>`}</tbody></table></div>`}
-function reportPreview(){const selected=reportMeeting==='all'?db.meetings:db.meetings.filter(x=>x.id===reportMeeting),actions=reportMeeting==='all'?db.actions:db.actions.filter(x=>x.meetingId===reportMeeting),decisions=reportMeeting==='all'?db.decisions:db.decisions.filter(x=>x.meetingId===reportMeeting);return `<article class="report-preview"><span class="eyebrow">Mission & Method · ${reportMeeting==='all'?'Consolidated record':'Meeting minutes'}</span><h2>${reportMeeting==='all'?'Meetings, Actions & Decisions':esc(selected[0]?.title||'Meeting record')}</h2><div class="report-meta"><div><b>Organisation:</b> ${esc(db.meta.organisation||'—')}</div><div><b>Project:</b> ${esc(db.meta.project||'—')}</div><div><b>Prepared by:</b> ${esc(db.meta.preparedBy||'—')}</div><div><b>Generated:</b> ${fmt(iso())}</div></div>${selected.map(m=>`<section><h3>${esc(m.title)} · ${fmt(m.date)}</h3><p><b>Status:</b> ${esc(m.status)} · <b>Time:</b> ${esc(m.time||'—')} · <b>Format:</b> ${esc(m.format||'—')} · <b>Location:</b> ${esc(m.location||'—')}</p><p><b>Facilitator:</b> ${esc(m.facilitator||'—')} · <b>Notes by:</b> ${esc(m.noteTaker||'—')}</p><p><b>Participants:</b> ${esc(m.participants||'—')}</p><p><b>Purpose:</b><br><span class="detail-block">${nl(m.purpose)}</span></p><p><b>Agenda:</b><br><span class="detail-block">${nl(m.agenda)}</span></p><p><b>Discussion / minutes:</b><br><span class="detail-block">${nl(m.discussion)}</span></p><p><b>Next meeting:</b> ${fmt(m.nextMeeting)}</p></section>`).join('')}<h3>Action register</h3>${reportTable(['Action','Meeting','Owner','Due','Priority','Status','Follow-up'],actions.map(a=>[a.title,meetingName(a.meetingId),a.owner,fmt(a.due),a.priority,a.status,a.notes]))}<h3>Decision register</h3>${reportTable(['Decision','Meeting','Date','Rationale','Decision maker','Owner','Status','Review'],decisions.map(d=>[d.title,meetingName(d.meetingId),fmt(d.date),d.rationale,d.decisionMaker,d.owner,d.status,fmt(d.reviewDate)]))}<p class="subtle">This document reflects the browser records at the time of export. Verify approvals before external circulation.</p></article>`}
-function reportsView(){return `<section class="no-print"><span class="eyebrow">Take the result with you</span><h2>Reports & export</h2><p>Preview a meeting record or the consolidated package. Download editable registers and a complete backup, or print a polished PDF.</p><div class="panel"><div class="form"><label class="field">Report scope<select id="report-meeting">${options([['all','All meetings'],...db.meetings.map(m=>[m.id,m.title])],reportMeeting)}</select></label><label class="field">Organisation name<input id="organisation-name" value="${esc(db.meta.organisation)}" placeholder="Organisation name"></label><label class="field">Project name<input id="project-name" value="${esc(db.meta.project)}" placeholder="Project name"></label><label class="field">Prepared by<input id="prepared-by" value="${esc(db.meta.preparedBy)}" placeholder="Name or team"></label></div><div class="actions" style="margin-top:15px">${button('Save report details','save-meta','','')}${button('Print / save as PDF','print-report')}${button('Download Excel workbook','xlsx')}${button('Actions CSV','actions-csv')}${button('Decisions CSV','decisions-csv')}</div></div><div class="panel"><h3>Data portability</h3><p>The Excel workbook includes separate Meetings, Actions and Decisions sheets. The JSON backup preserves all editable records for this tool.</p><div class="actions">${button('Download JSON backup','backup')}<label class="button secondary" for="backup-file">Import JSON backup</label><input id="backup-file" type="file" accept=".json,application/json" style="position:absolute;left:-9999px"><button type="button" class="text-button" data-act="new-workspace">Start a blank workspace</button></div></div></section><div class="print-host">${reportPreview()}</div>`}
-const input=(label,name,value='',type='text',required=false,extra='')=>`<label class="field">${label}<input name="${name}" type="${type}" value="${esc(value)}" ${required?'required':''} ${extra}></label>`;
-const area=(label,name,value='',required=false)=>`<label class="field full">${label}<textarea name="${name}" ${required?'required':''}>${esc(value)}</textarea></label>`;
-const select=(label,name,values,current)=>`<label class="field">${label}<select name="${name}">${options(values.map(x=>[x,x]),current)}</select></label>`;
-const meetingChoices=current=>`<label class="field">Meeting<select name="meetingId">${options([['','Unlinked'],...db.meetings.map(m=>[m.id,m.title])],current)}</select></label>`;
-function meetingForm(m={}){return `${input('Meeting title','title',m.title||'','text',true)}${input('Date','date',m.date||iso(),'date',true)}${input('Time','time',m.time||'','time')}${select('Status','status',statuses.meeting,m.status||'Planned')}${select('Format','format',['In person','Online','Hybrid'],m.format||'In person')}${input('Location / meeting link label','location',m.location||'')}${input('Facilitator','facilitator',m.facilitator||'')}${input('Notes by','noteTaker',m.noteTaker||'')}${area('Participants (names or roles)','participants',m.participants||'')}${area('Purpose · what should this meeting achieve?','purpose',m.purpose||'',true)}${area('Agenda / discussion topics','agenda',m.agenda||'')}${area('Discussion notes / minutes','discussion',m.discussion||'')}${input('Next meeting date','nextMeeting',m.nextMeeting||'','date')}`}
-function actionForm(a={}){return `${input('Action · what will be done?','title',a.title||'','text',true)}${meetingChoices(a.meetingId||'')}${input('Owner · one accountable person','owner',a.owner||'','text',true)}${input('Due date','due',a.due||'','date',true)}${select('Priority','priority',['High','Medium','Low'],a.priority||'Medium')}${select('Status','status',statuses.action,a.status||'Not started')}${area('Follow-up / evidence needed','notes',a.notes||'')}`}
-function decisionForm(d={}){return `${input('Decision / proposal','title',d.title||'','text',true)}${meetingChoices(d.meetingId||'')}${input('Date decided or proposed','date',d.date||iso(),'date',true)}${select('Status','status',statuses.decision,d.status||'Proposed')}${input('Decision maker / approving group','decisionMaker',d.decisionMaker||'','text',true)}${input('Implementation owner','owner',d.owner||'')}${area('Rationale · why this choice?','rationale',d.rationale||'',true)}<label class="field">Linked implementation action<select name="actionId">${options([['','None'],...db.actions.map(a=>[a.id,a.title])],d.actionId||'')}</select></label>${input('Review date','reviewDate',d.reviewDate||'','date')}${area('Conditions or review notes','notes',d.notes||'')}`}
-function dialog(kind,id='',prefillMeeting=''){const existing=kind==='meeting'?meeting(id):kind==='action'?db.actions.find(x=>x.id===id):db.decisions.find(x=>x.id===id);const value=existing||{meetingId:prefillMeeting};const title=`${existing?'Edit':kind==='decision'?'Record':'Add'} ${kind}`;return `<div class="modal" role="presentation"><div class="dialog" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="rowhead"><div><span class="eyebrow">${esc(kind)} record</span><h2>${esc(title)}</h2></div>${button('Close','close-modal')}</div><p>${kind==='meeting'?'Keep purpose, agenda and minutes in one record.':kind==='action'?'Name one owner and a due date so the task can be followed through.':'Record the rationale and decision maker so the choice can be reviewed later.'}</p><form data-form="${kind}" data-id="${esc(id)}" class="form">${kind==='meeting'?meetingForm(value):kind==='action'?actionForm(value):decisionForm(value)}<div class="field full actions"><button class="button" type="submit">Save ${kind}</button></div></form></div></div>`}
-function download(filename,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
-const safeCsv=v=>{let s=String(v??'');if(/^[\s]*[=+\-@]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"'};
-const csv=rows=>'\uFEFF'+rows.map(row=>row.map(safeCsv).join(',')).join('\r\n');
-const meetHeaders=['ID','Title','Date','Time','Status','Format','Location','Facilitator','Notes by','Participants','Purpose','Agenda','Discussion / minutes','Next meeting'];
-const actionHeaders=['ID','Meeting ID','Meeting','Action','Owner','Due','Priority','Status','Follow-up','Completed'];
-const decisionHeaders=['ID','Meeting ID','Meeting','Decision','Rationale','Decision maker','Date','Status','Implementation owner','Review date','Linked action ID','Notes'];
-const meetRows=()=>db.meetings.map(m=>[m.id,m.title,m.date,m.time,m.status,m.format,m.location,m.facilitator,m.noteTaker,m.participants,m.purpose,m.agenda,m.discussion,m.nextMeeting]);
-const actionRows=()=>db.actions.map(a=>[a.id,a.meetingId,meetingName(a.meetingId),a.title,a.owner,a.due,a.priority,a.status,a.notes,a.completedAt]);
-const decisionRows=()=>db.decisions.map(d=>[d.id,d.meetingId,meetingName(d.meetingId),d.title,d.rationale,d.decisionMaker,d.date,d.status,d.owner,d.reviewDate,d.actionId,d.notes]);
-function exportXlsx(){if(!window.MEALXLSX?.build){notice='Excel export is not available in this browser session.';render();return}const sheets=[{name:'Project summary',rows:[['MISSION & METHOD · MEETINGS, ACTIONS & DECISIONS'],['Organisation',db.meta.organisation],['Project',db.meta.project],['Prepared by',db.meta.preparedBy],['Generated',iso()],['Meetings',db.meetings.length],['Actions',db.actions.length],['Decisions',db.decisions.length]]},{name:'Meetings',headerRows:[0],rows:[meetHeaders,...meetRows()]},{name:'Actions',headerRows:[0],rows:[actionHeaders,...actionRows()]},{name:'Decisions',headerRows:[0],rows:[decisionHeaders,...decisionRows()]}];download('Mission-and-Method-meetings-actions-decisions.xlsx',window.MEALXLSX.build(sheets),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')}
-function validateBackup(x){if(x?.version!==1||!Array.isArray(x.meetings)||!Array.isArray(x.actions)||!Array.isArray(x.decisions)||!x.meta)throw Error('Not a valid Meetings, Actions & Decisions backup');const pick=(item,keys)=>Object.fromEntries(keys.map(k=>[k,String(item?.[k]??'').slice(0,15000)]));return {version:1,meta:pick(x.meta,['organisation','project','preparedBy']),meetings:x.meetings.map(v=>pick(v,['id','title','date','time','status','format','location','facilitator','noteTaker','participants','purpose','agenda','discussion','nextMeeting'])),actions:x.actions.map(v=>pick(v,['id','meetingId','title','owner','due','priority','status','notes','completedAt'])),decisions:x.decisions.map(v=>pick(v,['id','meetingId','title','rationale','decisionMaker','date','status','owner','reviewDate','actionId','notes']))}}
-async function importBackup(file){try{const x=validateBackup(JSON.parse(await file.text()));if(!confirm('Replace the records in this browser with the selected backup? Download a backup first if you need the current records.'))return;db=x;meetingId=db.meetings[0]?.id||'';reportMeeting='all';tab='Overview';persist('Backup imported.')}catch(error){notice=`Import failed: ${error.message}`;render()}}
-function submit(form){const kind=form.dataset.form,id=form.dataset.id||'',data=Object.fromEntries(new FormData(form));if(kind==='meeting'){const item=meeting(id)||{id:uid()};Object.assign(item,data);if(!id)db.meetings.push(item);meetingId=item.id;modal='';persist('Meeting record saved.');return}if(kind==='action'){const item=db.actions.find(x=>x.id===id)||{id:uid(),completedAt:''};Object.assign(item,data);if(item.status==='Completed'&&!item.completedAt)item.completedAt=iso();if(item.status!=='Completed')item.completedAt='';if(!id)db.actions.push(item);modal='';persist('Action register updated.');return}if(kind==='decision'){const item=db.decisions.find(x=>x.id===id)||{id:uid()};Object.assign(item,data);if(!id)db.decisions.push(item);modal='';persist('Decision register updated.')}}
-function action(act,id){if(act==='close-modal'){modal='';render();return}if(act==='new-meeting'||act==='edit-meeting'){modal=dialog('meeting',act==='edit-meeting'?id:'');render();return}if(act==='new-action'||act==='edit-action'){modal=dialog('action',act==='edit-action'?id:'',act==='new-action'?id:'');render();return}if(act==='new-decision'||act==='edit-decision'){modal=dialog('decision',act==='edit-decision'?id:'',act==='new-decision'?id:'');render();return}if(act==='select-meeting'){meetingId=id;tab='Meetings';notice='';render();return}if(act==='go-actions'){tab='Actions';render();return}if(act==='meeting-report'){reportMeeting=id;tab='Reports & export';render();return}if(act==='save-meta'){db.meta={organisation:root.querySelector('#organisation-name')?.value.trim()||'',project:root.querySelector('#project-name')?.value.trim()||'',preparedBy:root.querySelector('#prepared-by')?.value.trim()||''};persist('Report details saved.');return}if(act==='print-report'){window.print();return}if(act==='xlsx'){exportXlsx();return}if(act==='actions-csv'){download('Mission-and-Method-actions.csv',csv([actionHeaders,...actionRows()]),'text/csv;charset=utf-8');return}if(act==='decisions-csv'){download('Mission-and-Method-decisions.csv',csv([decisionHeaders,...decisionRows()]),'text/csv;charset=utf-8');return}if(act==='backup'){download('Mission-and-Method-meetings-actions-decisions-backup.json',JSON.stringify({...db,exportedAt:new Date().toISOString()},null,2),'application/json');return}if(act==='new-workspace'&&confirm('Start a blank workspace in this browser? Download a backup first if you need the current records.')){db=empty();meetingId='';reportMeeting='all';tab='Overview';persist('Blank workspace ready.')}}
-function render(){root.innerHTML=shell()}
-root.addEventListener('click',event=>{const target=event.target.closest('[data-tab],[data-act]');if(!target)return;if(target.dataset.tab){tab=target.dataset.tab;modal='';notice='';render();window.scrollTo(0,0)}else action(target.dataset.act,target.dataset.id||'')});
-root.addEventListener('submit',event=>{const form=event.target.closest('[data-form]');if(!form)return;event.preventDefault();submit(form)});
-root.addEventListener('change',event=>{const el=event.target;if(el.id==='action-filter'){actionFilter=el.value;render()}else if(el.id==='decision-filter'){decisionFilter=el.value;render()}else if(el.id==='report-meeting'){reportMeeting=el.value;render()}else if(el.id==='backup-file'&&el.files[0])importBackup(el.files[0])});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal){modal='';render()}});
-render();
+const persist=d=>storage.save(d);
+function save(note=''){storage.save(db);if(note)message=note;render()}
+
+// ---------- Cross-tool suite items (for linking actions / decisions) ----------
+const readStore=k=>{try{const r=localStorage.getItem(k);if(!r)return null;const o=JSON.parse(r);return o&&typeof o==='object'?o:null}catch{return null}};
+function suiteItems(){
+ const items=[];
+ const so=readStore(SO_KEY);(so?.objectives||[]).forEach(o=>items.push({group:'Strategic objectives',source:'so',ref:o.code,label:`${o.code} · ${o.title}`}));
+ const toc=readStore(TOC_KEY);(toc?.pathways||[]).forEach(p=>items.push({group:'Theory of Change pathways',source:'toc',ref:p.id,label:p.objective||'Untitled pathway'}));
+ const sk=readStore(SK_KEY);(sk?.kpis||[]).forEach(k=>items.push({group:'Strategy KPIs',source:'sk-kpi',ref:k.code,label:`${k.code} · ${k.name}`}));(sk?.initiatives||[]).forEach(i=>items.push({group:'Strategy KPIs initiatives',source:'sk-init',ref:i.code,label:`${i.code} · ${i.title}`}));
+ const meal=readStore(MEAL_KEY);(meal?.indicators||[]).forEach(i=>items.push({group:'MEAL indicators',source:'meal',ref:i.code,label:`${i.code} · ${i.name||'untitled'}`}));
+ const gantt=readStore(GANTT_KEY);(gantt?.tasks||[]).filter(t=>t.title).forEach(t=>items.push({group:'Gantt tasks',source:'gantt',ref:t.code,label:`${t.code||'·'} · ${t.title}`}));
+ const risks=readStore(RISK_KEY);(risks?.risks||[]).forEach(r=>items.push({group:'Risks',source:'risk',ref:r.code,label:`${r.code} · ${r.title}`}));(risks?.issues||[]).forEach(i=>items.push({group:'Issues',source:'issue',ref:i.code,label:`${i.code} · ${i.title}`}));
+ return items;
+}
+const toolHref=src=>({so:'Strategic-Objectives.html',toc:'Theory-of-Change-Builder.html','sk-kpi':'Strategy-KPIs-and-Annual-Planning.html','sk-init':'Strategy-KPIs-and-Annual-Planning.html',meal:'MEAL-Strategy.html',gantt:'Gantt-Project-Planner.html',risk:'Issue-and-Risk-Management.html',issue:'Issue-and-Risk-Management.html'}[src]||'#');
+
+const nextCode=()=>{const nums=db.meetings.map(m=>Number(String(m.code||'').replace('M',''))).filter(n=>!isNaN(n));return 'M'+(Math.max(0,...nums)+1)};
+const isOverdue=d=>d&&d<today();
+
+// ---------- Views ----------
+function startView(){
+ const m=db.meta;
+ const totalMeetings=db.meetings.length;
+ const openActions=db.meetings.flatMap(mt=>mt.actions.filter(a=>a.status!=='Done'&&a.status!=='Cancelled'));
+ const overdueActions=openActions.filter(a=>isOverdue(a.due));
+ const totalDecisions=db.meetings.flatMap(mt=>mt.decisions).length;
+ const upcomingMeeting=[...db.meetings].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).find(mt=>mt.date>=today());
+ return `${window.MMExample?.renderIntegration?.('meetings')||''}
+  <section class="work-box">
+   <div class="work-head">
+    <span class="work-badge">Your workspace</span>
+    <input class="work-org" data-field="organisation" value="${esc(m.organisation)}" placeholder="Add your organisation name →" aria-label="Organisation name">
+    <span class="work-status" id="work-status"></span>
+   </div>
+   <p class="work-hint">Run meetings that end with decisions and owned actions, not just notes. Decisions and actions roll up into their own registers so leadership can answer "what did we decide across the year?" and "what's overdue?" instantly.</p>
+   <div class="work-meta">
+    <label class="work-field"><span>Project / programme</span><input data-field="project" value="${esc(m.project)}" placeholder="e.g. 2026 leadership rhythm"></label>
+    <label class="work-field"><span>Planning year</span><input data-field="year" type="number" value="${esc(m.year)}" min="2000" max="2200"></label>
+    <label class="work-field"><span>Prepared by</span><input data-field="preparedBy" value="${esc(m.preparedBy)}" placeholder="Your name or team"></label>
+    <label class="work-field full"><span>Notes</span><textarea data-field="notes" placeholder="How this meeting rhythm fits — governance, team ops, project reviews.">${esc(m.notes)}</textarea></label>
+   </div>
+   <div class="grid four" style="margin:14px 0 10px">
+    ${card('Meetings',totalMeetings,'Recorded in this browser')}
+    ${card('Open actions',openActions.length,'Across all meetings',openActions.length>5)}
+    ${card('Actions overdue',overdueActions.length,'Past their due date',overdueActions.length>0)}
+    ${card('Decisions logged',totalDecisions,'In the register')}
+   </div>
+   ${upcomingMeeting?`<div class="notice"><b>Next meeting:</b> ${esc(upcomingMeeting.title||'Untitled')} on ${esc(fmtDate(upcomingMeeting.date))} · <button class="link" data-action="edit-meeting" data-id="${esc(upcomingMeeting.id)}">Open the record</button></div>`:''}
+   <div class="work-sect-head">
+    <h3>Get started</h3>
+    <p class="tiny">Each meeting record carries: agenda, who was there, decisions taken, and actions assigned. Decisions and actions are also surfaced as rolling registers (see tabs above).</p>
+   </div>
+   <div class="actions">
+    <button class="button" data-action="new-meeting">+ Add a meeting</button>
+    <a class="button secondary" href="#" data-tab="Meetings">Go to meetings list →</a>
+    <a class="button secondary" href="#" data-tab="Actions register">See all actions →</a>
+    <a class="button secondary" href="#" data-tab="Decisions register">See all decisions →</a>
+   </div>
+  </section>`;
+}
+
+function meetingsView(){
+ const sorted=[...db.meetings].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ const rows=sorted.map(m=>{
+  const openA=m.actions.filter(a=>a.status!=='Done'&&a.status!=='Cancelled').length;
+  const overdueA=m.actions.filter(a=>a.status!=='Done'&&a.status!=='Cancelled'&&isOverdue(a.due)).length;
+  return `<tr>
+   <td><b>${esc(m.code)}</b></td>
+   <td><b>${esc(m.title||'Untitled meeting')}</b>${m.location?`<br><small>${esc(m.location)}</small>`:''}</td>
+   <td>${esc(fmtDate(m.date))}</td>
+   <td>${pill(m.type)}</td>
+   <td>${esc(m.facilitator||'—')}</td>
+   <td>${m.decisions.length} decision${m.decisions.length===1?'':'s'}</td>
+   <td>${m.actions.length} action${m.actions.length===1?'':'s'}${openA?`<br><small>${openA} open${overdueA?` · <span class="pill bad" style="font-size:9px">${overdueA} overdue</span>`:''}</small>`:''}</td>
+   <td><div class="row-actions"><button class="link" data-action="edit-meeting" data-id="${esc(m.id)}">Open</button></div></td>
+  </tr>`;
+ });
+ return `<div class="rowhead section-head"><div><h2>Meetings</h2><p>One row per meeting. Open any one to edit agenda, decisions and actions. Sorted newest first.</p></div><button class="button" data-action="new-meeting">+ Add a meeting</button></div>
+  ${table(['Code','Title','Date','Type','Facilitator','Decisions','Actions',''],rows,'No meetings yet. Click "Add a meeting" to record one.')}`;
+}
+
+function actionsRegisterView(){
+ const all=db.meetings.flatMap(m=>m.actions.map(a=>({...a,meetingId:m.id,meetingCode:m.code,meetingTitle:m.title,meetingDate:m.date})));
+ const open=all.filter(a=>a.status!=='Done'&&a.status!=='Cancelled');
+ const overdue=open.filter(a=>isOverdue(a.due));
+ const sorted=[...all].sort((a,b)=>{if(a.status==='Done'||a.status==='Cancelled')return 1;if(b.status==='Done'||b.status==='Cancelled')return -1;return (a.due||'9999').localeCompare(b.due||'9999')});
+ const rows=sorted.map(a=>{
+  const od=isOverdue(a.due)&&a.status!=='Done'&&a.status!=='Cancelled';
+  const linked=a.linkSource&&a.linkSource!=='manual'&&a.linkRef?`<a class="link" href="${esc(toolHref(a.linkSource))}">${esc(a.linkRef)}</a>${a.linkText?`<br><small>${esc(a.linkText)}</small>`:''}`:(a.linkText?esc(a.linkText):'<span class="muted">—</span>');
+  return `<tr><td><b>${esc(a.text||'Untitled action')}</b></td><td>${linked}</td><td>${esc(a.owner||'—')}</td><td>${esc(fmtDate(a.due)||'—')} ${od?'<span class="pill bad" style="font-size:9px">overdue</span>':''}</td><td>${pill(a.status)}</td><td><button class="link" data-action="edit-meeting" data-id="${esc(a.meetingId)}">${esc(a.meetingCode)} · ${esc(fmtDate(a.meetingDate))}</button></td></tr>`;
+ });
+ return `<div class="rowhead section-head"><div><h2>Actions register</h2><p>Every action from every meeting in one list. Open items first, then by due date. Overdue items are flagged. Click a meeting code to jump to the full record.</p></div></div>
+  <div class="grid four" style="margin-bottom:16px">
+   ${card('Total actions',all.length,'All meetings combined')}
+   ${card('Open',open.length,'Still being worked on',open.length>5)}
+   ${card('Overdue',overdue.length,'Past their due date',overdue.length>0)}
+   ${card('Done',all.filter(a=>a.status==='Done').length,'Complete')}
+  </div>
+  ${table(['Action','Linked to','Owner','Due','Status','From meeting'],rows,'No actions logged yet. Add a meeting with actions on the Meetings tab.')}`;
+}
+
+function decisionsRegisterView(){
+ const all=db.meetings.flatMap(m=>m.decisions.map(d=>({...d,meetingId:m.id,meetingCode:m.code,meetingTitle:m.title,meetingDate:m.date})));
+ const sorted=[...all].sort((a,b)=>(b.meetingDate||'').localeCompare(a.meetingDate||''));
+ const rows=sorted.map(d=>`<tr><td>${esc(fmtDate(d.meetingDate))}</td><td><b>${esc(d.text||'—')}</b>${d.context?`<br><small>${esc(d.context)}</small>`:''}</td><td>${esc(d.decidedBy||'—')}</td><td>${pill(d.status)}</td><td><button class="link" data-action="edit-meeting" data-id="${esc(d.meetingId)}">${esc(d.meetingCode)} · ${esc(d.meetingTitle||'Meeting')}</button></td></tr>`);
+ return `<div class="rowhead section-head"><div><h2>Decisions register</h2><p>Every decision from every meeting, newest first. The "what did we decide?" view leadership asks for. Each row links back to the meeting it came from.</p></div></div>
+  ${table(['Date','Decision','Decided by','Status','From meeting'],rows,'No decisions logged yet. Add decisions inside a meeting record.')}`;
+}
+
+function exportViewPanel(){
+ return `${exportButtons()}<section class="panel"><h2>What the Excel workbook contains</h2><ul style="font-size:13px;line-height:1.5"><li>Read me — how to use the workbook offline</li><li>Meta — organisation, project, year</li><li>Meetings — one row per meeting with agenda / notes / attendees</li><li>Decisions — every decision with the meeting it came from</li><li>Actions — every action with owner, due, status and linked-to reference</li><li>_schema — field list for round-trip import</li></ul></section>`;
+}
+
+// ---------- Meeting modal (edit full record) ----------
+function meetingModal(m){
+ const isNew=!m;m=m||blankMeeting();
+ const items=suiteItems();
+ const groups={};items.forEach(it=>{(groups[it.group]=groups[it.group]||[]).push(it)});
+ const linkOptions=`<option value="manual">— Free text —</option>${Object.entries(groups).map(([g,arr])=>`<optgroup label="${esc(g)}">${arr.map(it=>`<option value="${esc(it.source+'::'+it.ref)}">${esc(it.label)}</option>`).join('')}</optgroup>`).join('')}`;
+ const decRow=(d,i)=>`<div class="mad-row" data-row-kind="decision" data-row-id="${esc(d.id)}">
+  <label class="mad-f mad-f-wide"><span>Decision</span><textarea data-field="text" data-rid="${esc(d.id)}" placeholder="State the decision taken">${esc(d.text)}</textarea></label>
+  <label class="mad-f"><span>Context</span><textarea data-field="context" data-rid="${esc(d.id)}" placeholder="Why">${esc(d.context)}</textarea></label>
+  <label class="mad-f"><span>Decided by</span><input data-field="decidedBy" data-rid="${esc(d.id)}" value="${esc(d.decidedBy)}" placeholder="Role or body"></label>
+  <label class="mad-f mad-f-narrow"><span>Status</span><select data-field="status" data-rid="${esc(d.id)}">${DSTATUS.map(s=>`<option ${d.status===s?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
+  <button type="button" class="link danger" data-action="remove-decision" data-id="${esc(d.id)}">Remove</button>
+ </div>`;
+ const combined=a=>a.linkSource==='manual'?'manual':`${a.linkSource}::${a.linkRef}`;
+ const actRow=(a,i)=>`<div class="mad-row" data-row-kind="action" data-row-id="${esc(a.id)}">
+  <label class="mad-f mad-f-wide"><span>Action</span><textarea data-field="text" data-rid="${esc(a.id)}" placeholder="What needs to happen">${esc(a.text)}</textarea></label>
+  <label class="mad-f"><span>Owner</span><input data-field="owner" data-rid="${esc(a.id)}" value="${esc(a.owner)}"></label>
+  <label class="mad-f mad-f-narrow"><span>Due</span><input type="date" data-field="due" data-rid="${esc(a.id)}" value="${esc(a.due)}"></label>
+  <label class="mad-f mad-f-narrow"><span>Status</span><select data-field="status" data-rid="${esc(a.id)}">${ASTATUS.map(s=>`<option ${a.status===s?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
+  <label class="mad-f mad-f-wide"><span>Linked to</span><select data-field="linkPick" data-rid="${esc(a.id)}">${linkOptions.replace(`value="${esc(combined(a))}"`,`value="${esc(combined(a))}" selected`)}</select><input data-field="linkText" data-rid="${esc(a.id)}" value="${esc(a.linkText)}" placeholder="Note or free-text target" style="margin-top:4px"></label>
+  <button type="button" class="link danger" data-action="remove-action" data-id="${esc(a.id)}">Remove</button>
+ </div>`;
+ return modal(isNew?'Add meeting':'Edit meeting',`<form data-form="meeting" data-id="${esc(m.id||'')}" class="form" id="meeting-form">
+  <div class="form-grid-top">
+   ${field('Code','code',m.code||nextCode(),'text','required')}
+   ${field('Title','title',m.title,'text','required')}
+   ${field('Date','date',m.date,'date','required')}
+   ${select('Type','type',MTYPES,m.type||'Team')}
+   ${field('Facilitator','facilitator',m.facilitator)}
+   ${field('Location','location',m.location,'text','','In-person venue or video link')}
+  </div>
+  ${area('Attendees — one per line or comma-separated','attendees',m.attendees)}
+  ${area('Apologies','apologies',m.apologies,'Who was invited but could not attend.')}
+  ${area('Agenda','agenda',m.agenda,'What the meeting covered. One topic per line keeps minutes readable.')}
+  ${area('Notes','notes',m.notes,'Context not covered by the decisions and actions below.')}
+  <h3 class="form-section">Decisions · log every decision taken</h3>
+  <div class="mad-rows" id="mad-decisions">${m.decisions.map(decRow).join('')||'<p class="muted" style="grid-column:1/-1">No decisions yet. Click "Add decision" below.</p>'}</div>
+  <div style="grid-column:1/-1"><button type="button" class="button small secondary" data-action="add-decision">+ Add decision</button></div>
+  <h3 class="form-section">Actions · each action gets an owner, a due date and a status</h3>
+  <div class="mad-rows" id="mad-actions">${m.actions.map(actRow).join('')||'<p class="muted" style="grid-column:1/-1">No actions yet. Click "Add action" below.</p>'}</div>
+  <div style="grid-column:1/-1"><button type="button" class="button small secondary" data-action="add-action">+ Add action</button><p class="tiny" style="margin-top:6px">The <b>Linked to</b> dropdown lets each action link to an objective, pathway, KPI, indicator, Gantt task or risk — picked from your other tools. Or leave as "Free text" and type a note.</p></div>
+  ${formEnd('Save meeting',{deleteId:isNew?'':m.id,deleteLabel:'Delete meeting'})}
+ </form>`);
+}
+
+// ---------- Actions ----------
+let editing={id:null,buffer:null};
+function action(el){
+ const a=el.dataset.action,id=el.dataset.id,tabTarget=el.dataset.tab;
+ if(tabTarget){tab=tabTarget;dlg='';message='';render();return}
+ if(a==='close'){dlg='';editing={id:null,buffer:null};render();return}
+ if(a==='new-meeting'){const m={...blankMeeting(),code:nextCode()};editing={id:null,buffer:m};dlg=meetingModal(m);render();return}
+ if(a==='edit-meeting'){const m=db.meetings.find(x=>x.id===id);if(m){editing={id:m.id,buffer:JSON.parse(JSON.stringify(m))};dlg=meetingModal(editing.buffer);render()}return}
+ if(a==='delete'){const m=db.meetings.find(x=>x.id===id);if(!m)return;if(!confirm('Delete this meeting record and its decisions and actions? Cannot be undone.'))return;db.meetings=db.meetings.filter(x=>x.id!==id);editing={id:null,buffer:null};dlg='';save('Meeting deleted.');return}
+ if(a==='add-decision'||a==='add-action'||a==='remove-decision'||a==='remove-action'){
+  // Keep edited values in buffer, then re-render the modal
+  syncBufferFromDom(root);
+  if(a==='add-decision')editing.buffer.decisions.push(blankDecision());
+  if(a==='add-action')editing.buffer.actions.push(blankAction());
+  if(a==='remove-decision'){if(!confirm('Remove this decision?'))return;editing.buffer.decisions=editing.buffer.decisions.filter(d=>d.id!==id)}
+  if(a==='remove-action'){if(!confirm('Remove this action?'))return;editing.buffer.actions=editing.buffer.actions.filter(d=>d.id!==id)}
+  dlg=meetingModal(editing.buffer);render();return;
+ }
+ if(a==='xlsx'){try{download('Mission-and-Method-meetings.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){downloadCsv();return}
+ if(a==='print'){window.print();return}
+ if(a==='export-json'){download('Mission-and-Method-meetings.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Mission-and-Method-meetings-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+}
+
+function syncBufferFromDom(root){
+ if(!editing.buffer)return;
+ const form=root.querySelector('form[data-form="meeting"]');if(!form)return;
+ const d=formData(form);
+ Object.assign(editing.buffer,{code:s(d.code),title:s(d.title),date:d.date||today(),type:d.type,facilitator:s(d.facilitator),location:s(d.location),attendees:s(d.attendees),apologies:s(d.apologies),agenda:s(d.agenda),notes:s(d.notes)});
+ // Pull decision rows
+ root.querySelectorAll('#mad-decisions .mad-row').forEach(row=>{
+  const rid=row.dataset.rowId;const dec=editing.buffer.decisions.find(x=>x.id===rid);if(!dec)return;
+  row.querySelectorAll('[data-field]').forEach(el=>{dec[el.dataset.field]=el.value});
+ });
+ root.querySelectorAll('#mad-actions .mad-row').forEach(row=>{
+  const rid=row.dataset.rowId;const act=editing.buffer.actions.find(x=>x.id===rid);if(!act)return;
+  row.querySelectorAll('[data-field]').forEach(el=>{
+   if(el.dataset.field==='linkPick'){const v=el.value;if(v==='manual'){act.linkSource='manual';act.linkRef=''}else{const [src,ref]=v.split('::');act.linkSource=src||'manual';act.linkRef=ref||''}}
+   else act[el.dataset.field]=el.value;
+  });
+ });
+}
+
+function submit(form){
+ if(form.dataset.form!=='meeting')return;
+ syncBufferFromDom(root);
+ const buf=editing.buffer;
+ stamp(buf);
+ const existing=db.meetings.find(m=>m.id===buf.id);
+ if(existing)Object.assign(existing,buf);else db.meetings.push(buf);
+ editing={id:null,buffer:null};dlg='';save('Meeting saved.');
+}
+
+// ---------- Excel ----------
+function buildWorkbook(withData){
+ const sheets=[
+  readmeSheet('Meetings, actions & decisions',[
+   'Facilitation tool: every meeting record carries agenda, decisions and actions.',
+   'Decisions and Actions sheets flatten the rolling registers across every meeting.',
+   'Round-trip supported: import the same workbook back to restore everything by code.'
+  ]),
+  metaSheet(db.meta),
+  {name:'Meetings',rows:[
+   ['Code','Title','Date','Type','Facilitator','Location','Attendees','Apologies','Agenda','Notes'],
+   ...(withData?db.meetings.map(m=>[m.code,m.title,m.date,m.type,m.facilitator,m.location,m.attendees,m.apologies,m.agenda,m.notes]):[])
+  ]},
+  {name:'Decisions',rows:[
+   ['Meeting code','Meeting date','Decision','Context','Decided by','Status'],
+   ...(withData?db.meetings.flatMap(m=>m.decisions.map(d=>[m.code,m.date,d.text,d.context,d.decidedBy,d.status])):[])
+  ]},
+  {name:'Actions',rows:[
+   ['Meeting code','Meeting date','Action','Owner','Due','Status','Linked source','Linked ref','Linked text'],
+   ...(withData?db.meetings.flatMap(m=>m.actions.map(a=>[m.code,m.date,a.text,a.owner,a.due,a.status,a.linkSource,a.linkRef,a.linkText])):[])
+  ]},
+  schemaSheet({Meetings:'code,title,date,type,facilitator,location,attendees,apologies,agenda,notes',Decisions:'meetingCode,meetingDate,text,context,decidedBy,status',Actions:'meetingCode,meetingDate,text,owner,due,status,linkSource,linkRef,linkText'})
+ ];
+ return buildXlsx(sheets);
+}
+function downloadCsv(){
+ const all=db.meetings.flatMap(m=>m.actions.map(a=>[m.code,m.date,a.text,a.owner,a.due,a.status,(a.linkSource==='manual'?'':a.linkSource+'/'+a.linkRef),a.linkText]));
+ download('Mission-and-Method-meetings-actions.csv',csv([['Meeting','Date','Action','Owner','Due','Status','Linked','Note'],...all]),'text/csv;charset=utf-8');
+}
+
+async function importXlsxFile(file){
+ try{
+  const data=await parseXlsx(await file.arrayBuffer());
+  const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);
+  const mRows=rowsToObjects(findSheet(data,'Meetings'));
+  const dRows=rowsToObjects(findSheet(data,'Decisions'));
+  const aRows=rowsToObjects(findSheet(data,'Actions'));
+  if(mRows?.length){
+   db.meetings=mRows.map(r=>({...blankMeeting(),code:r.Code||'',title:r.Title||'',date:r.Date||today(),type:r.Type||'Team',facilitator:r.Facilitator||'',location:r.Location||'',attendees:r.Attendees||'',apologies:r.Apologies||'',agenda:r.Agenda||'',notes:r.Notes||''}));
+   const byCode=new Map(db.meetings.map(m=>[m.code,m]));
+   (dRows||[]).forEach(r=>{const m=byCode.get(r['Meeting code']);if(!m)return;m.decisions.push({...blankDecision(),text:r.Decision||'',context:r.Context||'',decidedBy:r['Decided by']||'',status:r.Status||'Approved'})});
+   (aRows||[]).forEach(r=>{const m=byCode.get(r['Meeting code']);if(!m)return;m.actions.push({...blankAction(),text:r.Action||'',owner:r.Owner||'',due:r.Due||'',status:r.Status||'Open',linkSource:r['Linked source']||'manual',linkRef:r['Linked ref']||'',linkText:r['Linked text']||''})});
+  }
+  save('Excel imported.');
+ }catch(e){message='Excel import failed: '+e.message;render()}
+}
+async function importJsonFile(file){
+ try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}
+}
+
+// ---------- Start-tab live meta ----------
+function wireStart(root){
+ const box=root.querySelector('.work-box');if(!box)return;
+ const status=box.querySelector('#work-status');
+ let timer;const schedule=()=>{if(status)status.textContent='Saving…';clearTimeout(timer);timer=setTimeout(()=>{persist(db);if(status){status.textContent='✓ Saved';setTimeout(()=>status.textContent='',1500)}},400)};
+ box.querySelectorAll('.work-meta [data-field],.work-head [data-field]').forEach(el=>{
+  el.addEventListener('input',()=>{const k=el.dataset.field;db.meta[k]=el.type==='number'?(el.value===''?'':Number(el.value)):el.value;schedule()});
+  el.addEventListener('change',()=>{if(el.tagName==='SELECT'){const k=el.dataset.field;db.meta[k]=el.value;schedule()}});
+ });
+}
+
+function render(){
+ const views={'Start':startView,'Meetings':meetingsView,'Actions register':actionsRegisterView,'Decisions register':decisionsRegisterView,'Export':exportViewPanel};
+ root.innerHTML=shell({eyebrow:'Cross-cutting · Meetings, actions & decisions',title:'Meetings, Actions & Decisions',intro:'Run meetings that end with owned decisions and actions, not just notes. Decisions and actions roll into their own registers across every meeting — ready for leadership review, donor reporting and audit.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=meetings',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ bind(root,{tab:t=>{tab=t;message='';dlg='';editing={id:null,buffer:null};render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
+ wireStart(root);
+}
+
+persist(db);render();
 })();

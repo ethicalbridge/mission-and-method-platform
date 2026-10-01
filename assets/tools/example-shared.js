@@ -289,8 +289,9 @@ const integrationData={
  'theory-of-change':{step:2,label:'Step 2 of 5 · Theory of Change',pulls:[['strategic-objectives','Pulls objectives from Strategic Objectives (dropdown in each pathway). Problem, outcome and impact pre-fill from the selected ESO.']],pushes:[['strategy-kpis','Strategy KPIs reads the impact goal and the three pathways to anchor measurement.'],['meal-strategy','MEAL Strategy imports outcome- and impact-level indicators from each pathway.'],['gantt','Gantt turns each pathway output into a plannable work-stream.']]},
  'strategy-kpis':{step:3,label:'Step 3 of 5 · Strategy, KPIs & annual planning',pulls:[['strategic-objectives','Pulls ESOs and ISOs — each KPI is linked to one by code.'],['theory-of-change','Pulls the impact goal and uses pathway outcomes to shape KPIs.']],pushes:[['meal-strategy','MEAL Strategy inherits every KPI with its quarterly targets as the tracking matrix.'],['gantt','Gantt imports each initiative with its dates, owner and budget as a timeline bar.']]},
  'meal-strategy':{step:4,label:'Step 4 of 5 · MEAL Strategy',pulls:[['strategic-objectives','Reads the objective list to group indicators.'],['strategy-kpis','Imports every KPI with its quarterly targets — this is the backbone of the MEAL matrix.'],['theory-of-change','Imports outcome- and impact-level indicators from each pathway.']],pushes:[['issue-risk','Issue & Risk Management can log issues against any indicator here.']]},
- 'gantt':{step:5,label:'Step 5 of 5 · Gantt & project planner',pulls:[['strategic-objectives','Reads objectives to group tasks and bars.'],['strategy-kpis','Imports every initiative with its start, end, owner, budget and status.'],['theory-of-change','Reads pathway outputs so tasks can be tied back to a pathway.']],pushes:[['issue-risk','Issue & Risk Management can log issues against any task or milestone here.']]},
- 'issue-risk':{step:0,label:'Cross-cutting · Issue & risk management',pulls:[['strategic-objectives','Any ESO/ISO can carry its own risk register.'],['theory-of-change','Each pathway can hold assumption and risk rows.'],['strategy-kpis','Each KPI can log a risk-to-target.'],['meal-strategy','Each indicator can log data-quality issues.'],['gantt','Each task or milestone can log a delivery risk.']],pushes:[]}
+ 'gantt':{step:5,label:'Step 5 of 5 · Gantt & project planner',pulls:[['strategic-objectives','Reads objectives to group tasks and bars.'],['strategy-kpis','Imports every initiative with its start, end, owner, budget and status.'],['theory-of-change','Reads pathway outputs so tasks can be tied back to a pathway.'],['meetings','Reads actions from meeting records as external links against each task.']],pushes:[['issue-risk','Issue & Risk Management can log issues against any task or milestone here.'],['meetings','Any Gantt task can be the subject of a meeting agenda, decision or action.']]},
+ 'issue-risk':{step:0,label:'Cross-cutting · Issue & risk management',pulls:[['strategic-objectives','Any ESO/ISO can carry its own risk register.'],['theory-of-change','Each pathway can hold assumption and risk rows.'],['strategy-kpis','Each KPI can log a risk-to-target.'],['meal-strategy','Each indicator can log data-quality issues.'],['gantt','Each task or milestone can log a delivery risk.']],pushes:[]},
+ 'meetings':{step:0,label:'Cross-cutting · Meetings, actions & decisions',pulls:[['strategic-objectives','Agenda items can be about any ESO/ISO.'],['theory-of-change','Review a pathway, decide its next step.'],['strategy-kpis','Review KPI progress, decide an initiative pivot.'],['meal-strategy','Review quarterly actuals, log a learning decision.'],['gantt','Any Gantt task can be the subject of a meeting action.'],['issue-risk','A meeting can approve a risk mitigation.']],pushes:[['gantt','Gantt reads actions as external links against each task — nothing is auto-created, so no duplicate editing.']]}
 };
 const toolHrefs={
  'strategic-objectives':'Strategic-Objectives.html',
@@ -298,7 +299,8 @@ const toolHrefs={
  'strategy-kpis':'Strategy-KPIs-and-Annual-Planning.html',
  'meal-strategy':'MEAL-Strategy.html',
  'gantt':'Gantt-Project-Planner.html',
- 'issue-risk':'Issue-and-Risk-Management.html'
+ 'issue-risk':'Issue-and-Risk-Management.html',
+ 'meetings':'Meetings-Actions-and-Decisions.html'
 };
 const toolTitles={
  'strategic-objectives':'Strategic Objectives',
@@ -306,7 +308,8 @@ const toolTitles={
  'strategy-kpis':'Strategy KPIs',
  'meal-strategy':'MEAL Strategy',
  'gantt':'Gantt & Project Planner',
- 'issue-risk':'Issue & Risk Management'
+ 'issue-risk':'Issue & Risk Management',
+ 'meetings':'Meetings, Actions & Decisions'
 };
 const renderIntegration=tool=>{
  const d=integrationData[tool];if(!d) return '';

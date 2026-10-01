@@ -254,6 +254,21 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:800px){.work-meta{grid-template-columns:1fr}}
 @media(max-width:700px){.work-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.work-chain{grid-template-columns:1fr}}
+/* Meetings, Actions & Decisions — inline decision/action rows inside the meeting dialog */
+.form-grid-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;grid-column:1/-1}
+@media(max-width:800px){.form-grid-top{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.form-grid-top{grid-template-columns:1fr}}
+.mad-rows{display:grid;gap:10px;grid-column:1/-1}
+.mad-row{display:grid;grid-template-columns:2fr 1.4fr 1fr 0.8fr auto;gap:8px;align-items:start;background:#f5f9f6;border:1px solid #d6e2dc;border-radius:10px;padding:10px}
+.mad-row .mad-f-wide{grid-column:span 2}
+.mad-row .mad-f-narrow{grid-column:span 1}
+.mad-f{display:flex;flex-direction:column;gap:3px}
+.mad-f>span{font:900 10px/1 'Nunito Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.mad-f input,.mad-f select,.mad-f textarea{padding:5px 7px;font-size:12.5px;border:1px solid #d6e2dc;border-radius:6px;background:#fff;width:100%}
+.mad-f textarea{min-height:50px;resize:vertical}
+.mad-row .link.danger{align-self:center;font-size:12px}
+@media(max-width:900px){.mad-row{grid-template-columns:1fr 1fr;gap:6px}.mad-row .mad-f-wide{grid-column:span 2}.mad-row .mad-f-narrow{grid-column:span 1}}
+@media(max-width:500px){.mad-row{grid-template-columns:1fr}.mad-row .mad-f-wide,.mad-row .mad-f-narrow{grid-column:span 1}}
 /* Risk register (5x5 bands + heatmap) */
 .risk-band-low{background:#d6ebe3;color:#13483b}
 .risk-band-medium{background:#fff1d0;color:#8a6a2b}
