@@ -119,14 +119,11 @@ function startView(){
 
 function pathwaysView(){
  const rows=db.pathways.map((p,i)=>`<article class="panel"><div class="rowhead section-head"><div><span class="eyebrow">Pathway ${i+1}</span><h3>${esc(p.objective||'Untitled pathway')}</h3>${edited(p)}</div><div class="actions"><button class="button small secondary" data-action="edit-pathway" data-id="${p.id}">Edit</button></div></div>
-  <div class="split">
-   <div><b class="eyebrow">Input</b><p>${esc(p.input||'—')}</p><b class="eyebrow">Activity</b><p>${esc(p.activity||'—')}</p><b class="eyebrow">Output</b><p>${esc(p.output||'—')}</p></div>
-   <div><b class="eyebrow">Intermediate outcome</b><p>${esc(p.intermediateOutcome||'—')}</p><b class="eyebrow">Outcome</b><p>${esc(p.outcome||'—')}</p><b class="eyebrow">Impact</b><p>${esc(p.impact||'—')}</p></div>
-  </div>
-  ${p.assumptions?`<p><b>Assumptions:</b> ${esc(p.assumptions).replace(/\n/g,'<br>')}</p>`:''}
+  <div class="toc-chain"><div class="toc-step"><b class="eyebrow">Problem</b><p>${esc(p.problem||'—')}</p></div><div class="toc-step"><b class="eyebrow">Input</b><p>${esc(p.input||'—')}</p></div><div class="toc-step"><b class="eyebrow">Output</b><p>${esc(p.output||'—')}</p></div><div class="toc-step"><b class="eyebrow">Outcome</b><p>${esc(p.outcome||'—')}</p></div><div class="toc-step"><b class="eyebrow">Impact</b><p>${esc(p.impact||'—')}</p></div></div>
+  ${p.assumptions?`<p style="margin-top:12px"><b>Assumptions:</b> ${esc(p.assumptions).replace(/\n/g,'<br>')}</p>`:''}
   ${p.risks?`<p><b>Risks:</b> ${esc(p.risks).replace(/\n/g,'<br>')}</p>`:''}
  </article>`);
- return `<div class="rowhead section-head"><div><h2>Pathways</h2><p>One pathway per objective. Fill in each level — the assumptions column names what has to hold between steps.</p></div><button class="button" data-action="add-pathway">Add pathway</button></div>
+ return `<div class="rowhead section-head"><div><h2>Pathways</h2><p>One pathway per strategic objective. Each pathway runs: <b>objective → problem → input → output → outcome → impact</b>. The objective pulls from the Strategic Objectives tool.</p></div><button class="button" data-action="add-pathway">Add pathway</button></div>
   ${db.pathways.length?rows.join(''):empty('No pathways yet. Add one to start.')}`;
 }
 
@@ -197,20 +194,27 @@ function exportView(){
 // ---------- Modals ----------
 function pathwayModal(p){
  const isNew=!p;p=p||blankPathway();
- const objOptions=db.meta.objectives.length?db.meta.objectives.map(o=>[o,o]):[['','']];
+ // Pull objectives directly from the Strategic Objectives tool
+ const so=readSO();
+ const soObjs=(so?.objectives||[]).map(o=>({code:o.code||'',title:o.title||'',full:`${o.code||''} · ${o.title||''}`.replace(/^ · /,''),rationale:o.rationale||'',desiredChange:o.desiredChange||'',impact:o.impactStatement||''}));
+ const options=soObjs.map(o=>[o.full,o.full]);
+ // Fallback to anything already saved in meta.objectives
+ db.meta.objectives.forEach(o=>{if(!options.some(x=>x[0]===o))options.push([o,o])});
+ const soMap=Object.fromEntries(soObjs.map(o=>[o.full,{problem:o.rationale,outcome:o.desiredChange,impact:o.impact}]));
+ const soHint=options.length?'Pick the strategic objective this pathway supports — problem, outcome and impact pre-fill from it when the field is empty.':'No Strategic Objectives found yet. Open that tool first, or type the objective here.';
+ const objField=options.length?`<label class="field full"><span class="label">Objective ${tip(soHint)}</span><select name="objective" data-so-objectives="${esc(JSON.stringify(soMap))}"><option value="">— pick an objective —</option>${options.map(([v,l])=>`<option value="${esc(v)}" ${v===p.objective?'selected':''}>${esc(l)}</option>`).join('')}</select>${so?'':'<small>Tip: open Strategic Objectives first so your ESO list appears here automatically.</small>'}</label>`:area('Objective','objective',p.objective,soHint);
  return modal(isNew?'Add pathway':'Edit pathway',`<form data-form="pathway" data-id="${esc(p.id||'')}" class="form">
-  ${db.meta.objectives.length?select('Objective','objective',objOptions,p.objective,'The objective this pathway supports.','Not linked'):field('Objective','objective',p.objective,'text','','The objective this pathway supports.')}
-  ${area('Description — one-line summary of the pathway','description',p.description)}
-  ${area('Problem addressed by this pathway','problem',p.problem)}
+  ${objField}
+  ${area('Problem — what this pathway addresses','problem',p.problem,'The specific problem this pathway tackles. Pre-fills from the objective rationale when the field is empty.')}
   ${area('Input — resources needed','input',p.input,'People, funding, expertise, technology, partnerships.')}
-  ${area('Activity — work done with the inputs (optional)','activity',p.activity,'What you do with the resources.')}
   ${area('Output — immediate product or service','output',p.output,'What delivery produces: trainings held, reports published, services delivered.')}
-  ${area('Intermediate outcome (optional)','intermediateOutcome',p.intermediateOutcome,'A midpoint change between output and the main outcome.')}
-  ${area('Outcome — change in behaviour, knowledge or system','outcome',p.outcome,'The change your work causes, often together with others.')}
-  ${area('Impact — broader long-term change contributed to','impact',p.impact,'The condition your work helps create over time.')}
-  ${area('Assumptions — one per line','assumptions',p.assumptions,'Conditions that must hold for the pathway to work.')}
-  ${area('Risks — one per line','risks',p.risks,'What could stop this pathway from succeeding.')}
-  ${area('Evidence or references','evidence',p.evidence)}
+  ${area('Outcome — the change this pathway brings about','outcome',p.outcome,'The change your work causes, often together with others. Pre-fills from the objective desired-change when empty.')}
+  ${area('Impact — broader long-term change contributed to','impact',p.impact,'The condition your work helps create over time. Pre-fills from the objective impact statement when empty.')}
+  <details class="field full"><summary>Optional detail — assumptions, risks and evidence</summary>
+   ${area('Assumptions — one per line','assumptions',p.assumptions,'Conditions that must hold for the pathway to work.')}
+   ${area('Risks — one per line','risks',p.risks,'What could stop this pathway from succeeding.')}
+   ${area('Evidence or references','evidence',p.evidence)}
+  </details>
   ${formEnd('Save pathway',{deleteId:isNew?'':p.id,deleteLabel:'Delete pathway'})}
  </form>`);
 }
@@ -273,6 +277,19 @@ function render(){
   importJson:file=>importJson(file)
  });
  if(tab==='Start')window.MMExample?.bindLive?.(root,db,'theory-of-change');
+ // Auto-fill problem/outcome/impact when objective is picked (pulls from Strategic Objectives)
+ const objSel=root.querySelector('form[data-form="pathway"] select[name="objective"]');
+ if(objSel&&objSel.dataset.soObjectives){
+  objSel.addEventListener('change',()=>{
+   let map={};try{map=JSON.parse(objSel.dataset.soObjectives||'{}')}catch{}
+   const data=map[objSel.value];if(!data)return;
+   const form=objSel.form;
+   for(const [k,v] of Object.entries(data)){
+    const f=form.querySelector(`[name="${k}"]`);
+    if(f&&!String(f.value||'').trim()&&v)f.value=v;
+   }
+  });
+ }
 }
 
 // ---------- Actions ----------
@@ -321,7 +338,9 @@ function submit(form){
  if(kind==='pathway'){
   const existing=db.pathways.find(p=>p.id===form.dataset.id);
   const p=existing||{...blankPathway()};
-  Object.assign(p,{objective:s(d.objective),description:s(d.description),problem:s(d.problem),input:s(d.input),activity:s(d.activity),output:s(d.output),intermediateOutcome:s(d.intermediateOutcome),outcome:s(d.outcome),impact:s(d.impact),assumptions:s(d.assumptions),risks:s(d.risks),evidence:s(d.evidence)});
+  Object.assign(p,{objective:s(d.objective),description:s(d.description||p.description||''),problem:s(d.problem),input:s(d.input),activity:s(d.activity||p.activity||''),output:s(d.output),intermediateOutcome:s(d.intermediateOutcome||p.intermediateOutcome||''),outcome:s(d.outcome),impact:s(d.impact),assumptions:s(d.assumptions),risks:s(d.risks),evidence:s(d.evidence)});
+  // Keep meta.objectives in sync so other views (indicators, assumptions) can reference them
+  if(p.objective&&!db.meta.objectives.includes(p.objective))db.meta.objectives.push(p.objective);
   stamp(p);
   if(!existing)db.pathways.push(p);
   persist(db);modal_html='';message='Pathway saved.';render();return;
