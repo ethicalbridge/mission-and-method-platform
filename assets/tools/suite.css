@@ -96,6 +96,18 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 .checks{margin:6px 0;padding-left:18px}
 .checks li{margin:3px 0;color:var(--muted)}
 .row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.journey-steps{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.journey-steps .step{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:14px;padding:14px 16px;background:#fbf8f1;border:1px solid var(--line);border-radius:12px}
+.journey-steps .step.done{background:#edf7f0;border-color:#bddfcb}
+.journey-steps .step.current{border-color:var(--teal);border-width:2px;background:#fff}
+.journey-steps .step-num{width:34px;height:34px;border-radius:50%;background:#e9eded;color:var(--muted);display:grid;place-items:center;font-weight:900;font-size:16px}
+.journey-steps .step.done .step-num{background:var(--teal);color:#fff}
+.journey-steps .step.done .step-num:after{content:" ✓"}
+.journey-steps .step.current .step-num{background:var(--coral);color:#fff}
+.journey-steps .step-body{min-width:0}
+.journey-steps .step-body b{color:var(--deep)}
+.journey-steps .step-body p{margin:3px 0 0}
+@media(max-width:650px){.journey-steps .step{grid-template-columns:40px 1fr;grid-template-rows:auto auto}.journey-steps .step .button{grid-column:1/-1;justify-self:start}}
 @media(max-width:900px){.grid.four{grid-template-columns:repeat(2,1fr)}.indicator-grid{grid-template-columns:1fr 1fr}.action-row{grid-template-columns:1fr;gap:5px}}
 @media(max-width:800px){.grid.three{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.split{grid-template-columns:1fr}.shell{padding:13px}.grid,.grid.three,.grid.four,.form{grid-template-columns:1fr}.field.full{grid-column:auto}.top{align-items:start}}
