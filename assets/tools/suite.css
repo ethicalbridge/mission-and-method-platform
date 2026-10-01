@@ -254,6 +254,34 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:800px){.work-meta{grid-template-columns:1fr}}
 @media(max-width:700px){.work-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.work-chain{grid-template-columns:1fr}}
+/* Donor Mapping — alignment matrix cells */
+.align-matrix{border-collapse:separate;border-spacing:2px;min-width:600px}
+.align-matrix th{background:transparent;color:var(--deep);padding:4px 6px;text-align:center;font-size:12px}
+.align-matrix td{padding:6px 8px;background:#fff;border:1px solid var(--line);border-radius:4px;text-align:center}
+.align-matrix td.align-score{font-weight:900;min-width:42px}
+.align-matrix td.align-score.score-0{background:#f5f9f6;color:#a7b5af}
+.align-matrix td.align-score.score-1{background:#fff1d0;color:#8a6a2b}
+.align-matrix td.align-score.score-2{background:#dcefe3;color:#246046}
+.align-matrix td.align-score.score-3{background:var(--teal);color:#fff}
+.align-total{font-weight:900;color:var(--deep);min-width:70px}
+.align-total small{font-weight:400;color:var(--muted);font-size:10px}
+/* Organisation Structure — reporting-tree hierarchy and ownership cards */
+.org-tree,.org-tree ul{list-style:none;padding-left:0;margin:0}
+.org-tree ul{padding-left:28px;margin-top:8px;border-left:2px dashed #bddfcb}
+.org-node{margin:6px 0}
+.org-card{display:grid;grid-template-columns:70px 1fr auto auto;gap:10px;align-items:center;background:#fff;border:1px solid #bddfcb;border-radius:10px;padding:8px 12px}
+.org-code{font:900 11px/1 'Nunito Sans',sans-serif;color:var(--teal);letter-spacing:.08em}
+.org-card b{color:var(--deep);font-size:14px}
+.org-dept{font-size:11px;color:var(--muted);background:#f5f9f6;padding:2px 8px;border-radius:99px}
+.org-holder{font-size:12px;color:var(--ink);font-weight:800}
+.org-holder .muted{font-style:italic;font-weight:400}
+@media(max-width:650px){.org-card{grid-template-columns:1fr;gap:4px}}
+.ownership-card{border-left:4px solid var(--teal)}
+.ownership-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+.ownership-src{background:#f5f9f6;border:1px solid #d6e2dc;border-radius:8px;padding:8px 10px;font-size:12px}
+.ownership-src b{display:block;color:var(--deep);margin-bottom:3px;font-size:11px;letter-spacing:.04em}
+.ownership-src ul{margin:5px 0 0;padding-left:16px}
+.ownership-src li{margin:2px 0}
 /* Meetings, Actions & Decisions — inline decision/action rows inside the meeting dialog */
 .form-grid-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;grid-column:1/-1}
 @media(max-width:800px){.form-grid-top{grid-template-columns:1fr 1fr}}

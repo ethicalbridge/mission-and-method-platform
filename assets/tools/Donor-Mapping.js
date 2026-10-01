@@ -1,681 +1,217 @@
-(() => {
-  'use strict';
+/* Donor Mapping — the prospect side of fundraising.
+   Donor profiles with alignment-to-ESO scoring (0–3 per objective), pipeline
+   stage (Prospect → Qualified → Engaged → Proposing → Decided), and
+   decision outcomes. Qualified donors are promoted to Donor Tracking for
+   active cultivation. Reads ESOs from Strategic Objectives.
+*/
+(()=>{'use strict';
+const S=window.MMSuite;if(!S){console.error('MMSuite missing');return}
+const {esc,uid,now,today,currentYear,fmtDate,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,shell,importButtons,exportButtons,download,csv,XLSX_TYPE,buildXlsx,readmeSheet,schemaSheet,metaSheet,parseXlsx,findSheet,rowsToObjects,metaFromSheet,bind,formData,stamp,edited,editorName,clamp,s}=S;
 
-  const STORAGE_KEY = 'mm.donor-mapping.v1';
-  const CURRENT_VERSION = 2;
-  const TABS = [
-    ['matrix', 'Donor matrix'],
-    ['guide', 'Assessment guide'],
-    ['backup', 'Backup & restore']
-  ];
-  const FIXED_GENERAL_COLUMNS = 4;
+const KEY='mission-method-donor-mapping-v2',LEGACY='mission-method-donor-mapping-v1';
+const SO_KEY='mission-method-strategic-objectives-v2',TOC_KEY='mission-method-theory-of-change-v2';
+const TABS=['Start','Prospects','Alignment matrix','Export'];
+const DTYPES=['Foundation','Government','Bilateral','Corporate','Individual','UN agency','Multilateral','Other'];
+const STAGES=['Prospect','Qualified','Engaged','Proposing','Decided','Not fit'];
+const SIZES=['Micro (<$10k)','Small ($10k–$100k)','Medium ($100k–$1M)','Large ($1M–$10M)','Very large (>$10M)'];
 
-  const GENERAL = [
-    ['donor', 'Donor', 'text', 'Name of the donor organisation or fund.'],
-    ['fundName', 'Fund name', 'text', 'Specific fund, call or programme when known.'],
-    ['goNoGo', 'Go / No-go', 'decision', 'Record the team decision after reviewing the assessment.'],
-    ['priority', 'Priority', 'priority', 'Use High, Medium or Low to indicate attention needed.'],
-    ['donorType', 'Donor type', 'type', 'For example Trust, Institutional donor or Corporate.'],
-    ['interestAreas', 'Interest areas', 'text', 'Relevant themes, populations, geography or SDGs.'],
-    ['restrictions', 'Restrictions', 'textarea', 'Eligibility, compliance, geography or other restrictions.'],
-    ['fundingAmount', 'Indicative amount', 'text', 'Known or estimated amount and currency.'],
-    ['keyDates', 'Key dates', 'text', 'Opening date, closing date, decision date or cycle.'],
-    ['fundingLength', 'Funding length', 'text', 'Expected grant period or renewal cycle.'],
-    ['contactDetails', 'Contact details', 'textarea', 'Public contact point, relationship holder or engagement note.'],
-    ['website', 'Website', 'url', 'Official donor or fund web address.'],
-    ['notes', 'Notes', 'textarea', 'Freeform research, context or next-step note.']
-  ];
+const blankDonor=()=>({id:uid(),code:'',name:'',type:'Foundation',country:'',region:'',size:'Small ($10k–$100k)',focusAreas:'',website:'',contact:'',email:'',stage:'Prospect',typicalGrant:'',nextCycle:'',alignment:{},rationale:'',decision:'',decisionDate:'',notes:'',lastEditedBy:'',lastEditedAt:''});
+const blankMeta=()=>({organisation:'',year:currentYear,preparedBy:'',currency:'USD',notes:''});
+const blank=()=>({version:2,meta:blankMeta(),donors:[]});
 
-  const GROUPS = [
-    {
-      id: 'strategy', label: 'Strategy', className: 'group-strategy',
-      fields: [
-        ['valuesAlignment', 'Values aligned', 'Are values and approach aligned?'],
-        ['coreWorkSupport', 'Supports core work', 'Can the donor support the organisation’s core purpose?'],
-        ['requirementsGapFit', 'Fits funding gap', 'Would this support an identified funding requirement or gap?'],
-        ['innovationFit', 'Fits new work', 'Could it support a relevant new area, innovation or opportunity?'],
-        ['coreFundingSupport', 'Supports core funding', 'Could it support unrestricted or core funding?']
-      ]
-    },
-    {
-      id: 'likelihood', label: 'Likelihood of success', className: 'group-likelihood',
-      fields: [
-        ['currentPosition', 'Current position', 'Is there an existing relationship or route in?'],
-        ['wellPositioned', 'Well positioned', 'Is the organisation credibly positioned to apply?'],
-        ['competitiveLandscape', 'Competition understood', 'Is the competitive landscape sufficiently understood?'],
-        ['valueForMoney', 'Value for money', 'Can a compelling value-for-money case be made?'],
-        ['connectedPartners', 'Connected partners', 'Are relevant partners or allies connected?']
-      ]
-    },
-    {
-      id: 'technical', label: 'Technical', className: 'group-technical',
-      fields: [
-        ['proposalSummary', 'Proposal outline', 'Is there a clear proposal idea or summary?'],
-        ['proposalReadiness', 'Proposal readiness', 'Can the proposal be developed to the required standard?']
-      ]
-    },
-    {
-      id: 'capacity', label: 'Capacity', className: 'group-capacity',
-      fields: [
-        ['timetableStrength', 'Timetable works', 'Can the deadline and timetable realistically be met?'],
-        ['deliveryCapacity', 'Delivery capacity', 'Is there enough capacity to deliver a funded project?'],
-        ['staffingCapacity', 'Staffing capacity', 'Are the right people available to lead and support it?']
-      ]
-    },
-    {
-      id: 'risk', label: 'Risk', className: 'group-risk',
-      fields: [
-        ['donorReputationalRisk', 'Donor reputation risk', 'Could the donor’s reputation create a concern?'],
-        ['ethicalBridgeReputationalRisk', 'Organisation reputation risk', 'Could the work create reputational risk for the organisation?'],
-        ['financialRisk', 'Financial risk', 'Could the opportunity create an unacceptable financial risk?'],
-        ['newThematicGeographicRisk', 'Thematic / geographic risk', 'Could it take the organisation too far from its focus or geography?'],
-        ['governmentPartnerRisk', 'Government / partner risk', 'Could it introduce a government, judiciary or partner risk?'],
-        ['teamOverloadRisk', 'Team burden risk', 'Could it overburden the team or distract from priority work?']
-      ]
-    }
-  ];
+function migrateV1(v1){
+ const out=blank();
+ try{
+  (v1?.donors||[]).forEach((d,i)=>out.donors.push({...blankDonor(),code:'D'+(i+1),name:d.name||'',type:DTYPES.includes(d.type)?d.type:'Foundation',country:d.country||'',focusAreas:d.focus||d.focusAreas||'',stage:STAGES.includes(d.stage)?d.stage:'Prospect',typicalGrant:d.typicalGrant||'',notes:d.notes||''}));
+ }catch(e){console.warn('donor-mapping migrate failed',e)}
+ return out;
+}
 
-  const ASSESSMENT_FIELDS = GROUPS.flatMap(group => group.fields);
-  const ALL_FIELDS = [...GENERAL, ...ASSESSMENT_FIELDS];
-  const SELECT_OPTIONS = {
-    decision: ['', 'Go', 'No go'],
-    priority: ['', 'High', 'Medium', 'Low'],
-    type: ['', 'Trust', 'Institutional donor', 'Corporate', 'Foundation', 'Government', 'Multilateral', 'Network', 'Other'],
-    assessment: ['', 'Yes', 'No', "Don't know"]
-  };
+const storage=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.donor-mapping-cleanup-v2',blank)||d;if(!Array.isArray(d.donors))d.donors=[];d.donors.forEach(x=>{if(!x.alignment||typeof x.alignment!=='object')x.alignment={}});return d}});
+let db=storage.load(),tab='Start',dlg='',message='';
+const root=document.querySelector('#app');
+const persist=d=>storage.save(d);
+function save(note=''){storage.save(db);if(note)message=note;render()}
 
-  const $ = selector => document.querySelector(selector);
-  const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[character]));
-  const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const readStore=k=>{try{const r=localStorage.getItem(k);if(!r)return null;const o=JSON.parse(r);return o&&typeof o==='object'?o:null}catch{return null}};
+const soObjectives=()=>(readStore(SO_KEY)?.objectives||[]).filter(o=>o.code);
+const nextCode=()=>{const nums=db.donors.map(d=>Number(String(d.code||'').replace(/\D/g,''))).filter(n=>!isNaN(n));return 'D'+(Math.max(0,...nums)+1)};
 
-  const blankMeta = () => ({ organisation: '', period: '', preparedBy: '', notes: '' });
-  const blankDonor = () => Object.fromEntries([
-    ['id', uid()],
-    ...ALL_FIELDS.map(([key]) => [key, ''])
-  ]);
-  const blankState = () => ({ version: CURRENT_VERSION, meta: blankMeta(), donors: [] });
+// ---------- Alignment score ----------
+// Each donor rates alignment 0–3 against each ESO; total score and % of max.
+function totalAlignment(donor){
+ const esos=soObjectives().filter(o=>(o.group||'External')==='External');
+ if(!esos.length)return {sum:0,max:0,pct:0};
+ const sum=esos.reduce((n,o)=>n+(Number(donor.alignment?.[o.code])||0),0);
+ const max=esos.length*3;
+ return {sum,max,pct:max?Math.round((sum/max)*100):0};
+}
 
-  function exampleDonors() {
-    const examples = [
-      {
-        donor: 'Mama Cash',
-        fundName: 'General support grants',
-        goNoGo: 'Go',
-        priority: 'High',
-        donorType: 'Foundation',
-        interestAreas: 'Feminist movements and women’s rights',
-        restrictions: 'Review current eligibility and grant-call criteria.',
-        fundingAmount: 'Illustrative — confirm current call',
-        keyDates: 'Review annual grant cycle',
-        fundingLength: 'Confirm with current guidance',
-        website: 'https://www.mamacash.org',
-        notes: 'Example record — replace with your team’s current research.',
-        valuesAlignment: 'Yes', coreWorkSupport: 'Yes', requirementsGapFit: 'Yes',
-        innovationFit: 'Yes', coreFundingSupport: 'Yes', currentPosition: "Don't know",
-        wellPositioned: 'Yes', competitiveLandscape: "Don't know", valueForMoney: 'Yes',
-        connectedPartners: "Don't know", proposalSummary: 'Yes', proposalReadiness: "Don't know",
-        timetableStrength: 'Yes', deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
-        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: 'No',
-        newThematicGeographicRisk: 'No', governmentPartnerRisk: 'No', teamOverloadRisk: "Don't know"
-      },
-      {
-        donor: 'Black Feminist Fund',
-        fundName: 'Movement-building support',
-        goNoGo: 'Go',
-        priority: 'High',
-        donorType: 'Network',
-        interestAreas: 'Black feminist movements and organisations',
-        restrictions: 'Review current eligibility and route to application.',
-        fundingAmount: 'Illustrative — confirm current opportunity',
-        keyDates: 'Research current funding windows',
-        fundingLength: 'Confirm with current guidance',
-        website: 'https://blackfeministfund.org',
-        notes: 'Example record — intended to show how the assessment can be used.',
-        valuesAlignment: 'Yes', coreWorkSupport: 'Yes', requirementsGapFit: 'Yes',
-        innovationFit: 'Yes', coreFundingSupport: 'Yes', currentPosition: "Don't know",
-        wellPositioned: "Don't know", competitiveLandscape: "Don't know", valueForMoney: 'Yes',
-        connectedPartners: "Don't know", proposalSummary: "Don't know", proposalReadiness: "Don't know",
-        timetableStrength: "Don't know", deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
-        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: 'No',
-        newThematicGeographicRisk: 'No', governmentPartnerRisk: 'No', teamOverloadRisk: "Don't know"
-      },
-      {
-        donor: 'Global Fund for Women',
-        fundName: 'Gender justice grants',
-        goNoGo: 'Go',
-        priority: 'High',
-        donorType: 'Foundation',
-        interestAreas: 'Gender justice, human rights and movement building',
-        restrictions: 'Confirm current geographic and organisation requirements.',
-        fundingAmount: 'Illustrative — confirm current call',
-        keyDates: 'Review current grant cycle',
-        fundingLength: 'Confirm with current guidance',
-        website: 'https://www.globalfundforwomen.org',
-        notes: 'Example record — not a statement of current eligibility or funding availability.',
-        valuesAlignment: 'Yes', coreWorkSupport: 'Yes', requirementsGapFit: 'Yes',
-        innovationFit: 'Yes', coreFundingSupport: "Don't know", currentPosition: "Don't know",
-        wellPositioned: 'Yes', competitiveLandscape: "Don't know", valueForMoney: 'Yes',
-        connectedPartners: "Don't know", proposalSummary: 'Yes', proposalReadiness: "Don't know",
-        timetableStrength: 'Yes', deliveryCapacity: 'Yes', staffingCapacity: 'Yes',
-        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: 'No',
-        newThematicGeographicRisk: 'No', governmentPartnerRisk: 'No', teamOverloadRisk: 'No'
-      },
-      {
-        donor: 'All We Can',
-        fundName: 'Locally led development partnerships',
-        goNoGo: '',
-        priority: 'Medium',
-        donorType: 'Institutional donor',
-        interestAreas: 'Locally led development and international partnership',
-        restrictions: 'Research partnership model, geography and current priorities.',
-        fundingAmount: 'Research needed',
-        keyDates: 'Research current opportunities',
-        fundingLength: 'Research needed',
-        website: 'https://www.allwecan.org.uk',
-        notes: 'Example record — deliberately left under review until evidence is complete.',
-        valuesAlignment: 'Yes', coreWorkSupport: "Don't know", requirementsGapFit: "Don't know",
-        innovationFit: 'Yes', coreFundingSupport: "Don't know", currentPosition: "Don't know",
-        wellPositioned: "Don't know", competitiveLandscape: "Don't know", valueForMoney: "Don't know",
-        connectedPartners: "Don't know", proposalSummary: "Don't know", proposalReadiness: "Don't know",
-        timetableStrength: "Don't know", deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
-        donorReputationalRisk: 'No', ethicalBridgeReputationalRisk: 'No', financialRisk: "Don't know",
-        newThematicGeographicRisk: "Don't know", governmentPartnerRisk: "Don't know", teamOverloadRisk: "Don't know"
-      },
-      {
-        donor: 'Google.org',
-        fundName: 'Social impact grant opportunities',
-        goNoGo: '',
-        priority: 'Low',
-        donorType: 'Corporate',
-        interestAreas: 'Technology, social innovation and public benefit',
-        restrictions: 'Confirm scope, geography and invitation requirements before pursuing.',
-        fundingAmount: 'Research needed',
-        keyDates: 'Monitor public opportunities',
-        fundingLength: 'Research needed',
-        website: 'https://www.google.org',
-        notes: 'Example record — illustrative only, with no claim of eligibility or open funding.',
-        valuesAlignment: "Don't know", coreWorkSupport: "Don't know", requirementsGapFit: "Don't know",
-        innovationFit: 'Yes', coreFundingSupport: 'No', currentPosition: 'No',
-        wellPositioned: "Don't know", competitiveLandscape: "Don't know", valueForMoney: "Don't know",
-        connectedPartners: "Don't know", proposalSummary: "Don't know", proposalReadiness: "Don't know",
-        timetableStrength: "Don't know", deliveryCapacity: 'Yes', staffingCapacity: "Don't know",
-        donorReputationalRisk: "Don't know", ethicalBridgeReputationalRisk: "Don't know", financialRisk: 'No',
-        newThematicGeographicRisk: "Don't know", governmentPartnerRisk: "Don't know", teamOverloadRisk: 'No'
-      }
-    ];
-    return examples.map(example => Object.assign(blankDonor(), example));
-  }
+// ---------- Views ----------
+function startView(){
+ const m=db.meta;
+ const esos=soObjectives().filter(o=>(o.group||'External')==='External');
+ const totals={total:db.donors.length,qualified:db.donors.filter(d=>d.stage!=='Prospect'&&d.stage!=='Not fit').length,proposing:db.donors.filter(d=>d.stage==='Proposing').length,decided:db.donors.filter(d=>d.stage==='Decided').length};
+ return `${window.MMExample?.renderIntegration?.('donor-mapping')||''}
+  <section class="work-box">
+   <div class="work-head">
+    <span class="work-badge">Your workspace</span>
+    <input class="work-org" data-field="organisation" value="${esc(m.organisation)}" placeholder="Add your organisation name →" aria-label="Organisation name">
+    <span class="work-status" id="work-status"></span>
+   </div>
+   <p class="work-hint">Prospect side of fundraising. Score each donor's alignment against your strategic objectives, qualify or disqualify them, and promote qualified prospects into active cultivation (Donor Tracking).</p>
+   <div class="work-meta">
+    <label class="work-field"><span>Planning year</span><input data-field="year" type="number" value="${esc(m.year)}" min="2000" max="2200"></label>
+    <label class="work-field"><span>Currency</span><input data-field="currency" value="${esc(m.currency)}" placeholder="USD" maxlength="12"></label>
+    <label class="work-field"><span>Prepared by</span><input data-field="preparedBy" value="${esc(m.preparedBy)}" placeholder="Your name or team"></label>
+    <label class="work-field full"><span>Notes</span><textarea data-field="notes" placeholder="Fundraising strategy context — target mix, red lines, no-go donors.">${esc(m.notes)}</textarea></label>
+   </div>
+   <div class="grid four" style="margin:14px 0 10px">
+    ${card('Prospects',totals.total,'In the pipeline')}
+    ${card('Qualified+',totals.qualified,'Past the initial fit screen')}
+    ${card('Proposing',totals.proposing,'With a live proposal',totals.proposing>5)}
+    ${card('Decided',totals.decided,'Yes or no returned')}
+   </div>
+   ${esos.length?'':'<div class="notice warn"><b>No external strategic objectives found yet.</b> Open Strategic Objectives first — the alignment matrix uses your ESOs as columns.</div>'}
+   <div class="work-sect-head">
+    <h3>Get started</h3>
+    <p class="tiny">Add donors one at a time, score each one's fit with each of your ESOs (0 = no fit, 3 = perfect fit), and let the matrix surface the best-aligned prospects. Qualified donors can be promoted to <b>Donor Tracking</b> for active cultivation.</p>
+   </div>
+   <div class="actions">
+    <button class="button" data-action="new-donor">+ Add a donor</button>
+    <a class="button secondary" href="#" data-tab="Prospects">Go to prospect pipeline →</a>
+    <a class="button secondary" href="#" data-tab="Alignment matrix">See alignment matrix →</a>
+    <a class="button secondary" href="Donor-Tracking.html">Open Donor Tracking →</a>
+   </div>
+  </section>`;
+}
 
-  function normaliseDonor(candidate) {
-    const donor = blankDonor();
-    if (!candidate || typeof candidate !== 'object') return donor;
-    donor.id = String(candidate.id || donor.id);
-    for (const [key] of ALL_FIELDS) donor[key] = String(candidate[key] ?? '');
-    return donor;
-  }
+function prospectsView(){
+ const stageOrder={'Proposing':0,'Engaged':1,'Qualified':2,'Prospect':3,'Decided':4,'Not fit':5};
+ const sorted=[...db.donors].sort((a,b)=>(stageOrder[a.stage]??9)-(stageOrder[b.stage]??9)||totalAlignment(b).pct-totalAlignment(a).pct);
+ const rows=sorted.map(d=>{
+  const align=totalAlignment(d);
+  const bandClass=align.pct>=75?'risk-band-low':align.pct>=50?'risk-band-medium':align.pct>=25?'risk-band-high':'risk-band-none';
+  return `<tr>
+   <td><b>${esc(d.code)}</b></td>
+   <td><b>${esc(d.name||'Untitled donor')}</b>${d.country?`<br><small>${esc(d.country)}${d.region?' · '+esc(d.region):''}</small>`:''}</td>
+   <td>${pill(d.type)}</td>
+   <td>${esc(d.size||'—')}<br><small>${esc(d.typicalGrant||'')}</small></td>
+   <td class="risk-score-cell ${bandClass}" title="${align.sum}/${align.max}"><b>${align.pct}%</b></td>
+   <td>${pill(d.stage||'Prospect')}</td>
+   <td>${esc(fmtDate(d.nextCycle)||'—')}</td>
+   <td><div class="row-actions"><button class="link" data-action="edit-donor" data-id="${esc(d.id)}">Edit</button></div></td>
+  </tr>`;
+ });
+ return `<div class="rowhead section-head"><div><h2>Prospect pipeline</h2><p>Donors sorted by stage then by fit. Click Edit to open the full profile — type, focus areas, contact, cycle timing and the 0–3 fit score against each of your ESOs.</p></div><button class="button" data-action="new-donor">+ Add a donor</button></div>
+  ${table(['Code','Donor','Type','Size · typical grant','Fit %','Stage','Next cycle',''],rows,'No donors yet. Click "Add a donor" to begin.')}`;
+}
 
-  function normaliseState(candidate) {
-    if (!candidate || typeof candidate !== 'object' || !Array.isArray(candidate.donors)) {
-      throw new Error('This is not a compatible Donor Mapping backup.');
-    }
-    const meta = candidate.meta && typeof candidate.meta === 'object' ? candidate.meta : {};
-    return {
-      version: Number(candidate.version) || 1,
-      meta: {
-        organisation: String(meta.organisation ?? ''),
-        period: String(meta.period ?? ''),
-        preparedBy: String(meta.preparedBy ?? ''),
-        notes: String(meta.notes ?? '')
-      },
-      donors: candidate.donors.map(normaliseDonor)
-    };
-  }
+function alignmentMatrixView(){
+ const esos=soObjectives().filter(o=>(o.group||'External')==='External');
+ if(!esos.length)return `<div class="rowhead section-head"><div><h2>Alignment matrix</h2><p>Each donor's fit score against each ESO. Open Strategic Objectives first to populate the columns.</p></div></div><p class="example-empty">No external strategic objectives found.</p>`;
+ const sorted=[...db.donors].sort((a,b)=>totalAlignment(b).pct-totalAlignment(a).pct);
+ const scoreCell=v=>{const n=Number(v)||0;const cls=n===3?'score-3':n===2?'score-2':n===1?'score-1':'score-0';return `<td class="align-score ${cls}">${n||'·'}</td>`};
+ const rows=sorted.map(d=>{const t=totalAlignment(d);return `<tr><td><b>${esc(d.code)}</b></td><td><b>${esc(d.name||'—')}</b></td><td>${pill(d.stage||'Prospect')}</td>${esos.map(o=>scoreCell(d.alignment?.[o.code])).join('')}<td class="align-total"><b>${t.pct}%</b><br><small>${t.sum}/${t.max}</small></td></tr>`}).join('');
+ return `<div class="rowhead section-head"><div><h2>Alignment matrix · donors × ESOs</h2><p>Scores: 0 = no fit, 1 = adjacent, 2 = fit, 3 = perfect fit. The % column is the donor's total out of the maximum possible. Edit a donor to set the scores.</p></div></div>
+  <section class="panel"><div class="tablewrap"><table class="align-matrix"><thead><tr><th>Code</th><th>Donor</th><th>Stage</th>${esos.map(o=>`<th title="${esc(o.title)}">${esc(o.code)}</th>`).join('')}<th>Fit %</th></tr></thead><tbody>${rows||'<tr><td colspan="'+(4+esos.length)+'" class="muted">No donors yet.</td></tr>'}</tbody></table></div></section>`;
+}
 
-  function initialState() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (!saved) return { ...blankState(), donors: exampleDonors() };
-      const restored = normaliseState(saved);
-      const hasMeaningfulDonor = restored.donors.some(row => ALL_FIELDS.some(([key]) => String(row[key] || '').trim()));
-      if (restored.version < CURRENT_VERSION && !hasMeaningfulDonor) {
-        return { ...restored, version: CURRENT_VERSION, donors: exampleDonors() };
-      }
-      return { ...restored, version: CURRENT_VERSION };
-    } catch {
-      return { ...blankState(), donors: exampleDonors() };
-    }
-  }
+function exportViewPanel(){
+ return `${exportButtons()}<section class="panel"><h2>What the Excel workbook contains</h2><ul style="font-size:13px;line-height:1.5"><li>Read me — how to use the workbook offline</li><li>Meta — organisation, year, currency</li><li>Donors — full profile per donor including ESO alignment scores</li><li>_schema — field list for round-trip import</li></ul></section>`;
+}
 
-  let state = initialState();
-  let tab = 'matrix';
-  let filters = { decision: 'all', priority: 'all', donorType: 'all', assessment: 'all' };
-  let disposeMatrixScroll = () => {};
+function donorModal(d){
+ const isNew=!d;d=d||blankDonor();
+ const esos=soObjectives().filter(o=>(o.group||'External')==='External');
+ const alignFields=esos.map(o=>`<label class="field"><span class="label">${esc(o.code)} · ${esc(o.title.slice(0,45))}${o.title.length>45?'…':''} ${tip('0 = no fit, 1 = adjacent, 2 = fit, 3 = perfect fit')}</span><select name="align_${esc(o.code)}">${[0,1,2,3].map(v=>`<option value="${v}" ${String(d.alignment?.[o.code]||0)===String(v)?'selected':''}>${v}</option>`).join('')}</select></label>`).join('');
+ return modal(isNew?'Add donor':'Edit donor',`<form data-form="donor" data-id="${esc(d.id||'')}" class="form">
+  ${field('Code','code',d.code||nextCode(),'text','required')}
+  ${field('Donor name','name',d.name,'text','required')}
+  ${select('Type','type',DTYPES,d.type)}
+  ${field('Country','country',d.country)}
+  ${field('Region','region',d.region,'text','','e.g. Sub-Saharan Africa, LAC, SE Asia')}
+  ${select('Size','size',SIZES,d.size)}
+  ${field('Typical grant size','typicalGrant',d.typicalGrant,'text','','e.g. $50,000 over 2 years')}
+  ${field('Website','website',d.website,'url')}
+  ${field('Contact person','contact',d.contact)}
+  ${field('Contact email','email',d.email,'email')}
+  ${area('Focus areas / priorities','focusAreas',d.focusAreas)}
+  <h3 class="form-section">Pipeline</h3>
+  ${select('Stage','stage',STAGES,d.stage||'Prospect')}
+  ${field('Next funding cycle','nextCycle',d.nextCycle,'date','','When the next proposal window opens.')}
+  ${area('Fit rationale','rationale',d.rationale,'Why this donor and your work are a match (or not).')}
+  <h3 class="form-section">ESO alignment (0–3 per objective)</h3>
+  ${esos.length?`<div class="form-grid-top">${alignFields}</div>`:'<p class="muted" style="grid-column:1/-1">No external strategic objectives found. Open Strategic Objectives first.</p>'}
+  <h3 class="form-section">Decision</h3>
+  ${select('Outcome','decision',['','Interested','Submitted proposal','Awarded','Declined','Withdrew'],d.decision||'')}
+  ${field('Decision date','decisionDate',d.decisionDate,'date')}
+  ${area('Notes','notes',d.notes)}
+  ${formEnd('Save donor',{deleteId:isNew?'':d.id,deleteLabel:'Delete donor'})}
+ </form>`);
+}
 
-  function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
+function action(el){
+ const a=el.dataset.action,id=el.dataset.id,tabTarget=el.dataset.tab;
+ if(tabTarget){tab=tabTarget;dlg='';message='';render();return}
+ if(a==='close'){dlg='';render();return}
+ if(a==='new-donor'){dlg=donorModal();render();return}
+ if(a==='edit-donor'){const d=db.donors.find(x=>x.id===id);if(d){dlg=donorModal(d);render()}return}
+ if(a==='delete'){const d=db.donors.find(x=>x.id===id);if(!d)return;if(!confirm('Delete this donor? Cannot be undone.'))return;db.donors=db.donors.filter(x=>x.id!==id);dlg='';save('Donor deleted.');return}
+ if(a==='xlsx'){try{download('Mission-and-Method-donor-mapping.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){downloadCsv();return}
+ if(a==='print'){window.print();return}
+ if(a==='export-json'){download('Mission-and-Method-donor-mapping.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Mission-and-Method-donor-mapping-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+}
 
-  function safeFileName() {
-    return String(state.meta.organisation || 'Donor-mapping')
-      .replace(/[^a-z0-9_-]+/gi, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 60) || 'Donor-mapping';
-  }
+function submit(form){
+ if(form.dataset.form!=='donor')return;
+ const existing=db.donors.find(d=>d.id===form.dataset.id);
+ const d=existing||{...blankDonor()};
+ const data=formData(form);
+ const align={};soObjectives().filter(o=>(o.group||'External')==='External').forEach(o=>{align[o.code]=Number(data['align_'+o.code])||0});
+ Object.assign(d,{code:s(data.code)||d.code||nextCode(),name:s(data.name),type:data.type,country:s(data.country),region:s(data.region),size:data.size,typicalGrant:s(data.typicalGrant),website:s(data.website),contact:s(data.contact),email:s(data.email),focusAreas:s(data.focusAreas),stage:data.stage||'Prospect',nextCycle:data.nextCycle||'',rationale:s(data.rationale),alignment:align,decision:data.decision||'',decisionDate:data.decisionDate||'',notes:s(data.notes)});
+ stamp(d);
+ if(!existing)db.donors.push(d);
+ dlg='';save('Donor saved.');
+}
 
-  function fieldControl(row, field, isAssessment = false) {
-    const [key, label, type] = field;
-    const value = row[key] || '';
-    const aria = `${label} for ${row.donor || 'new donor'}`;
-    if (type === 'decision' || type === 'priority' || type === 'type' || isAssessment) {
-      const options = SELECT_OPTIONS[isAssessment ? 'assessment' : type];
-      return `<select class="cell-control ${key === 'goNoGo' && value === 'Go' ? 'status-go' : key === 'goNoGo' && value === 'No go' ? 'status-no-go' : ''}" data-row="${esc(row.id)}" data-field="${esc(key)}" aria-label="${esc(aria)}">
-        ${options.map(option => `<option value="${esc(option)}" ${value === option ? 'selected' : ''}>${esc(option || 'Select…')}</option>`).join('')}
-      </select>`;
-    }
-    if (type === 'textarea') {
-      return `<textarea class="cell-control" data-row="${esc(row.id)}" data-field="${esc(key)}" aria-label="${esc(aria)}">${esc(value)}</textarea>`;
-    }
-    return `<input class="cell-control" type="${type === 'url' ? 'url' : 'text'}" data-row="${esc(row.id)}" data-field="${esc(key)}" aria-label="${esc(aria)}" value="${esc(value)}"${type === 'url' ? ' placeholder="https://"' : ''}>`;
-  }
+function buildWorkbook(withData){
+ const esos=soObjectives().filter(o=>(o.group||'External')==='External');
+ const header=['Code','Name','Type','Country','Region','Size','Typical grant','Website','Contact','Email','Focus areas','Stage','Next cycle','Rationale','Decision','Decision date',...esos.map(o=>'Align:'+o.code),'Fit %','Notes'];
+ const rowFor=d=>{const t=totalAlignment(d);return [d.code,d.name,d.type,d.country,d.region,d.size,d.typicalGrant,d.website,d.contact,d.email,d.focusAreas,d.stage,d.nextCycle,d.rationale,d.decision,d.decisionDate,...esos.map(o=>d.alignment?.[o.code]||0),t.pct,d.notes]};
+ const sheets=[
+  readmeSheet('Donor Mapping',['Prospect side of fundraising.','Alignment columns use the 0–3 score per ESO; Fit % is the total over the maximum possible.']),
+  metaSheet(db.meta),
+  {name:'Donors',rows:[header,...(withData?db.donors.map(rowFor):[])]},
+  schemaSheet({Donors:'code,name,type,country,region,size,typicalGrant,website,contact,email,focusAreas,stage,nextCycle,rationale,decision,decisionDate,alignment,notes'})
+ ];
+ return buildXlsx(sheets);
+}
+function downloadCsv(){
+ const esos=soObjectives().filter(o=>(o.group||'External')==='External');
+ download('Mission-and-Method-donor-mapping.csv',csv([['Code','Name','Type','Country','Stage','Fit %',...esos.map(o=>o.code)],...db.donors.map(d=>{const t=totalAlignment(d);return [d.code,d.name,d.type,d.country,d.stage,t.pct,...esos.map(o=>d.alignment?.[o.code]||0)]})]),'text/csv;charset=utf-8');
+}
+async function importXlsxFile(file){
+ try{
+  const data=await parseXlsx(await file.arrayBuffer());
+  const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);
+  const rows=rowsToObjects(findSheet(data,'Donors'));
+  if(rows?.length)db.donors=rows.map(r=>{const align={};Object.keys(r).filter(k=>k.startsWith('Align:')).forEach(k=>{align[k.slice(6)]=Number(r[k])||0});return {...blankDonor(),code:r.Code||'',name:r.Name||'',type:r.Type||'Foundation',country:r.Country||'',region:r.Region||'',size:r.Size||'',typicalGrant:r['Typical grant']||'',website:r.Website||'',contact:r.Contact||'',email:r.Email||'',focusAreas:r['Focus areas']||'',stage:r.Stage||'Prospect',nextCycle:r['Next cycle']||'',rationale:r.Rationale||'',decision:r.Decision||'',decisionDate:r['Decision date']||'',alignment:align,notes:r.Notes||''}});
+  save('Excel imported.');
+ }catch(e){message='Excel import failed: '+e.message;render()}
+}
+async function importJsonFile(file){try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}}
 
-  function assessmentSummary(row) {
-    const { yes, no, unknown, complete, total } = assessmentProgress(row);
-    return `<strong>${complete}/${total} assessed</strong><br><span>${yes} yes · ${no} no${unknown ? ` · ${unknown} unsure` : ''}</span>`;
-  }
+function wireStart(root){const box=root.querySelector('.work-box');if(!box)return;const status=box.querySelector('#work-status');let timer;const schedule=()=>{if(status)status.textContent='Saving…';clearTimeout(timer);timer=setTimeout(()=>{persist(db);if(status){status.textContent='✓ Saved';setTimeout(()=>status.textContent='',1500)}},400)};box.querySelectorAll('.work-meta [data-field],.work-head [data-field]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.field;db.meta[k]=el.type==='number'?(el.value===''?'':Number(el.value)):el.value;schedule()})})}
 
-  function assessmentProgress(row) {
-    const yes = ASSESSMENT_FIELDS.filter(([key]) => row[key] === 'Yes').length;
-    const no = ASSESSMENT_FIELDS.filter(([key]) => row[key] === 'No').length;
-    const unknown = ASSESSMENT_FIELDS.filter(([key]) => row[key] === "Don't know").length;
-    const total = ASSESSMENT_FIELDS.length;
-    return { yes, no, unknown, complete: yes + no + unknown, total };
-  }
+function render(){
+ const views={'Start':startView,'Prospects':prospectsView,'Alignment matrix':alignmentMatrixView,'Export':exportViewPanel};
+ root.innerHTML=shell({eyebrow:'Funding · Donor mapping',title:'Donor Mapping',intro:'Prospect side of fundraising. Score each donor against your strategic objectives, qualify or disqualify, and promote qualified prospects to Donor Tracking for active cultivation.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=donor-mapping',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
+ wireStart(root);
+}
 
-  function matchesFilters(row) {
-    if (filters.decision !== 'all' && row.goNoGo !== filters.decision) return false;
-    if (filters.priority !== 'all' && row.priority !== filters.priority) return false;
-    if (filters.donorType !== 'all' && row.donorType !== filters.donorType) return false;
-    const progress = assessmentProgress(row);
-    if (filters.assessment === 'complete' && progress.complete !== progress.total) return false;
-    if (filters.assessment === 'needs-research' && !(progress.complete > 0 && progress.complete < progress.total)) return false;
-    if (filters.assessment === 'not-started' && progress.complete !== 0) return false;
-    return true;
-  }
-
-  function filterField(key, label, options) {
-    return `<label class="filter-field" for="filter-${esc(key)}"><span>${esc(label)}</span><select id="filter-${esc(key)}" data-filter="${esc(key)}" aria-controls="donor-table">${options.map(([value, optionLabel]) => `<option value="${esc(value)}" ${filters[key] === value ? 'selected' : ''}>${esc(optionLabel)}</option>`).join('')}</select></label>`;
-  }
-
-  function filtersHtml() {
-    return `<section class="filter-panel" aria-label="Donor filters">
-      <div class="filter-title"><p>FILTER DONORS</p><strong>View the right opportunities</strong><span>Use the dropdowns to focus the donor list.</span></div>
-      <fieldset><legend>Filter donor list</legend><div class="filter-row">
-        ${filterField('decision', 'Decision', [['all', 'All decisions'], ['Go', 'Go'], ['No go', 'No go'], ['', 'Not decided']])}
-        ${filterField('priority', 'Priority', [['all', 'All priorities'], ['High', 'High priority'], ['Medium', 'Medium priority'], ['Low', 'Low priority'], ['', 'Not prioritised']])}
-        ${filterField('donorType', 'Donor type', [['all', 'All donor types'], ...SELECT_OPTIONS.type.slice(1).map(value => [value, value])] )}
-        ${filterField('assessment', 'Assessment', [['all', 'All assessment progress'], ['complete', 'Fully assessed'], ['needs-research', 'Needs research'], ['not-started', 'Not started']])}
-        <button type="button" class="clear-filters" data-action="clear-filters">Clear filters</button>
-      </div></fieldset>
-    </section>`;
-  }
-
-  function tabsHtml() {
-    return `<div class="rail-brand"><span class="rail-mark" aria-hidden="true">M</span><span><strong>Mission &amp; Method</strong><small>Funding &amp; business development</small></span></div><p class="rail-section-label">Donor Mapping</p><div class="rail-links" role="group" aria-label="Donor Mapping sections">${TABS.map(([id, label]) => `<button type="button" data-tab="${id}" class="${tab === id ? 'active' : ''}" aria-current="${tab === id ? 'page' : 'false'}"><span>${label}</span></button>`).join('')}</div>`;
-  }
-
-  function percentage(value, total) {
-    return total ? Math.round((value / total) * 100) : 0;
-  }
-
-  function priorityBar(label, count, total, className) {
-    return `<div class="priority-row"><div><span>${esc(label)}</span><strong>${count}</strong></div><span class="priority-track"><i class="priority-fill ${esc(className)}" style="--share:${percentage(count, total)}%"></i></span></div>`;
-  }
-
-  function visualOverview({ goCount, noGoCount, inReview, highPriority, mediumPriority, lowPriority, unprioritised, assessment }) {
-    const donorTotal = state.donors.length;
-    const assessmentPercentage = percentage(assessment.complete, assessment.total);
-    return `<section class="visual-dashboard" aria-label="Donor mapping visual overview">
-      <article class="visual-card decision-visual">
-        <div class="visual-card-heading"><div><p class="eyebrow">Decision view</p><h3>Go / no-go</h3></div><span>${donorTotal} donor${donorTotal === 1 ? '' : 's'}</span></div>
-        <div class="decision-graphic">
-          <div class="decision-donut" role="img" aria-label="${goCount} go, ${noGoCount} no go and ${inReview} in review" style="--go-share:${percentage(goCount, donorTotal)}%; --no-go-share:${percentage(noGoCount, donorTotal)}%"><div><strong>${percentage(goCount, donorTotal)}%</strong><span>Go</span></div></div>
-          <dl class="chart-legend">
-            <div class="legend-go"><dt>Go</dt><dd>${goCount}</dd></div>
-            <div class="legend-no-go"><dt>No go</dt><dd>${noGoCount}</dd></div>
-            <div class="legend-review"><dt>In review</dt><dd>${inReview}</dd></div>
-          </dl>
-        </div>
-      </article>
-      <article class="visual-card priority-visual">
-        <div class="visual-card-heading"><div><p class="eyebrow">Focus view</p><h3>Priorities</h3></div><span>Where to focus</span></div>
-        <div class="priority-bars" aria-label="Priority distribution">
-          ${priorityBar('High', highPriority, donorTotal, 'high')}
-          ${priorityBar('Medium', mediumPriority, donorTotal, 'medium')}
-          ${priorityBar('Low', lowPriority, donorTotal, 'low')}
-          ${priorityBar('Not prioritised', unprioritised, donorTotal, 'none')}
-        </div>
-      </article>
-      <article class="visual-card assessment-visual">
-        <div class="visual-card-heading"><div><p class="eyebrow">Evidence view</p><h3>Assessment coverage</h3></div><span>${assessment.complete}/${assessment.total}</span></div>
-        <div class="coverage-number"><strong>${assessmentPercentage}%</strong><span>assessment recorded</span></div>
-        <div class="coverage-track" aria-hidden="true"><i style="--coverage:${assessmentPercentage}%"></i></div>
-        <dl class="assessment-key-mini">
-          <div><dt>Yes</dt><dd>${assessment.yes}</dd></div>
-          <div><dt>No</dt><dd>${assessment.no}</dd></div>
-          <div><dt>Unsure</dt><dd>${assessment.unknown}</dd></div>
-        </dl>
-      </article>
-    </section>`;
-  }
-
-  function matrix() {
-    const goCount = state.donors.filter(row => row.goNoGo === 'Go').length;
-    const noGoCount = state.donors.filter(row => row.goNoGo === 'No go').length;
-    const highPriority = state.donors.filter(row => row.priority === 'High').length;
-    const mediumPriority = state.donors.filter(row => row.priority === 'Medium').length;
-    const lowPriority = state.donors.filter(row => row.priority === 'Low').length;
-    const unprioritised = state.donors.filter(row => !row.priority).length;
-    const inReview = state.donors.filter(row => !row.goNoGo).length;
-    const assessment = state.donors.reduce((totals, row) => {
-      const progress = assessmentProgress(row);
-      totals.yes += progress.yes;
-      totals.no += progress.no;
-      totals.unknown += progress.unknown;
-      totals.complete += progress.complete;
-      totals.total += progress.total;
-      return totals;
-    }, { yes: 0, no: 0, unknown: 0, complete: 0, total: 0 });
-    const filteredDonors = state.donors.filter(matchesFilters);
-    const columnHeaders = [...GENERAL.map(field => field[1]), ...ASSESSMENT_FIELDS.map(field => field[1])];
-    const headers = columnHeaders.map((label, index) => `<th scope="col" class="${index < FIXED_GENERAL_COLUMNS ? `sticky-${index + 1}` : ''} ${index >= GENERAL.length ? 'assessment-heading' : ''}">${esc(label)}</th>`).join('');
-    const rows = filteredDonors.map(row => `
-      <tr>
-        ${GENERAL.map((field, index) => `<td class="${index < FIXED_GENERAL_COLUMNS ? `sticky-${index + 1}` : ''}">${fieldControl(row, field)}</td>`).join('')}
-        ${ASSESSMENT_FIELDS.map(field => `<td>${fieldControl(row, field, true)}</td>`).join('')}
-        <td class="summary-cell">${assessmentSummary(row)}</td>
-        <td class="row-actions"><button class="danger" type="button" data-action="delete" data-row="${esc(row.id)}" aria-label="Delete ${esc(row.donor || 'donor row')}">Delete</button></td>
-      </tr>`).join('');
-
-    return `
-      <section class="workspace-summary">
-        <div>
-          <p class="eyebrow">Funding workspace</p>
-          <h2>Donor Mapping</h2>
-          <p>Assess donor fit, keep research visible and make clearer go/no-go decisions.</p>
-        </div>
-        <span>${state.donors.length} donor${state.donors.length === 1 ? '' : 's'} mapped</span>
-      </section>
-
-      <section class="metric-strip" aria-label="Donor mapping summary">
-        <div class="card metric metric-total"><small>Donors mapped</small><strong>${state.donors.length}</strong></div>
-        <div class="card metric metric-go"><small>Go</small><strong>${goCount}</strong></div>
-        <div class="card metric metric-no-go"><small>No go</small><strong>${noGoCount}</strong></div>
-        <div class="card metric metric-priority"><small>High priority</small><strong>${highPriority}</strong></div>
-        <div class="card metric metric-review"><small>In review</small><strong>${inReview}</strong></div>
-      </section>
-
-      ${visualOverview({ goCount, noGoCount, inReview, highPriority, mediumPriority, lowPriority, unprioritised, assessment })}
-
-      ${filtersHtml()}
-
-      <details class="mapping-details">
-        <summary>Mapping details</summary>
-        <p class="muted">These details are included in your browser backup and CSV exports.</p>
-        <form id="meta-form" class="form-grid">
-          ${metaField('organisation', 'Organisation')}
-          ${metaField('period', 'Mapping period / cycle')}
-          ${metaField('preparedBy', 'Prepared by')}
-          ${metaField('notes', 'Mapping notes', 'textarea')}
-        </form>
-      </details>
-
-      <section class="list-panel">
-        <div class="list-heading">
-          <div>
-            <p class="eyebrow">Donor list</p>
-            <h3>Mapped donors</h3>
-            <p class="muted">Scroll horizontally to complete the full Annex 2 strategy, likelihood, technical, capacity and risk assessment.</p>
-          </div>
-          <div class="list-actions"><span class="results-count" role="status" aria-live="polite">Showing ${filteredDonors.length} of ${state.donors.length}</span><button type="button" data-action="add">Add donor</button></div>
-        </div>
-        <p class="example-note"><strong>Example records are included.</strong> Edit or delete them, then add your own donor research. The examples contain public, illustrative information only.</p>
-        ${state.donors.length && filteredDonors.length ? `<div class="matrix-scroll-shell">
-          <div class="matrix-top-scroll" id="donor-table-top-scroll" role="region" aria-label="Horizontal scroll for the donor assessment matrix" aria-controls="donor-table" tabindex="0">
-            <span class="sr-only">Use this horizontal scroll bar to view more donor assessment columns.</span>
-            <div class="matrix-top-scroll-spacer" aria-hidden="true"></div>
-          </div>
-          <div class="table-wrap" id="donor-table-scroll" role="region" aria-label="Donor assessment matrix, horizontally scrollable" tabindex="0">
-            <table id="donor-table">
-            <caption>Donor assessment matrix — showing ${filteredDonors.length} of ${state.donors.length} mapped donors</caption>
-            <thead>
-              <tr class="group-row">
-                <th scope="colgroup" colspan="${FIXED_GENERAL_COLUMNS}" class="group-general group-general-fixed">General information</th>
-                <th scope="colgroup" colspan="${GENERAL.length - FIXED_GENERAL_COLUMNS}" class="group-general group-general-continued" aria-label="General information"></th>
-                ${GROUPS.map(group => `<th scope="colgroup" colspan="${group.fields.length}" class="${group.className}">${esc(group.label)}</th>`).join('')}
-                <th rowspan="2" class="group-general">Assessment</th>
-                <th rowspan="2" class="group-general">Actions</th>
-              </tr>
-              <tr class="column-row">${headers}</tr>
-            </thead>
-            <tbody>${rows}</tbody>
-            </table>
-          </div>
-        </div>` : state.donors.length ? `<div class="zero-results"><h3>No donors match these filters</h3><p>Clear the filters to see all mapped donors, or add another donor.</p><div class="actions"><button type="button" class="light" data-action="clear-filters">Clear filters</button><button type="button" data-action="add">Add donor</button></div></div>` : `<div class="empty"><h3>Your donor map is ready to start</h3><p>Add a donor to begin the go/no-go assessment.</p><button type="button" data-action="add">Add first donor</button></div>`}
-      </section>`;
-  }
-
-  function metaField(key, label, type = 'text') {
-    const value = state.meta[key] || '';
-    return `<label>${esc(label)}${type === 'textarea'
-      ? `<textarea name="${key}">${esc(value)}</textarea>`
-      : `<input name="${key}" value="${esc(value)}">`
-    }</label>`;
-  }
-
-  function guide() {
-    return `
-      <div class="toolbar"><div><h2>Assessment guide</h2><p class="intro">Use the same question structure for every donor so that decisions are consistent and easy to review.</p></div><button type="button" data-action="add">Add donor</button></div>
-      <section class="callout"><strong>Keep the decision human.</strong> The matrix records evidence and gaps. It does not calculate a go/no-go decision for you; use team judgement, due diligence and the donor’s published requirements.</section>
-      <section class="guide-grid">
-        ${GROUPS.map(group => `<article class="card"><h3>${esc(group.label)}</h3><ul>${group.fields.map(([, label, help]) => `<li><strong>${esc(label)}:</strong> ${esc(help)}</li>`).join('')}</ul></article>`).join('')}
-      </section>
-      <section class="panel assessment-key">
-        <div><h4>Yes</h4><p>There is evidence that the condition is met.</p></div>
-        <div><h4>No</h4><p>The condition is not met or presents a material issue.</p></div>
-        <div><h4>Don't know</h4><p>Research or internal discussion is still needed before a decision.</p></div>
-      </section>`;
-  }
-
-  function backup() {
-    return `
-      <div class="toolbar"><div><h2>Backup &amp; restore</h2><p class="intro">Your data is private to this browser. Save a JSON backup before changing browser, device or account.</p></div></div>
-      <section class="backup-grid">
-        <article class="panel"><h3>Export a full backup</h3><p>Downloads all mapping details and assessments as a JSON file. Use it to restore your working copy later.</p><button type="button" data-action="download-backup">Export data backup</button></article>
-        <article class="panel"><h3>Export a spreadsheet view</h3><p>Downloads every donor field as a CSV file that can open in Excel, Google Sheets or another system.</p><button type="button" class="light" data-action="download-csv">Download CSV</button></article>
-        <article class="panel"><h3>Restore a backup</h3><p>Choose a Donor Mapping JSON backup. Restoring replaces the current data in this browser.</p><label class="button light">Choose JSON backup<input id="import-file" type="file" accept=".json,application/json" hidden></label></article>
-        <article class="panel"><h3>Start a blank donor map</h3><p>Clears all donor rows and mapping details from this browser. Export a backup first if you may need them again.</p><button type="button" class="danger" data-action="clear">Clear this donor map</button></article>
-      </section>`;
-  }
-
-  function setupMatrixScroll() {
-    const topScroll = $('#donor-table-top-scroll');
-    const spacer = $('.matrix-top-scroll-spacer');
-    const tableWrap = $('#donor-table-scroll');
-    const table = $('#donor-table');
-    if (!topScroll || !spacer || !tableWrap || !table) return;
-
-    let syncing = false;
-    const copyScrollPosition = (from, to) => {
-      if (syncing) return;
-      const fromMaximum = from.scrollWidth - from.clientWidth;
-      const toMaximum = to.scrollWidth - to.clientWidth;
-      if (fromMaximum <= 0 || toMaximum <= 0) return;
-      syncing = true;
-      to.scrollLeft = Math.round((from.scrollLeft / fromMaximum) * toMaximum);
-      requestAnimationFrame(() => { syncing = false; });
-    };
-    const syncSize = () => {
-      const width = Math.max(table.scrollWidth, tableWrap.scrollWidth, tableWrap.clientWidth);
-      spacer.style.width = `${width}px`;
-      const hasOverflow = tableWrap.scrollWidth - tableWrap.clientWidth > 1;
-      topScroll.hidden = !hasOverflow;
-      topScroll.tabIndex = hasOverflow ? 0 : -1;
-      if (hasOverflow) copyScrollPosition(tableWrap, topScroll);
-    };
-    const fromTop = () => copyScrollPosition(topScroll, tableWrap);
-    const fromTable = () => copyScrollPosition(tableWrap, topScroll);
-    topScroll.addEventListener('scroll', fromTop, { passive: true });
-    tableWrap.addEventListener('scroll', fromTable, { passive: true });
-    const observer = 'ResizeObserver' in window ? new ResizeObserver(syncSize) : null;
-    observer?.observe(table);
-    observer?.observe(tableWrap);
-    const frame = requestAnimationFrame(syncSize);
-    disposeMatrixScroll = () => {
-      cancelAnimationFrame(frame);
-      observer?.disconnect();
-      topScroll.removeEventListener('scroll', fromTop);
-      tableWrap.removeEventListener('scroll', fromTable);
-      disposeMatrixScroll = () => {};
-    };
-  }
-
-  function render() {
-    disposeMatrixScroll();
-    $('#tabs').innerHTML = tabsHtml();
-    $('#app').innerHTML = tab === 'matrix' ? matrix() : tab === 'guide' ? guide() : backup();
-    setupMatrixScroll();
-  }
-
-  function updateMeta(form) {
-    const values = new FormData(form);
-    state.meta = {
-      organisation: String(values.get('organisation') || ''),
-      period: String(values.get('period') || ''),
-      preparedBy: String(values.get('preparedBy') || ''),
-      notes: String(values.get('notes') || '')
-    };
-    save();
-  }
-
-  function updateRow(target) {
-    const row = state.donors.find(item => item.id === target.dataset.row);
-    if (!row || !Object.prototype.hasOwnProperty.call(row, target.dataset.field)) return;
-    row[target.dataset.field] = target.value;
-    save();
-    if (target.dataset.field === 'goNoGo') {
-      target.classList.toggle('status-go', target.value === 'Go');
-      target.classList.toggle('status-no-go', target.value === 'No go');
-    }
-    if (ASSESSMENT_FIELDS.some(([key]) => key === target.dataset.field)) {
-      const summary = target.closest('tr')?.querySelector('.summary-cell');
-      if (summary) summary.innerHTML = assessmentSummary(row);
-    }
-  }
-
-  function download(name, content, type) {
-    const url = URL.createObjectURL(new Blob([content], { type }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = name;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-  }
-
-  function exportBackup() {
-    download(`${safeFileName()}-donor-mapping-backup.json`, JSON.stringify({ ...state, exportedAt: new Date().toISOString() }, null, 2), 'application/json');
-  }
-
-  function csvCell(value) {
-    let content = String(value ?? '');
-    if (/^[=+@\- \t\r]/.test(content)) content = `'${content}`;
-    return `"${content.replaceAll('"', '""')}"`;
-  }
-
-  function exportCsv() {
-    const headers = ALL_FIELDS.map(([, label]) => label);
-    const rows = state.donors.map(row => ALL_FIELDS.map(([key]) => row[key] || ''));
-    const content = '\ufeff' + [headers, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n');
-    download(`${safeFileName()}-donor-mapping.csv`, content, 'text/csv;charset=utf-8');
-  }
-
-  document.addEventListener('click', event => {
-    const tabButton = event.target.closest('[data-tab]');
-    if (tabButton) {
-      tab = tabButton.dataset.tab;
-      render();
-      return;
-    }
-    const button = event.target.closest('[data-action]');
-    if (!button) return;
-    const action = button.dataset.action;
-    if (action === 'add') {
-      state.donors.push(blankDonor());
-      filters = { decision: 'all', priority: 'all', donorType: 'all', assessment: 'all' };
-      save();
-      tab = 'matrix';
-      render();
-      const input = $('.table-wrap tbody tr:last-child input, .table-wrap tbody tr:last-child select');
-      input?.focus();
-    }
-    if (action === 'delete') {
-      const row = state.donors.find(item => item.id === button.dataset.row);
-      if (!confirm(`Delete ${row?.donor || 'this donor row'}?`)) return;
-      state.donors = state.donors.filter(item => item.id !== button.dataset.row);
-      save();
-      render();
-    }
-    if (action === 'download-backup') exportBackup();
-    if (action === 'download-csv') exportCsv();
-    if (action === 'clear-filters') {
-      filters = { decision: 'all', priority: 'all', donorType: 'all', assessment: 'all' };
-      render();
-    }
-    if (action === 'clear') {
-      if (!confirm('Clear every donor row and mapping detail from this browser?')) return;
-      state = blankState();
-      save();
-      tab = 'matrix';
-      render();
-    }
-  });
-
-  document.addEventListener('input', event => {
-    const target = event.target;
-    if (target.closest('#meta-form')) updateMeta(target.closest('#meta-form'));
-    if (target.dataset.row) updateRow(target);
-  });
-
-  document.addEventListener('change', async event => {
-    const target = event.target;
-    if (target.dataset.filter) {
-      filters[target.dataset.filter] = target.value;
-      render();
-      return;
-    }
-    if (target.dataset.row) {
-      updateRow(target);
-      if (['goNoGo', 'priority', 'donorType'].includes(target.dataset.field) || ASSESSMENT_FIELDS.some(([key]) => key === target.dataset.field)) render();
-    }
-    if (target.id !== 'import-file') return;
-    const file = target.files?.[0];
-    if (!file) return;
-    try {
-      const imported = normaliseState(JSON.parse(await file.text()));
-      if (!confirm('Replace the current Donor Mapping data in this browser?')) return;
-      state = { ...imported, version: CURRENT_VERSION };
-      save();
-      tab = 'matrix';
-      render();
-    } catch (error) {
-      alert(`Import failed: ${error.message}`);
-      target.value = '';
-    }
-  });
-
-  $('#download-csv').addEventListener('click', exportCsv);
-  $('#download-backup').addEventListener('click', exportBackup);
-  save();
-  render();
+persist(db);render();
 })();

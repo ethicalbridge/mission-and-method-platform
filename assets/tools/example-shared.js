@@ -291,7 +291,10 @@ const integrationData={
  'meal-strategy':{step:4,label:'Step 4 of 5 · MEAL Strategy',pulls:[['strategic-objectives','Reads the objective list to group indicators.'],['strategy-kpis','Imports every KPI with its quarterly targets — this is the backbone of the MEAL matrix.'],['theory-of-change','Imports outcome- and impact-level indicators from each pathway.']],pushes:[['issue-risk','Issue & Risk Management can log issues against any indicator here.']]},
  'gantt':{step:5,label:'Step 5 of 5 · Gantt & project planner',pulls:[['strategic-objectives','Reads objectives to group tasks and bars.'],['strategy-kpis','Imports every initiative with its start, end, owner, budget and status.'],['theory-of-change','Reads pathway outputs so tasks can be tied back to a pathway.'],['meetings','Reads actions from meeting records as external links against each task.']],pushes:[['issue-risk','Issue & Risk Management can log issues against any task or milestone here.'],['meetings','Any Gantt task can be the subject of a meeting agenda, decision or action.']]},
  'issue-risk':{step:0,label:'Cross-cutting · Issue & risk management',pulls:[['strategic-objectives','Any ESO/ISO can carry its own risk register.'],['theory-of-change','Each pathway can hold assumption and risk rows.'],['strategy-kpis','Each KPI can log a risk-to-target.'],['meal-strategy','Each indicator can log data-quality issues.'],['gantt','Each task or milestone can log a delivery risk.']],pushes:[]},
- 'meetings':{step:0,label:'Cross-cutting · Meetings, actions & decisions',pulls:[['strategic-objectives','Agenda items can be about any ESO/ISO.'],['theory-of-change','Review a pathway, decide its next step.'],['strategy-kpis','Review KPI progress, decide an initiative pivot.'],['meal-strategy','Review quarterly actuals, log a learning decision.'],['gantt','Any Gantt task can be the subject of a meeting action.'],['issue-risk','A meeting can approve a risk mitigation.']],pushes:[['gantt','Gantt reads actions as external links against each task — nothing is auto-created, so no duplicate editing.']]}
+ 'meetings':{step:0,label:'Cross-cutting · Meetings, actions & decisions',pulls:[['strategic-objectives','Agenda items can be about any ESO/ISO.'],['theory-of-change','Review a pathway, decide its next step.'],['strategy-kpis','Review KPI progress, decide an initiative pivot.'],['meal-strategy','Review quarterly actuals, log a learning decision.'],['gantt','Any Gantt task can be the subject of a meeting action.'],['issue-risk','A meeting can approve a risk mitigation.']],pushes:[['gantt','Gantt reads actions as external links against each task — nothing is auto-created, so no duplicate editing.']]},
+ 'org-structure':{step:0,label:'Foundation · Organisation structure',pulls:[['strategic-objectives','Owners you set on each ESO/ISO are summarised here against their role.'],['strategy-kpis','KPI owners and initiative owners are counted against each role.'],['meal-strategy','MEAL indicator owners (data managers) are counted against each role.'],['gantt','Gantt task owners are counted against each role — see where capacity concentrates.']],pushes:[['strategic-objectives','Owner dropdowns in every tool pull names from the role library here.'],['meetings','Attendees and action owners can come from the role library.']]},
+ 'donor-mapping':{step:0,label:'Funding · Donor mapping (prospect side)',pulls:[['strategic-objectives','Alignment scoring maps each donor against your ESOs — fit is the first qualification question.'],['theory-of-change','Donors whose priorities match your impact goal rise to the top of the pipeline.']],pushes:[['donor-tracking','Qualified donors move from mapping into the active pipeline for cultivation and application.']]},
+ 'donor-tracking':{step:0,label:'Funding · Donor tracking (relationship side)',pulls:[['donor-mapping','Qualified prospects promoted from mapping become grants in cultivation here.'],['strategic-objectives','Each grant can be tied to the ESOs it funds, so leadership can see which objectives are funded and which are at risk.'],['strategy-kpis','Grants can be tied to specific initiatives — the budget side of annual planning.']],pushes:[['strategy-kpis','Awarded grants feed the funding picture for Strategy KPIs initiatives.']]}
 };
 const toolHrefs={
  'strategic-objectives':'Strategic-Objectives.html',
@@ -300,7 +303,10 @@ const toolHrefs={
  'meal-strategy':'MEAL-Strategy.html',
  'gantt':'Gantt-Project-Planner.html',
  'issue-risk':'Issue-and-Risk-Management.html',
- 'meetings':'Meetings-Actions-and-Decisions.html'
+ 'meetings':'Meetings-Actions-and-Decisions.html',
+ 'org-structure':'Organisation-Structure.html',
+ 'donor-mapping':'Donor-Mapping.html',
+ 'donor-tracking':'Donor-Tracking.html'
 };
 const toolTitles={
  'strategic-objectives':'Strategic Objectives',
@@ -309,7 +315,10 @@ const toolTitles={
  'meal-strategy':'MEAL Strategy',
  'gantt':'Gantt & Project Planner',
  'issue-risk':'Issue & Risk Management',
- 'meetings':'Meetings, Actions & Decisions'
+ 'meetings':'Meetings, Actions & Decisions',
+ 'org-structure':'Organisation Structure',
+ 'donor-mapping':'Donor Mapping',
+ 'donor-tracking':'Donor Tracking'
 };
 const renderIntegration=tool=>{
  const d=integrationData[tool];if(!d) return '';
