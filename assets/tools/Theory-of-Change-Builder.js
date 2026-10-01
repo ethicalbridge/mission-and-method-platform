@@ -87,7 +87,7 @@ function dashboard(){
 function startView(){
  const m=db.meta;
  return `${window.MMExample?.renderBox?.('theory-of-change')||''}${window.MMExample?.renderUserBox?.('theory-of-change',db)||''}
-  <div class="notice">A Theory of Change explains how your work contributes to the change you want. Build it level by level: Input → Activity → Output → Outcome → Impact, with the assumptions that must hold between each step.</div>
+  <div class="notice">A Theory of Change explains how your work contributes to the change you want. Build it level by level: <b>Objective → Problem → Input → Output → Outcome → Impact</b>, with the assumptions that must hold between each step. The objective pulls from the Strategic Objectives tool.</div>
   <section class="panel"><h2>Project details</h2>
    <form data-form="meta" class="form">
     ${field('Organisation name','organisation',m.organisation)}

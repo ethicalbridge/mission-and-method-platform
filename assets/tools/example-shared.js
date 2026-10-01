@@ -184,46 +184,50 @@ const renderBox=tool=>{
 };
 
 // ---------- Your-workspace box (mirrors the example, filled with user data) ----------
-const dash=s=>s&&String(s).trim()?esc(s):'<span class="val-empty">— to fill</span>';
+// The user box ALWAYS shows the same structure as the example box, with "— to fill"
+// placeholders where the user has not written content yet. As they type (and as they
+// save objectives / pathways / KPIs), those placeholders replace with their content.
+const EMPTY='<span class="val-empty">— to fill</span>';
+const dash=s=>s&&String(s).trim()?esc(s):EMPTY;
 const myMv=m=>`<div class="example-mv">
  <div><b>Mission</b><p>${dash(m.mission)}</p></div>
  <div><b>Vision</b><p>${dash(m.vision)}</p></div>
- <div><b>Values</b><p>${m.values&&String(m.values).trim()?esc(String(m.values).split('\n').filter(x=>x.trim()).join(' · ')):'<span class="val-empty">— to fill</span>'}</p></div>
+ <div><b>Values</b><p>${m.values&&String(m.values).trim()?esc(String(m.values).split('\n').filter(x=>x.trim()).join(' · ')):EMPTY}</p></div>
 </div>`;
-const myEsoCard=o=>`<article class="example-eso"><h4>${esc(o.code||'—')} · ${esc(o.title||'Untitled objective')}</h4><span class="lbl">Why this matters</span><p class="val">${dash(o.rationale)}</p><span class="lbl">Change we want</span><p class="val">${dash(o.desiredChange)}</p><span class="lbl">Owner</span><p class="val">${esc(o.owner||'—')} · priority ${esc(o.priority||'—')}</p></article>`;
-const myHead=(m,hint)=>`<div class="example-summary"><span class="example-badge mine">Your workspace</span><span class="example-title">${esc(m.organisation||'Add your organisation name →')}</span></div><p class="example-intro">${esc(hint)}</p>`;
+const myEsoCard=(o,fallbackCode)=>`<article class="example-eso"><h4>${esc(o?.code||fallbackCode||'—')} · ${o?.title?esc(o.title):EMPTY}</h4><span class="lbl">Why this matters</span><p class="val">${dash(o?.rationale)}</p><span class="lbl">Change we want</span><p class="val">${dash(o?.desiredChange)}</p><span class="lbl">Owner</span><p class="val">${o?.owner?esc(o.owner):EMPTY}${o?.priority?' · priority '+esc(o.priority):''}</p></article>`;
+const myHead=(m,hint)=>`<summary class="example-summary"><span class="example-badge mine">Your workspace</span><span class="example-title">${m.organisation?esc(m.organisation):'<span class="val-empty">Add your organisation name →</span>'}</span></summary><p class="example-intro">${esc(hint)}</p>`;
 
 const renderUserBox=(tool,db)=>{
  if(!db||!db.meta) return '';
  const m=db.meta;
- const anyMeta=(m.organisation||m.mission||m.vision||m.values||m.planName||m.name||m.impactGoal||'').trim();
- const anyObj=(db.objectives||[]).some(o=>o.code||o.title||o.rationale);
- const anyPath=(db.pathways||[]).some(p=>p.objective||p.input||p.activity||p.output||p.outcome||p.impact);
- const anyKpi=(db.kpis||[]).some(k=>k.code||k.name);
- const anyData=anyObj||anyPath||anyKpi||(db.initiatives&&db.initiatives.some(i=>i.title));
- if(!anyMeta&&!anyData) return '';
  if(tool==='strategic-objectives'){
   const ext=(db.objectives||[]).filter(o=>o.group==='External');
   const int=(db.objectives||[]).filter(o=>o.group==='Internal');
-  const cards=ext.length?ext.map(myEsoCard).join(''):'<p class="example-empty">No external objectives yet — add your first ESO below.</p>';
-  const isoLine=int.length?`<p class="tiny" style="margin:10px 0 0"><b>Plus ${int.length} internal objective${int.length===1?'':'s'}:</b> ${int.map(i=>esc(i.code||'—')+' · '+esc((i.title||'untitled').toLowerCase())).join('; ')}.</p>`:'<p class="tiny" style="margin:10px 0 0"><b>No internal objectives yet.</b> Add governance, learning or operations foundations below.</p>';
-  return `<section class="example-box mine">${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — a quick view of what your strategic objectives look like together.')}${myMv(m)}<p class="tiny" style="margin:8px 0 6px"><b>Your external objectives (${ext.length}):</b></p><div class="example-objectives">${cards}</div>${isoLine}</section>`;
+  // Always render three ESO cards: user's filled ones first, then placeholders
+  const esoSlots=[0,1,2].map(i=>ext[i]?myEsoCard(ext[i]):myEsoCard(null,'ESO'+(i+1))).join('');
+  const extraExt=ext.length>3?`<p class="tiny" style="margin:8px 0 0">Plus ${ext.length-3} more external objective${ext.length-3===1?'':'s'}.</p>`:'';
+  const isoLine=int.length?`<p class="tiny" style="margin:10px 0 0"><b>Internal objectives (${int.length}):</b> ${int.map(i=>esc((i.code||'—')+' · '+(i.title||'untitled').toLowerCase())).join('; ')}.</p>`:'<p class="tiny" style="margin:10px 0 0"><b>Internal objectives:</b> <span class="val-empty">add governance, learning or operations foundations below (ISO1, ISO2, ISO3).</span></p>';
+  return `<details class="example-box mine" open>${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — placeholders show where to write.')}${myMv(m)}<p class="tiny" style="margin:8px 0 6px"><b>External objectives (${ext.length} of 3 shown):</b></p><div class="example-objectives">${esoSlots}</div>${extraExt}${isoLine}</details>`;
  }
  if(tool==='theory-of-change'){
   const paths=(db.pathways||[]).filter(p=>p.objective||p.problem||p.input||p.output||p.outcome||p.impact);
-  const first=paths[0];
-  const chain=first?`<p class="tiny" style="margin:6px 0 8px"><b>Impact goal:</b> ${dash(m.impactGoal)} · <b>Pathway 1 of ${paths.length}</b></p><div class="example-chain six"><div class="step"><b>Objective</b><p>${dash(first.objective)}</p></div><div class="step"><b>Problem</b><p>${dash(first.problem)}</p></div><div class="step"><b>Input</b><p>${dash(first.input)}</p></div><div class="step"><b>Output</b><p>${dash(first.output)}</p></div><div class="step"><b>Outcome</b><p>${dash(first.outcome)}</p></div><div class="step"><b>Impact</b><p>${dash(first.impact)}</p></div></div>`:'<p class="example-empty">No pathways yet — add your first pathway below. The objective will auto-fill from the Strategic Objectives tool.</p>';
+  const first=paths[0]||{};
+  const pathLine=paths.length?`<p class="tiny" style="margin:6px 0 8px"><b>Impact goal:</b> ${dash(m.impactGoal)} · <b>Pathway 1 of ${paths.length}</b> shown below.</p>`:`<p class="tiny" style="margin:6px 0 8px"><b>Impact goal:</b> ${dash(m.impactGoal)} · <b>Pathway 1</b> shown below. <span class="val-empty">Add a pathway to fill the chain — the objective auto-fills from the Strategic Objectives tool.</span></p>`;
+  const chain=`<div class="example-chain six"><div class="step"><b>Objective</b><p>${dash(first.objective)}</p></div><div class="step"><b>Problem</b><p>${dash(first.problem)}</p></div><div class="step"><b>Input</b><p>${dash(first.input)}</p></div><div class="step"><b>Output</b><p>${dash(first.output)}</p></div><div class="step"><b>Outcome</b><p>${dash(first.outcome)}</p></div><div class="step"><b>Impact</b><p>${dash(first.impact)}</p></div></div>`;
   const others=paths.length>1?`<p class="tiny" style="margin:4px 0 0"><b>Other pathways:</b> ${paths.slice(1).map(p=>esc(p.objective||'untitled')).join('; ')}.</p>`:'';
-  return `<section class="example-box mine">${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — a quick view of your theory of change in one place.')}${myMv(m)}${chain}${others}</section>`;
+  return `<details class="example-box mine" open>${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — placeholders show where to write.')}${myMv(m)}${pathLine}${chain}${others}</details>`;
  }
  if(tool==='strategy-kpis'){
   const kpis=db.kpis||[];
-  const shown=kpis.slice(0,3);
-  const qLine=k=>['q1','q2','q3','q4'].map((q,i)=>`Q${i+1} ${esc(k[q]||'—')}`).join(' · ');
-  const cards=shown.length?shown.map(k=>`<article class="example-eso"><h4>${esc(k.code||'—')} · ${esc(k.name||'Untitled KPI')}</h4><span class="lbl">Linked to</span><p class="val">${esc(k.objectiveCode||'—')}</p><span class="lbl">Baseline → Annual target</span><p class="val">${esc(k.baseline||'—')} → ${esc(k.target||'—')}</p><span class="lbl">Quarterly targets</span><p class="val">${qLine(k)}</p><span class="lbl">Owner</span><p class="val">${esc(k.owner||'—')} · source: ${esc(k.source||'—')}</p></article>`).join(''):'<p class="example-empty">No KPIs yet — add your first KPI below.</p>';
+  const slot=(k,fallback)=>{
+   const qLine=['q1','q2','q3','q4'].map((q,i)=>`Q${i+1} ${k&&k[q]?esc(k[q]):'—'}`).join(' · ');
+   return `<article class="example-eso"><h4>${esc(k?.code||fallback)} · ${k?.name?esc(k.name):EMPTY}</h4><span class="lbl">Linked to</span><p class="val">${k?.objectiveCode?esc(k.objectiveCode):EMPTY}</p><span class="lbl">Baseline → Annual target</span><p class="val">${k?.baseline?esc(k.baseline):EMPTY} → ${k?.target?esc(k.target):EMPTY}</p><span class="lbl">Quarterly targets</span><p class="val">${qLine}</p><span class="lbl">Owner</span><p class="val">${k?.owner?esc(k.owner):EMPTY}${k?.source?' · source: '+esc(k.source):''}</p></article>`;
+  };
+  const slots=[0,1,2].map(i=>slot(kpis[i],'KPI'+(i+1))).join('');
   const extra=kpis.length>3?`<p class="tiny" style="margin:8px 0 0">Plus ${kpis.length-3} more KPI${kpis.length-3===1?'':'s'}.</p>`:'';
   const inits=(db.initiatives||[]).length;
-  return `<section class="example-box mine">${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — a quick view of your plan at a glance.')}${myMv(m)}<p class="tiny" style="margin:4px 0 8px"><b>Your KPIs (${kpis.length}) · initiatives (${inits}):</b></p><div class="example-objectives">${cards}</div>${extra}</section>`;
+  const initLine=inits?`<p class="tiny" style="margin:10px 0 0"><b>Initiatives (${inits}):</b> the work moving these KPIs.</p>`:'<p class="tiny" style="margin:10px 0 0"><b>Initiatives:</b> <span class="val-empty">add the work that moves each KPI below.</span></p>';
+  return `<details class="example-box mine" open>${myHead(m,'This mirrors the example above, filled with your own content. It updates as you edit — placeholders show where to write.')}${myMv(m)}<p class="tiny" style="margin:4px 0 8px"><b>Your KPIs (${kpis.length} of 3 shown):</b></p><div class="example-objectives">${slots}</div>${extra}${initLine}</details>`;
  }
  return '';
 };
