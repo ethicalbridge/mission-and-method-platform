@@ -1,58 +1,384 @@
+/* Issue & Risk Management — cross-cutting compliance register.
+   Compliance-grade: 5×5 L×I scoring, mitigation owner/due/status, approval
+   trail, review cadence with overdue flag, separate Risk register and Issue
+   log. Risks and issues can be linked to an item from any other tool
+   (Strategic Objectives, ToC pathways, Strategy KPIs, MEAL indicators, Gantt
+   tasks) OR described in free text — the user picks either path.
+*/
+(()=>{'use strict';
+const S=window.MMSuite;if(!S){console.error('MMSuite missing');return}
+const {esc,uid,now,today,currentYear,fmtDate,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,shell,importButtons,exportButtons,download,csv,XLSX_TYPE,buildXlsx,readmeSheet,schemaSheet,metaSheet,parseXlsx,findSheet,rowsToObjects,metaFromSheet,bind,formData,stamp,edited,editorName,clamp,s}=S;
+
+const KEY='mission-method-issue-risk-v2',LEGACY='mission-method-issue-risk-v1';
+const SO_KEY='mission-method-strategic-objectives-v2',TOC_KEY='mission-method-theory-of-change-v2',SK_KEY='mission-method-strategy-kpis-v2',MEAL_KEY='mission-method-meal-strategy-v3',GANTT_KEY='mission-method-gantt-v2';
+const TABS=['Start','Risks','Issues','Heatmap','Export'];
+const R_STATUS=['Open','Monitoring','Mitigating','Closed'];
+const I_STATUS=['Open','In progress','Resolved','Closed'];
+const M_STATUS=['Not started','In progress','Done','Blocked'];
+const CADENCES=['Weekly','Monthly','Quarterly','Semi-annual','Annual','Ad hoc'];
+const CATEGORIES=['Financial','Programming','Partners','Compliance','HR','Operations','Safeguarding','MEAL quality','Donor compliance','Reputation','Legal','Other'];
+
+const blankRisk=()=>({id:uid(),code:'',title:'',description:'',threatensSource:'manual',threatensRef:'',threatens:'',category:'Other',likelihood:3,impact:3,mitigation:'',mitigationOwner:'',mitigationDue:'',mitigationStatus:'Not started',approvedBy:'',approvedOn:'',reviewCadence:'Quarterly',nextReview:'',lastReview:'',status:'Open',notes:'',createdAt:now(),lastEditedBy:'',lastEditedAt:''});
+const blankIssue=()=>({id:uid(),code:'',title:'',description:'',affectsSource:'manual',affectsRef:'',affects:'',category:'Other',severity:3,happenedOn:today(),resolution:'',owner:'',due:'',status:'Open',reportedBy:'',resolvedOn:'',linkedRiskCode:'',notes:'',createdAt:now(),lastEditedBy:'',lastEditedAt:''});
+const blankMeta=()=>({organisation:'',project:'',year:currentYear,preparedBy:'',defaultCadence:'Quarterly',notes:''});
+const blank=()=>({version:2,meta:blankMeta(),risks:[],issues:[]});
+
+function migrateV1(v1){
+ const out=blank();
+ try{
+  if(v1.settings?.organisation)out.meta.organisation=v1.settings.organisation;
+  (v1.risks||[]).forEach((r,i)=>{
+   const code=r.id||'R'+(i+1);
+   out.risks.push({...blankRisk(),code,title:r.title||'',description:r.description||'',threatens:[r.project,r.department].filter(Boolean).join(' · '),category:CATEGORIES.includes(r.category)?r.category:'Other',likelihood:clamp(r.likelihood,1,5)||3,impact:clamp(r.impact,1,5)||3,mitigation:r.mitigation||r.controls||'',mitigationOwner:r.mitigationOwner||r.owner||'',mitigationDue:r.due||'',mitigationStatus:'In progress',status:R_STATUS.includes(r.status)?r.status:'Open',notes:r.notes||'',createdAt:r.history?.[r.history.length-1]?.at||now()});
+  });
+  (v1.issues||[]).forEach((is,i)=>{
+   const code=is.id||'I'+(i+1);
+   const link=(is.riskIds||[])[0];const linkedCode=link?(v1.risks||[]).find(r=>r.id===link)?.id:'';
+   out.issues.push({...blankIssue(),code,title:is.title||'',description:is.description||'',affects:[is.project,is.department].filter(Boolean).join(' · '),category:CATEGORIES.includes(is.category)?is.category:'Other',severity:is.severity==='Critical'?5:is.severity==='High'?4:is.severity==='Medium'?3:is.severity==='Low'?2:3,happenedOn:is.identified||today(),resolution:is.resolution||'',owner:is.owner||'',due:is.due||'',status:I_STATUS.includes(is.status)?is.status:'Open',resolvedOn:is.closedAt||'',linkedRiskCode:linkedCode||'',notes:is.notes||'',createdAt:is.identified||now()});
+  });
+ }catch(e){console.warn('risk migrate failed',e)}
+ return out;
+}
+
+const storage=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.risk-cleanup-v2',blank)||d;if(!Array.isArray(d.risks))d.risks=[];if(!Array.isArray(d.issues))d.issues=[];return d}});
+let db=storage.load(),tab='Start',dlg='',message='';
 const root=document.querySelector('#app');
-const KEY='mission-method-issue-risk-v1';
-const categories=['Financial management','Partner management','Award management','Programming','Donor compliance','Decision making procedures','HR management','Contracting and consultancies','Legal compliance','Logistics & procurement','Membership related','MEAL & quality assurance','Other'];
-const severity=['Low','Medium','High','Critical'];
-const today=()=>new Date().toISOString().slice(0,10);
-const id=p=>`${p}-${crypto.randomUUID?.()||Math.random().toString(36).slice(2)}`;
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const slug=s=>String(s||'Mission-and-Method').replace(/[^a-z0-9-]+/gi,'-').replace(/^-|-$/g,'').slice(0,70);
-const csv=rows=>'\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\r\n');
-function download(name,body,type='text/csv;charset=utf-8'){const blob=new Blob([body],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function example(){const riskId='R-001',issueId='I-001',actionId='A-001';return {version:1,settings:{organisation:'Example organisation',method:'weighted',bands:[9,14,19],appetite:14},risks:[{id:riskId,title:'Weak procurement approval controls',description:'Purchases may be approved without adequate separation of duties.',category:'Financial management',project:'Example programme',country:'Example country',department:'Operations',owner:'Operations lead',identified:today(),causes:'Unclear approval steps and limited staff capacity',consequences:'Ineligible spending or delayed reporting',likelihood:4,impact:4,controls:'Second sign-off for purchases over the agreed threshold',mitigation:'Document approval steps and train the team',mitigationOwner:'Operations lead',due:'',residualLikelihood:2,residualImpact:3,appetite:14,status:'Active',reviewDate:'',notes:'Illustrative example only.',history:[{at:new Date().toISOString(),event:'Example risk created'}]}],issues:[{id:issueId,title:'Approval missing on a sample purchase',description:'A routine review found one purchase without the required second sign-off.',identified:today(),category:'Financial management',severity:'High',owner:'Operations lead',status:'Open',due:'',project:'Example programme',country:'Example country',department:'Operations',riskIds:[riskId],resolution:'',closedAt:'',notes:'Illustrative example only.',history:[{at:new Date().toISOString(),event:'Example issue created and linked to risk R-001'}]}],actions:[{id:actionId,title:'Update procurement approval procedure',sourceType:'Issue',sourceId:issueId,owner:'Operations lead',due:'',status:'In progress',priority:'High',completion:40,notes:'Illustrative example only.',history:[{at:new Date().toISOString(),event:'Example action created'}]}]};}
-let db;try{db=JSON.parse(localStorage.getItem(KEY)||'null')||example()}catch{db=example()}
-db.settings ||= example().settings;db.risks ||= [];db.issues ||= [];db.actions ||= [];
-let view='dashboard',edit=null,detail=null,heatMode='inherent',filter={search:'',severity:'',status:'',category:'',owner:'',project:'',country:'',linked:''},notice='';
-function save(){localStorage.setItem(KEY,JSON.stringify(db));}
-function record(type,key){return db[type].find(x=>x.id===key);}
-function log(x,event){x.history ||= [];x.history.unshift({at:new Date().toISOString(),event});}
-function score(likelihood,impact){const l=Number(likelihood)||0,i=Number(impact)||0;return !l||!i?0:db.settings.method==='simple'?l*i:l*i+i;}
-function rating(n){if(!n)return 'Unrated';const [low,medium,high]=db.settings.bands.map(Number);return n<=low?'Low':n<=medium?'Medium':n<=high?'High':'Critical';}
-function riskScore(r,mode='inherent'){return mode==='residual'?score(r.residualLikelihood,r.residualImpact):score(r.likelihood,r.impact);}
-function badge(s){return `<span class="severity ${esc(s)}">${esc(s)}</span>`;}
-function overdue(x){return x.due&&x.due<today()&&!['Closed','Complete'].includes(x.status);}
-function dueSoon(x){if(!x.due||['Closed','Complete'].includes(x.status))return false;const days=(new Date(x.due)-new Date(today()))/86400000;return days>=0&&days<=7;}
-function issueStatus(i){return overdue(i)?'Overdue':i.status;}
-function trend(r){const h=r.history||[];const scores=h.filter(e=>Number.isFinite(e.score)).map(e=>e.score);if(scores.length<2)return 'No trend yet';return scores[0]>scores[1]?'Increasing':scores[0]<scores[1]?'Decreasing':'Stable';}
-function help(label,body){return `<span class="help-tip"><button type="button" aria-label="Help: ${esc(label)}">i</button><span>${esc(body)}</span></span>`;}
-function attention(){const out=[];db.risks.filter(r=>r.status==='Active').forEach(r=>{const level=rating(riskScore(r));if(level==='Critical')out.push([`Critical risk: ${r.title}`,`Inherent score ${riskScore(r)}. Review mitigation and owner.`]);if(r.reviewDate&&r.reviewDate<today())out.push([`Risk review overdue: ${r.title}`,`Review was due ${r.reviewDate}.`]);if(trend(r)==='Increasing')out.push([`Risk score increased: ${r.title}`,'Review the changed likelihood or impact.']);if(riskScore(r,'residual')>Number(r.appetite||db.settings.appetite))out.push([`Residual risk above tolerance: ${r.title}`,'Compare the remaining exposure with your stated tolerance.']);const linked=db.issues.filter(i=>i.riskIds.includes(r.id));if(linked.length>=2)out.push([`${linked.length} issues linked to ${r.title}`,'Repeated incidents may warrant a review of controls; decide whether mitigation needs to change.']);});db.issues.filter(i=>i.status!=='Closed'&&i.severity==='Critical').forEach(i=>out.push([`Critical issue unresolved: ${i.title}`,'Confirm ownership and immediate action.']));db.actions.filter(overdue).forEach(a=>out.push([`Action overdue: ${a.title}`,`Due ${a.due}.` ]));db.actions.filter(dueSoon).forEach(a=>out.push([`Action due soon: ${a.title}`,`Due ${a.due}.`]));return out;}
-function metric(label,value,target,valueFilter){return `<button class="card metric" data-view="${target}" ${valueFilter?`data-filter="${valueFilter}"`:''}><span>${label}</span><b>${value}</b></button>`;}
-function bars(items,target,key='severity'){const max=Math.max(1,...items.map(x=>x[1]));return `<div class="bar-chart">${items.map(([name,count])=>`<button class="bar-row" data-view="${target}" data-filter="${key}:${esc(name)}"><span>${esc(name)}</span><span class="bar"><i style="width:${100*count/max}%"></i></span><strong>${count}</strong></button>`).join('')}</div>`;}
-function dashboard(){const active=db.risks.filter(r=>r.status==='Active'),open=db.issues.filter(i=>i.status!=='Closed'),done=db.issues.filter(i=>i.closedAt?.slice(0,7)===today().slice(0,7)),completed=db.actions.length?Math.round(db.actions.reduce((s,a)=>s+Number(a.completion||0),0)/db.actions.length):0,closed=db.issues.filter(i=>i.closedAt&&i.identified),avg=closed.length?Math.round(closed.reduce((s,i)=>s+(new Date(i.closedAt)-new Date(i.identified))/86400000,0)/closed.length):0;const riskLevels=severity.map(s=>[s,active.filter(r=>rating(riskScore(r))===s).length]),issueLevels=severity.map(s=>[s,open.filter(i=>i.severity===s).length]),attentionItems=attention();return `<section class="metric-grid">${metric('Active risks',active.length,'risks','status:Active')}${metric('Critical risks',riskLevels[3][1],'risks','severity:Critical')}${metric('High risks',riskLevels[2][1],'risks','severity:High')}${metric('Open issues',open.length,'issues','status:Open')}${metric('Overdue actions',db.actions.filter(overdue).length,'actions','status:Overdue')}</section><section class="dashboard-grid"><div class="panel"><h2>Needs attention</h2><div class="notice-list">${attentionItems.slice(0,10).map(x=>`<div class="notice"><b>${esc(x[0])}</b><p>${esc(x[1])}</p></div>`).join('')||'<p>No automatic alerts right now. Continue routine reviews.</p>'}</div></div><div class="panel"><h2>Current picture</h2><p><b>${open.filter(i=>i.severity==='Critical').length}</b> critical issues · <b>${done.length}</b> issues closed this month · <b>${completed}%</b> average action completion · <b>${avg}</b> average days to close</p><p><b>${active.filter(r=>trend(r)==='Increasing').length}</b> risks increasing · <b>${active.filter(r=>trend(r)==='Decreasing').length}</b> decreasing</p><div class="toolbar"><button class="small-button secondary" data-view="matrix">Open risk matrix</button><button class="small-button secondary" data-view="actions">Review all actions</button></div></div><div class="panel"><h2>Risks by severity</h2>${bars(riskLevels,'risks')}</div><div class="panel"><h2>Open issues by severity</h2>${bars(issueLevels,'issues')}</div><div class="panel"><h2>Risks by category</h2>${bars(categories.map(c=>[c,active.filter(r=>r.category===c).length]).filter(x=>x[1]),'risks','category')}</div><div class="panel"><h2>Issues by category</h2>${bars(categories.map(c=>[c,open.filter(i=>i.category===c).length]).filter(x=>x[1]),'issues','category')}</div></section><section class="panel"><h2>Connected issues and risks</h2>${db.risks.filter(r=>db.issues.some(i=>i.riskIds.includes(r.id))).map(r=>{const linked=db.issues.filter(i=>i.riskIds.includes(r.id));return `<p><button class="link-button" data-detail="risk:${r.id}">${esc(r.id)} · ${esc(r.title)}</button> → ${linked.map(i=>`<button class="link-button" data-detail="issue:${i.id}">${esc(i.id)}</button>`).join(' · ')} <small>(${linked.length} issue${linked.length===1?'':'s'})</small></p>`}).join('')||'<p>No risks have linked issues yet.</p>'}</section>`;}
-function options(list,current='',blank='All'){return `<option value="">${blank}</option>${list.map(x=>`<option value="${esc(x)}" ${x===current?'selected':''}>${esc(x)}</option>`).join('')}`;}
-function filterBar(kind){const unique=key=>[...new Set(db[kind].map(x=>x[key]).filter(Boolean))].sort();return `<div class="filters"><label>Search<input data-filter-field="search" value="${esc(filter.search)}" placeholder="Title, ID or description"></label><label>Severity<select data-filter-field="severity">${options(severity,filter.severity)}</select></label><label>Status<select data-filter-field="status">${options(kind==='issues'?['Open','In progress','Overdue','Closed']:['Active','Monitoring','Closed'],filter.status)}</select></label><label>Category<select data-filter-field="category">${options(categories,filter.category)}</select></label><label>Department<select data-filter-field="department">${options(unique('department'),filter.department)}</select></label><label>Owner<select data-filter-field="owner">${options(unique('owner'),filter.owner)}</select></label><label>Project<select data-filter-field="project">${options(unique('project'),filter.project)}</select></label><label>Country<select data-filter-field="country">${options(unique('country'),filter.country)}</select></label><label>Identified month<input type="month" data-filter-field="date" value="${esc(filter.date||'')}"></label>${kind==='issues'?`<label>Linked risk<select data-filter-field="linked">${options(db.risks.map(r=>r.id),filter.linked)}</select></label>`:''}<label>Sort<select data-filter-field="sort"><option value="newest" ${filter.sort!=='oldest'&&filter.sort!=='severity'?'selected':''}>Newest first</option><option value="oldest" ${filter.sort==='oldest'?'selected':''}>Oldest first</option><option value="severity" ${filter.sort==='severity'?'selected':''}>Highest severity</option></select></label><button class="small-button secondary" data-clear-filters>Clear filters</button></div>`;}
-function filtered(kind){return db[kind].filter(x=>{const text=[x.id,x.title,x.description,x.notes].join(' ').toLowerCase(),level=kind==='risks'?rating(riskScore(x)):x.severity,status=kind==='issues'?issueStatus(x):x.status;return (!filter.search||text.includes(filter.search.toLowerCase()))&&(!filter.severity||level===filter.severity)&&(!filter.status||status===filter.status||(filter.status==='Open'&&kind==='issues'&&x.status!=='Closed'))&&(!filter.category||x.category===filter.category)&&(!filter.owner||x.owner===filter.owner)&&(!filter.project||x.project===filter.project)&&(!filter.country||x.country===filter.country)&&(!filter.department||x.department===filter.department)&&(!filter.linked||x.riskIds?.includes(filter.linked))&&(!filter.date||x.identified?.startsWith(filter.date))&&(!filter.trend||kind==='risks'&&trend(x)===filter.trend);}).sort((a,b)=>filter.sort==='oldest'?String(a.identified||'').localeCompare(String(b.identified||'')):filter.sort==='severity'?severity.indexOf(kind==='risks'?rating(riskScore(b)):b.severity)-severity.indexOf(kind==='risks'?rating(riskScore(a)):a.severity):String(b.identified||'').localeCompare(String(a.identified||'')));}
-function issues(){const rows=filtered('issues');return `<section class="panel"><div class="toolbar"><button class="button" data-new="issue">Add issue</button><button class="button secondary" data-export="issues">Download issue register</button></div><p>An <b>issue</b> has already happened. Record what occurred, assign corrective action, and track it through resolution.</p>${filterBar('issues')}<div class="table-scroll"><table class="data-table"><thead><tr><th>ID / Issue</th><th>Severity</th><th>Status</th><th>Category</th><th>Owner</th><th>Due</th><th>Linked risks</th><th>Actions</th></tr></thead><tbody>${rows.map(i=>`<tr><td><button class="record" data-detail="issue:${i.id}">${esc(i.id)} · ${esc(i.title)}</button></td><td>${badge(i.severity)}</td><td>${esc(issueStatus(i))}</td><td>${esc(i.category)}</td><td>${esc(i.owner)}</td><td>${esc(i.due)}</td><td>${i.riskIds.map(r=>`<button class="link-button" data-detail="risk:${r}">${esc(r)}</button>`).join(' ')}</td><td>${db.actions.filter(a=>a.sourceType==='Issue'&&a.sourceId===i.id).length}</td></tr>`).join('')||'<tr><td colspan="8">No issues match these filters.</td></tr>'}</tbody></table></div><p class="subtle">${rows.length} issue${rows.length===1?'':'s'} shown</p></section>`;}
-function risks(){const rows=filtered('risks');return `<section class="panel"><div class="toolbar"><button class="button" data-new="risk">Add risk</button><button class="button secondary" data-export="risks">Download risk register</button><button class="button secondary" data-view="matrix">View risk matrix</button></div><p>A <b>risk</b> is uncertain: it could happen and affect an objective. Inherent exposure is before controls; residual exposure is what remains after controls and mitigation.</p>${filterBar('risks')}<div class="table-scroll"><table class="data-table"><thead><tr><th>ID / Risk</th><th>Category</th><th>Owner</th><th>Inherent</th><th>Residual</th><th>Trend</th><th>Status</th><th>Linked issues</th><th>Review</th></tr></thead><tbody>${rows.map(r=>`<tr><td><button class="record" data-detail="risk:${r.id}">${esc(r.id)} · ${esc(r.title)}</button></td><td>${esc(r.category)}</td><td>${esc(r.owner)}</td><td>${riskScore(r)} ${badge(rating(riskScore(r)))}</td><td>${riskScore(r,'residual')} ${badge(rating(riskScore(r,'residual')))}</td><td>${esc(trend(r))}</td><td>${esc(r.status)}</td><td>${db.issues.filter(i=>i.riskIds.includes(r.id)).length}</td><td>${esc(r.reviewDate)}</td></tr>`).join('')||'<tr><td colspan="9">No risks match these filters.</td></tr>'}</tbody></table></div><p>${rows.length} risk${rows.length===1?'':'s'} shown</p></section>`;}
-function actions(){const rows=db.actions.filter(a=>!filter.status||filter.status==='Overdue'&&overdue(a)||a.status===filter.status).sort((a,b)=>String(a.due||'9999').localeCompare(String(b.due||'9999')));return `<section class="panel"><div class="toolbar"><button class="button" data-new="action">Add action</button><button class="button secondary" data-export="actions">Download action tracker</button></div><p>All corrective and mitigation actions appear here, regardless of whether they started from an issue or a risk.</p><div class="filters"><label>Status<select data-filter-field="status">${options(['Not started','In progress','Overdue','Complete'],filter.status)}</select></label><button class="small-button secondary" data-clear-filters>Clear filter</button></div><div class="table-scroll"><table class="data-table"><thead><tr><th>Action</th><th>Source</th><th>Owner</th><th>Deadline</th><th>Status</th><th>Priority</th><th>Complete</th></tr></thead><tbody>${rows.map(a=>`<tr><td><button class="record" data-detail="action:${a.id}">${esc(a.id)} · ${esc(a.title)}</button></td><td><button class="link-button" data-detail="${a.sourceType.toLowerCase()}:${a.sourceId}">${esc(a.sourceType)} ${esc(a.sourceId)}</button></td><td>${esc(a.owner)}</td><td>${esc(a.due)} ${overdue(a)?badge('Critical'):dueSoon(a)?badge('Medium'):''}</td><td>${esc(overdue(a)?'Overdue':a.status)}</td><td>${badge(a.priority)}</td><td>${Number(a.completion)||0}%</td></tr>`).join('')||'<tr><td colspan="7">No actions match this filter.</td></tr>'}</tbody></table></div></section>`;}
-function matrix(){const active=db.risks.filter(r=>r.status!=='Closed');let cells='';for(let l=5;l>=1;l--){cells+=`<div class="axis">${l}</div>`;for(let i=1;i<=5;i++){const n=score(l,i),group=active.filter(r=>Number(heatMode==='inherent'?r.likelihood:r.residualLikelihood)===l&&Number(heatMode==='inherent'?r.impact:r.residualImpact)===i);cells+=`<div class="heatcell ${rating(n)}"><b>${n} · ${rating(n)}</b>${group.map(r=>`<button data-detail="risk:${r.id}">${esc(r.id)} ${esc(r.title)}</button>`).join('')}</div>`;}}cells+='<div class="axis">L × I</div>'+[1,2,3,4,5].map(n=>`<div class="axis">Impact ${n}</div>`).join('');return `<section class="panel"><h2>Risk matrix</h2><p>Likelihood runs vertically; impact runs horizontally. Select a risk to open its record. Changing either score moves it to the matching cell.</p><div class="toolbar"><button class="button ${heatMode==='inherent'?'':'secondary'}" data-heat="inherent">Inherent risk</button><button class="button ${heatMode==='residual'?'':'secondary'}" data-heat="residual">Residual risk</button><button class="button secondary" data-export="matrix">Print or save matrix as PDF</button></div><div class="table-scroll"><div class="heatmap">${cells}</div></div></section>`;}
-function insights(){const projectNames=[...new Set(db.risks.map(r=>r.project).filter(Boolean))],owners=[...new Set(db.issues.map(i=>i.owner).filter(Boolean))],months=[...new Set(db.issues.map(i=>i.identified?.slice(0,7)).filter(Boolean))].sort(),open=db.issues.filter(i=>i.status!=='Closed').length,closed=db.issues.length-open;return `<section class="dashboard-grid"><div class="panel"><h2>Open vs closed issues</h2>${bars([['Open',open],['Closed',closed]],'issues','status')}</div><div class="panel"><h2>Issues by owner</h2>${bars(owners.map(x=>[x,db.issues.filter(i=>i.owner===x&&i.status!=='Closed').length]),'issues','owner')}</div><div class="panel"><h2>Issues identified over time</h2>${bars(months.map(m=>[m,db.issues.filter(i=>i.identified?.startsWith(m)).length]),'issues','date')}</div><div class="panel"><h2>Risk exposure by project</h2>${bars(projectNames.map(p=>[p,db.risks.filter(r=>r.project===p&&r.status!=='Closed').reduce((s,r)=>s+riskScore(r),0)]),'risks','project')}</div><div class="panel"><h2>Inherent vs residual exposure</h2>${bars([['Inherent',db.risks.reduce((s,r)=>s+riskScore(r),0)],['Residual',db.risks.reduce((s,r)=>s+riskScore(r,'residual'),0)]],'matrix','mode')}</div><div class="panel"><h2>Risk score trend</h2>${bars([['Increasing',db.risks.filter(r=>trend(r)==='Increasing').length],['Stable',db.risks.filter(r=>trend(r)==='Stable').length],['Decreasing',db.risks.filter(r=>trend(r)==='Decreasing').length]],'risks','trend')}</div></section>`;}
-function plan(){return `<section class="panel"><span class="eyebrow">Management output</span><h2>Risk management plan</h2><p><b>${esc(db.settings.organisation)}</b> · Generated ${today()} · Scoring: ${db.settings.method==='simple'?'Likelihood × Impact':'Likelihood × Impact + Impact'} · Residual tolerance ${db.settings.appetite}</p><p>Review each risk, its current controls, planned mitigation, owner, deadline and remaining exposure. Linked issues show where a risk has materialised.</p><div class="toolbar"><button class="button" data-print>Print or save plan as PDF</button><button class="button secondary" data-export="risks">Download register CSV</button></div>${db.risks.map(r=>`<article class="panel"><h3>${esc(r.id)} · ${esc(r.title)}</h3><p>${esc(r.description)}</p><p><b>Inherent:</b> ${riskScore(r)} ${rating(riskScore(r))} · <b>Residual:</b> ${riskScore(r,'residual')} ${rating(riskScore(r,'residual'))} · <b>Tolerance:</b> ${r.appetite||db.settings.appetite}</p><p><b>Owner:</b> ${esc(r.owner)} · <b>Category:</b> ${esc(r.category)} · <b>Project:</b> ${esc(r.project)} · <b>Country:</b> ${esc(r.country)}</p><p><b>Causes:</b> ${esc(r.causes)} · <b>Consequences:</b> ${esc(r.consequences)}</p><p><b>Existing controls:</b> ${esc(r.controls)}</p><p><b>Mitigation:</b> ${esc(r.mitigation)} · <b>Owner:</b> ${esc(r.mitigationOwner)} · <b>Due:</b> ${esc(r.due)}</p><p><b>Review:</b> ${esc(r.reviewDate)} · <b>Linked issues:</b> ${db.issues.filter(i=>i.riskIds.includes(r.id)).map(i=>i.id).join(', ')||'None'}</p></article>`).join('')||'<p>No risks recorded yet.</p>'}</section>`;}
-function settings(){return `<section class="panel"><h2>Scoring method</h2><p>Choose a scoring approach and rating thresholds. The original workbook uses <b>likelihood × impact + impact</b>; the simpler 5 × 5 method uses <b>likelihood × impact</b>. Scores and the matrix recalculate immediately after saving.</p><form id="settings-form" class="form-grid"><label class="field full">Organisation<input name="organisation" value="${esc(db.settings.organisation)}"></label><label class="field full">Formula<select name="method"><option value="weighted" ${db.settings.method==='weighted'?'selected':''}>Workbook method: L × I + I (range 2–30)</option><option value="simple" ${db.settings.method==='simple'?'selected':''}>Standard matrix: L × I (range 1–25)</option></select></label><label class="field">Low maximum<input type="number" min="1" max="30" name="low" value="${db.settings.bands[0]}"></label><label class="field">Medium maximum<input type="number" min="1" max="30" name="medium" value="${db.settings.bands[1]}"></label><label class="field">High maximum<input type="number" min="1" max="30" name="high" value="${db.settings.bands[2]}"></label><label class="field">Default residual tolerance<input type="number" min="1" max="30" name="appetite" value="${db.settings.appetite}"></label><button class="button" type="submit">Save scoring method</button></form><p><b>Current bands:</b> Low ≤ ${db.settings.bands[0]}; Medium ≤ ${db.settings.bands[1]}; High ≤ ${db.settings.bands[2]}; Critical above ${db.settings.bands[2]}.</p></section>`;}
-function input(name,label,value='',type='text',extra=''){return `<label class="field ${extra}">${label}<input name="${name}" type="${type}" value="${esc(value)}"></label>`;}
-function area(name,label,value='',extra=''){return `<label class="field ${extra}">${label}<textarea name="${name}">${esc(value)}</textarea></label>`;}
-function select(name,label,items,value='',extra=''){return `<label class="field ${extra}">${label}<select name="${name}">${options(items,value,'Select…')}</select></label>`;}
-function riskForm(r={}){return `<form id="record-form" data-kind="risk" data-id="${esc(r.id||'')}" class="form-grid">${input('title','Risk title',r.title,'text','full')}${area('description','Description: what uncertain event could happen?',r.description,'full')}${select('category','Category',categories,r.category)}${input('project','Project / programme',r.project)}${input('country','Country / region',r.country)}${input('department','Department / team',r.department)}${input('owner','Risk owner',r.owner)}${input('identified','Date identified',r.identified||today(),'date')}${area('causes','Root causes: why might this happen?',r.causes,'full')}${area('consequences','Potential consequences for objectives',r.consequences,'full')}${select('likelihood',`Inherent likelihood (1–5) ${help('Likelihood','How likely is the risk before new controls? 1 is rare; 5 is almost certain.')}`,[1,2,3,4,5].map(String),String(r.likelihood||''))}${select('impact',`Inherent impact (1–5) ${help('Impact','How serious would the consequence be if it occurred? 1 is negligible; 5 is critical.')}`,[1,2,3,4,5].map(String),String(r.impact||''))}${area('controls','Existing controls',r.controls,'full')}${area('mitigation',`Mitigation measures ${help('Mitigation','State concrete steps that reduce the chance or consequence of this risk. Name who will do them and by when.')}`,r.mitigation,'full')}${input('mitigationOwner','Mitigation owner',r.mitigationOwner)}${input('due','Mitigation due date',r.due,'date')}${select('residualLikelihood',`Residual likelihood ${help('Residual risk','Estimate likelihood after existing and planned controls. Do not assume mitigation works until evidence supports it.')}`,[1,2,3,4,5].map(String),String(r.residualLikelihood||''))}${select('residualImpact','Residual impact',[1,2,3,4,5].map(String),String(r.residualImpact||''))}${input('appetite','Acceptable residual score / tolerance',r.appetite||db.settings.appetite,'number')}${select('status','Status',['Active','Monitoring','Closed'],r.status||'Active')}${input('reviewDate','Next review date',r.reviewDate,'date')}${area('notes','Notes / evidence',r.notes,'full')}<button class="button" type="submit">Save risk</button></form>`;}
-function issueForm(i={}){return `<form id="record-form" data-kind="issue" data-id="${esc(i.id||'')}" class="form-grid">${input('title','Issue title: what happened?',i.title,'text','full')}${area('description','Description and immediate effect',i.description,'full')}${input('identified','Date identified',i.identified||today(),'date')}${select('category','Category',categories,i.category)}${select('severity','Severity',severity,i.severity||'Medium')}${select('status','Status',['Open','In progress','Closed'],i.status||'Open')}${input('owner','Responsible person',i.owner)}${input('due','Resolution deadline',i.due,'date')}${input('project','Project / programme',i.project)}${input('country','Country / region',i.country)}${input('department','Department / team',i.department)}<label class="field full">Linked risks (select multiple using Ctrl or Cmd)<select name="riskIds" multiple size="${Math.max(3,Math.min(7,db.risks.length))}">${db.risks.map(r=>`<option value="${r.id}" ${i.riskIds?.includes(r.id)?'selected':''}>${esc(r.id)} · ${esc(r.title)}</option>`).join('')}</select><span class="help">Leave empty if this issue arose independently. You can add or change links later.</span></label>${area('notes','Notes / evidence',i.notes,'full')}${area('resolution','Resolution and closure details',i.resolution,'full')}${input('closedAt','Closed date',i.closedAt,'date')}<button class="button" type="submit">Save issue</button></form>`;}
-function actionForm(a={}){return `<form id="record-form" data-kind="action" data-id="${esc(a.id||'')}" class="form-grid">${input('title','Action required',a.title,'text','full')}${select('sourceType','Source type',['Issue','Risk'],a.sourceType||'Issue')}<label class="field">Source record<select name="sourceId">${options([...db.issues.map(i=>i.id),...db.risks.map(r=>r.id)],a.sourceId,'Select issue or risk')}</select></label>${input('owner','Action owner',a.owner)}${input('due','Deadline',a.due,'date')}${select('status','Status',['Not started','In progress','Complete'],a.status||'Not started')}${select('priority','Priority',severity,a.priority||'Medium')}${input('completion','Completion %',a.completion||0,'number')}${area('notes','Notes / evidence',a.notes,'full')}<button class="button" type="submit">Save action</button></form>`;}
-function editor(){if(!edit)return '';const item=edit.id?record(edit.kind+'s',edit.id):(edit.seed||{});return `<div class="editor" id="editor"><div class="editor-box"><div class="editor-head"><div><span class="eyebrow">${edit.id?'Edit':'New'} ${edit.kind}</span><h2>${edit.id?esc(item?.title):`Record ${edit.kind==='issue'?'an':'a'} ${edit.kind}`}</h2></div><button class="close" data-close aria-label="Close editor">×</button></div>${edit.kind==='risk'?riskForm(item):edit.kind==='issue'?issueForm(item):actionForm(item)}</div></div>`;}
-function history(items){return `<ol class="history">${(items||[]).map(h=>`<li>${esc(h.event)} <small>${new Date(h.at).toLocaleString()}</small></li>`).join('')||'<li>No history recorded yet.</li>'}</ol>`;}
-function details(){if(!detail)return '';const x=record(detail.kind+'s',detail.id);if(!x)return '';let body='';if(detail.kind==='risk'){const linked=db.issues.filter(i=>i.riskIds.includes(x.id)),actions=db.actions.filter(a=>a.sourceType==='Risk'&&a.sourceId===x.id);body=`<div class="detail-grid"><section><h3>Assessment</h3><p>Inherent: ${riskScore(x)} ${badge(rating(riskScore(x)))} · Residual: ${riskScore(x,'residual')} ${badge(rating(riskScore(x,'residual')))}</p><p>Likelihood ${x.likelihood}/5 · Impact ${x.impact}/5 · Residual likelihood ${x.residualLikelihood}/5 · Residual impact ${x.residualImpact}/5</p><p>Trend: ${esc(trend(x))}</p></section><section><h3>Ownership & review</h3><p>${esc(x.owner)} · ${esc(x.category)} · ${esc(x.project)} · ${esc(x.country)}</p><p>Next review: ${esc(x.reviewDate||'Not set')}</p></section><section><h3>Causes and consequences</h3><p>${esc(x.causes)}</p><p>${esc(x.consequences)}</p></section><section><h3>Controls and mitigation</h3><p>${esc(x.controls)}</p><p>${esc(x.mitigation)}</p><p>Owner: ${esc(x.mitigationOwner)} · Due: ${esc(x.due)}</p></section><section><h3>Linked issues (${linked.length})</h3>${linked.map(i=>`<p><button class="link-button" data-detail="issue:${i.id}">${esc(i.id)} · ${esc(i.title)}</button> · ${esc(issueStatus(i))}</p>`).join('')||'<p>None linked.</p>'}</section><section><h3>Mitigation actions (${actions.length})</h3>${actions.map(a=>`<p><button class="link-button" data-detail="action:${a.id}">${esc(a.id)} · ${esc(a.title)}</button></p>`).join('')||'<p>None recorded.</p>'}</section></div>`;}else if(detail.kind==='issue'){const actions=db.actions.filter(a=>a.sourceType==='Issue'&&a.sourceId===x.id);body=`<div class="detail-grid"><section><h3>Issue</h3><p>${esc(x.description)}</p><p>${badge(x.severity)} · ${esc(issueStatus(x))} · Owner: ${esc(x.owner)}</p></section><section><h3>Linked risks</h3>${x.riskIds.map(r=>`<p><button class="link-button" data-detail="risk:${r}">${esc(r)} · ${esc(record('risks',r)?.title)}</button></p>`).join('')||'<p>This issue is independent of an existing risk.</p>'}<button class="small-button secondary" data-new="risk" data-from-issue="${x.id}">Create risk from issue</button></section><section><h3>Corrective actions</h3>${actions.map(a=>`<p><button class="link-button" data-detail="action:${a.id}">${esc(a.id)} · ${esc(a.title)}</button> · ${a.completion}% complete</p>`).join('')||'<p>None recorded.</p>'}<button class="small-button secondary" data-new="action" data-from-issue="${x.id}">Add corrective action</button></section><section><h3>Resolution</h3><p>${esc(x.resolution||'Not resolved yet.')}</p><p>Closed: ${esc(x.closedAt||'Not closed')}</p></section></div>`;}else body=`<div class="detail-grid"><section><h3>Progress</h3><p>${esc(x.status)} · ${x.completion}% complete · Due ${esc(x.due||'not set')}</p><p>Owner: ${esc(x.owner)} · Priority: ${badge(x.priority)}</p></section><section><h3>Source</h3><button class="link-button" data-detail="${x.sourceType.toLowerCase()}:${x.sourceId}">${esc(x.sourceType)} ${esc(x.sourceId)}</button></section></div>`;return `<div class="editor" id="detail"><div class="editor-box"><div class="editor-head"><div><span class="eyebrow">${esc(x.id)}</span><h2>${esc(x.title)}</h2></div><button class="close" data-close aria-label="Close record">×</button></div><div class="toolbar"><button class="small-button" data-edit="${detail.kind}:${x.id}">Edit record</button>${detail.kind==='risk'?`<button class="small-button secondary" data-new="action" data-from-risk="${x.id}">Add mitigation action</button>`:''}</div>${body}<section class="panel"><h3>Activity history</h3>${history(x.history)}</section></div></div>`;}
-function app(){const sections={dashboard,issues,risks,actions,matrix,plan,settings};return `<div class="shell"><header class="top"><a class="brand" href="#">Mission <span>&amp;</span> Method</a><div class="top-actions"><span class="eyebrow">Issue & risk management</span><button class="small-button secondary" data-export="backup">Data backup</button><button class="small-button secondary" data-start-blank>Start blank</button><label class="small-button secondary import-label">Restore backup<input type="file" accept="application/json,.json" id="restore-file" hidden></label></div></header><section class="hero"><div><span class="eyebrow">Connected management workspace</span><h1>Issues, risks & actions</h1><p>See what could happen, what has happened, and what needs to be done next. ${db.settings.organisation==='Example organisation'?'The initial records are clearly marked examples. Use Start blank when you are ready to enter your own.':'Your records are saved in this browser. Download a data backup regularly.'}</p></div><button class="button coral" data-print>Print current view / save PDF</button></section><nav class="nav" aria-label="Workspace views">${[['dashboard','Dashboard'],['issues','Issues'],['risks','Risks'],['actions','Actions'],['matrix','Risk matrix'],['plan','Management plan'],['settings','Scoring settings']].map(([k,t])=>`<button data-view="${k}" class="${view===k?'active':''}">${t}</button>`).join('')}</nav>${notice?`<p class="summary-card" role="status">${esc(notice)}</p>`:''}<main id="app-main">${sections[view]()}${view==='dashboard'?insights():''}</main><div class="print-report"><p>Mission &amp; Method · ${esc(db.settings.organisation)} · Generated ${today()}</p></div>${editor()}${details()}</div>`;}
-function render(){root.innerHTML=app();bind();}
-function formData(form){const obj=Object.fromEntries(new FormData(form));if(form.dataset.kind==='issue')obj.riskIds=[...form.elements.riskIds.selectedOptions].map(o=>o.value);return obj;}
-function saveRecord(form){const kind=form.dataset.kind,collection=kind+'s',incoming=formData(form),existing=form.dataset.id?record(collection,form.dataset.id):null,originIssue=edit?.seed?.fromIssueId;if(!incoming.title?.trim()){notice='Give the record a title before saving.';return false;}if(kind==='issue'&&incoming.status==='Closed'&&!incoming.resolution?.trim()){notice='Add a resolution before closing an issue.';return false;}if(kind==='action'){incoming.completion=Math.min(100,Math.max(0,Number(incoming.completion)||0));if(!incoming.sourceId||!record(incoming.sourceType.toLowerCase()+'s',incoming.sourceId)){notice='Choose a valid issue or risk for this action.';return false;}}if(kind==='risk'){['likelihood','impact','residualLikelihood','residualImpact','appetite'].forEach(k=>incoming[k]=Number(incoming[k])||0);}if(existing){const before=kind==='risk'?riskScore(existing):0;const oldStatus=existing.status;Object.assign(existing,incoming);if(kind==='risk')log(existing,`Risk updated: inherent ${before} → ${riskScore(existing)}; residual ${riskScore(existing,'residual')}.`);else log(existing,`${kind} updated${oldStatus!==existing.status?`: ${oldStatus} → ${existing.status}`:''}.`);}else{const prefix={risk:'R',issue:'I',action:'A'}[kind],number=Math.max(0,...db[collection].map(x=>Number(x.id.split('-')[1])||0))+1;incoming.id=`${prefix}-${String(number).padStart(3,'0')}`;incoming.history=[];db[collection].push(incoming);log(incoming,`${kind} created.`);}if(kind==='risk'){const x=existing||incoming;x.history[0].score=riskScore(x);if(originIssue){const source=record('issues',originIssue);if(source&&!source.riskIds.includes(x.id)){source.riskIds.push(x.id);log(source,`Created and linked risk ${x.id}.`);}}}if(kind==='issue'){if(incoming.status==='Closed'&&!incoming.closedAt)(existing||incoming).closedAt=today();if(incoming.status!=='Closed')(existing||incoming).closedAt='';}if(kind==='action'&&incoming.status==='Complete')(existing||incoming).completion=100;save();edit=null;detail={kind,id:(existing||incoming).id};notice=`${kind[0].toUpperCase()+kind.slice(1)} saved.`;return true;}
-function exportRows(kind){if(kind==='issues')return [['ID','Issue','Description','Date identified','Category','Severity','Owner','Status','Deadline','Project','Country','Department','Linked risks','Resolution','Closed date','Notes'],...filtered('issues').map(i=>[i.id,i.title,i.description,i.identified,i.category,i.severity,i.owner,issueStatus(i),i.due,i.project,i.country,i.department,i.riskIds.join('; '),i.resolution,i.closedAt,i.notes])];if(kind==='risks')return [['ID','Risk','Description','Category','Project','Country','Department','Owner','Identified','Causes','Consequences','Likelihood','Impact','Inherent score','Inherent rating','Controls','Mitigation','Mitigation owner','Due','Residual likelihood','Residual impact','Residual score','Residual rating','Tolerance','Status','Review date','Linked issues','Notes'],...filtered('risks').map(r=>[r.id,r.title,r.description,r.category,r.project,r.country,r.department,r.owner,r.identified,r.causes,r.consequences,r.likelihood,r.impact,riskScore(r),rating(riskScore(r)),r.controls,r.mitigation,r.mitigationOwner,r.due,r.residualLikelihood,r.residualImpact,riskScore(r,'residual'),rating(riskScore(r,'residual')),r.appetite,r.status,r.reviewDate,db.issues.filter(i=>i.riskIds.includes(r.id)).map(i=>i.id).join('; '),r.notes])];return [['Action','Source','Owner','Deadline','Status','Priority','Completion %','Notes'],...db.actions.filter(a=>!filter.status||filter.status==='Overdue'&&overdue(a)||a.status===filter.status).map(a=>[a.title,`${a.sourceType} ${a.sourceId}`,a.owner,a.due,overdue(a)?'Overdue':a.status,a.priority,a.completion,a.notes])];}
-function doExport(kind){if(kind==='backup')return download(`${slug(db.settings.organisation)}-issues-risks-backup.json`,JSON.stringify(db,null,2),'application/json');if(kind==='matrix'){window.print();return;}download(`${slug(db.settings.organisation)}-${kind}-register.csv`,csv(exportRows(kind)));}
-async function restoreBackup(file){try{const parsed=JSON.parse(await file.text());if(!Array.isArray(parsed.risks)||!Array.isArray(parsed.issues)||!Array.isArray(parsed.actions)||!parsed.settings)throw new Error('This file is not a Mission & Method issue/risk backup.');if(!confirm('Replace the current browser data with this backup? Download a backup of your current work first if you need to keep it.'))return;db=parsed;save();view='dashboard';notice='Backup restored.';render();}catch(error){notice=error.message;render();}}
-function bind(){root.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;if(b.dataset.filter){const [k,v]=b.dataset.filter.split(':');filter={search:'',severity:'',status:'',category:'',owner:'',project:'',country:'',linked:''};filter[k]=v;if(k==='mode')heatMode=v.toLowerCase();}else if(view!=='issues'&&view!=='risks')filter={search:'',severity:'',status:'',category:'',owner:'',project:'',country:'',linked:''};notice='';render();});root.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>{let item={};if(b.dataset.fromIssue){const i=record('issues',b.dataset.fromIssue);item=b.dataset.new==='risk'?{fromIssueId:i.id,title:`Risk of repeated ${i.title.toLowerCase()}`,category:i.category,project:i.project,country:i.country,department:i.department,owner:i.owner,description:i.description}:{sourceType:'Issue',sourceId:i.id,owner:i.owner,priority:i.severity};}if(b.dataset.fromRisk)item={sourceType:'Risk',sourceId:b.dataset.fromRisk,owner:record('risks',b.dataset.fromRisk)?.mitigationOwner};edit={kind:b.dataset.new,id:null,seed:item};detail=null;render();});root.querySelectorAll('[data-detail]').forEach(b=>b.onclick=()=>{const [kind,id]=b.dataset.detail.split(':');if(record(kind+'s',id)){detail={kind,id};edit=null;render();}});root.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const [kind,id]=b.dataset.edit.split(':');edit={kind,id};detail=null;render();});root.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{edit=null;detail=null;render();});root.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>doExport(b.dataset.export));root.querySelector('#restore-file')?.addEventListener('change',e=>{const file=e.currentTarget.files?.[0];if(file)restoreBackup(file);});root.querySelectorAll('[data-print]').forEach(b=>b.onclick=()=>window.print());root.querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{heatMode=b.dataset.heat;render();});root.querySelectorAll('[data-filter-field]').forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',()=>{filter[x.dataset.filterField]=x.value;render();const next=root.querySelector(`[data-filter-field="${x.dataset.filterField}"]`);next?.focus();if(next?.setSelectionRange&&x.type==='text')next.setSelectionRange(x.selectionStart,x.selectionEnd);}));root.querySelector('[data-clear-filters]')?.addEventListener('click',()=>{filter={search:'',severity:'',status:'',category:'',owner:'',project:'',country:'',linked:''};render();});root.querySelector('#record-form')?.addEventListener('submit',e=>{e.preventDefault();saveRecord(e.currentTarget);render();});root.querySelector('[data-start-blank]')?.addEventListener('click',()=>{if(!confirm('Start a blank workspace? This replaces the current browser data. Download a data backup first if you need to keep it.'))return;db={version:1,settings:{organisation:'',method:'weighted',bands:[9,14,19],appetite:14},risks:[],issues:[],actions:[]};save();filter={};view='dashboard';detail=null;edit=null;notice='Blank workspace ready.';render();});root.querySelector('#settings-form')?.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget)),bands=[Number(d.low),Number(d.medium),Number(d.high)];if(!(bands[0]<bands[1]&&bands[1]<bands[2])){notice='Thresholds must increase from Low to High.';render();return;}db.settings={organisation:d.organisation,method:d.method,bands,appetite:Number(d.appetite)};save();notice='Scoring method saved; ratings and matrix updated.';render();});}
-render();
+const persist=d=>storage.save(d);
+function save(note=''){storage.save(db);if(note)message=note;render()}
+
+// ---------- Cross-tool: items users may want to link a risk/issue to ----------
+const readStore=k=>{try{const r=localStorage.getItem(k);if(!r)return null;const o=JSON.parse(r);return o&&typeof o==='object'?o:null}catch{return null}};
+function suiteItems(){
+ const items=[];
+ const so=readStore(SO_KEY);(so?.objectives||[]).forEach(o=>items.push({group:'Strategic objectives',source:'so',ref:o.code,label:`${o.code} · ${o.title}`}));
+ const toc=readStore(TOC_KEY);(toc?.pathways||[]).forEach(p=>items.push({group:'Theory of Change pathways',source:'toc',ref:p.id,label:p.objective||'Untitled pathway'}));
+ const sk=readStore(SK_KEY);(sk?.kpis||[]).forEach(k=>items.push({group:'Strategy KPIs',source:'sk-kpi',ref:k.code,label:`${k.code} · ${k.name}`}));(sk?.initiatives||[]).forEach(i=>items.push({group:'Strategy KPIs initiatives',source:'sk-init',ref:i.code,label:`${i.code} · ${i.title}`}));
+ const meal=readStore(MEAL_KEY);(meal?.indicators||[]).forEach(i=>items.push({group:'MEAL indicators',source:'meal',ref:i.code,label:`${i.code} · ${i.name||'untitled'}`}));
+ const gantt=readStore(GANTT_KEY);(gantt?.tasks||[]).filter(t=>t.title).forEach(t=>items.push({group:'Gantt tasks',source:'gantt',ref:t.code,label:`${t.code||'·'} · ${t.title}`}));
+ return items;
+}
+
+// ---------- Scoring helpers (5×5) ----------
+const scoreOf=r=>Number(r.likelihood||0)*Number(r.impact||0);
+const scoreBand=n=>n>=15?'critical':n>=10?'high':n>=5?'medium':n>=1?'low':'none';
+const bandLabel=b=>({critical:'Critical',high:'High',medium:'Medium',low:'Low',none:'—'}[b]);
+const isOverdue=d=>d&&d<today();
+
+// ---------- Threatens / Affects field (dropdown of suite items OR manual text) ----------
+function threatensField(r,prefix='threatens'){
+ const items=suiteItems();
+ const groups={};items.forEach(it=>{(groups[it.group]=groups[it.group]||[]).push(it)});
+ const refVal=r[prefix+'Ref']||'';const srcVal=r[prefix+'Source']||'manual';const textVal=r[prefix]||'';
+ const combined=srcVal==='manual'?'manual':`${srcVal}::${refVal}`;
+ return `<label class="field full"><span class="label">${prefix==='threatens'?'What this risk threatens':'What this issue affects'} ${tip('Either pick an item from your other tools or type free text in the box below.')}</span>
+  <select name="${prefix}Pick" data-threatens-pick="${prefix}">
+   <option value="manual" ${srcVal==='manual'?'selected':''}>— Type free text below —</option>
+   ${items.length?Object.entries(groups).map(([g,arr])=>`<optgroup label="${esc(g)}">${arr.map(it=>`<option value="${esc(it.source+'::'+it.ref)}" ${combined===(it.source+'::'+it.ref)?'selected':''}>${esc(it.label)}</option>`).join('')}</optgroup>`).join(''):'<option disabled>No items found in your other tools yet</option>'}
+  </select>
+  <textarea name="${prefix}" placeholder="${prefix==='threatens'?'e.g. the Q4 cohort delivery deadline, financial sustainability, safeguarding of participants':'e.g. what has gone wrong and what it has affected so far'}" style="margin-top:6px">${esc(textVal)}</textarea>
+  <small>Pick from the dropdown to link to an objective, pathway, KPI, indicator or Gantt task. Or just type below. Both can be used together.</small>
+ </label>`;
+}
+function parseThreatens(d,prefix='threatens'){
+ const pick=String(d[prefix+'Pick']||'manual');
+ if(pick==='manual')return {source:'manual',ref:''};
+ const [source,ref]=pick.split('::');return {source:source||'manual',ref:ref||''};
+}
+function threatensLabel(r,prefix='threatens'){
+ const src=r[prefix+'Source'],ref=r[prefix+'Ref'],txt=r[prefix];
+ if(src==='manual'||!ref)return esc(txt||'<span class="muted">—</span>');
+ const item=suiteItems().find(it=>it.source===src&&it.ref===ref);
+ const link=item?`<a href="${esc(toolHref(src))}" class="link">${esc(item.label)}</a>`:esc(ref);
+ return `${link}${txt?`<br><small>${esc(txt)}</small>`:''}`;
+}
+const toolHref=src=>({so:'Strategic-Objectives.html',toc:'Theory-of-Change-Builder.html','sk-kpi':'Strategy-KPIs-and-Annual-Planning.html','sk-init':'Strategy-KPIs-and-Annual-Planning.html',meal:'MEAL-Strategy.html',gantt:'Gantt-Project-Planner.html'}[src]||'#');
+
+// ---------- Risk modal ----------
+function riskModal(r){
+ const isNew=!r;r=r||blankRisk();
+ const sc=scoreOf(r),band=scoreBand(sc);
+ return modal(isNew?'Add risk':'Edit risk',`<form data-form="risk" data-id="${esc(r.id||'')}" class="form">
+  ${field('Code','code',r.code||nextCode('R'),'text','required','Short reference, e.g. R1.')}
+  ${field('Risk title','title',r.title,'text','required')}
+  ${area('Description','description',r.description,'What might happen and under what conditions.')}
+  ${threatensField(r,'threatens')}
+  ${select('Category','category',CATEGORIES,r.category)}
+  <div class="form split-5x5">
+   ${select('Likelihood (1–5)','likelihood',[['1','1 · Rare'],['2','2 · Unlikely'],['3','3 · Possible'],['4','4 · Likely'],['5','5 · Almost certain']],String(r.likelihood||3))}
+   ${select('Impact (1–5)','impact',[['1','1 · Negligible'],['2','2 · Minor'],['3','3 · Moderate'],['4','4 · Major'],['5','5 · Severe']],String(r.impact||3))}
+   <div class="field"><span class="label">Score · band</span><div class="risk-score-preview risk-band-${band}"><b>${sc||'—'}</b> · ${bandLabel(band)}</div></div>
+  </div>
+  <h3 class="form-section">Mitigation</h3>
+  ${area('Mitigation plan','mitigation',r.mitigation,'What is being done to reduce likelihood or impact.')}
+  ${field('Mitigation owner','mitigationOwner',r.mitigationOwner)}
+  ${field('Mitigation due','mitigationDue',r.mitigationDue,'date')}
+  ${select('Mitigation status','mitigationStatus',M_STATUS,r.mitigationStatus||'Not started')}
+  <h3 class="form-section">Approval trail <small style="font-weight:400;color:var(--muted)">Compliance record of who signed off</small></h3>
+  ${field('Approved by','approvedBy',r.approvedBy,'text','','e.g. Board, Director, Programme committee')}
+  ${field('Approved on','approvedOn',r.approvedOn,'date')}
+  <h3 class="form-section">Review</h3>
+  ${select('Review cadence','reviewCadence',CADENCES,r.reviewCadence||'Quarterly')}
+  ${field('Next review','nextReview',r.nextReview,'date','','When this risk must be re-reviewed. Red flag appears if past.')}
+  ${field('Last reviewed','lastReview',r.lastReview,'date')}
+  ${select('Overall status','status',R_STATUS,r.status||'Open')}
+  ${area('Notes','notes',r.notes)}
+  ${formEnd('Save risk',{deleteId:isNew?'':r.id,deleteLabel:'Delete risk'})}
+ </form>`);
+}
+
+function issueModal(i){
+ const isNew=!i;i=i||blankIssue();
+ const riskOpts=db.risks.map(r=>[r.code,`${r.code} · ${r.title}`]);
+ return modal(isNew?'Add issue':'Edit issue',`<form data-form="issue" data-id="${esc(i.id||'')}" class="form">
+  ${field('Code','code',i.code||nextCode('I'),'text','required')}
+  ${field('Issue title','title',i.title,'text','required')}
+  ${area('Description','description',i.description,'What has happened. Keep it factual.')}
+  ${threatensField(i,'affects')}
+  ${select('Category','category',CATEGORIES,i.category)}
+  ${select('Severity (1–5)','severity',[['1','1 · Minor'],['2','2 · Noticeable'],['3','3 · Significant'],['4','4 · Serious'],['5','5 · Critical']],String(i.severity||3))}
+  ${field('When it happened','happenedOn',i.happenedOn,'date')}
+  ${field('Reported by','reportedBy',i.reportedBy)}
+  <h3 class="form-section">Resolution</h3>
+  ${area('Resolution plan','resolution',i.resolution,'What needs to be done to close the issue.')}
+  ${field('Owner','owner',i.owner)}
+  ${field('Due date','due',i.due,'date')}
+  ${select('Status','status',I_STATUS,i.status||'Open')}
+  ${field('Resolved on','resolvedOn',i.resolvedOn,'date')}
+  ${riskOpts.length?select('Linked risk (optional)','linkedRiskCode',riskOpts,i.linkedRiskCode,'If this issue is an instance of a known risk, link it here.','None'):field('Linked risk code (optional)','linkedRiskCode',i.linkedRiskCode)}
+  ${area('Notes','notes',i.notes)}
+  ${formEnd('Save issue',{deleteId:isNew?'':i.id,deleteLabel:'Delete issue'})}
+ </form>`);
+}
+
+const nextCode=prefix=>{const list=prefix==='R'?db.risks:db.issues;const nums=list.map(x=>Number(String(x.code||'').replace(prefix,''))).filter(n=>!isNaN(n));return prefix+(Math.max(0,...nums)+1)};
+
+// ---------- Views ----------
+function startView(){
+ const m=db.meta;
+ const openR=db.risks.filter(r=>r.status!=='Closed').length;
+ const highR=db.risks.filter(r=>r.status!=='Closed'&&scoreBand(scoreOf(r))==='critical'||scoreBand(scoreOf(r))==='high').length;
+ const openI=db.issues.filter(i=>i.status!=='Closed'&&i.status!=='Resolved').length;
+ const overdueM=db.risks.filter(r=>isOverdue(r.mitigationDue)&&r.mitigationStatus!=='Done').length;
+ const overdueRev=db.risks.filter(r=>isOverdue(r.nextReview)&&r.status!=='Closed').length;
+ return `${window.MMExample?.renderIntegration?.('issue-risk')||''}
+  <section class="work-box">
+   <div class="work-head">
+    <span class="work-badge">Your workspace</span>
+    <input class="work-org" data-field="organisation" value="${esc(m.organisation)}" placeholder="Add your organisation name →" aria-label="Organisation name">
+    <span class="work-status" id="work-status"></span>
+   </div>
+   <p class="work-hint">Compliance-grade register. 5×5 likelihood × impact scoring, mitigation trail, approval trail, review cadence with overdue flag. Risks (might happen) and Issues (have happened) are kept separate.</p>
+   <div class="work-meta">
+    <label class="work-field"><span>Project / programme</span><input data-field="project" value="${esc(m.project)}" placeholder="e.g. 2026 annual plan"></label>
+    <label class="work-field"><span>Planning year</span><input data-field="year" type="number" value="${esc(m.year)}" min="2000" max="2200"></label>
+    <label class="work-field"><span>Prepared by</span><input data-field="preparedBy" value="${esc(m.preparedBy)}" placeholder="Your name or team"></label>
+    <label class="work-field"><span>Default review cadence</span><select data-field="defaultCadence">${CADENCES.map(c=>`<option ${m.defaultCadence===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+    <label class="work-field full"><span>Notes</span><textarea data-field="notes">${esc(m.notes)}</textarea></label>
+   </div>
+   <div class="grid four" style="margin:14px 0 10px">
+    ${card('Open risks',openR,`${highR} high or critical`,highR>0)}
+    ${card('Open issues',openI,'Issues still being resolved',openI>0)}
+    ${card('Mitigations overdue',overdueM,'Mitigation plans past their due date',overdueM>0)}
+    ${card('Reviews overdue',overdueRev,'Risks past their next-review date',overdueRev>0)}
+   </div>
+   <div class="work-sect-head">
+    <h3>Get started</h3>
+    <p class="tiny">Risk register vs issue log — <b>Risks</b> are things that <i>might</i> happen (focus: prevention). <b>Issues</b> are things that <i>have</i> happened (focus: resolution). Each can either link to an item from your other tools (objectives, KPIs, indicators, Gantt tasks) or be described in free text.</p>
+   </div>
+   <div class="actions">
+    <button class="button" data-action="new-risk">+ Add a risk</button>
+    <button class="button" data-action="new-issue">+ Add an issue</button>
+    <a class="button secondary" href="#" data-tab="Risks">Go to risk register →</a>
+    <a class="button secondary" href="#" data-tab="Issues">Go to issue log →</a>
+    <a class="button secondary" href="#" data-tab="Heatmap">View 5×5 heatmap →</a>
+   </div>
+  </section>`;
+}
+
+function risksView(){
+ const sorted=[...db.risks].sort((a,b)=>scoreOf(b)-scoreOf(a));
+ const rows=sorted.map(r=>{
+  const sc=scoreOf(r),band=scoreBand(sc);
+  const mitOverdue=isOverdue(r.mitigationDue)&&r.mitigationStatus!=='Done';
+  const revOverdue=isOverdue(r.nextReview)&&r.status!=='Closed';
+  return `<tr>
+   <td><b>${esc(r.code)}</b></td>
+   <td><b>${esc(r.title||'Untitled')}</b>${r.description?`<br><small>${esc(r.description)}</small>`:''}</td>
+   <td>${threatensLabel(r,'threatens')}</td>
+   <td>${esc(r.category)}</td>
+   <td class="risk-score-cell risk-band-${band}" title="L${r.likelihood} × I${r.impact} = ${sc}"><b>${sc||'—'}</b><br><small>${bandLabel(band)}</small></td>
+   <td>${esc(r.mitigationOwner||'—')}<br><small>due ${esc(fmtDate(r.mitigationDue)||'—')} ${mitOverdue?'<span class="pill bad" style="font-size:9px">overdue</span>':''}</small><br>${pill(r.mitigationStatus||'Not started')}</td>
+   <td>${r.approvedBy?`${esc(r.approvedBy)}<br><small>${esc(fmtDate(r.approvedOn)||'')}</small>`:'<span class="muted">—</span>'}</td>
+   <td>${esc(r.reviewCadence||'—')}<br><small>next ${esc(fmtDate(r.nextReview)||'—')} ${revOverdue?'<span class="pill bad" style="font-size:9px">overdue</span>':''}</small></td>
+   <td>${pill(r.status||'Open')}</td>
+   <td><div class="row-actions"><button class="link" data-action="edit-risk" data-id="${esc(r.id)}">Edit</button></div></td>
+  </tr>`;
+ });
+ return `<div class="rowhead section-head"><div><h2>Risk register</h2><p>Things that <i>might</i> happen and would set you back. Scored on a 5×5 likelihood × impact grid. Mitigation and approval columns are the audit trail; a review flagged "overdue" means the next-review date has passed.</p></div><button class="button" data-action="new-risk">+ Add a risk</button></div>
+  ${table(['Code','Risk','What it threatens','Category','Score','Mitigation','Approved by','Review','Status',''],rows,'No risks logged yet. Click "Add a risk" to start.')}`;
+}
+
+function issuesView(){
+ const sorted=[...db.issues].sort((a,b)=>Number(b.severity||0)-Number(a.severity||0));
+ const rows=sorted.map(i=>{
+  const overdue=isOverdue(i.due)&&i.status!=='Closed'&&i.status!=='Resolved';
+  const sevBand=i.severity>=5?'critical':i.severity>=4?'high':i.severity>=3?'medium':'low';
+  const linked=i.linkedRiskCode?db.risks.find(r=>r.code===i.linkedRiskCode):null;
+  return `<tr>
+   <td><b>${esc(i.code)}</b></td>
+   <td><b>${esc(i.title||'Untitled')}</b>${i.description?`<br><small>${esc(i.description)}</small>`:''}</td>
+   <td>${threatensLabel(i,'affects')}</td>
+   <td>${esc(i.category)}</td>
+   <td class="risk-score-cell risk-band-${sevBand}"><b>${i.severity||'—'}</b></td>
+   <td>${esc(fmtDate(i.happenedOn)||'—')}${i.reportedBy?`<br><small>${esc(i.reportedBy)}</small>`:''}</td>
+   <td>${esc(i.owner||'—')}<br><small>due ${esc(fmtDate(i.due)||'—')} ${overdue?'<span class="pill bad" style="font-size:9px">overdue</span>':''}</small></td>
+   <td>${pill(i.status||'Open')}${i.resolvedOn?`<br><small>${esc(fmtDate(i.resolvedOn))}</small>`:''}</td>
+   <td>${linked?`<a class="link" href="#" data-action="edit-risk" data-id="${esc(linked.id)}">${esc(linked.code)}</a>`:'<span class="muted">—</span>'}</td>
+   <td><div class="row-actions"><button class="link" data-action="edit-issue" data-id="${esc(i.id)}">Edit</button></div></td>
+  </tr>`;
+ });
+ return `<div class="rowhead section-head"><div><h2>Issue log</h2><p>Things that <i>have</i> happened and need resolving. Each issue can optionally link to a known risk — repeated issues against the same risk mean the mitigation needs to change.</p></div><button class="button" data-action="new-issue">+ Add an issue</button></div>
+  ${table(['Code','Issue','What it affects','Category','Severity','Happened','Owner','Status','Linked risk',''],rows,'No issues logged yet. Click "Add an issue" to record one.')}`;
+}
+
+function heatmapView(){
+ const grid={};for(let l=1;l<=5;l++)for(let i=1;i<=5;i++)grid[l+'_'+i]=[];
+ db.risks.filter(r=>r.status!=='Closed').forEach(r=>{const key=r.likelihood+'_'+r.impact;if(grid[key])grid[key].push(r)});
+ const cells=[];
+ for(let l=5;l>=1;l--){
+  const row=['<tr>'];
+  row.push(`<th class="hm-y">L${l}</th>`);
+  for(let i=1;i<=5;i++){
+   const list=grid[l+'_'+i]||[],sc=l*i,band=scoreBand(sc);
+   const tooltip=list.map(r=>`${r.code} ${r.title}`).join('\n')||'No risks here';
+   row.push(`<td class="hm-cell risk-band-${band}" title="${esc(tooltip)}"><div class="hm-count">${list.length||''}</div><div class="hm-sc">${sc}</div>${list.length?`<div class="hm-codes">${list.slice(0,3).map(r=>esc(r.code)).join(' ')}${list.length>3?' +'+(list.length-3):''}</div>`:''}</td>`);
+  }
+  row.push('</tr>');
+  cells.push(row.join(''));
+ }
+ const headerRow='<tr><th></th>'+[1,2,3,4,5].map(i=>`<th class="hm-x">I${i}</th>`).join('')+'</tr>';
+ const bandCount=b=>db.risks.filter(r=>r.status!=='Closed'&&scoreBand(scoreOf(r))===b).length;
+ return `<div class="rowhead section-head"><div><h2>5×5 risk heatmap</h2><p>Open risks placed by likelihood (vertical) × impact (horizontal). Hover a cell to see which risks sit there. Colour bands follow the standard compliance model: 1–4 Low, 5–9 Medium, 10–14 High, 15–25 Critical.</p></div></div>
+  <div class="grid four" style="margin-bottom:16px">
+   ${card('Low',bandCount('low'),'1–4',false)}${card('Medium',bandCount('medium'),'5–9',false)}${card('High',bandCount('high'),'10–14',bandCount('high')>0)}${card('Critical',bandCount('critical'),'15–25',bandCount('critical')>0)}
+  </div>
+  <section class="panel"><div class="tablewrap"><table class="hm-table">${headerRow}${cells.join('')}</table></div><p class="tiny" style="margin-top:10px">Likelihood: 1 Rare · 2 Unlikely · 3 Possible · 4 Likely · 5 Almost certain. Impact: 1 Negligible · 2 Minor · 3 Moderate · 4 Major · 5 Severe.</p></section>`;
+}
+
+function exportViewPanel(){
+ return `${exportButtons()}<section class="panel"><h2>What the Excel workbook contains</h2><ul style="font-size:13px;line-height:1.5"><li>Read me — how to use the workbook offline</li><li>Meta — organisation, project, year, default review cadence</li><li>Risks — the full register with score, mitigation trail, approval trail and review cadence</li><li>Issues — the full issue log with resolution and linked risk</li><li>_schema — field list for round-trip import</li></ul></section>`;
+}
+
+// ---------- Actions ----------
+function action(el){
+ const a=el.dataset.action,id=el.dataset.id,tabTarget=el.dataset.tab;
+ if(tabTarget){tab=tabTarget;dlg='';message='';render();return}
+ if(a==='close'){dlg='';render();return}
+ if(a==='new-risk'){dlg=riskModal();render();return}
+ if(a==='edit-risk'){const r=db.risks.find(x=>x.id===id);if(r){dlg=riskModal(r);render()}return}
+ if(a==='new-issue'){dlg=issueModal();render();return}
+ if(a==='edit-issue'){const i=db.issues.find(x=>x.id===id);if(i){dlg=issueModal(i);render()}return}
+ if(a==='delete'){
+  const risk=db.risks.find(r=>r.id===id),issue=db.issues.find(i=>i.id===id);
+  if(risk){if(!confirm('Delete this risk?'))return;db.risks=db.risks.filter(r=>r.id!==id)}
+  else if(issue){if(!confirm('Delete this issue?'))return;db.issues=db.issues.filter(i=>i.id!==id)}
+  else return;
+  dlg='';save('Deleted.');return;
+ }
+ if(a==='xlsx'){try{download('Mission-and-Method-issue-risk-register.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){downloadCsv();return}
+ if(a==='print'){window.print();return}
+ if(a==='export-json'){download('Mission-and-Method-issue-risk-register.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='load-example'){/* placeholder — risk tool has no auto example yet */return}
+ if(a==='download-template'){try{download('Mission-and-Method-issue-risk-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+}
+
+function submit(form){
+ const kind=form.dataset.form,d=formData(form);
+ if(kind==='risk'){
+  const existing=db.risks.find(r=>r.id===form.dataset.id);
+  const r=existing||{...blankRisk()};
+  const tr=parseThreatens(d,'threatens');
+  Object.assign(r,{code:s(d.code)||r.code||nextCode('R'),title:s(d.title),description:s(d.description),threatensSource:tr.source,threatensRef:tr.ref,threatens:s(d.threatens),category:d.category,likelihood:Number(d.likelihood)||3,impact:Number(d.impact)||3,mitigation:s(d.mitigation),mitigationOwner:s(d.mitigationOwner),mitigationDue:d.mitigationDue||'',mitigationStatus:d.mitigationStatus||'Not started',approvedBy:s(d.approvedBy),approvedOn:d.approvedOn||'',reviewCadence:d.reviewCadence||'Quarterly',nextReview:d.nextReview||'',lastReview:d.lastReview||'',status:d.status||'Open',notes:s(d.notes)});
+  stamp(r);
+  if(!existing)db.risks.push(r);
+  dlg='';save('Risk saved.');return;
+ }
+ if(kind==='issue'){
+  const existing=db.issues.find(i=>i.id===form.dataset.id);
+  const i=existing||{...blankIssue()};
+  const tr=parseThreatens(d,'affects');
+  Object.assign(i,{code:s(d.code)||i.code||nextCode('I'),title:s(d.title),description:s(d.description),affectsSource:tr.source,affectsRef:tr.ref,affects:s(d.affects),category:d.category,severity:Number(d.severity)||3,happenedOn:d.happenedOn||today(),reportedBy:s(d.reportedBy),resolution:s(d.resolution),owner:s(d.owner),due:d.due||'',status:d.status||'Open',resolvedOn:d.resolvedOn||'',linkedRiskCode:s(d.linkedRiskCode),notes:s(d.notes)});
+  stamp(i);
+  if(!existing)db.issues.push(i);
+  dlg='';save('Issue saved.');return;
+ }
+}
+
+// ---------- Excel ----------
+function buildWorkbook(withData){
+ const sheets=[
+  readmeSheet('Issue & Risk Management',[
+   'Compliance-grade register. 5×5 L×I scoring, mitigation trail, approval trail and review cadence.',
+   'Risks are what might happen; Issues are what has happened. Each row has a code for round-trip import.',
+   'Importing this file back to the tool updates every row by code. Changing codes creates new rows.'
+  ]),
+  metaSheet(db.meta),
+  {name:'Risks',rows:[
+   ['Code','Title','Description','What it threatens (source)','What it threatens (ref)','What it threatens (text)','Category','Likelihood','Impact','Score','Band','Mitigation','Mitigation owner','Mitigation due','Mitigation status','Approved by','Approved on','Review cadence','Next review','Last reviewed','Status','Notes'],
+   ...(withData?db.risks.map(r=>[r.code,r.title,r.description,r.threatensSource,r.threatensRef,r.threatens,r.category,r.likelihood,r.impact,scoreOf(r),bandLabel(scoreBand(scoreOf(r))),r.mitigation,r.mitigationOwner,r.mitigationDue,r.mitigationStatus,r.approvedBy,r.approvedOn,r.reviewCadence,r.nextReview,r.lastReview,r.status,r.notes]):[])
+  ]},
+  {name:'Issues',rows:[
+   ['Code','Title','Description','What it affects (source)','What it affects (ref)','What it affects (text)','Category','Severity','Happened on','Reported by','Resolution','Owner','Due','Status','Resolved on','Linked risk','Notes'],
+   ...(withData?db.issues.map(i=>[i.code,i.title,i.description,i.affectsSource,i.affectsRef,i.affects,i.category,i.severity,i.happenedOn,i.reportedBy,i.resolution,i.owner,i.due,i.status,i.resolvedOn,i.linkedRiskCode,i.notes]):[])
+  ]},
+  schemaSheet({Risks:'code,title,description,threatensSource,threatensRef,threatens,category,likelihood,impact,mitigation,mitigationOwner,mitigationDue,mitigationStatus,approvedBy,approvedOn,reviewCadence,nextReview,lastReview,status,notes',Issues:'code,title,description,affectsSource,affectsRef,affects,category,severity,happenedOn,reportedBy,resolution,owner,due,status,resolvedOn,linkedRiskCode,notes'})
+ ];
+ return buildXlsx(sheets);
+}
+function downloadCsv(){
+ const rows=[['Type','Code','Title','Category','Score/Sev','Owner','Due','Status'],...db.risks.map(r=>['Risk',r.code,r.title,r.category,scoreOf(r),r.mitigationOwner,r.mitigationDue,r.status]),...db.issues.map(i=>['Issue',i.code,i.title,i.category,i.severity,i.owner,i.due,i.status])];
+ download('Mission-and-Method-issue-risk.csv',csv(rows),'text/csv;charset=utf-8');
+}
+
+async function importXlsxFile(file){
+ try{
+  const data=await parseXlsx(await file.arrayBuffer());
+  const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);
+  const riskRows=rowsToObjects(findSheet(data,'Risks'));
+  const issueRows=rowsToObjects(findSheet(data,'Issues'));
+  if(riskRows?.length)db.risks=riskRows.map(r=>({...blankRisk(),code:r.Code||'',title:r.Title||'',description:r.Description||'',threatensSource:r['What it threatens (source)']||'manual',threatensRef:r['What it threatens (ref)']||'',threatens:r['What it threatens (text)']||'',category:r.Category||'Other',likelihood:Number(r.Likelihood)||3,impact:Number(r.Impact)||3,mitigation:r.Mitigation||'',mitigationOwner:r['Mitigation owner']||'',mitigationDue:r['Mitigation due']||'',mitigationStatus:r['Mitigation status']||'Not started',approvedBy:r['Approved by']||'',approvedOn:r['Approved on']||'',reviewCadence:r['Review cadence']||'Quarterly',nextReview:r['Next review']||'',lastReview:r['Last reviewed']||'',status:r.Status||'Open',notes:r.Notes||''}));
+  if(issueRows?.length)db.issues=issueRows.map(i=>({...blankIssue(),code:i.Code||'',title:i.Title||'',description:i.Description||'',affectsSource:i['What it affects (source)']||'manual',affectsRef:i['What it affects (ref)']||'',affects:i['What it affects (text)']||'',category:i.Category||'Other',severity:Number(i.Severity)||3,happenedOn:i['Happened on']||today(),reportedBy:i['Reported by']||'',resolution:i.Resolution||'',owner:i.Owner||'',due:i.Due||'',status:i.Status||'Open',resolvedOn:i['Resolved on']||'',linkedRiskCode:i['Linked risk']||'',notes:i.Notes||''}));
+  save('Excel imported.');
+ }catch(e){message='Excel import failed: '+e.message;render()}
+}
+async function importJsonFile(file){
+ try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}
+}
+
+// ---------- Live meta editing (Start workspace) ----------
+function wireStart(root){
+ const box=root.querySelector('.work-box');if(!box)return;
+ const status=box.querySelector('#work-status');
+ let timer;const schedule=()=>{if(status)status.textContent='Saving…';clearTimeout(timer);timer=setTimeout(()=>{persist(db);if(status){status.textContent='✓ Saved';setTimeout(()=>status.textContent='',1500)}},400)};
+ box.querySelectorAll('.work-meta [data-field],.work-head [data-field]').forEach(el=>{
+  el.addEventListener('input',()=>{const k=el.dataset.field;db.meta[k]=el.type==='number'?(el.value===''?'':Number(el.value)):el.value;schedule()});
+  el.addEventListener('change',()=>{if(el.tagName==='SELECT'){const k=el.dataset.field;db.meta[k]=el.value;schedule()}});
+ });
+ // Toggle threatens-pick dropdowns in modals: when user picks a suite item, auto-fill the textarea with the item label as a note
+ const picks=root.querySelectorAll('select[data-threatens-pick]');
+ picks.forEach(sel=>{sel.addEventListener('change',()=>{
+  const name=sel.dataset.threatensPick;const text=sel.form.querySelector(`textarea[name="${name}"]`);if(!text)return;
+  if(sel.value!=='manual'){const label=sel.options[sel.selectedIndex]?.text||'';if(!text.value.trim())text.value=label}
+ })});
+}
+
+function render(){
+ const views={'Start':startView,'Risks':risksView,'Issues':issuesView,'Heatmap':heatmapView,'Export':exportViewPanel};
+ root.innerHTML=shell({eyebrow:'Cross-cutting · Issue & risk management',title:'Issue & Risk Management',intro:'Compliance-grade register for everything that might go wrong (risks) or already has (issues). 5×5 likelihood × impact scoring, mitigation and approval trail, review cadence with overdue flags. Links to any item from the other tools, or stands alone.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=risk',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
+ wireStart(root);
+}
+
+persist(db);render();
+})();

@@ -254,6 +254,27 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:800px){.work-meta{grid-template-columns:1fr}}
 @media(max-width:700px){.work-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.work-chain{grid-template-columns:1fr}}
+/* Risk register (5x5 bands + heatmap) */
+.risk-band-low{background:#d6ebe3;color:#13483b}
+.risk-band-medium{background:#fff1d0;color:#8a6a2b}
+.risk-band-high{background:#ffdfc5;color:#88452b}
+.risk-band-critical{background:var(--coral);color:#fff}
+.risk-band-none{background:#f5f9f6;color:var(--muted)}
+.risk-score-cell{text-align:center;font-weight:900;min-width:60px;padding:8px 6px;border-radius:0}
+.risk-score-cell small{font-weight:600;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+.risk-score-preview{padding:8px 12px;border-radius:8px;font-weight:900;text-align:center;font-size:16px}
+.form-section{font:900 11px/1 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--deep);grid-column:1/-1;margin:14px 0 2px;padding-top:10px;border-top:1px dashed var(--line)}
+.split-5x5{grid-template-columns:1fr 1fr 1fr !important;display:grid;gap:12px;grid-column:1/-1}
+@media(max-width:650px){.split-5x5{grid-template-columns:1fr !important}}
+/* 5x5 Heatmap */
+.hm-table{min-width:500px;border-collapse:separate;border-spacing:3px}
+.hm-table th{background:transparent;color:var(--deep);font-weight:900;padding:4px}
+.hm-table th.hm-y{text-align:right;padding-right:10px}
+.hm-table th.hm-x{text-align:center;padding:4px}
+.hm-cell{text-align:center;padding:12px 6px;border-radius:10px;min-width:72px;height:72px;vertical-align:middle;cursor:default}
+.hm-cell .hm-count{font:900 20px/1 'Nunito Sans',sans-serif}
+.hm-cell .hm-sc{font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:2px;opacity:.7}
+.hm-cell .hm-codes{font-size:10px;margin-top:3px;opacity:.9}
 /* Capacity table (Gantt tool · who is overloaded by month) */
 .cap-table{min-width:1000px}
 .cap-table th.cap-owner{text-align:left;position:sticky;left:0;z-index:2;min-width:160px}
