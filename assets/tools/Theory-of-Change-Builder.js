@@ -1,98 +1,439 @@
-const e = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-const download = (name, content, type) => { const blob = new Blob([content], {type}); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = name; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
+(()=>{'use strict';
+const S=window.MMSuite;if(!S){alert('Suite kit not loaded');return}
+const {esc,uid,now,today,currentYear,clone,fmtDate,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,shell,importButtons,exportButtons,download,csv,XLSX_TYPE,buildXlsx,readmeSheet,schemaSheet,metaSheet,parseXlsx,findSheet,rowsToObjects,metaFromSheet,bind,formData,stamp,edited,editorName,clamp,s,STATUSES}=S;
 
-const root = document.querySelector('#software-demo');
-const KEY = 'mission-method-toc-builder-v1';
-const types = ['impact','outcome','intermediate_outcome','output','activity','input'];
-const labels = {impact:'Impact',outcome:'Outcome',intermediate_outcome:'Intermediate outcome',output:'Output',activity:'Activity',input:'Input'};
-const templates = {
-  blank:{name:'Untitled project',nodes:[],edges:[]},
-  community:{name:'Community livelihoods programme',nodes:[['impact','Young adults in Riverside have more secure livelihoods.'],['outcome','Graduates enter suitable work or sustain viable income activities.'],['intermediate_outcome','Young adults demonstrate job-relevant skills and employers use accessible recruitment.'],['output','Accessible job-readiness sessions and employer engagement delivered.'],['activity','Test barriers with young adults; adapt materials; recruit mentors; deliver sessions.'],['input','Coordinator time, accessible venue, transport support and trained mentors.']],edges:[[5,4],[4,3],[3,2],[2,1],[1,0]]},
-  advocacy:{name:'Inclusive local policy campaign',nodes:[['impact','Local policy better protects the rights of people with disabilities.'],['outcome','Decision makers adopt and implement accessible policy changes.'],['intermediate_outcome','Affected communities and allies influence the policy discussion with credible evidence.'],['output','Evidence briefings, coalition meetings and accessible public communications produced.'],['activity','Gather lived experience safely; analyse policy; convene coalition; brief decision makers.'],['input','Policy expertise, community partners, accessible communications budget.']],edges:[[5,4],[4,3],[3,2],[2,1],[1,0]]},
-  ethicalHub:{name:'Global ethical organisations hub',nodes:[['impact','A globally connected ethical ecosystem empowers local organisations and amplifies social, environmental and economic justice movements.'],['outcome','Local ethical organisations gain global recognition and access to new collaborations.'],['intermediate_outcome','International actors can discover and assess trustworthy local organisations by cause, location and impact.'],['output','An operational digital hub with verified organisation profiles and transparent data.'],['activity','Build the platform, verify organisations, create profiles and run outreach with grassroots partners.'],['input','Digital development, content and partnership expertise; staff capacity; funding; IT infrastructure; verification standards; outreach capability.']],edges:[[5,4],[4,3],[3,2],[2,1],[1,0]]}
-};
-const uid = p => `${p}-${crypto.randomUUID?.() || Math.random().toString(36).slice(2)}`;
-const now = () => new Date().toISOString().slice(0,10);
-function starter(){
- const t=templates.ethicalHub; const ids=t.nodes.map((n,i)=>uid('r'));
- return {meta:{organisation:'Ethical Bridge',name:t.name,country:'Global',dates:'2026–2028',preparedBy:'Project design team',version:'0.1',notes:'Seeded from the Ethical Bridge Theory of Change workbook.',mission:'Connect people, organisations and opportunities that contribute to ethical, inclusive and sustainable change.',vision:'A globally connected ethical ecosystem where local organisations and communities can thrive.',values:'Ethics\nTransparency\nCommunity empowerment\nSustainability',description:'If Ethical Bridge combines digital development, verification standards, partnerships and outreach to build a trusted digital hub, ethical organisations can become more visible and form new collaborations. This contributes to a globally connected ethical ecosystem, provided local organisations participate and stakeholders trust the verification process.',problem:'Ethical local organisations often lack visibility and access to international networks. There is limited awareness and connection between global actors and grassroots changemakers.',objectives:['Build a global hub to connect with ethical organisations']},nodes:t.nodes.map((n,i)=>({id:ids[i],type:n[0],text:n[1],objective:'Build a global hub to connect with ethical organisations',x:100+(5-i)*145,y:190+(i%2)*120})),edges:t.edges.map(x=>({id:uid('c'),from:ids[x[0]],to:ids[x[1]],why:'This is the current theory to test with affected organisations and international partners.',assumption:'Local organisations can participate and stakeholders trust the verification process.',evidence:'Validate with user research, partner feedback and platform usage evidence.',risk:'Insufficient participation or insufficient funding for development and outreach.',external:''})),indicators:[],assumptions:[],risks:[],stakeholders:[],lastEdited:new Date().toISOString()};
+// ---------- Storage ----------
+const KEY='mission-method-theory-of-change-v2', LEGACY='mission-method-toc-builder-v1';
+const SO_KEY='mission-method-strategic-objectives-v2';
+
+const LEVELS=[['impact','Impact'],['outcome','Outcome'],['intermediate_outcome','Intermediate outcome'],['output','Output'],['activity','Activity'],['input','Input']];
+const LEVEL_LABEL=Object.fromEntries(LEVELS);
+const LEVEL_ORDER={impact:5,outcome:4,intermediate_outcome:3,output:2,activity:1,input:0};
+
+const blankMeta=()=>({organisation:'',name:'Theory of Change',country:'',dates:`${currentYear}–${currentYear+2}`,preparedBy:'',version:'0.1',notes:'',mission:'',vision:'',values:'',impactGoal:'',problem:'',description:'',objectives:[]});
+const blankPathway=()=>({id:uid(),objective:'',description:'',problem:'',input:'',activity:'',output:'',intermediateOutcome:'',outcome:'',impact:'',assumptions:'',risks:'',evidence:'',lastEditedBy:'',lastEditedAt:''});
+const blankIndicator=()=>({id:uid(),pathwayId:'',level:'outcome',name:'',definition:'',baseline:'',target:'',unit:'',source:'',frequency:'',owner:'',verification:'',notes:'',lastEditedBy:'',lastEditedAt:''});
+const blank=()=>({version:2,meta:blankMeta(),pathways:[],indicators:[],snapshots:[]});
+
+function migrateV1(v1){
+ const out=blank();
+ const m=v1.meta||{};
+ Object.assign(out.meta,{organisation:m.organisation||'',name:m.name||'Theory of Change',country:m.country||'',dates:m.dates||out.meta.dates,preparedBy:m.preparedBy||'',version:m.version||'0.1',notes:m.notes||'',mission:m.mission||'',vision:m.vision||'',values:m.values||'',impactGoal:'',problem:m.problem||'',description:m.description||'',objectives:Array.isArray(m.objectives)?m.objectives:[]});
+ // Convert tocRows → pathways
+ (v1.tocRows||[]).forEach(r=>{
+  out.pathways.push({...blankPathway(),objective:s(r.objective),description:s(r.description),problem:s(r.problem),input:s(r.input),activity:s(r.activity),output:s(r.output),outcome:s(r.outcome),impact:s(r.impact),assumptions:s(r.assumption),risks:'',evidence:''});
+ });
+ // Convert indicators
+ (v1.indicators||[]).forEach(i=>{
+  out.indicators.push({...blankIndicator(),name:s(i.name),definition:s(i.definition),baseline:s(i.baseline),target:s(i.target),unit:s(i.unit),source:s(i.source),frequency:s(i.frequency),owner:s(i.owner),verification:s(i.verification),notes:s(i.notes)});
+ });
+ // Convert nodes/edges (canvas data) into assumptions on pathway if any text present
+ if(!out.pathways.length&&(v1.nodes||[]).length){
+  const p=blankPathway();
+  const pick=t=>(v1.nodes||[]).filter(n=>n.type===t).map(n=>n.text).join('\n');
+  Object.assign(p,{input:pick('input'),activity:pick('activity'),output:pick('output'),outcome:pick('outcome'),intermediateOutcome:pick('intermediate_outcome'),impact:pick('impact')});
+  const assumps=[...(v1.edges||[]).map(e=>e.assumption),...(v1.assumptions||[]).map(a=>a.text)].filter(Boolean).join('\n');
+  p.assumptions=assumps;
+  out.pathways.push(p);
+ }
+ return out;
 }
-let state; try { state=JSON.parse(localStorage.getItem(KEY)||'null')||starter(); } catch { state=starter(); }
-Object.assign(state.meta, {mission:'',vision:'',values:'',description:'',problem:'',objectives:[]}, state.meta || {});
-if(!Array.isArray(state.meta.objectives)) state.meta.objectives=String(state.meta.objectives||'').split('\n').map(x=>x.trim()).filter(Boolean);
-state.nodes.forEach(n=>n.objective ||= state.meta.objectives[0] || '');
-if(!Array.isArray(state.tocRows)||!state.tocRows.length){const list=t=>state.nodes.filter(n=>n.type===t).map(n=>n.text).join('\n');state.tocRows=[{id:uid('row'),objective:state.meta.objectives.join('\n'),description:state.meta.description,problem:state.meta.problem,input:list('input'),output:list('output'),outcome:[list('outcome'),list('intermediate_outcome')].filter(Boolean).join('\n'),impact:list('impact'),assumption:[...state.assumptions.map(a=>a.text),...state.edges.map(e=>e.assumption)].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join('\n')}];}
-let tab='dashboard', selected=null, wizardStep=0, notice='';
-const terms={Foundation:'Your Mission, Vision and Values provide the direction for the change you choose to pursue.',Description:'A short, plain-language explanation of the project and how its pathway is expected to work.',Problem:'The situation or challenge your organisation exists to help address.',Objective:'A specific change or result your organisation is deliberately working toward.',Input:'The resources needed to carry out work: people, funding, expertise, technology or partnerships.',Activity:'Work people do using inputs to create outputs.',Output:'The immediate, measurable product or service created by activities.',Outcome:'A change in behaviour, knowledge, access, practice, relationship or system.',Impact:'The broader, longer-term change your work contributes to.',Assumption:'An uncertain condition that needs to hold for change to happen.',Assumptions:'Conditions that need to hold true for the pathway to work and should be discussed and tested.'};
-const tooltip=(term)=>`<span class="term-help"><button class="term-tip" type="button" aria-label="What does ${term} mean?" data-tip="${term}" aria-describedby="help-${term}">i</button><span class="help-popover" id="help-${term}" role="tooltip"><b>${term}</b><span>${safe(terms[term]||'A key Theory of Change concept.')}</span><em>${term==='Objective'?'Example: “Local organisations access international partnerships.”':term==='Description'?'Example: “We build a trusted platform so ethical organisations are easier to find, assess and connect with.”':term==='Problem'?'Example: “Local ethical organisations are often invisible to international funders and partners.”':term==='Input'?'Example: “Staff time, funding, a digital platform, partner networks and verification expertise.”':term==='Output'?'Example: “A searchable online hub with verified organisation profiles.”':term==='Outcome'?'Example: “International actors can identify and connect with credible local organisations.”':term==='Impact'?'Example: “A more connected ethical ecosystem that strengthens local change efforts.”':'Example: “Local organisations are willing and able to maintain an accurate profile.”'}</em></span></span>`;
-function foundation(){return `<details class="foundation-panel"><summary>Module 1 reference <span>Mission, Vision & Values</span></summary><div><p class="foundation-note">Paste the Mission, Vision and Values you built in Module 1 here. They are a reference to guide this process; you do not build them again in this tool.</p><p><b>Mission</b>${safe(state.meta.mission||'Not added yet.').replaceAll('\n','<br>')}</p><p><b>Vision</b>${safe(state.meta.vision||'Not added yet.').replaceAll('\n','<br>')}</p><p><b>Values</b>${safe(state.meta.values||'Not added yet.').replaceAll('\n','<br>')}</p><button class="plain-button" data-tab="project">Paste Module 1 reference</button></div></details>`;}
-function save(){state.lastEdited=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(state));}
-function node(id){return state.nodes.find(x=>x.id===id)}
-function safe(s){return e(String(s||''));}
-function csv(rows){return '\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\r\n');}
-function xlsx(rows){const enc=new TextEncoder(),join=parts=>{const length=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(length);let at=0;parts.forEach(p=>{out.set(p,at);at+=p.length;});return out;},u16=n=>Uint8Array.of(n&255,n>>>8&255),u32=n=>Uint8Array.of(n&255,n>>>8&255,n>>>16&255,n>>>24&255),crc=bytes=>{let c=-1;for(const b of bytes){c^=b;for(let i=0;i<8;i++)c=c&1?c>>>1^0xedb88320:c>>>1;}return(c^-1)>>>0;},zip=entries=>{let offset=0;const locals=[],central=[];entries.forEach(([name,data])=>{const file=typeof data==='string'?enc.encode(data):data,nameBytes=enc.encode(name),check=crc(file),local=join([u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(check),u32(file.length),u32(file.length),u16(nameBytes.length),u16(0),nameBytes,file]);locals.push(local);central.push(join([u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(check),u32(file.length),u32(file.length),u16(nameBytes.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),nameBytes]));offset+=local.length;});const center=join(central);return join([...locals,center,u32(0x06054b50),u16(0),u16(0),u16(entries.length),u16(entries.length),u32(center.length),u32(offset),u16(0)]);},xml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c])),col=n=>{let s='';for(n++;n;n=Math.floor((n-1)/26))s=String.fromCharCode(65+(n-1)%26)+s;return s;},cell=(r,c,value,style='')=>`<c r="${col(c)}${r}" t="inlineStr"${style?` s="${style}"`:''}><is><t xml:space="preserve">${xml(value)}</t></is></c>`;const sheetRows=rows.map((row,i)=>`<row r="${i+1}">${row.map((v,c)=>cell(i+1,c,v,i===4?'1':'')).join('')}</row>`).join('');const sheet=`<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>${Array.from({length:8},(_,i)=>`<col min="${i+1}" max="${i+1}" width="34" customWidth="1"/>`).join('')}</cols><sheetData>${sheetRows}</sheetData></worksheet>`;return zip([['[Content_Types].xml','<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],['_rels/.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],['xl/workbook.xml','<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Theory of Change" sheetId="1" r:id="rId1"/></sheets></workbook>'],['xl/_rels/workbook.xml.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],['xl/styles.xml','<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Aptos"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Aptos"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF123C48"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf xfId="0"/><xf xfId="0" fontId="1" fillId="2" applyFont="1" applyFill="1"/></cellXfs></styleSheet>'],['xl/worksheets/sheet1.xml',sheet]]);}
-function excelData(){return [['Mission & Method · Theory of Change'],['Organisation',state.meta.organisation],['Project',state.meta.name],[],['Objectives','Description','Problem','Input','Output','Outcome','Impact','Assumptions'],...state.tocRows.map(r=>[r.objective,r.description,r.problem,r.input,r.output,r.outcome,r.impact,r.assumption])];}
-function line(n){return n?`${labels[n.type]}: ${n.text}`:'';}
-function resultNodes(){return state.nodes.filter(n=>['impact','outcome','intermediate_outcome','output'].includes(n.type));}
-function addNode(type='outcome',text=''){const n={id:uid('r'),type,text,x:120+state.nodes.length*22,y:130+(state.nodes.length%4)*100};state.nodes.push(n);selected=n.id;save();render();}
-function delNode(id){state.nodes=state.nodes.filter(n=>n.id!==id);state.edges=state.edges.filter(x=>x.from!==id&&x.to!==id);state.indicators=state.indicators.filter(x=>x.resultId!==id);selected=null;save();render();}
-function check(){const issues=[];const incoming=id=>state.edges.some(x=>x.to===id), outgoing=id=>state.edges.some(x=>x.from===id);if(!state.meta.problem)issues.push(['Problem is not defined','State the situation this project will address and who experiences it.','problem']);if(!state.meta.objectives.length)issues.push(['No objective is defined','Add one or more specific change objectives before finalising the pathway.','objective']);if(!state.meta.description)issues.push(['Description is missing','Give a short description of the project and its change logic.','description']); for(const n of state.nodes){if(!n.objective&&state.meta.objectives.length)issues.push(['Result is not linked to an objective','Assign this result to the objective it supports.',n.id]);if(n.type==='activity'&&!outgoing(n.id))issues.push(['Activity has no output','Connect this activity to the output it supports.',n.id]);if(n.type==='output'&&!outgoing(n.id))issues.push(['Output has no later result','Show how this deliverable could contribute to a change.',n.id]);if(['outcome','intermediate_outcome','impact'].includes(n.type)&&!state.indicators.some(i=>i.resultId===n.id))issues.push(['Result has no indicator','Add a practical way to observe progress.',n.id]);if(!incoming(n.id)&&n.type!=='input')issues.push(['Disconnected result','Connect this result into a pathway or explain why it is separate.',n.id]);if((n.type==='outcome'||n.type==='intermediate_outcome')&&/deliver|train|hold|provide|conduct/i.test(n.text))issues.push(['Result may describe an activity','Outcomes usually describe changed behaviour, capability, relationships or conditions.',n.id]);}
- for(const edge of state.edges){if(!edge.why.trim())issues.push(['Connection has no explanation','State why you expect this change to lead to the next.',edge.id]);if(!edge.assumption.trim())issues.push(['Connection has no assumption','Record the uncertain condition that needs to hold.',edge.id]);}
- for(const i of state.indicators){if(!i.baseline)issues.push(['Indicator has no baseline','Record a starting value or explain why a baseline is not feasible.',i.id]);if(!i.target)issues.push(['Indicator has no target','Set a time-bound expected level of progress.',i.id]);if(!i.frequency)issues.push(['Indicator has no reporting frequency','State when this evidence will be reviewed.',i.id]);}
- return issues;
+
+const {load,save:persist}=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{
+ if(!Array.isArray(d.pathways))d.pathways=[];
+ if(!Array.isArray(d.indicators))d.indicators=[];
+ if(!Array.isArray(d.snapshots))d.snapshots=[];
+ if(!Array.isArray(d.meta.objectives))d.meta.objectives=[];
+ if(!d.pathways.length)d.pathways=[blankPathway()];
+ return d;
+}});
+let db=load();
+
+// ---------- SO integration ----------
+function readSO(){try{const raw=localStorage.getItem(SO_KEY);if(!raw)return null;const o=JSON.parse(raw);return o&&Array.isArray(o.objectives)?o:null}catch{return null}}
+const soObjectives=()=>readSO()?.objectives||[];
+const soReady=()=>soObjectives().length>0;
+
+// ---------- UI state ----------
+let tab='Start', modal_html='', message='';
+const TABS=['Start','Pathways','Indicators','Assumptions & risks','Review','Export'];
+
+// ---------- Journey panel ----------
+function journeyPanel(){
+ const soN=soObjectives().length;
+ const step1Done=soN>0;
+ const step2Done=db.pathways.some(p=>p.output||p.outcome||p.impact)||!!db.meta.description;
+ const step3Done=false; // check SK later if desired
+ return `<section class="panel"><div class="rowhead section-head"><div><span class="eyebrow">Recommended path</span><h2>Where this tool sits</h2><p>Each step builds on the one before. Tick means data was found for that tool in this browser.</p></div></div>
+  <ol class="journey-steps">
+   <li class="step ${step1Done?'done':''}"><span class="step-num">1</span><div class="step-body"><b>Strategic Objectives · Module 1</b><p class="tiny">${step1Done?`<b>${soN}</b> objective${soN===1?'':'s'} ready — <button class="link" data-action="import-so-direct">bring them in</button>`:'Set multi-year direction and objectives first.'}</p></div><a class="button ${step1Done?'secondary':''} small" href="Strategic-Objectives.html">${step1Done?'Review →':'Start here →'}</a></li>
+   <li class="step ${step2Done?'done':''} current"><span class="step-num">2</span><div class="step-body"><b>Theory of Change Builder <span class="pill">You are here</span></b><p class="tiny">Map the pathway from objectives to long-term impact, and name the assumptions behind each step.</p></div></li>
+   <li class="step ${step3Done?'done':''}"><span class="step-num">3</span><div class="step-body"><b>Strategy, KPIs &amp; Annual Planning · Module 6</b><p class="tiny">Turn this year's slice into measurable KPIs, an annual plan and review decisions.</p></div><a class="button secondary small" href="Strategy-KPIs-and-Annual-Planning.html">Open →</a></li>
+  </ol></section>`;
 }
-function matrix(){const pick=t=>state.nodes.filter(n=>n.type===t).map(n=>n.text).join('\n');const assumptions=[...state.edges.map(e=>e.assumption),...state.assumptions.map(a=>a.text)].filter(Boolean).join('\n');return `<div class="matrix-wrap"><table class="toc-matrix"><thead><tr>${[['Objectives','Objective'],['Description','Description'],['Problem','Problem'],['Input','Input'],['Output','Output'],['Outcome','Outcome'],['Impact','Impact'],['Assumptions','Assumption']].map(([x,term])=>`<th>${x}${tooltip(term)}</th>`).join('')}</tr></thead><tbody><tr><td>${safe(state.meta.objectives.join('\n'))}</td><td>${safe(state.meta.description)}</td><td>${safe(state.meta.problem)}</td><td>${safe(pick('input'))}</td><td>${safe(pick('output'))}</td><td>${safe([pick('outcome'),pick('intermediate_outcome')].filter(Boolean).join('\n'))}</td><td>${safe(pick('impact'))}</td><td>${safe(assumptions)}</td></tr></tbody></table></div>`;}
-function dashboard(){return `<section class="simple-head"><div><span class="eyebrow">Theory of Change framework</span><h1>${safe(state.meta.name)}</h1><p>Complete one clear framework. Each column is a different part of your Theory of Change.</p></div><button class="button" data-tab="project">Edit project details</button></section>${foundation()}<section class="roadmap"><b>Complete in order</b>${['1. Objectives','2. Description','3. Problem','4. Inputs','5. Outputs','6. Outcomes','7. Impact','8. Assumptions'].map(x=>`<span>${x}</span>`).join('')}</section><section class="toc-panel matrix-panel"><div class="split-head"><div><h2>Your Theory of Change</h2><p>Activities can be added in Canvas when useful. They support the pathway but do not replace the eight core fields below.</p></div><button class="plain-button" data-tab="canvas">Edit inputs, outputs, outcomes and impact</button></div>${matrix()}<div class="toolbar"><button class="button" data-tab="project">Edit objectives, description and problem</button><button class="button ghost" data-tab="quality">Review and export</button></div></section>`;}
-function project(){return `<section class="toc-panel"><span class="eyebrow">Theory of Change framework</span><h1>Project details</h1><p>Use this page for the text fields in your framework.</p><form id="meta-form" class="toc-form"><fieldset><legend>Organisation and project</legend>${[['organisation','Organisation name'],['name','Project name'],['country','Country / location'],['dates','Project dates'],['preparedBy','Prepared by'],['version','Version']].map(([k,l])=>`<label>${l}<input name="${k}" value="${safe(state.meta[k])}" maxlength="500"></label>`).join('')}</fieldset><fieldset><legend>Module 1 reference</legend><p class="field-note">Paste the Mission, Vision and Values you already built in Module 1. They guide this work and are included in the exported document.</p>${[['mission','Mission'],['vision','Vision'],['values','Values — one per line']].map(([k,l])=>`<label>${l}<textarea name="${k}" rows="3" maxlength="2000">${safe(state.meta[k])}</textarea></label>`).join('')}</fieldset><fieldset><legend>Core framework fields</legend><label>Objectives — one per line<textarea name="objectives" rows="4" maxlength="3000">${safe(state.meta.objectives.join('\n'))}</textarea></label><label>Description<textarea name="description" rows="5" maxlength="4000">${safe(state.meta.description)}</textarea></label><label>Problem<textarea name="problem" rows="5" maxlength="3000">${safe(state.meta.problem)}</textarea></label><label>Optional notes<textarea name="notes" rows="3" maxlength="2000">${safe(state.meta.notes)}</textarea></label></fieldset><button class="button">Save framework</button></form></section>`;}
-const prompts=[['foundation','Before you start: your foundation','Your Mission, Vision and Values come from Module 1. They anchor the change you decide to work toward.'],['problem','What problem are you trying to address?','The situation or challenge your organisation exists to help address. Who experiences it, where, why and with what consequence?'],['objective','What specific change or result are you deliberately working toward?','An objective connects your Mission to practical action. Make it clear, connected to your Mission and focused on change rather than an activity.'],['input','What people, resources and relationships do you need?','Inputs are resources: people, funding, expertise, technology, information, partnerships and access.'],['activity','What work will turn those inputs into deliverables?','Activities are a supporting step. They explain what people do with inputs. They are different from outputs, which are the immediate deliverables.'],['output','What immediate, measurable product or service will you create?','Outputs show that delivery happened. They do not on their own show that life changed.'],['outcome','What change in behaviour, knowledge, access, practice, relationship or system do you expect?','Outcomes are changes that happen because of work, often with other actors involved.'],['impact','What broader, long-term change could this contribute to?','Impact is the longer-term condition your work contributes to. It is not a claim that your organisation causes every change alone.'],['assumption','What uncertain condition must hold for this pathway to work?','An assumption is something that needs to be true but may not be fully within your control. Make it specific enough to investigate.'],['description','Can you explain the whole pathway in plain language?','Use the narrative to test the logic: If we use inputs to deliver activities, we expect outputs that contribute to outcomes and impact, provided assumptions hold.']];
-function wizard(){const [kind,title,hint]=prompts[wizardStep];const progress=((wizardStep)/prompts.length)*100;const guide={foundation:['What is this?','Your Mission describes your purpose, Vision describes the future you seek and Values guide how you work.','Why does it matter?','They help you decide which changes fit your organisation.'],problem:['What is this?','The current situation you want to help change.','Questions to help you think','Who experiences it? Why does it persist? What evidence supports it? What happens if nothing changes?'],objective:['What is this?','A deliberate, specific result your organisation works toward.','Common mistake','“Hold workshops” is an activity. “Young people improve job-relevant skills” is an objective focused on change.'],input:['What is this?','The resources required to carry out the work.','Example','Staff time, accessible venue, partner relationships, funding and technology.'],activity:['What is this?','The work people do using inputs.','Why is this included?','Activities make the link from resources to measurable deliverables clear.'],output:['What is this?','The immediate product or service created by activities.','Example','100 community health workers complete a training.'],outcome:['What is this?','A change in behaviour, knowledge, access, practice, relationship or system.','Example','Health workers improve knowledge and use better practices.'],impact:['What is this?','The broader, longer-term change your work contributes to.','Example','Communities have improved access to quality healthcare.'],assumption:['What is this?','An uncertain condition that needs to hold for a pathway to work.','Questions to help you think','What would make this pathway fail? What evidence could challenge your current view?'],description:['What is this?','A concise explanation of your complete Theory of Change.','Starter','If we use [inputs] to deliver [activities], we expect [outputs], which should contribute to [outcomes] and ultimately [impact], provided [assumptions] hold.']}[kind];const existing=kind==='foundation'?`${state.meta.mission}\n\n${state.meta.vision}\n\n${state.meta.values}`:kind==='problem'?state.meta.problem:kind==='description'?state.meta.description:kind==='objective'?state.meta.objectives.join('\n'):'';return `<section class="toc-panel wizard">${foundation()}<span class="eyebrow">Guided mode · Module 2</span><p class="subtle">Step ${wizardStep+1} of ${prompts.length}</p><progress max="100" value="${progress}"></progress><h1>${title} ${tooltip(kind==='objective'?'Objective':kind[0].toUpperCase()+kind.slice(1))}</h1><p>${hint}</p><div class="learning-card"><h2>${guide[0]}</h2><p>${guide[1]}</p><h2>${guide[2]}</h2><p>${guide[3]}</p></div>${kind==='activity'?'<div class="logic-example"><b>Activity</b> Train 100 community health workers <span>↓</span><b>Output</b> 100 health workers complete training <span>↓</span><b>Outcome</b> Health workers use better practices <span>↓</span><b>Impact</b> Communities access better healthcare</div>':''}<label class="wizard-label">Now build yours<textarea id="wizard-answer" rows="7" placeholder="Write a draft. You can revise it later." ${kind==='foundation'?'readonly':''}>${safe(existing)}</textarea></label><div class="toolbar"><button class="plain-button" data-action="wizard-back" ${wizardStep?'':'disabled'}>Back</button><button class="button" data-action="wizard-next">${wizardStep===prompts.length-1?'Save description & review':'Save & continue'}</button></div></section>`;}
-function svg(){const W=1050,H=620;return `<svg class="toc-canvas" id="toc-svg" viewBox="0 0 ${W} ${H}" aria-label="Interactive Theory of Change canvas"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs><rect width="${W}" height="${H}" fill="#f5f8f7"/>${state.edges.map(x=>{const a=node(x.from),b=node(x.to);if(!a||!b)return '';return `<line class="toc-edge ${selected===x.id?'selected':''}" data-edge="${x.id}" x1="${a.x+115}" y1="${a.y+38}" x2="${b.x+115}" y2="${b.y+38}" marker-end="url(#arrow)"/>`;}).join('')}${state.nodes.map(n=>`<g class="toc-node ${selected===n.id?'selected':''}" data-node="${n.id}" transform="translate(${n.x} ${n.y})"><rect width="230" height="76" rx="10"/><text x="14" y="23" class="node-type">${labels[n.type]}</text><text x="14" y="45" class="node-text">${safe(n.text).slice(0,70)}${n.text.length>70?'…':''}</text></g>`).join('')}</svg>`;}
-function canvas(){const s=selected&&node(selected);const edge=selected&&state.edges.find(x=>x.id===selected);const objectiveOptions=['<option value="">Not assigned yet</option>',...state.meta.objectives.map(o=>`<option value="${safe(o)}">${safe(o)}</option>`)].join('');return `<section class="canvas-layout"><div class="canvas-main"><div class="canvas-head"><div><span class="eyebrow">Canvas mode</span><h1>Theory of Change</h1><p>Drag results to organise the visual. Select an arrow to record why that connection should lead to change.</p></div><div class="toolbar"><button class="button ghost" data-action="add-node">Add result</button><button class="button ghost" data-action="add-edge">Connect results</button></div></div>${svg()}</div><aside class="canvas-inspector">${s?`<h2>Edit ${labels[s.type]}</h2><form id="node-form" class="toc-form"><label>Result type<select name="type">${types.map(t=>`<option ${t===s.type?'selected':''} value="${t}">${labels[t]}</option>`).join('')}</select></label><label>Connected objective<select name="objective">${objectiveOptions.replace(`value="${safe(s.objective)}"`,`value="${safe(s.objective)}" selected`)}</select></label><label>Statement<textarea name="text" rows="6">${safe(s.text)}</textarea></label><button class="button">Save result</button><button class="plain-button danger" type="button" data-action="delete-node">Delete result</button></form>`:edge?`<h2>Explain causal link</h2><p><b>${safe(line(node(edge.from)))}</b> → <b>${safe(line(node(edge.to)))}</b></p><form id="edge-form" class="toc-form"><label>Why should this lead to the next change?<textarea name="why">${safe(edge.why)}</textarea></label><label>Assumption<textarea name="assumption">${safe(edge.assumption)}</textarea></label><label>Evidence / reason<textarea name="evidence">${safe(edge.evidence)}</textarea></label><label>Risk<textarea name="risk">${safe(edge.risk)}</textarea></label><label>External factor<textarea name="external">${safe(edge.external)}</textarea></label><button class="button">Save connection</button></form>`:`<h2>Build your pathway</h2><p>Select a result to edit it, or select an arrow to explain a causal relationship.</p><button class="button" data-action="add-node">Add your first result</button>`}</aside></section>`;}
-function framework(){const rows=[...types].reverse().flatMap(t=>state.nodes.filter(n=>n.type===t));return `<section class="toc-panel"><span class="eyebrow">Multiple views · same project data</span><h1>Results framework</h1><p>Each result is linked to an objective so you can test whether the full pathway serves a deliberate change.</p><div class="table-wrap"><table><thead><tr><th>Objective</th><th>Level</th><th>Result</th><th>Connected from</th><th>Indicators</th></tr></thead><tbody>${rows.map(n=>`<tr><td>${safe(n.objective)}</td><td>${labels[n.type]}</td><td>${safe(n.text)}</td><td>${safe(state.edges.filter(x=>x.to===n.id).map(x=>node(x.from)?.text).join('; '))}</td><td>${state.indicators.filter(i=>i.resultId===n.id).length}</td></tr>`).join('')||'<tr><td colspan="5">No results yet.</td></tr>'}</tbody></table></div><div class="toolbar"><button class="button ghost" data-export="framework-csv">Download editable CSV matrix</button><button class="button ghost" data-export="framework-doc">Download Word-compatible framework</button></div></section>`;}
-function indicators(){return `<section class="toc-panel"><div class="split-head"><div><span class="eyebrow">MEAL-ready data</span><h1>Indicator builder</h1><p>Define indicators against relevant changes, then use the quality prompts to strengthen them.</p></div><button class="button" data-action="add-indicator">Add indicator</button></div>${state.indicators.length?`<div class="table-wrap"><table><thead><tr><th>Indicator</th><th>Result</th><th>Baseline</th><th>Target</th><th>Frequency</th><th></th></tr></thead><tbody>${state.indicators.map(i=>`<tr><td>${safe(i.name)}</td><td>${safe(node(i.resultId)?.text)}</td><td>${safe(i.baseline)}</td><td>${safe(i.target)}</td><td>${safe(i.frequency)}</td><td><button class="plain-button" data-edit-indicator="${i.id}">Edit</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="empty-state">No indicators yet. Start with an outcome or impact, then define what useful evidence would show progress.</p>'}<div id="indicator-editor"></div></section>`;}
-function indicatorForm(i={id:'',name:'',definition:'',resultId:'',kind:'quantitative',baseline:'',target:'',unit:'',source:'',method:'',frequency:'',disaggregation:'',owner:'',verification:'',notes:''}){return `<form id="indicator-form" class="toc-form editor"><h2>${i.id?'Edit':'New'} indicator</h2>${[['name','Indicator name'],['definition','Definition'],['baseline','Baseline'],['target','Target'],['unit','Unit of measurement'],['source','Data source'],['method','Collection method'],['frequency','Reporting frequency'],['disaggregation','Disaggregation'],['owner','Responsible person/team'],['verification','Means of verification'],['notes','Notes']].map(([k,l])=>`<label>${l}<input name="${k}" value="${safe(i[k])}" maxlength="800"></label>`).join('')}<label>Result measured<select name="resultId">${resultNodes().map(n=>`<option value="${n.id}" ${n.id===i.resultId?'selected':''}>${safe(n.text)}</option>`).join('')}</select></label><label>Type<select name="kind"><option ${i.kind==='quantitative'?'selected':''}>quantitative</option><option ${i.kind==='qualitative'?'selected':''}>qualitative</option></select></label><button class="button">Save indicator</button><button type="button" class="plain-button" data-action="close-indicator">Cancel</button></form>`;}
-function registers(){const linkedAssumptions=state.edges.filter(x=>x.assumption).map(x=>({text:x.assumption,related:`${node(x.from)?.text} → ${node(x.to)?.text}`,evidence:x.evidence,status:'To test'}));const linkedRisks=state.edges.filter(x=>x.risk).map(x=>({risk:x.risk,related:node(x.to)?.text,likelihood:'',impact:'',mitigation:'',owner:'',status:'Open'})); const assumptions=[...linkedAssumptions,...state.assumptions], risks=[...linkedRisks,...state.risks];return `<section class="toc-panel"><span class="eyebrow">Registers generated from your pathway</span><h1>Assumptions & risks</h1><p>Assumptions and risks attached to causal links are collected here so they do not disappear inside the diagram.</p><div class="register-grid"><article><div class="split-head"><h2>Assumptions</h2><button class="plain-button" data-action="add-assumption">Add standalone assumption</button></div><div class="table-wrap"><table><thead><tr><th>Assumption</th><th>Related pathway</th><th>Evidence</th><th>Status</th></tr></thead><tbody>${assumptions.map(a=>`<tr><td>${safe(a.text)}</td><td>${safe(a.related)}</td><td>${safe(a.evidence)}</td><td>${safe(a.status)}</td></tr>`).join('')||'<tr><td colspan="4">None recorded.</td></tr>'}</tbody></table></div></article><article><div class="split-head"><h2>Risks</h2><button class="plain-button" data-action="add-risk">Add standalone risk</button></div><div class="table-wrap"><table><thead><tr><th>Risk</th><th>Related result</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th></tr></thead><tbody>${risks.map(r=>`<tr><td>${safe(r.risk)}</td><td>${safe(r.related)}</td><td>${safe(r.likelihood)}</td><td>${safe(r.impact)}</td><td>${safe(r.mitigation)}</td></tr>`).join('')||'<tr><td colspan="5">None recorded.</td></tr>'}</tbody></table></div></article></div><div id="register-editor"></div></section>`;}
-function quality(){const issues=check();const review=[['Foundation',state.meta.mission&&state.meta.vision&&state.meta.values,'Is the proposed change consistent with your Mission, Vision and Values?'],['Objectives',state.meta.objectives.length,'Do the objectives describe changes rather than activities?'],['Problem',state.meta.problem,'Does the problem describe who is affected, why it persists and the consequence?'],['Pathway',state.nodes.length,'Can you explain why each connection could lead to the next result?'],['Assumptions',state.edges.some(x=>x.assumption)||state.assumptions.length,'Have you named conditions outside your direct control?'],['Evidence',state.indicators.length,'Will the selected indicators give useful evidence of change?']];return `<section class="toc-panel"><span class="eyebrow">Review before export</span><h1>Review your Theory of Change</h1><p>Read the complete design together before downloading it. These prompts support your judgement and conversation with stakeholders.</p>${foundation()}<div class="review-summary"><h2>Project logic</h2><p><b>Objectives:</b> ${state.meta.objectives.map(safe).join('; ')||'Not yet defined'}</p><p><b>Problem:</b> ${safe(state.meta.problem||'Not yet defined')}</p><p><b>Description:</b> ${safe(state.meta.description||'Not yet defined')}</p></div><div class="check-list">${review.map(x=>`<article><b>${x[0]} ${x[1]?'✓':'—'}</b><p>${x[2]}</p></article>`).join('')}${issues.map(i=>`<article><b>${safe(i[0])}</b><p>${safe(i[1])}</p><button class="plain-button" data-focus="${i[2]}">Review in canvas</button></article>`).join('')}</div><div class="toolbar"><button class="button" data-tab="exports">Preview exports</button><button class="button ghost" data-export="quality-doc">Download quality report</button></div></section>`;}
-function reportHtml(){const results=[...types].reverse().flatMap(t=>state.nodes.filter(n=>n.type===t));return `<!doctype html><html><head><meta charset="utf-8"><title>${safe(state.meta.name)} | Programme Design Package</title><style>body{font:11pt Arial;color:#173c43;margin:42px;line-height:1.45}h1{font-size:30px;color:#123c48}h2{border-bottom:2px solid #e56f4a;padding-bottom:5px;margin-top:32px}table{border-collapse:collapse;width:100%;margin:12px 0}th{background:#123c48;color:#fff;text-align:left}th,td{padding:8px;border:1px solid #ccd8d8;vertical-align:top}.meta{background:#f3f7f4;padding:15px}.small{font-size:9pt;color:#52666b}@media print{body{margin:20mm}}</style></head><body><p class="small">Mission &amp; Method · Programme-design package · Generated ${now()} · Version ${safe(state.meta.version)}</p><h1>${safe(state.meta.name)}</h1><div class="meta"><b>${safe(state.meta.organisation)}</b><br>${safe(state.meta.country)} · ${safe(state.meta.dates)}<br>Prepared by: ${safe(state.meta.preparedBy)}<br>${safe(state.meta.notes)}</div><h2>Project summary</h2><p>This package consolidates the project’s Theory of Change, results framework, indicator matrix, assumptions and risks from the same structured project data.</p><h2>Results framework</h2><table><tr><th>Level</th><th>Result</th></tr>${results.map(n=>`<tr><td>${labels[n.type]}</td><td>${safe(n.text)}</td></tr>`).join('')}</table><h2>Indicator matrix</h2><table><tr><th>Result</th><th>Indicator</th><th>Baseline</th><th>Target</th><th>Source</th><th>Frequency</th></tr>${state.indicators.map(i=>`<tr><td>${safe(node(i.resultId)?.text)}</td><td>${safe(i.name)}</td><td>${safe(i.baseline)}</td><td>${safe(i.target)}</td><td>${safe(i.source)}</td><td>${safe(i.frequency)}</td></tr>`).join('')}</table><h2>Assumptions and risks</h2><table><tr><th>Connection / result</th><th>Assumption</th><th>Risk</th><th>Evidence / mitigation</th></tr>${state.edges.filter(x=>x.assumption||x.risk).map(x=>`<tr><td>${safe(node(x.from)?.text)} → ${safe(node(x.to)?.text)}</td><td>${safe(x.assumption)}</td><td>${safe(x.risk)}</td><td>${safe(x.evidence)}</td></tr>`).join('')}</table><h2>Quality check</h2><ul>${check().map(x=>`<li><b>${safe(x[0])}:</b> ${safe(x[1])}</li>`).join('')||'<li>No automatic gaps found. Review with relevant stakeholders before use.</li>'}</ul></body></html>`;}
-function exports(){return `<section class="toc-panel"><span class="eyebrow">Export preview</span><h1>Export your project</h1><p>Select individual outputs or create a consolidated programme-design package. The preview uses the same project data you edit in the builder.</p><div class="export-grid">${[['toc-svg','Theory of Change diagram','SVG — scalable diagram for proposals or slides'],['framework-csv','Results framework','CSV — editable matrix for Excel'],['framework-doc','Logframe / results framework','Word-compatible document'],['indicator-csv','Indicator matrix','CSV — editable MEAL matrix'],['risk-csv','Risk & assumptions registers','CSV — structured registers'],['quality-doc','Quality-check report','Word-compatible review report'],['package-doc','Complete programme-design package','Word-compatible package; print to PDF']].map(x=>`<article><h2>${x[1]}</h2><p>${x[2]}</p><button class="button ghost" data-export="${x[0]}">Download</button></article>`).join('')}</div><details class="toc-alert"><summary>Preview and branding</summary><p>Exports include organisation, project, location, dates, preparer, generation date and version. The next production iteration should add a stored organisation logo, section inclusion controls, page orientation and true XLSX/ZIP generation through a reviewed export service.</p></details></section>`;}
-function reportHtmlEnhanced(){const results=[...types].reverse().flatMap(t=>state.nodes.filter(n=>n.type===t)), diagram=svg();return `<!doctype html><html><head><meta charset="utf-8"><title>${safe(state.meta.name)} | Programme Design Package</title><style>body{font:11pt Arial;color:#173c43;margin:42px;line-height:1.45}h1{font-size:30px;color:#123c48}h2{border-bottom:2px solid #e56f4a;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:12px 0}th{background:#123c48;color:#fff;text-align:left}th,td{padding:8px;border:1px solid #ccd8d8;vertical-align:top}.meta,.foundation{background:#f3f7f4;padding:15px}.small{font-size:9pt;color:#52666b}.toc-node rect{fill:#fff;stroke:#123c48;stroke-width:2}.node-type{font:700 11px Arial;fill:#e56f4a}.node-text{font:13px Arial;fill:#173c43}.toc-edge{stroke:#597276;stroke-width:2}.toc-canvas{width:100%;height:auto;background:#f5f8f7}@media print{body{margin:20mm}}</style></head><body><p class="small">Mission &amp; Method · Programme-design package · Generated ${now()} · Version ${safe(state.meta.version)}</p><h1>${safe(state.meta.name)}</h1><div class="meta"><b>${safe(state.meta.organisation)}</b><br>${safe(state.meta.country)} · ${safe(state.meta.dates)}<br>Prepared by: ${safe(state.meta.preparedBy)}<br>${safe(state.meta.notes)}</div><h2>Your Foundation</h2><div class="foundation"><p><b>Mission:</b> ${safe(state.meta.mission)}</p><p><b>Vision:</b> ${safe(state.meta.vision)}</p><p><b>Values:</b> ${safe(state.meta.values).replaceAll('\n','<br>')}</p></div><h2>Project summary</h2><p>${safe(state.meta.description)}</p><p><b>Problem:</b> ${safe(state.meta.problem)}</p><h2>Objectives</h2><ul>${state.meta.objectives.map(x=>`<li>${safe(x)}</li>`).join('')||'<li>Not yet defined</li>'}</ul><h2>Theory of Change diagram</h2>${diagram}<h2>Results framework</h2><table><tr><th>Objective</th><th>Level</th><th>Result</th></tr>${results.map(n=>`<tr><td>${safe(n.objective)}</td><td>${labels[n.type]}</td><td>${safe(n.text)}</td></tr>`).join('')}</table><h2>Indicator matrix</h2><table><tr><th>Result</th><th>Indicator</th><th>Baseline</th><th>Target</th><th>Source</th><th>Frequency</th></tr>${state.indicators.map(i=>`<tr><td>${safe(node(i.resultId)?.text)}</td><td>${safe(i.name)}</td><td>${safe(i.baseline)}</td><td>${safe(i.target)}</td><td>${safe(i.source)}</td><td>${safe(i.frequency)}</td></tr>`).join('')}</table><h2>Assumptions and risks</h2><table><tr><th>Connection / result</th><th>Assumption</th><th>Risk</th><th>Evidence / mitigation</th></tr>${state.edges.filter(x=>x.assumption||x.risk).map(x=>`<tr><td>${safe(node(x.from)?.text)} → ${safe(node(x.to)?.text)}</td><td>${safe(x.assumption)}</td><td>${safe(x.risk)}</td><td>${safe(x.evidence)}</td></tr>`).join('')}</table><h2>Quality check</h2><ul>${check().map(x=>`<li><b>${safe(x[0])}:</b> ${safe(x[1])}</li>`).join('')||'<li>No automatic gaps found. Review with relevant stakeholders before use.</li>'}</ul></body></html>`;}
-function syncNodes(type,text){const lines=String(text||'').split('\n').map(x=>x.trim()).filter(Boolean), current=state.nodes.filter(n=>n.type===type);state.nodes=state.nodes.filter(n=>n.type!==type);lines.forEach((text,i)=>state.nodes.push({id:current[i]?.id||uid('r'),type,text,objective:state.meta.objectives[0]||'',x:100+i*28,y:120+i*78}));}
-function workspace(){const values=t=>state.nodes.filter(n=>n.type===t).map(n=>n.text).join('\n'), assumptions=[...state.assumptions.map(a=>a.text),...state.edges.map(e=>e.assumption)].filter(Boolean).join('\n');const review=[['Impact',values('impact'),'Is this the long-term change you want to contribute to?'],['Outcomes',[values('outcome'),values('intermediate_outcome')].filter(Boolean).join('\n'),'Are these conditions or changes that need to happen before impact?'],['Outputs',values('output'),'Are these immediate products or services, rather than changes in people’s lives?'],['Assumptions',assumptions,'What needs to hold true for the pathway to work? Can you test it?'],['Pathway',state.nodes.length,'Can you explain why inputs and activities lead to outputs, then outcomes and impact?']];return `<section class="toc-workspace"><header class="workspace-head"><span class="eyebrow">Mission &amp; Method · Theory of Change</span><h1>Build your Theory of Change</h1><p>Start with the change you want to contribute to, then make the pathway to it clear. Fill in each section below.</p></header>${foundation()}<form id="toc-workspace-form"><section class="project-strip"><label>Organisation<input name="organisation" value="${safe(state.meta.organisation)}"></label><label>Project name<input name="name" value="${safe(state.meta.name)}"></label></section><div class="toc-sections"><article><h2>1. Objectives ${tooltip('Objective')}</h2><p>What specific change is this project working toward?</p><textarea name="objectives" rows="4">${safe(state.meta.objectives.join('\n'))}</textarea></article><article><h2>2. Description</h2><p>Briefly explain the project and how you expect change to happen.</p><textarea name="description" rows="4">${safe(state.meta.description)}</textarea></article><article><h2>3. Problem ${tooltip('Problem')}</h2><p>What problem are you addressing? Who is affected, and why does it matter?</p><textarea name="problem" rows="5">${safe(state.meta.problem)}</textarea></article><article><h2>4. Inputs ${tooltip('Input')}</h2><p>What resources do you need: people, funding, partners, skills, information or technology?</p><textarea name="input" rows="5">${safe(values('input'))}</textarea></article><article class="optional"><h2>Optional: Activities ${tooltip('Activity')}</h2><p>What will you do with the inputs? Activities explain the work behind the outputs.</p><textarea name="activity" rows="4">${safe(values('activity'))}</textarea></article><article><h2>5. Outputs ${tooltip('Output')}</h2><p>What immediate products or services will the activities create?</p><textarea name="output" rows="5">${safe(values('output'))}</textarea></article><article><h2>6. Outcomes ${tooltip('Outcome')}</h2><p>What changes in knowledge, behaviour, access, practice, relationships or systems do you expect?</p><textarea name="outcome" rows="5">${safe([values('outcome'),values('intermediate_outcome')].filter(Boolean).join('\n'))}</textarea></article><article><h2>7. Impact ${tooltip('Impact')}</h2><p>What broader, longer-term change will this contribute to?</p><textarea name="impact" rows="5">${safe(values('impact'))}</textarea></article><article><h2>8. Assumptions ${tooltip('Assumption')}</h2><p>What needs to be true for this pathway to work? Write one assumption per line.</p><textarea name="assumption" rows="5">${safe(assumptions)}</textarea></article></div><button class="button" type="submit">Save Theory of Change</button></form><section class="review-box"><span class="eyebrow">Review &amp; quality</span><h2>Test your change pathway</h2><div class="review-grid">${review.map(x=>`<article class="${x[1]?'complete':''}"><b>${x[1]?'✓':'—'} ${x[0]}</b><p>${x[2]}</p></article>`).join('')}</div></section><section class="export-box"><span class="eyebrow">Export</span><h2>Download your work</h2><p>Use the complete package for a Word-compatible document that can be printed or saved as PDF.</p><div class="toolbar"><button type="button" class="button ghost" data-export="toc-svg">Theory of Change diagram (SVG)</button><button type="button" class="button ghost" data-export="framework-csv">Framework (CSV)</button><button type="button" class="button ghost" data-export="quality-doc">Quality review (Word)</button><button type="button" class="button" data-export="package-doc">Complete package (Word)</button></div></section></section>`;}
-function excelWorkspace(){const columns=[['objective','Objectives','What specific change or result is this objective working toward?'],['description','Description','Briefly explain the project and how you expect its pathway to create change.'],['problem','Problem','State the problem, who experiences it, why it persists and why it matters.'],['input','Input','List the people, funding, skills, partnerships, information or technology needed.'],['output','Output','List the immediate products or services that delivery will create.'],['outcome','Outcome','Describe changes in knowledge, behaviour, access, practice, relationships or systems.'],['impact','Impact','State the broader long-term change this work contributes to.'],['assumption','Assumptions','State what needs to hold true for this pathway to work.']];const review=[['Objectives',state.tocRows.some(r=>r.objective),'Do the objectives describe a change, rather than a task?'],['Pathway',state.tocRows.some(r=>r.output&&r.outcome&&r.impact),'Can you explain how outputs could contribute to outcomes and then impact?'],['Assumptions',state.tocRows.some(r=>r.assumption),'Have you made conditions outside your control explicit?']];return `<section class="excel-workspace"><header class="workspace-head"><span class="eyebrow">Mission &amp; Method · Theory of Change</span><h1>Theory of Change</h1><p>Complete one row for each objective. Use the <b>i</b> buttons when you need a prompt for a section.</p></header>${foundation()}<form id="excel-toc-form"><section class="project-strip"><label>Organisation<input name="organisation" value="${safe(state.meta.organisation)}"></label><label>Project name<input name="name" value="${safe(state.meta.name)}"></label></section><div class="excel-scroll"><table class="excel-table"><thead><tr>${columns.map(c=>`<th>${c[1]}${tooltip(c[1]==='Objectives'?'Objective':c[1])}</th>`).join('')}<th class="remove-col">&nbsp;</th></tr><tr class="header-help">${columns.map(c=>`<td>${c[2]}</td>`).join('')}<td></td></tr></thead><tbody>${state.tocRows.map(r=>`<tr data-row="${r.id}">${columns.map(c=>`<td><textarea aria-label="${c[1]}" data-field="${c[0]}" rows="8" placeholder="Write here…">${safe(r[c[0]])}</textarea></td>`).join('')}<td class="remove-col"><button type="button" class="row-remove" data-remove-row="${r.id}" aria-label="Remove this Theory of Change row">×</button></td></tr>`).join('')}</tbody></table></div><div class="toolbar"><button type="button" class="button ghost" data-action="add-toc-row">Add objective row</button><button class="button" type="submit">Save Theory of Change</button></div></form><section class="review-box"><span class="eyebrow">Review &amp; quality</span><h2>Check before exporting</h2><div class="review-grid">${review.map(x=>`<article class="${x[1]?'complete':''}"><b>${x[1]?'✓':'—'} ${x[0]}</b><p>${x[2]}</p></article>`).join('')}</div></section><section class="export-box"><span class="eyebrow">Export</span><h2>Download your Theory of Change</h2><div class="toolbar"><button type="button" class="button ghost" data-export="toc-svg">Diagram (SVG)</button><button type="button" class="button ghost" data-export="framework-csv">Framework (CSV)</button><button type="button" class="button ghost" data-export="quality-doc">Quality review (Word)</button><button type="button" class="button" data-export="package-doc">Complete package (Word)</button></div></section></section>`;}
-function excelWorkspaceWithLesson(){return excelWorkspace().replace('</p></header><details',`</p><a class="button lesson-button" href="https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=2&amp;lesson=understanding">Learn about Theory of Change</a></header><details`).replace('data-export="framework-csv">Framework (CSV)','data-export="excel-xlsx">Download Excel (.xlsx)');}
-function html(){return `<div class="toc-app"><header class="toc-top"><a class="toc-brand" href="software.html">Mission <span>&amp;</span> Method <small>BUILD</small></a><div><button class="plain-button" data-action="save-backup">Export data backup</button><span class="subtle">Saved locally · ${new Date(state.lastEdited).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span></div></header>${notice?`<p class="toc-notice" role="status">${safe(notice)}</p>`:''}<main>${excelWorkspaceWithLesson()}</main></div>`;}
-function doExport(kind){const results=[...types].reverse().flatMap(t=>state.nodes.filter(n=>n.type===t));if(kind==='toc-svg'){const s=document.querySelector('#toc-svg')?.outerHTML||svg();download(`${state.meta.name}-theory-of-change.svg`,s,'image/svg+xml');}else if(kind==='framework-csv'){download(`${state.meta.name}-results-framework.csv`,csv([['Objective','Level','Result','Connected from','Indicators'],...results.map(n=>[n.objective,labels[n.type],n.text,state.edges.filter(x=>x.to===n.id).map(x=>node(x.from)?.text).join('; '),state.indicators.filter(i=>i.resultId===n.id).map(i=>i.name).join('; ')])]),'text/csv;charset=utf-8');}else if(kind==='indicator-csv'){download(`${state.meta.name}-indicator-matrix.csv`,csv([['Result','Indicator','Definition','Type','Baseline','Target','Unit','Data source','Method','Frequency','Disaggregation','Owner','Verification','Notes'],...state.indicators.map(i=>[node(i.resultId)?.text,i.name,i.definition,i.kind,i.baseline,i.target,i.unit,i.source,i.method,i.frequency,i.disaggregation,i.owner,i.verification,i.notes])]),'text/csv;charset=utf-8');}else if(kind==='risk-csv'){download(`${state.meta.name}-registers.csv`,csv([['Register','Related pathway/result','Entry','Evidence / mitigation','Likelihood','Impact','Owner','Status'],...state.edges.flatMap(x=>[["Assumption",`${node(x.from)?.text} → ${node(x.to)?.text}`,x.assumption,x.evidence,'','','','To test'],["Risk",node(x.to)?.text,x.risk,'', '', '', '', 'Open']]).filter(x=>x[2])]),'text/csv;charset=utf-8');}else if(kind==='quality-doc'){download(`${state.meta.name}-quality-check.doc`,reportHtmlEnhanced(),'application/msword');}else {download(`${state.meta.name}-programme-design-package.doc`,reportHtmlEnhanced(),'application/msword');}}
-function bind(){root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;notice='';render();});root.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>doExport(b.dataset.export));root.querySelector('[data-action="new-project"]')?.addEventListener('click',()=>{if(confirm('Start a new blank project? Export your current backup first if you want to keep it.')){state=starter();state.nodes=[];state.edges=[];state.meta.name='Untitled project';save();render();}});root.querySelector('[data-action="add-node"]')?.addEventListener('click',()=>addNode());root.querySelector('[data-action="delete-node"]')?.addEventListener('click',()=>delNode(selected));root.querySelector('[data-action="add-edge"]')?.addEventListener('click',()=>{const results=state.nodes.filter(n=>n.type!=='input');if(results.length<2){notice='Add at least two results before connecting them.';render();return;}const from=prompt(`Enter the number of the starting result:\n${results.map((n,i)=>`${i+1}. ${n.text}`).join('\n')}`),to=prompt('Enter the number of the next result:');const a=results[Number(from)-1],b=results[Number(to)-1];if(a&&b&&a!==b){state.edges.push({id:uid('c'),from:a.id,to:b.id,why:'',assumption:'',evidence:'',risk:'',external:''});save();notice='Connection added. Select the arrow to explain it.';render();}});root.querySelector('[data-action="wizard-back"]')?.addEventListener('click',()=>{wizardStep=Math.max(0,wizardStep-1);render();});root.querySelector('[data-action="wizard-next"]')?.addEventListener('click',()=>{const answer=root.querySelector('#wizard-answer').value.trim(),p=prompts[wizardStep];if(!answer){notice='Write a short draft before continuing.';render();return;}if(p[0]==='assumption'){const edge=state.edges.at(-1);if(edge)edge.assumption=answer;else state.assumptions.push({text:answer,related:'Project pathway',evidence:'',status:'To test'});}else {const previous=state.nodes.at(-1);const n={id:uid('r'),type:p[0],text:answer,x:100+(5-wizardStep)*145,y:190+(wizardStep%2)*120};state.nodes.push(n);if(previous)state.edges.push({id:uid('c'),from:n.id,to:previous.id,why:'',assumption:'',evidence:'',risk:'',external:''});}wizardStep++;save();if(wizardStep>=prompts.length){wizardStep=0;tab='canvas';notice='Your first pathway is ready to review in canvas mode.';}render();});root.querySelector('#meta-form')?.addEventListener('submit',ev=>{ev.preventDefault();Object.assign(state.meta,Object.fromEntries(new FormData(ev.currentTarget)));save();notice='Project details saved.';tab='dashboard';render();});root.querySelector('#node-form')?.addEventListener('submit',ev=>{ev.preventDefault();Object.assign(node(selected),Object.fromEntries(new FormData(ev.currentTarget)));save();notice='Result saved.';render();});root.querySelector('#edge-form')?.addEventListener('submit',ev=>{ev.preventDefault();Object.assign(state.edges.find(x=>x.id===selected),Object.fromEntries(new FormData(ev.currentTarget)));save();notice='Causal explanation saved.';render();});root.querySelector('[data-action="add-indicator"]')?.addEventListener('click',()=>root.querySelector('#indicator-editor').innerHTML=indicatorForm());root.querySelectorAll('[data-edit-indicator]').forEach(b=>b.onclick=()=>root.querySelector('#indicator-editor').innerHTML=indicatorForm(state.indicators.find(i=>i.id===b.dataset.editIndicator)));root.querySelector('#indicator-form')?.addEventListener('submit',ev=>{ev.preventDefault();const data=Object.fromEntries(new FormData(ev.currentTarget));let item=state.indicators.find(i=>i.id===data.id);if(!item){item={id:uid('i')};state.indicators.push(item);}Object.assign(item,data);save();notice='Indicator saved.';render();});root.querySelector('[data-action="close-indicator"]')?.addEventListener('click',()=>{root.querySelector('#indicator-editor').innerHTML='';});root.querySelector('[data-action="add-assumption"]')?.addEventListener('click',()=>{const text=prompt('Assumption');if(text){state.assumptions.push({text,related:'Project pathway',evidence:'',status:'To test'});save();render();}});root.querySelector('[data-action="add-risk"]')?.addEventListener('click',()=>{const risk=prompt('Risk');if(risk){state.risks.push({risk,related:'Project pathway',likelihood:'',impact:'',mitigation:'',owner:'',status:'Open'});save();render();}});root.querySelectorAll('[data-focus]').forEach(b=>b.onclick=()=>{selected=b.dataset.focus;tab='canvas';render();});root.querySelector('[data-action="save-backup"]')?.addEventListener('click',()=>download(`${state.meta.name}-structured-project-data.json`,JSON.stringify(state,null,2),'application/json'));bindCanvas();}
-function bindCanvas(){const svgEl=root.querySelector('#toc-svg');if(!svgEl)return;let dragging=null;svgEl.querySelectorAll('[data-node]').forEach(el=>el.addEventListener('pointerdown',ev=>{dragging=el.dataset.node;selected=dragging;el.setPointerCapture(ev.pointerId);render();}));svgEl.querySelectorAll('[data-edge]').forEach(el=>el.addEventListener('click',()=>{selected=el.dataset.edge;render();}));svgEl.addEventListener('pointermove',ev=>{if(!dragging)return;const pt=svgEl.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const p=pt.matrixTransform(svgEl.getScreenCTM().inverse());const n=node(dragging);n.x=Math.max(0,Math.min(820,p.x-115));n.y=Math.max(20,Math.min(520,p.y-38));save();render();});svgEl.addEventListener('pointerup',()=>dragging=null);}
-function currentExcelData(){const form=root.querySelector('#excel-toc-form');if(!form)return excelData();const rows=[...form.querySelectorAll('tbody tr[data-row]')].map(tr=>{const row={};tr.querySelectorAll('[data-field]').forEach(field=>row[field.dataset.field]=field.value.trim());return row;});return [['Mission & Method · Theory of Change'],['Organisation',form.elements.organisation.value.trim()],['Project',form.elements.name.value.trim()],[],['Objectives','Description','Problem','Input','Output','Outcome','Impact','Assumptions'],...rows.map(r=>[r.objective,r.description,r.problem,r.input,r.output,r.outcome,r.impact,r.assumption])];}
-function downloadExcel(){const data=currentExcelData(),project=data[2][1]||'Theory-of-Change';download(`${project}-theory-of-change.xlsx`,xlsx(data),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');}
-function bindUpdated(){
- root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;notice='';render();});
- root.querySelectorAll('[data-tip]').forEach(b=>b.onclick=()=>{notice=`${b.dataset.tip}: ${terms[b.dataset.tip]||'A key Theory of Change concept.'}`;render();});
- root.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>doExport(b.dataset.export));
- root.querySelectorAll('[data-export="excel-xlsx"]').forEach(b=>b.onclick=()=>downloadExcel());
- root.querySelector('[data-action="new-project"]')?.addEventListener('click',()=>{if(confirm('Start a new blank project? Export a backup first if you want to keep this project.')){state=starter();state.nodes=[];state.edges=[];state.meta.name='Untitled project';state.meta.problem='';state.meta.objectives=[];state.meta.description='';save();render();}});
- root.querySelector('[data-action="add-node"]')?.addEventListener('click',()=>addNode());
- root.querySelector('[data-action="delete-node"]')?.addEventListener('click',()=>delNode(selected));
- root.querySelector('[data-action="wizard-back"]')?.addEventListener('click',()=>{wizardStep=Math.max(0,wizardStep-1);render();});
- root.querySelector('[data-action="wizard-next"]')?.addEventListener('click',()=>{const answer=root.querySelector('#wizard-answer').value.trim(),kind=prompts[wizardStep][0];if(kind!=='foundation'&&!answer){notice='Write a short draft before continuing.';render();return;}if(kind==='problem')state.meta.problem=answer;else if(kind==='objective')state.meta.objectives=[...new Set(answer.split('\n').map(x=>x.trim()).filter(Boolean))];else if(kind==='description')state.meta.description=answer;else if(kind==='assumption'){const edge=state.edges.at(-1);if(edge)edge.assumption=answer;else state.assumptions.push({text:answer,related:'Project pathway',evidence:'',status:'To test'});}else if(kind!=='foundation'){const previous=state.nodes.at(-1);const n={id:uid('r'),type:kind,text:answer,objective:state.meta.objectives[0]||'',x:100+(5-wizardStep)*145,y:190+(wizardStep%2)*120};state.nodes.push(n);if(previous)state.edges.push({id:uid('c'),from:n.id,to:previous.id,why:'',assumption:'',evidence:'',risk:'',external:''});}wizardStep++;save();if(wizardStep>=prompts.length){wizardStep=0;tab='quality';notice='Review your complete Theory of Change, then export a professional output.';}render();});
- root.querySelector('#meta-form')?.addEventListener('submit',ev=>{ev.preventDefault();const data=Object.fromEntries(new FormData(ev.currentTarget));data.objectives=String(data.objectives||'').split('\n').map(x=>x.trim()).filter(Boolean);Object.assign(state.meta,data);save();notice='Project details saved.';tab='dashboard';render();});
- root.querySelector('#node-form')?.addEventListener('submit',ev=>{ev.preventDefault();Object.assign(node(selected),Object.fromEntries(new FormData(ev.currentTarget)));save();notice='Result saved.';render();});
- root.querySelector('#edge-form')?.addEventListener('submit',ev=>{ev.preventDefault();Object.assign(state.edges.find(x=>x.id===selected),Object.fromEntries(new FormData(ev.currentTarget)));save();notice='Causal explanation saved.';render();});
- root.querySelector('[data-action="add-indicator"]')?.addEventListener('click',()=>root.querySelector('#indicator-editor').innerHTML=indicatorForm());
- root.querySelectorAll('[data-edit-indicator]').forEach(b=>b.onclick=()=>root.querySelector('#indicator-editor').innerHTML=indicatorForm(state.indicators.find(i=>i.id===b.dataset.editIndicator)));
- root.querySelector('#indicator-form')?.addEventListener('submit',ev=>{ev.preventDefault();const data=Object.fromEntries(new FormData(ev.currentTarget));let item=state.indicators.find(i=>i.id===data.id);if(!item){item={id:uid('i')};state.indicators.push(item);}Object.assign(item,data);save();notice='Indicator saved.';render();});
- root.querySelector('[data-action="close-indicator"]')?.addEventListener('click',()=>root.querySelector('#indicator-editor').innerHTML='');
- root.querySelector('[data-action="add-assumption"]')?.addEventListener('click',()=>{const text=prompt('Assumption');if(text){state.assumptions.push({text,related:'Project pathway',evidence:'',status:'To test'});save();render();}});
- root.querySelector('[data-action="add-risk"]')?.addEventListener('click',()=>{const risk=prompt('Risk');if(risk){state.risks.push({risk,related:'Project pathway',likelihood:'',impact:'',mitigation:'',owner:'',status:'Open'});save();render();}});
- root.querySelectorAll('[data-focus]').forEach(b=>b.onclick=()=>{selected=b.dataset.focus;tab='canvas';render();});
- root.querySelector('#toc-workspace-form')?.addEventListener('submit',ev=>{ev.preventDefault();const data=Object.fromEntries(new FormData(ev.currentTarget));state.meta.organisation=data.organisation.trim();state.meta.name=data.name.trim()||'Untitled project';state.meta.objectives=String(data.objectives||'').split('\n').map(x=>x.trim()).filter(Boolean);state.meta.description=data.description.trim();state.meta.problem=data.problem.trim();['input','activity','output','outcome','impact'].forEach(type=>syncNodes(type,data[type]));state.nodes=state.nodes.filter(n=>n.type!=='intermediate_outcome');state.assumptions=String(data.assumption||'').split('\n').map(x=>x.trim()).filter(Boolean).map(text=>({text,related:'Theory of Change pathway',evidence:'',status:'To test'}));state.edges=[];const order=['input','activity','output','outcome','impact'];for(let i=0;i<order.length-1;i++){const from=state.nodes.find(n=>n.type===order[i]),to=state.nodes.find(n=>n.type===order[i+1]);if(from&&to)state.edges.push({id:uid('c'),from:from.id,to:to.id,why:'',assumption:'',evidence:'',risk:'',external:''});}save();notice='Theory of Change saved. Review the questions below, then export.';render();});
- root.querySelector('[data-action="add-toc-row"]')?.addEventListener('click',()=>{state.tocRows.push({id:uid('row'),objective:'',description:'',problem:'',input:'',output:'',outcome:'',impact:'',assumption:''});render();});
- root.querySelectorAll('[data-remove-row]').forEach(b=>b.onclick=()=>{if(state.tocRows.length>1)state.tocRows=state.tocRows.filter(r=>r.id!==b.dataset.removeRow);else Object.assign(state.tocRows[0],{objective:'',description:'',problem:'',input:'',output:'',outcome:'',impact:'',assumption:''});render();});
- root.querySelector('#excel-toc-form')?.addEventListener('submit',ev=>{ev.preventDefault();const form=ev.currentTarget;state.meta.organisation=form.elements.organisation.value.trim();state.meta.name=form.elements.name.value.trim()||'Untitled project';state.tocRows=[...form.querySelectorAll('tbody tr[data-row]')].map(tr=>{const row={id:tr.dataset.row};tr.querySelectorAll('[data-field]').forEach(field=>row[field.dataset.field]=field.value.trim());return row;});state.meta.objectives=state.tocRows.map(r=>r.objective).filter(Boolean);state.meta.description=state.tocRows.map(r=>r.description).filter(Boolean).join('\n\n');state.meta.problem=state.tocRows.map(r=>r.problem).filter(Boolean).join('\n\n');state.nodes=state.nodes.filter(n=>!['input','output','outcome','intermediate_outcome','impact'].includes(n.type));state.assumptions=[];state.edges=[];state.tocRows.forEach((r,index)=>{const add=(type,text)=>{if(!text)return null;const n={id:uid('r'),type,text,objective:r.objective,x:90+index*30,y:100+index*78};state.nodes.push(n);return n;};const input=add('input',r.input),output=add('output',r.output),outcome=add('outcome',r.outcome),impact=add('impact',r.impact);String(r.assumption||'').split('\n').map(x=>x.trim()).filter(Boolean).forEach(text=>state.assumptions.push({text,related:r.objective||'Theory of Change pathway',evidence:'',status:'To test'}));[input,output,outcome,impact].filter(Boolean).reduce((from,to)=>{state.edges.push({id:uid('c'),from:from.id,to:to.id,why:'',assumption:r.assumption||'',evidence:'',risk:'',external:''});return to;});});save();notice='Theory of Change saved. Review it below, then export.';render();});
- root.querySelector('[data-action="save-backup"]')?.addEventListener('click',()=>download(`${state.meta.name}-structured-project-data.json`,JSON.stringify(state,null,2),'application/json'));
- bindCanvas();
+
+// ---------- Views ----------
+function dashboard(){
+ const pw=db.pathways.length;
+ const complete=db.pathways.filter(p=>p.input&&p.output&&p.outcome&&p.impact).length;
+ const withAssumption=db.pathways.filter(p=>p.assumptions).length;
+ const withIndicator=db.pathways.filter(p=>db.indicators.some(i=>i.pathwayId===p.id)).length;
+ return `<section class="panel"><span class="eyebrow">Overview</span><h2>Theory of Change progress</h2>
+  <div class="grid four">${card('Pathways',pw,`${complete} complete (all 4 levels filled)`)}${card('With assumptions',withAssumption,'Named conditions that must hold')}${card('With indicators',withIndicator,'Evidence of change identified')}${card('Objectives',db.meta.objectives.length,'From Module 1 or added here')}</div>
+ </section>`;
 }
-function htmlWithExcel(){return html().replace('<button class="plain-button" data-action="save-backup">Export data backup</button>','<button class="button header-export" data-export="excel-xlsx">Download Excel (.xlsx)</button>');}
-function render(){root.innerHTML=htmlWithExcel();bindUpdated();}
-if(root)render();
+
+function startView(){
+ const m=db.meta;
+ return `${journeyPanel()}${dashboard()}
+  <div class="notice">A Theory of Change explains how your work contributes to the change you want. Build it level by level: Input → Activity → Output → Outcome → Impact, with the assumptions that must hold between each step.</div>
+  <section class="panel"><h2>Project details</h2>
+   <form data-form="meta" class="form">
+    ${field('Organisation name','organisation',m.organisation)}
+    ${field('Project / plan name','name',m.name)}
+    ${field('Country or location','country',m.country)}
+    ${field('Dates','dates',m.dates)}
+    ${field('Prepared by','preparedBy',m.preparedBy)}
+    ${field('Version','version',m.version)}
+    ${area('Mission (from Module 1)','mission',m.mission)}
+    ${area('Vision (from Module 1)','vision',m.vision)}
+    ${area('Values (from Module 1)','values',m.values)}
+    ${area('Impact goal — the broader change this contributes to','impactGoal',m.impactGoal)}
+    ${area('Problem — the situation this project addresses','problem',m.problem)}
+    ${area('Description — plain-language summary of the whole pathway','description',m.description)}
+    ${area('Objectives — one per line','objectives',(m.objectives||[]).join('\n'),'The specific changes this project is working toward. Imported from Strategic Objectives if available.')}
+    ${area('Notes','notes',m.notes)}
+    <div class="actions field full"><button class="button" type="submit">Save project details</button></div>
+   </form>
+  </section>
+  <section class="panel"><h2>Get started</h2>
+   <div class="actions">
+    ${soReady()?`<button class="button" data-action="import-so-direct">Bring in objectives from Strategic Objectives (${soObjectives().length})</button>`:''}
+    <button class="button ${soReady()?'secondary':''}" data-action="add-pathway">Add pathway</button>
+    <button class="button secondary" data-action="load-example">Load example</button>
+    ${importButtons('')}
+   </div>
+  </section>`;
+}
+
+function pathwaysView(){
+ const rows=db.pathways.map((p,i)=>`<article class="panel"><div class="rowhead section-head"><div><span class="eyebrow">Pathway ${i+1}</span><h3>${esc(p.objective||'Untitled pathway')}</h3>${edited(p)}</div><div class="actions"><button class="button small secondary" data-action="edit-pathway" data-id="${p.id}">Edit</button></div></div>
+  <div class="split">
+   <div><b class="eyebrow">Input</b><p>${esc(p.input||'—')}</p><b class="eyebrow">Activity</b><p>${esc(p.activity||'—')}</p><b class="eyebrow">Output</b><p>${esc(p.output||'—')}</p></div>
+   <div><b class="eyebrow">Intermediate outcome</b><p>${esc(p.intermediateOutcome||'—')}</p><b class="eyebrow">Outcome</b><p>${esc(p.outcome||'—')}</p><b class="eyebrow">Impact</b><p>${esc(p.impact||'—')}</p></div>
+  </div>
+  ${p.assumptions?`<p><b>Assumptions:</b> ${esc(p.assumptions).replace(/\n/g,'<br>')}</p>`:''}
+  ${p.risks?`<p><b>Risks:</b> ${esc(p.risks).replace(/\n/g,'<br>')}</p>`:''}
+ </article>`);
+ return `<div class="rowhead section-head"><div><h2>Pathways</h2><p>One pathway per objective. Fill in each level — the assumptions column names what has to hold between steps.</p></div><button class="button" data-action="add-pathway">Add pathway</button></div>
+  ${db.pathways.length?rows.join(''):empty('No pathways yet. Add one to start.')}`;
+}
+
+function indicatorsView(){
+ const rows=db.indicators.map(i=>`<tr>
+  <td><b>${esc(i.name||'Untitled')}</b>${edited(i)}</td>
+  <td>${esc(LEVEL_LABEL[i.level]||i.level)}</td>
+  <td>${esc(i.baseline||'—')} → ${esc(i.target||'—')}${i.unit?` ${esc(i.unit)}`:''}</td>
+  <td>${esc(i.source||'—')}</td>
+  <td>${esc(i.frequency||'—')}</td>
+  <td>${esc(i.owner||'—')}</td>
+  <td><button class="button small secondary" data-action="edit-indicator" data-id="${i.id}">Edit</button></td>
+ </tr>`);
+ return `<div class="rowhead section-head"><div><h2>Indicators</h2><p>How you'll know change is happening. Each indicator needs a baseline, target, source and reporting frequency to be useful.</p></div><button class="button" data-action="add-indicator">Add indicator</button></div>
+  ${table(['Indicator','Level','Baseline → target','Source','Frequency','Owner',''],rows,'No indicators yet. Define at least one for each outcome and impact.')}`;
+}
+
+function assumptionsView(){
+ // Combine per-pathway assumption lines into a flat view
+ const items=[];
+ db.pathways.forEach((p,i)=>{
+  (p.assumptions||'').split('\n').map(x=>x.trim()).filter(Boolean).forEach(text=>items.push({pathway:p.objective||`Pathway ${i+1}`,text,kind:'assumption',id:p.id}));
+  (p.risks||'').split('\n').map(x=>x.trim()).filter(Boolean).forEach(text=>items.push({pathway:p.objective||`Pathway ${i+1}`,text,kind:'risk',id:p.id}));
+ });
+ const assumptions=items.filter(x=>x.kind==='assumption');
+ const risks=items.filter(x=>x.kind==='risk');
+ return `<div class="rowhead section-head"><div><h2>Assumptions &amp; risks</h2><p>Everything from the Assumptions and Risks fields across all pathways. Edit the pathway to change these.</p></div></div>
+  <section class="panel"><h3>Assumptions (${assumptions.length})</h3>${assumptions.length?table(['Pathway','Assumption',''],assumptions.map(a=>`<tr><td>${esc(a.pathway)}</td><td>${esc(a.text)}</td><td><button class="link" data-action="edit-pathway" data-id="${a.id}">Edit pathway</button></td></tr>`),''):empty('No assumptions recorded yet.')}</section>
+  <section class="panel"><h3>Risks (${risks.length})</h3>${risks.length?table(['Pathway','Risk',''],risks.map(r=>`<tr><td>${esc(r.pathway)}</td><td>${esc(r.text)}</td><td><button class="link" data-action="edit-pathway" data-id="${r.id}">Edit pathway</button></td></tr>`),''):empty('No risks recorded yet.')}</section>`;
+}
+
+function reviewView(){
+ const checks=[
+  ['Impact defined',db.pathways.some(p=>p.impact)||!!db.meta.impactGoal,'Is the long-term change clearly stated?'],
+  ['Outcomes connect to impact',db.pathways.some(p=>p.outcome&&p.impact),'Each outcome should be a step toward impact.'],
+  ['Outputs link to outcomes',db.pathways.some(p=>p.output&&p.outcome),'Outputs are what delivery produces; outcomes are the change that follows.'],
+  ['Assumptions named',db.pathways.some(p=>p.assumptions),'What has to hold true for the pathway to work?'],
+  ['Indicators defined',db.indicators.length>0,'How will you see change happening?'],
+  ['Problem stated',!!db.meta.problem,'Does the problem describe who, why and the consequence?']
+ ];
+ const snaps=[...db.snapshots].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ return `<div class="rowhead section-head"><div><h2>Review your Theory of Change</h2><p>Read the complete design together before export. Snapshots keep a dated record of what the theory looked like at that moment.</p></div><button class="button" data-action="new-snapshot">Capture snapshot</button></div>
+  <section class="panel"><h3>Quality check</h3><div class="grid">${checks.map(c=>`<div class="card ${c[1]?'':'warn'}"><span class="eyebrow">${c[1]?'✓':'—'} ${esc(c[0])}</span><p>${esc(c[2])}</p></div>`).join('')}</div></section>
+  <section class="panel"><h3>Review snapshots</h3>${snaps.length?table(['Date','Reviewer','Pathways','Summary',''],snaps.map(sn=>`<tr><td>${esc(fmtDate(sn.date))}</td><td>${esc(sn.reviewer||'—')}</td><td>${(sn.snapshot?.pathways||[]).length}</td><td>${esc(sn.summary||'—')}</td><td><button class="link" data-action="delete-snapshot" data-id="${sn.id}">Delete</button></td></tr>`),''):empty('No snapshots yet. Capture one at your next review.')}</section>`;
+}
+
+function exportView(){
+ return `<div class="rowhead section-head"><div><h2>Export your Theory of Change</h2><p>Excel matches the Module 2 workbook exactly — you can re-import it later without losing anything.</p></div></div>
+  ${exportButtons()}
+  <section class="panel"><h3>${esc(db.meta.name||'Theory of Change')}</h3><p>${esc(db.meta.organisation||'Organisation not entered')} · ${esc(db.meta.dates||'—')} · Prepared by ${esc(db.meta.preparedBy||'—')}</p>
+   ${db.meta.impactGoal?`<p><b>Impact goal:</b> ${esc(db.meta.impactGoal)}</p>`:''}
+   ${db.meta.problem?`<p><b>Problem:</b> ${esc(db.meta.problem)}</p>`:''}
+   ${db.meta.description?`<p><b>Description:</b> ${esc(db.meta.description)}</p>`:''}
+   ${(db.meta.objectives||[]).length?`<p><b>Objectives:</b></p><ul>${db.meta.objectives.map(o=>`<li>${esc(o)}</li>`).join('')}</ul>`:''}
+  </section>
+  ${db.pathways.map((p,i)=>`<section class="panel"><h3>Pathway ${i+1}: ${esc(p.objective||'Untitled')}</h3>
+   <p><b>Input:</b> ${esc(p.input||'—')}</p>
+   <p><b>Activity:</b> ${esc(p.activity||'—')}</p>
+   <p><b>Output:</b> ${esc(p.output||'—')}</p>
+   <p><b>Intermediate outcome:</b> ${esc(p.intermediateOutcome||'—')}</p>
+   <p><b>Outcome:</b> ${esc(p.outcome||'—')}</p>
+   <p><b>Impact:</b> ${esc(p.impact||'—')}</p>
+   ${p.assumptions?`<p><b>Assumptions:</b> ${esc(p.assumptions)}</p>`:''}
+   ${p.risks?`<p><b>Risks:</b> ${esc(p.risks)}</p>`:''}
+  </section>`).join('')}`;
+}
+
+// ---------- Modals ----------
+function pathwayModal(p){
+ const isNew=!p;p=p||blankPathway();
+ const objOptions=db.meta.objectives.length?db.meta.objectives.map(o=>[o,o]):[['','']];
+ return modal(isNew?'Add pathway':'Edit pathway',`<form data-form="pathway" data-id="${esc(p.id||'')}" class="form">
+  ${db.meta.objectives.length?select('Objective','objective',objOptions,p.objective,'The objective this pathway supports.','Not linked'):field('Objective','objective',p.objective,'text','','The objective this pathway supports.')}
+  ${area('Description — one-line summary of the pathway','description',p.description)}
+  ${area('Problem addressed by this pathway','problem',p.problem)}
+  ${area('Input — resources needed','input',p.input,'People, funding, expertise, technology, partnerships.')}
+  ${area('Activity — work done with the inputs (optional)','activity',p.activity,'What you do with the resources.')}
+  ${area('Output — immediate product or service','output',p.output,'What delivery produces: trainings held, reports published, services delivered.')}
+  ${area('Intermediate outcome (optional)','intermediateOutcome',p.intermediateOutcome,'A midpoint change between output and the main outcome.')}
+  ${area('Outcome — change in behaviour, knowledge or system','outcome',p.outcome,'The change your work causes, often together with others.')}
+  ${area('Impact — broader long-term change contributed to','impact',p.impact,'The condition your work helps create over time.')}
+  ${area('Assumptions — one per line','assumptions',p.assumptions,'Conditions that must hold for the pathway to work.')}
+  ${area('Risks — one per line','risks',p.risks,'What could stop this pathway from succeeding.')}
+  ${area('Evidence or references','evidence',p.evidence)}
+  ${formEnd('Save pathway',{deleteId:isNew?'':p.id,deleteLabel:'Delete pathway'})}
+ </form>`);
+}
+
+function indicatorModal(i){
+ const isNew=!i;i=i||blankIndicator();
+ const pathwayOptions=db.pathways.map((p,idx)=>[p.id,p.objective||`Pathway ${idx+1}`]);
+ return modal(isNew?'Add indicator':'Edit indicator',`<form data-form="indicator" data-id="${esc(i.id||'')}" class="form">
+  ${select('Pathway','pathwayId',pathwayOptions,i.pathwayId,'','Not linked')}
+  ${select('Level measured','level',LEVELS,i.level||'outcome','Which level of the pathway this indicator measures.')}
+  ${field('Indicator name','name',i.name,'text','required','What is counted or measured.')}
+  ${area('Definition','definition',i.definition,'Exactly what counts, and what does not.')}
+  ${field('Baseline','baseline',i.baseline)}
+  ${field('Target','target',i.target)}
+  ${field('Unit','unit',i.unit)}
+  ${field('Data source','source',i.source)}
+  ${field('Reporting frequency','frequency',i.frequency)}
+  ${field('Owner','owner',i.owner)}
+  ${field('Means of verification','verification',i.verification)}
+  ${area('Notes','notes',i.notes)}
+  ${formEnd('Save indicator',{deleteId:isNew?'':i.id,deleteLabel:'Delete indicator'})}
+ </form>`);
+}
+
+function snapshotModal(){
+ return modal('Capture Theory of Change snapshot',`<form data-form="snapshot" class="form">
+  ${field('Snapshot date','date',today(),'date','required')}
+  ${field('Reviewer','reviewer',editorName()||'')}
+  ${area('Summary — what was discussed or decided','summary','')}
+  <div class="actions field full"><button class="button" type="submit">Capture snapshot</button><button class="button secondary" type="button" data-action="close">Cancel</button></div>
+ </form>`,'Saves the whole Theory of Change (meta, pathways, indicators) at this moment so you can see what it looked like later.');
+}
+
+// ---------- Render ----------
+function view(){
+ switch(tab){
+  case 'Start':return startView();
+  case 'Pathways':return pathwaysView();
+  case 'Indicators':return indicatorsView();
+  case 'Assumptions & risks':return assumptionsView();
+  case 'Review':return reviewView();
+  case 'Export':return exportView();
+ }
+ return startView();
+}
+
+function render(){
+ document.querySelector('#app').innerHTML=shell({
+  eyebrow:'Strategy & impact · Theory of Change',
+  title:'Theory of Change Builder',
+  intro:'Map how your work contributes to long-term change. Build pathways from inputs to impact and name the assumptions that need to hold.',
+  module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=2',label:'Review Module Two'},
+  tabs:TABS, active:tab, message, content:view(), modal:modal_html
+ });
+ bind(document.querySelector('#app'),{
+  tab:t=>{tab=t;message='';modal_html='';render()},
+  action,submit,
+  importXlsx:file=>importXlsx(file),
+  importJson:file=>importJson(file)
+ });
+}
+
+// ---------- Actions ----------
+function action(el){
+ const a=el.dataset?.action;
+ if(a==='close'){modal_html='';render();return}
+ if(a==='add-pathway'){modal_html=pathwayModal();render();return}
+ if(a==='edit-pathway'){const p=db.pathways.find(x=>x.id===el.dataset.id);if(p){modal_html=pathwayModal(p);render()}return}
+ if(a==='add-indicator'){modal_html=indicatorModal();render();return}
+ if(a==='edit-indicator'){const i=db.indicators.find(x=>x.id===el.dataset.id);if(i){modal_html=indicatorModal(i);render()}return}
+ if(a==='new-snapshot'){modal_html=snapshotModal();render();return}
+ if(a==='delete-snapshot'){if(!confirm('Delete this snapshot? Cannot be undone.'))return;db.snapshots=db.snapshots.filter(sn=>sn.id!==el.dataset.id);persist(db);message='Snapshot deleted.';render();return}
+ if(a==='delete'){
+  const id=el.dataset.id;
+  if(!confirm('Delete this record? Cannot be undone.'))return;
+  db.pathways=db.pathways.filter(p=>p.id!==id);
+  db.indicators=db.indicators.filter(i=>i.id!==id);
+  persist(db);modal_html='';message='Deleted.';render();return;
+ }
+ if(a==='import-so-direct'){
+  const so=readSO();if(!so||!so.objectives?.length){message='No Strategic Objectives found. Open that tool first.';render();return}
+  const objectives=so.objectives.map(o=>`${o.code} · ${o.title}`);
+  if(!confirm(`Bring in ${objectives.length} objective${objectives.length===1?'':'s'} from Strategic Objectives?\n\nThey'll replace the Objectives list in this tool. Pathways, indicators and snapshots stay as they are.`))return;
+  db.meta.objectives=objectives;
+  if(so.meta){if(!db.meta.mission)db.meta.mission=so.meta.mission||'';if(!db.meta.vision)db.meta.vision=so.meta.vision||'';if(!db.meta.values)db.meta.values=so.meta.values||'';if(!db.meta.organisation)db.meta.organisation=so.meta.organisation||''}
+  persist(db);message=`${objectives.length} objective${objectives.length===1?'':'s'} imported.`;tab='Start';render();return;
+ }
+ if(a==='load-example'){
+  if((db.pathways.length>1||db.pathways.some(p=>p.output||p.outcome))&&!confirm('Replace current pathways with an example?'))return;
+  db=exampleDb();persist(db);message='Example loaded.';render();return;
+ }
+ if(a==='download-template'){try{download('Mission-and-Method-theory-of-change-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE);message='Template downloaded.';render()}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Mission-and-Method-theory-of-change.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='xlsx'){try{download('Mission-and-Method-theory-of-change.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel workbook downloaded.';render()}catch(e){message='Export failed: '+e.message;render()}return}
+ if(a==='csv'){exportCsv();return}
+ if(a==='print'){window.print();return}
+}
+
+function submit(form){
+ const kind=form.dataset.form,d=formData(form);
+ if(kind==='meta'){
+  const objectives=String(d.objectives||'').split('\n').map(x=>x.trim()).filter(Boolean);
+  Object.assign(db.meta,{organisation:s(d.organisation),name:s(d.name),country:s(d.country),dates:s(d.dates),preparedBy:s(d.preparedBy),version:s(d.version),mission:s(d.mission),vision:s(d.vision),values:s(d.values),impactGoal:s(d.impactGoal),problem:s(d.problem),description:s(d.description),notes:s(d.notes),objectives});
+  persist(db);message='Project details saved.';render();return;
+ }
+ if(kind==='pathway'){
+  const existing=db.pathways.find(p=>p.id===form.dataset.id);
+  const p=existing||{...blankPathway()};
+  Object.assign(p,{objective:s(d.objective),description:s(d.description),problem:s(d.problem),input:s(d.input),activity:s(d.activity),output:s(d.output),intermediateOutcome:s(d.intermediateOutcome),outcome:s(d.outcome),impact:s(d.impact),assumptions:s(d.assumptions),risks:s(d.risks),evidence:s(d.evidence)});
+  stamp(p);
+  if(!existing)db.pathways.push(p);
+  persist(db);modal_html='';message='Pathway saved.';render();return;
+ }
+ if(kind==='indicator'){
+  const existing=db.indicators.find(i=>i.id===form.dataset.id);
+  const i=existing||{...blankIndicator()};
+  Object.assign(i,{pathwayId:d.pathwayId||'',level:d.level||'outcome',name:s(d.name),definition:s(d.definition),baseline:s(d.baseline),target:s(d.target),unit:s(d.unit),source:s(d.source),frequency:s(d.frequency),owner:s(d.owner),verification:s(d.verification),notes:s(d.notes)});
+  stamp(i);
+  if(!existing)db.indicators.push(i);
+  persist(db);modal_html='';message='Indicator saved.';render();return;
+ }
+ if(kind==='snapshot'){
+  const snap={id:uid(),date:d.date||today(),reviewer:s(d.reviewer),summary:s(d.summary),snapshot:{meta:clone(db.meta),pathways:clone(db.pathways),indicators:clone(db.indicators)}};
+  db.snapshots.unshift(snap);persist(db);modal_html='';message='Snapshot captured.';render();return;
+ }
+}
+
+// ---------- Excel ----------
+const META_LABELS={organisation:'Organisation',name:'Project name',country:'Country',dates:'Dates',preparedBy:'Prepared by',version:'Version',mission:'Mission',vision:'Vision',values:'Values',impactGoal:'Impact goal',problem:'Problem',description:'Description',notes:'Notes'};
+const PATHWAY_HEADERS=['Objective','Description','Problem','Input','Activity','Output','Intermediate outcome','Outcome','Impact','Assumptions','Risks','Evidence','Last edited by','Last edited at'];
+const INDICATOR_HEADERS=['Pathway objective','Level','Indicator','Definition','Baseline','Target','Unit','Data source','Frequency','Owner','Means of verification','Notes','Last edited by','Last edited at'];
+const SNAPSHOT_HEADERS=['Date','Reviewer','Summary','Pathway count','Indicator count','Snapshot JSON'];
+
+function buildWorkbook(withData){
+ const meta=Object.entries(META_LABELS).map(([k,l])=>[l,withData?(k==='notes'?db.meta[k]:db.meta[k]||''):'']);
+ if(withData){
+  meta.push(['Objectives',(db.meta.objectives||[]).join(' | ')]);
+ }else{
+  meta.push(['Objectives','']);
+ }
+ const pathwayById=id=>db.pathways.find(p=>p.id===id);
+ const pathwayRows=withData?db.pathways.map(p=>[p.objective,p.description,p.problem,p.input,p.activity,p.output,p.intermediateOutcome,p.outcome,p.impact,p.assumptions,p.risks,p.evidence,p.lastEditedBy||'',p.lastEditedAt||'']):[];
+ const indicatorRows=withData?db.indicators.map(i=>[pathwayById(i.pathwayId)?.objective||'',i.level,i.name,i.definition,i.baseline,i.target,i.unit,i.source,i.frequency,i.owner,i.verification,i.notes,i.lastEditedBy||'',i.lastEditedAt||'']):[];
+ const snapshotRows=withData?db.snapshots.map(sn=>[sn.date,sn.reviewer||'',sn.summary||'',(sn.snapshot?.pathways||[]).length,(sn.snapshot?.indicators||[]).length,JSON.stringify(sn.snapshot||{})]):[];
+ return buildXlsx([
+  readmeSheet([
+   'Mission & Method — Theory of Change workbook (Module 2)',
+   'This workbook matches the Theory of Change Builder one-to-one.',
+   '',
+   'How to use',
+   '1. Meta — project context and the Mission/Vision/Values from Module 1.',
+   '2. Pathways — one row per objective-level pathway from inputs through to impact, with assumptions and risks.',
+   '3. Indicators — one row per indicator; link to its pathway by the pathway\'s objective.',
+   '4. Review snapshots — captured snapshots of the whole theory at a point in time.',
+   '',
+   'Round-trip with the tool',
+   'Complete this template in Excel, then Import Excel workbook in the tool. Export from the tool later to get an updated copy back. Nothing changes format either way.',
+   '',
+   'Relationship to Strategic Objectives (Module 1)',
+   'Objectives can be brought in from the Strategic Objectives tool with one click (Start tab). They appear as the Objective field on each pathway row.'
+  ]),
+  metaSheet(meta),
+  {name:'Pathways',headerRows:[0],rows:[PATHWAY_HEADERS,...pathwayRows]},
+  {name:'Indicators',headerRows:[0],rows:[INDICATOR_HEADERS,...indicatorRows]},
+  {name:'Review snapshots',headerRows:[0],rows:[SNAPSHOT_HEADERS,...snapshotRows]},
+  schemaSheet('mission-method-theory-of-change',2)
+ ]);
+}
+
+async function importXlsx(file){
+ try{
+  const sheets=await parseXlsx(file);
+  const metaRows=findSheet(sheets,['Meta']);
+  const metaMap={organisation:'Organisation',name:'Project name',country:'Country',dates:'Dates',preparedBy:'Prepared by',version:'Version',mission:'Mission',vision:'Vision',values:'Values',impactGoal:'Impact goal',problem:'Problem',description:'Description',notes:'Notes'};
+  const newMeta={...blankMeta(),...metaFromSheet(metaRows,metaMap)};
+  // Objectives: look for a row labeled "Objectives" in meta
+  if(metaRows){const obj=metaRows.find(r=>String(r[0]||'').trim().toLowerCase()==='objectives');if(obj)newMeta.objectives=String(obj[1]||'').split(/[|\n]/).map(x=>x.trim()).filter(Boolean)}
+  const pathwayMap={objective:'Objective',description:'Description',problem:'Problem',input:'Input',activity:'Activity',output:'Output',intermediateOutcome:'Intermediate outcome',outcome:'Outcome',impact:'Impact',assumptions:'Assumptions',risks:'Risks',evidence:'Evidence',lastEditedBy:'Last edited by',lastEditedAt:'Last edited at'};
+  const pathways=rowsToObjects(findSheet(sheets,['Pathways']),pathwayMap).map(r=>({...blankPathway(),...r}));
+  const indicatorMap={pathwayObjective:'Pathway objective',level:'Level',name:'Indicator',definition:'Definition',baseline:'Baseline',target:'Target',unit:'Unit',source:'Data source',frequency:'Frequency',owner:'Owner',verification:'Means of verification',notes:'Notes',lastEditedBy:'Last edited by',lastEditedAt:'Last edited at'};
+  const indicators=rowsToObjects(findSheet(sheets,['Indicators']),indicatorMap).map(r=>{const pathway=pathways.find(p=>p.objective===r.pathwayObjective);return {...blankIndicator(),pathwayId:pathway?.id||'',level:r.level||'outcome',name:r.name,definition:r.definition,baseline:r.baseline,target:r.target,unit:r.unit,source:r.source,frequency:r.frequency,owner:r.owner,verification:r.verification,notes:r.notes,lastEditedBy:r.lastEditedBy,lastEditedAt:r.lastEditedAt}});
+  const snapMap={date:'Date',reviewer:'Reviewer',summary:'Summary',json:'Snapshot JSON'};
+  const snapshots=rowsToObjects(findSheet(sheets,['Review snapshots']),snapMap).map(sn=>{let snap={};try{snap=JSON.parse(String(sn.json||'{}'))}catch{}return {id:uid(),date:sn.date,reviewer:sn.reviewer,summary:sn.summary,snapshot:snap}});
+  const preview=`Import preview:\n• ${pathways.length} pathways\n• ${indicators.length} indicators\n• ${snapshots.length} snapshots\n\nReplace current data?`;
+  if(!confirm(preview))return;
+  db={version:2,meta:newMeta,pathways:pathways.length?pathways:[blankPathway()],indicators,snapshots};
+  persist(db);tab='Start';message='Workbook imported.';render();
+ }catch(e){message='Import failed: '+e.message;render()}
+}
+
+async function importJson(file){
+ try{
+  const obj=JSON.parse(await file.text());
+  let next;
+  if(obj.version===2&&Array.isArray(obj.pathways))next=obj;
+  else if(obj.meta&&(Array.isArray(obj.tocRows)||Array.isArray(obj.nodes)))next=migrateV1(obj);
+  else throw new Error('Not a Theory of Change backup');
+  if(!confirm('Replace current data?'))return;
+  db={...blank(),...next};persist(db);tab='Start';message='Backup imported.';render();
+ }catch(e){message='Import failed: '+e.message;render()}
+}
+
+function exportCsv(){
+ const rows=[['Section','Pathway','Field','Value']];
+ db.pathways.forEach((p,i)=>{
+  const pname=p.objective||`Pathway ${i+1}`;
+  ['objective','description','problem','input','activity','output','intermediateOutcome','outcome','impact','assumptions','risks','evidence'].forEach(k=>{if(p[k])rows.push(['pathway',pname,k,p[k]])});
+ });
+ db.indicators.forEach(ind=>{
+  const pathway=db.pathways.find(p=>p.id===ind.pathwayId);
+  const pname=pathway?.objective||'—';
+  ['name','definition','baseline','target','unit','source','frequency','owner','verification'].forEach(k=>{if(ind[k])rows.push(['indicator',pname,k,ind[k]])});
+ });
+ download('Mission-and-Method-theory-of-change.csv',csv(rows),'text/csv;charset=utf-8');
+}
+
+// ---------- Example ----------
+function exampleDb(){
+ const d=blank();
+ d.meta={...blankMeta(),organisation:'Example organisation',name:'Community livelihoods programme',country:'Example country',dates:`${currentYear}–${currentYear+2}`,impactGoal:'Young adults in Riverside have more secure livelihoods.',problem:'Young adults in Riverside struggle to find secure work and employers use narrow recruitment practices.',description:'If we test barriers with young adults, adapt materials, train mentors and run accessible sessions, young adults will demonstrate job-relevant skills and employers will adopt accessible recruitment — contributing to more secure livelihoods.',objectives:['ESO1 · Young adults secure sustainable livelihoods']};
+ d.pathways=[{...blankPathway(),objective:'ESO1 · Young adults secure sustainable livelihoods',description:'Prepare young adults for work and encourage inclusive recruitment.',problem:'Young adults in Riverside struggle to find secure work.',input:'Coordinator time, accessible venue, transport support and trained mentors.',activity:'Test barriers with young adults; adapt materials; recruit mentors; deliver sessions.',output:'Accessible job-readiness sessions and employer engagement delivered.',intermediateOutcome:'Young adults demonstrate job-relevant skills and employers use accessible recruitment.',outcome:'Graduates enter suitable work or sustain viable income activities.',impact:'Young adults in Riverside have more secure livelihoods.',assumptions:'Local employers participate in accessible recruitment.\nYoung adults can attend regularly without childcare or transport barriers.',risks:'Employer engagement is slower than expected.\nFunding ends before cohorts reach the labour market.',evidence:'Prior pilot data; employer survey results.'}];
+ d.indicators=[{...blankIndicator(),pathwayId:d.pathways[0].id,level:'outcome',name:'Percentage of graduates in paid work 6 months after programme',baseline:'38%',target:'60%',unit:'%',source:'Follow-up survey',frequency:'Six-monthly',owner:'MEAL officer'},{...blankIndicator(),pathwayId:d.pathways[0].id,level:'output',name:'Number of job-readiness sessions delivered',baseline:'0',target:'24',unit:'sessions',source:'Session register',frequency:'Monthly',owner:'Programme lead'}];
+ return d;
+}
+
+render();
+})();
