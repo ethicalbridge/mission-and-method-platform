@@ -131,3 +131,21 @@
   .sw-stats,.sw-plans,.sw-tools,.sw-trust{grid-template-columns:1fr}
   .sw-section{padding:56px 0}
 }
+
+/* ---------- Guided path cards (recommended tool order) ---------- */
+.path-intro{font-size:15px;line-height:1.55;color:var(--muted);margin:-6px 0 18px;max-width:680px}
+.sw-path article{position:relative;transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+.sw-path article .step-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.sw-path article .step-circle{width:28px;height:28px;border-radius:50%;background:#eee8e0;color:var(--muted);display:grid;place-items:center;font-weight:900;font-size:13px}
+.sw-path article .step-label{font-size:11px;font-weight:900;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+/* Completed step */
+.sw-path article.is-done{background:#f3faf5;border-color:#bddfcb}
+.sw-path article.is-done .step-circle{background:#1e7c4a;color:#fff;font-size:0}
+.sw-path article.is-done .step-circle:after{content:"✓";font-size:14px}
+.sw-path article.is-done .step-label{color:#1e7c4a}
+/* Up next (first incomplete step) */
+.sw-path article.is-next{border-color:var(--coral);border-width:2px;box-shadow:0 10px 30px rgba(229,111,74,.14)}
+.sw-path article.is-next .step-circle{background:var(--coral);color:#fff}
+.sw-path article.is-next .step-label{color:var(--coral)}
+/* Later step (still available but secondary) */
+.sw-path article.is-later .step-label{color:var(--muted)}

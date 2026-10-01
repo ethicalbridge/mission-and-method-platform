@@ -101,17 +101,19 @@ function dashboard(){
 function readSO(){try{const raw=localStorage.getItem('mission-method-strategic-objectives-v2');if(!raw)return null;const o=JSON.parse(raw);return o&&Array.isArray(o.objectives)?o:null}catch{return null}}
 const soReady=()=>(readSO()?.objectives||[]).length>0;
 const soCount=()=>(readSO()?.objectives||[]).length;
+function readToC(){try{const raw=localStorage.getItem('mission-method-theory-of-change-v2');if(!raw)return null;const o=JSON.parse(raw);return o&&(Array.isArray(o.pathways)||Array.isArray(o.objectives))?o:null}catch{return null}}
+const tocReady=()=>{const o=readToC();return !!(o?.pathways?.length||o?.objectives?.length)};
 
 function journeyPanel(){
  const so=readSO(),soN=so?.objectives?.length||0;
- const step1Done=soN>0,step2Done=db.objectives.length>0||db.kpis.length>0;
+ const step1Done=soN>0,step2Done=tocReady(),step3Done=db.objectives.length>0||db.kpis.length>0;
  const soHref='Strategic-Objectives.html';
- const ganttHref='Gantt-Project-Planner.html';
+ const tocHref='Theory-of-Change-Builder.html';
  return `<section class="panel journey"><div class="rowhead section-head"><div><span class="eyebrow">Recommended path</span><h2>Where this tool sits</h2><p>Each step builds on the one before. Anything already complete shows a tick — but you can jump ahead if you want.</p></div></div>
   <ol class="journey-steps">
    <li class="step ${step1Done?'done':''}"><span class="step-num">1</span><div class="step-body"><b>Strategic Objectives · Module 1</b><p class="tiny">${step1Done?`<b>${soN}</b> multi-year objective${soN===1?'':'s'} ready — <button class="link" data-action="import-so-direct">bring them in here</button>`:'Set your organisation\'s multi-year direction and objectives.'}</p></div><a class="button ${step1Done?'secondary':''} small" href="${soHref}">${step1Done?'Review →':'Start here →'}</a></li>
-   <li class="step ${step2Done?'done':''} current"><span class="step-num">2</span><div class="step-body"><b>Strategy, KPIs &amp; Annual Planning <span class="pill">You are here</span></b><p class="tiny">Turn this year's slice into measurable priorities, KPIs and initiatives with review decisions.</p></div></li>
-   <li class="step"><span class="step-num">3</span><div class="step-body"><b>Work Plan &amp; Gantt · Module 6</b><p class="tiny">Break each initiative into scheduled work with owners, dependencies and progress. Coming next in the path.</p></div><a class="button secondary small" href="${ganttHref}">Open →</a></li>
+   <li class="step ${step2Done?'done':''}"><span class="step-num">2</span><div class="step-body"><b>Theory of Change Builder · Module 2</b><p class="tiny">${step2Done?'Theory of Change ready.':'Map the pathway from objectives to long-term change before setting KPIs.'}</p></div><a class="button ${step2Done?'secondary':''} small" href="${tocHref}">${step2Done?'Review →':'Open →'}</a></li>
+   <li class="step ${step3Done?'done':''} current"><span class="step-num">3</span><div class="step-body"><b>Strategy, KPIs &amp; Annual Planning <span class="pill">You are here</span></b><p class="tiny">Turn this year's slice into measurable priorities, KPIs and initiatives with review decisions.</p></div></li>
   </ol></section>`;
 }
 

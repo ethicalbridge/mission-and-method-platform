@@ -71,26 +71,27 @@
 
       <div class="sw-topics">
 
-        <div class="sw-topic">
-          <h3>Strategy &amp; impact <small>3 tools</small></h3>
-          <div class="sw-tools">
-            <article>
-              <span class="status invite">Invitation access</span>
+        <div class="sw-topic sw-topic-path" data-path="strategy">
+          <h3>Strategy &amp; impact <small>Recommended path · 3 steps</small></h3>
+          <p class="path-intro">Work through these in order. Each one builds on the last — once you've completed a step it's marked with a tick, and the next step is highlighted as "Up next".</p>
+          <div class="sw-tools sw-path">
+            <article data-tool-key="mission-method-strategic-objectives-v2" data-step="1" data-tool-slug="strategic-objectives">
+              <div class="step-head"><span class="step-circle">1</span><span class="step-label">Start here · Module 1</span></div>
               <h4>Strategic Objectives</h4>
               <p>Build separate external and internal strategic objectives, with actions, owners, progress and review decisions.</p>
               <a class="open" data-tool-access-link data-tool-name="Strategic Objectives" data-tool-destination="assets/tools/Strategic-Objectives.html" href="#tool-access">Unlock with access code →</a>
             </article>
-            <article>
-              <span class="status invite">Invitation access</span>
-              <h4>Strategy, KPIs &amp; Annual Planning</h4>
-              <p>Connect priorities, objectives, measures, results, initiatives and review decisions in one exportable workspace.</p>
-              <a class="open" data-tool-access-link data-tool-name="Strategy KPIs and Annual Planning" data-tool-destination="assets/tools/Strategy-KPIs-and-Annual-Planning.html" href="#tool-access">Unlock with access code →</a>
-            </article>
-            <article>
-              <span class="status invite">Invitation access</span>
+            <article data-tool-key="mission-method-theory-of-change-v2" data-step="2" data-tool-slug="theory-of-change" data-requires="mission-method-strategic-objectives-v2">
+              <div class="step-head"><span class="step-circle">2</span><span class="step-label">Next · Module 2</span></div>
               <h4>Theory of Change Builder</h4>
-              <p>Map the changes you expect and record the assumptions behind them.</p>
-              <a class="open" data-tool-access-link data-preserve-label data-tool-name="Theory of Change Builder" data-tool-destination="assets/tools/Theory-of-Change-Builder.html" href="#tool-access">Unlock →</a>
+              <p>Map the pathway from your objectives to the long-term change you want, and record the assumptions behind each step.</p>
+              <a class="open" data-tool-access-link data-tool-name="Theory of Change Builder" data-tool-destination="assets/tools/Theory-of-Change-Builder.html" href="#tool-access">Unlock with access code →</a>
+            </article>
+            <article data-tool-key="mission-method-strategy-kpis-v2" data-step="3" data-tool-slug="strategy-kpis" data-requires="mission-method-theory-of-change-v2">
+              <div class="step-head"><span class="step-circle">3</span><span class="step-label">Then · Module 6</span></div>
+              <h4>Strategy, KPIs &amp; Annual Planning</h4>
+              <p>Turn multi-year objectives into this year's priorities, measurable KPIs, an annual plan and review decisions.</p>
+              <a class="open" data-tool-access-link data-tool-name="Strategy KPIs and Annual Planning" data-tool-destination="assets/tools/Strategy-KPIs-and-Annual-Planning.html" href="#tool-access">Unlock with access code →</a>
             </article>
           </div>
         </div>
@@ -310,5 +311,48 @@
 <script src="app.js?v=nfr1"></script>
 <script type="module" src="software.js"></script>
 <script type="module" src="tool-access-ui.js?v=code2"></script>
+<script>
+// Mark path steps as done/next based on whether each tool's localStorage has content.
+(function(){
+  function hasContent(key){
+    try{
+      const raw=localStorage.getItem(key);
+      if(!raw)return false;
+      const d=JSON.parse(raw);
+      // Common shapes: objectives, pathways, priorities, kpis arrays
+      return Array.isArray(d.objectives)&&d.objectives.length>0
+        || Array.isArray(d.pathways)&&d.pathways.length>0
+        || Array.isArray(d.priorities)&&d.priorities.length>0
+        || Array.isArray(d.kpis)&&d.kpis.length>0;
+    }catch{return false}
+  }
+  function refreshPaths(){
+    document.querySelectorAll('.sw-topic-path').forEach(topic=>{
+      const steps=[...topic.querySelectorAll('.sw-path article')];
+      let foundNext=false;
+      steps.forEach(step=>{
+        const key=step.dataset.toolKey;
+        const done=hasContent(key);
+        step.classList.toggle('is-done',done);
+        step.classList.remove('is-next','is-later');
+        if(done){
+          const label=step.querySelector('.step-label');
+          if(label&&!label.dataset.origText){label.dataset.origText=label.textContent}
+          if(label)label.textContent='Completed';
+        }else{
+          const label=step.querySelector('.step-label');
+          if(label&&label.dataset.origText)label.textContent=label.dataset.origText;
+          if(!foundNext){step.classList.add('is-next');foundNext=true}
+          else step.classList.add('is-later');
+        }
+      });
+    });
+  }
+  refreshPaths();
+  // Re-check when returning to the page from a tool (e.g. back button) or when storage changes in another tab.
+  window.addEventListener('pageshow',refreshPaths);
+  window.addEventListener('storage',refreshPaths);
+})();
+</script>
 </body>
 </html>
