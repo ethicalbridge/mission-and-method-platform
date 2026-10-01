@@ -29,7 +29,7 @@ function migrateV1(v1){
  return out;
 }
 const DECISIONS=x=>S.DECISION_STATUSES.includes(x)?x:'Open';
-const normalise=d=>{if(d.meta&&/Ethical Bridge \(example\)/i.test(d.meta.organisation||''))return blank();for(const k of ['objectives','kpis','results','initiatives','reviews'])if(!Array.isArray(d[k]))d[k]=[];d.reviews.forEach(r=>{if(!Array.isArray(r.decisions))r.decisions=[]});return d};
+const normalise=d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.sk-cleanup-v3',blank)||d;for(const k of ['objectives','kpis','results','initiatives','reviews'])if(!Array.isArray(d[k]))d[k]=[];d.reviews.forEach(r=>{if(!Array.isArray(r.decisions))r.decisions=[]});return d};
 const storage=S.store({key:'mission-method-strategy-kpis-v2',version:2,blank,legacy:[{key:'mm.strategy-kpis.v1',migrate:migrateV1}],normalise});
 let db=storage.load();
 let tab='Start',dlg='',message='',calendar='Months';
@@ -252,6 +252,7 @@ function render(){
  const views={'Start':start,'Objectives':objectivesView,'KPIs & results':kpisView,'Annual plan':planView,'Calendar':calendarView,'Review':reviewView,'Export':exportView};
  root.innerHTML=S.shell({eyebrow:'Strategy & impact · Strategy, KPIs & annual planning',title:'Strategy, KPIs & Annual Planning',intro:'Turn objectives into measures and a year of work: KPIs with targets and dated results, an annual plan with owners, dates and budget, and quarterly reviews that record decisions.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=6',label:'Review Module Six'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  S.bind(root,app);
+ if(tab==='Start')window.MMExample?.bindLive?.(root,db,'strategy-kpis');
 }
 const app={
  tab(t){tab=t;message='';render();root.querySelector('#main')?.focus()},

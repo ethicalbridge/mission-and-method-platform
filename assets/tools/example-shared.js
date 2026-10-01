@@ -197,7 +197,10 @@ const renderUserBox=(tool,db)=>{
  if(!db||!db.meta) return '';
  const m=db.meta;
  const anyMeta=(m.organisation||m.mission||m.vision||m.values||m.planName||m.name||m.impactGoal||'').trim();
- const anyData=(db.objectives&&db.objectives.length)||(db.pathways&&db.pathways.length)||(db.kpis&&db.kpis.length)||(db.indicators&&db.indicators.length)||(db.initiatives&&db.initiatives.length);
+ const anyObj=(db.objectives||[]).some(o=>o.code||o.title||o.rationale);
+ const anyPath=(db.pathways||[]).some(p=>p.objective||p.input||p.activity||p.output||p.outcome||p.impact);
+ const anyKpi=(db.kpis||[]).some(k=>k.code||k.name);
+ const anyData=anyObj||anyPath||anyKpi||(db.initiatives&&db.initiatives.some(i=>i.title));
  if(!anyMeta&&!anyData) return '';
  if(tool==='strategic-objectives'){
   const ext=(db.objectives||[]).filter(o=>o.group==='External');
@@ -225,5 +228,54 @@ const renderUserBox=(tool,db)=>{
  return '';
 };
 
-window.MMExample={org,external,internal,strategicObjectives,theoryOfChange,strategyKpis,renderBox,renderUserBox};
+// ---------- Live binding — update the "Your workspace" mirror as the user types ----------
+const bindLive=(root,db,tool)=>{
+ if(!root||!db) return;
+ const form=root.querySelector('form[data-form="meta"]');
+ if(!form) return;
+ const update=()=>{
+  // Build a shallow-cloned live db from the current form values, without mutating the saved db
+  const live={...db,meta:{...db.meta}};
+  const fd=new FormData(form);
+  for(const [k,v] of fd.entries()){
+   const cur=live.meta[k];
+   if(typeof cur==='number'&&v!==''){const n=Number(v);live.meta[k]=isNaN(n)?v:n}
+   else live.meta[k]=v;
+  }
+  const newHtml=renderUserBox(tool,live);
+  const existing=root.querySelector('.example-box.mine');
+  if(existing&&newHtml){
+   const wrap=document.createElement('div');wrap.innerHTML=newHtml;
+   const fresh=wrap.firstElementChild;
+   if(fresh) existing.replaceWith(fresh);
+  }else if(!existing&&newHtml){
+   const topExample=Array.from(root.querySelectorAll('.example-box')).find(x=>!x.classList.contains('mine'));
+   if(topExample){
+    const wrap=document.createElement('div');wrap.innerHTML=newHtml;
+    const fresh=wrap.firstElementChild;
+    if(fresh) topExample.after(fresh);
+   }
+  }else if(existing&&!newHtml){
+   existing.remove();
+  }
+ };
+ form.addEventListener('input',update);
+};
+
+// ---------- Stale-example cleanup (one-time per tool) ----------
+// Called from each tool's normalise. Clears any previously loaded example data
+// so users start with an empty workspace. Future Load actions persist normally.
+const cleanupStaleExample=(d,flagKey,blankFn)=>{
+ try{
+  if(!localStorage.getItem(flagKey)){
+   localStorage.setItem(flagKey,'1');
+   if(d&&d.meta&&/\(example\)/i.test((d.meta.organisation||'')+' '+(d.meta.planName||'')+' '+(d.meta.name||''))){
+    return blankFn();
+   }
+  }
+ }catch{}
+ return d;
+};
+
+window.MMExample={org,external,internal,strategicObjectives,theoryOfChange,strategyKpis,renderBox,renderUserBox,bindLive,cleanupStaleExample};
 })();

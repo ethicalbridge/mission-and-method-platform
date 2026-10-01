@@ -40,7 +40,7 @@ function migrateV1(v1){
 }
 
 const {load,save:persist}=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{
- if(d.meta&&/Ethical Bridge \(example\)/i.test(d.meta.organisation||'')) return blank();
+ d=window.MMExample?.cleanupStaleExample?.(d,'mm.toc-cleanup-v3',blank)||d;
  if(!Array.isArray(d.pathways))d.pathways=[];
  if(!Array.isArray(d.indicators))d.indicators=[];
  if(!Array.isArray(d.snapshots))d.snapshots=[];
@@ -265,12 +265,14 @@ function render(){
   module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=2',label:'Review Module Two'},
   tabs:TABS, active:tab, message, content:view(), modal:modal_html
  });
- bind(document.querySelector('#app'),{
+ const root=document.querySelector('#app');
+ bind(root,{
   tab:t=>{tab=t;message='';modal_html='';render()},
   action,submit,
   importXlsx:file=>importXlsx(file),
   importJson:file=>importJson(file)
  });
+ if(tab==='Start')window.MMExample?.bindLive?.(root,db,'theory-of-change');
 }
 
 // ---------- Actions ----------
