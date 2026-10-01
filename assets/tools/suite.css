@@ -254,6 +254,16 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:800px){.work-meta{grid-template-columns:1fr}}
 @media(max-width:700px){.work-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.work-chain{grid-template-columns:1fr}}
+/* Marketing calendar — month-grid for content posts */
+.calendar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.calendar-month{min-height:120px}
+.cal-post{background:#f5f9f6;border-left:3px solid var(--teal);border-radius:6px;padding:7px 10px;font-size:12px}
+.cal-post.is-published{background:#dcefe3;border-color:#246046}
+.cal-post.is-scheduled{background:#fff1d0;border-color:var(--sun)}
+.cal-post.is-draft{background:#f5f9f6;border-color:var(--muted)}
+.cal-post-head{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:10px;color:var(--muted);margin-bottom:3px}
+.cal-date{font-weight:900;color:var(--deep)}
+.cal-post b{display:block;color:var(--ink);font-weight:800;line-height:1.3}
 /* Donor Mapping — alignment matrix cells */
 .align-matrix{border-collapse:separate;border-spacing:2px;min-width:600px}
 .align-matrix th{background:transparent;color:var(--deep);padding:4px 6px;text-align:center;font-size:12px}

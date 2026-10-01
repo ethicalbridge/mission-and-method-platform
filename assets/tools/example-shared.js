@@ -297,7 +297,8 @@ const integrationData={
  'donor-tracking':{step:0,label:'Funding · Donor tracking (relationship side)',pulls:[['donor-mapping','Qualified prospects promoted from mapping become grants in cultivation here.'],['strategic-objectives','Each grant can be tied to the ESOs it funds, so leadership can see which objectives are funded and which are at risk.'],['strategy-kpis','Grants can be tied to specific initiatives — the budget side of annual planning.']],pushes:[['strategy-kpis','Awarded grants feed the funding picture for Strategy KPIs initiatives.']]},
  'policy':{step:0,label:'Compliance · Policy management',pulls:[['org-structure','Policy owners come from the role library.'],['issue-risk','A policy breach can be logged as an issue; a policy gap can be logged as a risk.']],pushes:[['org-structure','Policies acknowledged by each staff member feed into onboarding compliance.']]},
  'onboarding':{step:0,label:'People · Onboarding & staff compliance',pulls:[['org-structure','The new hire fills a role from the role library.'],['policy','Required policy acknowledgements come from the policy register.']],pushes:[['org-structure','Completed hires become active role holders.']]},
- 'checkins':{step:0,label:'People · Check-ins & development',pulls:[['org-structure','Each team member is a role holder.'],['strategic-objectives','Development goals can be tied to specific ESOs.'],['strategy-kpis','Individual contribution to KPIs can be reviewed here.']],pushes:[['meetings','1:1 decisions and actions can flow into the shared Meetings register.']]}
+ 'checkins':{step:0,label:'People · Check-ins & development',pulls:[['org-structure','Each team member is a role holder.'],['strategic-objectives','Development goals can be tied to specific ESOs.'],['strategy-kpis','Individual contribution to KPIs can be reviewed here.']],pushes:[['meetings','1:1 decisions and actions can flow into the shared Meetings register.']]},
+ 'marketing':{step:0,label:'Communications · Marketing & social planner',pulls:[['strategic-objectives','Posts can be tagged with the ESO they advance.'],['strategy-kpis','Fundraising campaigns feed Strategy KPIs KPIs like supporter count and donor acquisition.'],['theory-of-change','Comms narrative anchors in the Theory of Change impact goal.']],pushes:[['meetings','Comms performance reviews feed back into the leadership cadence.']]}
 };
 const toolHrefs={
  'strategic-objectives':'Strategic-Objectives.html',
@@ -312,7 +313,8 @@ const toolHrefs={
  'donor-tracking':'Donor-Tracking.html',
  'policy':'Policy-Management.html',
  'onboarding':'Onboarding-and-Compliance.html',
- 'checkins':'People-Check-Ins-and-Development.html'
+ 'checkins':'People-Check-Ins-and-Development.html',
+ 'marketing':'Marketing-and-Social-Planner.html'
 };
 const toolTitles={
  'strategic-objectives':'Strategic Objectives',
@@ -327,7 +329,8 @@ const toolTitles={
  'donor-tracking':'Donor Tracking',
  'policy':'Policy Management',
  'onboarding':'Onboarding & Staff Compliance',
- 'checkins':'People Check-ins & Development'
+ 'checkins':'People Check-ins & Development',
+ 'marketing':'Marketing & Social Planner'
 };
 const renderIntegration=tool=>{
  const d=integrationData[tool];if(!d) return '';
