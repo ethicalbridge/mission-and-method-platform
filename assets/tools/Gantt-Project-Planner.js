@@ -1,8 +1,8 @@
 (()=>{'use strict';
-const S=window.MMSuite,{esc,uid,fmtDate,monthsSince,clamp,currentYear,money,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,s}=S;
+const S=window.MMSuite,{esc,uid,fmtDate,monthsSince,clamp,currentYear,money,field,area,select,tip,pill,bar,card,empty,modal,formEnd,table,s,stamp}=S;
 const root=document.querySelector('#app');
 const WORKBOOK='mission-method-gantt-project-planner',FILE='Mission-and-Method-gantt-project-plan';
-const TABS=['Start','Timeline','Tasks','Review','Export'];
+const TABS=['Start','Timeline','Tasks','Capacity','Review','Export'];
 const LEVELS=['Strategic objective','Subcategory','Activity','Sub-activity','Task','Milestone'],GROUP_LEVELS=['Strategic objective','Subcategory'],PRIORITY=['High','Normal','Low'];
 const isGroup=t=>GROUP_LEVELS.includes(t.level);
 
@@ -63,7 +63,54 @@ function dashboard(){
  const last=S.sortedReviews(db.reviews)[0]?.date||'',m=monthsSince(last),budget=l.reduce((n,t)=>n+(Number(t.budget)||0),0);
  return `<section class="panel"><span class="eyebrow">Overview · ${esc(db.meta.year)}</span><h2>Project at a glance</h2><div class="grid four">${card('Items',db.tasks.length,`${db.tasks.filter(isGroup).length} groups · ${l.length} activities and tasks`)}${card('Average progress',avg()+'%','',false,bar(avg()))}${card('Overdue',late,'Past their finish date and not completed',late>0)}${card('Since last review',m===null?'—':m+' mo',last?fmtDate(last):'No review recorded yet',m!==null&&m>3)}</div><div class="grid four" style="margin-top:12px">${card('Dependency clashes',clash,'Starts before the item it depends on finishes',clash>0)}${card('Without an owner',noOwner,'',noOwner>0)}${card('Milestones in the next 31 days',soon.length,soon.map(t=>t.title).slice(0,2).join(' · '))}${card('Budget',money(budget,db.meta.currency),'Sum of activity and task budgets')}</div></section>`;
 }
-function start(){const m=db.meta;return `${dashboard()}<div class="notice">Group work under strategic objectives, then add activities, tasks and milestones beneath them. Give each item an owner and dates; link it to the item it depends on. You can bring in the annual plan from Strategy, KPIs & Annual Planning with Import Excel. Data stays in this browser — download the Excel or JSON regularly.</div><section class="panel"><h2>Project context</h2><form data-form="meta" class="form">${field('Project or plan name','project',m.project)}${field('Organisation','organisation',m.organisation)}${field('Planning year','year',m.year,'number','min="2000" max="2200"','The timeline shows this year.')}${field('Currency','currency',m.currency,'text','maxlength="12" placeholder="e.g. USD, EUR, KES"')}${field('Prepared by','preparedBy',m.preparedBy)}${field('Next review','reviewDate',m.reviewDate,'date')}${area('Notes','notes',m.notes)}<div class="actions"><button class="button" type="submit">Save project context</button></div></form></section><section class="panel"><h2>Get started</h2><div class="actions"><button class="button" data-action="add" data-level="Strategic objective">Add objective group</button><button class="button" data-action="add">Add activity</button>${S.importButtons('Load example plan')}</div><p class="tiny">Import Excel accepts this tool's workbook (replaces everything) or a Strategy, KPIs & Annual Planning workbook (adds its objectives and annual plan).</p></section>`}
+function start(){const m=db.meta;const sk=readStore('mission-method-strategy-kpis-v2');const skInits=(sk?.initiatives||[]).length;const importedInit=db.tasks.filter(t=>t.code&&t.code.startsWith('AP')).length;return `${window.MMExample?.renderIntegration?.('gantt')||''}${dashboard()}<div class="notice">Group work under strategic objectives, then add activities, tasks and milestones beneath them. Give each item an owner and dates; link it to the item it depends on. The <b>Capacity</b> tab shows who's overloaded this month.</div><section class="panel"><h2>Project context</h2><form data-form="meta" class="form">${field('Project or plan name','project',m.project)}${field('Organisation','organisation',m.organisation)}${field('Planning year','year',m.year,'number','min="2000" max="2200"','The timeline shows this year.')}${field('Currency','currency',m.currency,'text','maxlength="12" placeholder="e.g. USD, EUR, KES"')}${field('Prepared by','preparedBy',m.preparedBy)}${field('Next review','reviewDate',m.reviewDate,'date')}${area('Notes','notes',m.notes)}<div class="actions"><button class="button" type="submit">Save project context</button></div></form></section><section class="panel"><h2>Get started</h2><div class="actions">${skInits?`<button class="button" data-action="import-sk-initiatives">↙ Import ${skInits} initiative${skInits===1?'':'s'} from Strategy KPIs${importedInit?` (${importedInit} already here)`:''}</button>`:''}<button class="button ${skInits?'secondary':''}" data-action="add" data-level="Strategic objective">+ Add objective group</button><button class="button secondary" data-action="add">+ Add activity</button>${S.importButtons('Load example plan')}</div><p class="tiny">Import Excel accepts this tool's workbook (replaces everything) or a Strategy KPIs workbook (adds its objectives and annual plan). The dedicated button above is faster — it pulls initiatives already in this browser without a file.</p></section>`}
+function readStore(k){try{const r=localStorage.getItem(k);if(!r)return null;const o=JSON.parse(r);return o&&typeof o==='object'?o:null}catch{return null}}
+
+// Pull initiatives from Strategy KPIs; each becomes a Gantt activity.
+// Objective code becomes a parent group row. Idempotent: updates by code.
+function importStrategyKpis(){
+ const sk=readStore('mission-method-strategy-kpis-v2');
+ if(!sk||!sk.initiatives?.length){message='No initiatives found in Strategy KPIs. Open that tool first.';render();return}
+ const objCodes=new Set(sk.initiatives.map(i=>i.objectiveCode).filter(Boolean));
+ let added=0,updated=0;
+ // Make sure each objective exists as a Strategic objective parent row
+ objCodes.forEach(code=>{
+  let g=db.tasks.find(t=>t.code===code&&t.level==='Strategic objective');
+  if(!g){const soTitle=(readStore('mission-method-strategic-objectives-v2')?.objectives||[]).find(o=>o.code===code)?.title||code;
+   g={...blankTask(),code,level:'Strategic objective',title:`${code} · ${soTitle}`};
+   db.tasks.push(g);added++}
+ });
+ // Each initiative becomes an Activity under its objective
+ sk.initiatives.forEach(init=>{
+  const code=init.code||'AP?';
+  let t=db.tasks.find(x=>x.code===code);
+  const base={code,level:'Activity',parentCode:init.objectiveCode||'',title:init.title||'Untitled initiative',owner:init.owner||'',status:init.status||'Planned',start:init.start||'',finish:init.end||'',progress:Number(init.progress)||0,budget:init.budget||'',notes:init.notes||init.annualOutcome||''};
+  if(t){Object.assign(t,base);stamp(t);updated++}else{t={...blankTask(),...base};stamp(t);db.tasks.push(t);added++}
+ });
+ save(`Strategy KPIs initiatives imported — ${added} new, ${updated} refreshed. Edit on the Timeline tab.`);
+}
+
+// Capacity view — simple month-by-owner heat-grid summing committed days.
+function capacityView(){
+ const year=Number(db.meta.year)||currentYear;
+ const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+ // Collect every leaf task with dates and owner
+ const items=db.tasks.filter(t=>!isGroup(t)&&t.owner&&t.start&&t.finish);
+ const owners=[...new Set(items.map(t=>t.owner))].sort();
+ const workingDaysInMonth=(y,m)=>{let n=0;const d=new Date(y,m,1);while(d.getMonth()===m){const dow=d.getDay();if(dow!==0&&dow!==6)n++;d.setDate(d.getDate()+1)}return n};
+ const daysInRange=(t,y,m)=>{const start=new Date(Math.max(new Date(t.start),new Date(y,m,1))),end=new Date(Math.min(new Date(t.finish),new Date(y,m+1,0)));if(start>end)return 0;let n=0;const d=new Date(start);while(d<=end){const dow=d.getDay();if(dow!==0&&dow!==6)n++;d.setDate(d.getDate()+1)}return n};
+ // Days committed per owner per month (assumes full-time; multiply by effort% later)
+ const grid=owners.map(o=>({owner:o,months:months.map((_,m)=>{let total=0;const taskList=[];items.filter(t=>t.owner===o).forEach(t=>{const d=daysInRange(t,year,m);if(d>0){total+=d;taskList.push(`${t.code||'·'} ${t.title.slice(0,32)} (${d}d)`)}});return {total,working:workingDaysInMonth(year,m),tasks:taskList}})}));
+ const limit=85; // overload-tight threshold (% of working days)
+ const colour=pct=>pct>=100?'cap-over':pct>=limit?'cap-tight':pct>=50?'cap-ok':pct>0?'cap-light':'cap-empty';
+ const headerCells=months.map((m,i)=>`<th class="cap-h">${m}<br><small>${workingDaysInMonth(year,i)}d</small></th>`).join('');
+ const rows=grid.length?grid.map(g=>`<tr><th class="cap-owner">${esc(g.owner)}</th>${g.months.map(cell=>{const pct=cell.working?Math.round((cell.total/cell.working)*100):0;return `<td class="cap-cell ${colour(pct)}" title="${esc(cell.tasks.join('\n'))||'No commitments'}"><div class="cap-val">${cell.total||'·'}</div><div class="cap-pct">${cell.working&&cell.total?pct+'%':''}</div></td>`}).join('')}</tr>`).join(''):`<tr><td colspan="13" class="cap-empty-row">No tasks with an owner and start/finish date yet. Add owners and dates to see capacity.</td></tr>`;
+ const overloaded=grid.flatMap(g=>g.months.map((cell,m)=>({owner:g.owner,month:months[m],pct:cell.working?Math.round((cell.total/cell.working)*100):0}))).filter(x=>x.pct>=limit);
+ return `<div class="rowhead section-head"><div><h2>Capacity · who's overloaded this month?</h2><p>Working days each owner is committed to this year, by month. Working days assume Mon–Fri; percentage is committed days ÷ available working days. Hover any cell to see which tasks make up the total.</p></div></div>
+  ${overloaded.length?`<div class="notice warn"><b>${overloaded.length} overload warning${overloaded.length===1?'':'s'}:</b> ${overloaded.slice(0,6).map(x=>esc(x.owner)+' in '+x.month+' ('+x.pct+'%)').join(' · ')}${overloaded.length>6?' and '+(overloaded.length-6)+' more':''}. Spread work across months or reassign tasks.</div>`:''}
+  <section class="panel"><div class="tablewrap"><table class="cap-table"><thead><tr><th class="cap-owner">Owner</th>${headerCells}</tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="cap-legend"><span class="cap-swatch cap-empty"></span> No work <span class="cap-swatch cap-light"></span> &lt; 50% <span class="cap-swatch cap-ok"></span> 50–${limit-1}% <span class="cap-swatch cap-tight"></span> ${limit}–99% (tight) <span class="cap-swatch cap-over"></span> ≥ 100% (overloaded)</div></section>`;
+}
 
 function periods(){const y=Number(db.meta.year)||currentYear;return view==='Quarters'?[0,1,2,3].map(i=>({label:'Q'+(i+1),a:`${y}-${String(i*3+1).padStart(2,'0')}-01`,b:new Date(Date.UTC(y,i*3+3,0)).toISOString().slice(0,10)})):Array.from({length:12},(_,i)=>({label:new Date(y,i,1).toLocaleString(undefined,{month:'short'}),a:`${y}-${String(i+1).padStart(2,'0')}-01`,b:new Date(Date.UTC(y,i+1,0)).toISOString().slice(0,10)}))}
 function timelineTable(rows,interactive=true){
@@ -149,7 +196,7 @@ function mergeAnnualPlan(n){
 
 // ---------- wiring ----------
 function render(){
- const views={'Start':start,'Timeline':timelineView,'Tasks':tasksView,'Review':reviewView,'Export':exportView};
+ const views={'Start':start,'Timeline':timelineView,'Tasks':tasksView,'Capacity':capacityView,'Review':reviewView,'Export':exportView};
  root.innerHTML=S.shell({eyebrow:'Project management · Gantt & project planner',title:'Gantt & Project Planner',intro:'Plan objectives, activities, tasks and milestones on one timeline, with owners, dependencies, progress and budget, and review the plan as it moves.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=6&lesson=timeline',label:'Review Module Six'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  S.bind(root,app);
  root.querySelectorAll('[data-filter]').forEach(x=>x.addEventListener('change',()=>{if(x.dataset.filter==='owner')ownerFilter=x.value;else statusFilter=x.value;render()}));
@@ -181,6 +228,7 @@ const app={
    db.tasks.forEach(x=>{if(x.parentCode===t.code)x.parentCode=t.parentCode||'';if(x.dependsOn===t.code)x.dependsOn=''});db.tasks=db.tasks.filter(x=>x!==t);dlg='';return save(`${t.code} deleted.`);
   }
   if(a==='load-example'){if(db.tasks.length&&!confirm('Replace the current plan with the example? Download a backup first if you need it.'))return;db=makeExample();tab='Timeline';save('Example loaded. Replace it with your own plan.');return}
+  if(a==='import-sk-initiatives'){importStrategyKpis();return}
   try{
    if(a==='download-template'){S.download(`${FILE}-TEMPLATE.xlsx`,workbook(false),S.XLSX_TYPE);message='Template downloaded. Complete it in Excel, then use Import Excel workbook to bring it back.';render();return}
    if(a==='xlsx'){S.download(`${FILE}.xlsx`,workbook(true),S.XLSX_TYPE);return}

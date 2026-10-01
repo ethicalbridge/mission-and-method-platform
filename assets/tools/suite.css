@@ -254,6 +254,28 @@ details summary{cursor:pointer;font-weight:800;color:var(--deep)}
 @media(max-width:800px){.work-meta{grid-template-columns:1fr}}
 @media(max-width:700px){.work-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.work-chain{grid-template-columns:1fr}}
+/* Capacity table (Gantt tool · who is overloaded by month) */
+.cap-table{min-width:1000px}
+.cap-table th.cap-owner{text-align:left;position:sticky;left:0;z-index:2;min-width:160px}
+.cap-table td.cap-cell{text-align:center;padding:6px 4px;border-left:1px solid #edf2ef;min-width:60px}
+.cap-table th.cap-h{text-align:center;padding:6px 4px;min-width:60px;font-weight:800}
+.cap-table th.cap-h small{font-weight:400;color:#b9cbc5;font-size:10px}
+.cap-cell .cap-val{font-weight:900;font-size:13px;color:var(--deep)}
+.cap-cell .cap-pct{font-size:10px;color:var(--muted);margin-top:1px}
+.cap-cell.cap-empty{background:#f8fafa}
+.cap-cell.cap-light{background:#edf4ef}
+.cap-cell.cap-ok{background:#c7e3d1}
+.cap-cell.cap-tight{background:#f8ca68}
+.cap-cell.cap-over{background:var(--coral);color:#fff}
+.cap-cell.cap-over .cap-val,.cap-cell.cap-over .cap-pct{color:#fff}
+.cap-empty-row{text-align:center;padding:18px;color:var(--muted);background:#f5f9f6}
+.cap-legend{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:12px;font-size:12px;color:var(--muted)}
+.cap-swatch{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:4px;vertical-align:middle}
+.cap-swatch.cap-empty{background:#f8fafa;border:1px solid var(--line)}
+.cap-swatch.cap-light{background:#edf4ef}
+.cap-swatch.cap-ok{background:#c7e3d1}
+.cap-swatch.cap-tight{background:#f8ca68}
+.cap-swatch.cap-over{background:var(--coral)}
 /* timeline (Gantt) */
 .gantt table{min-width:980px}
 .gantt th:first-child,.gantt td:first-child{position:sticky;left:0;z-index:2;background:#fff;min-width:260px;max-width:340px}
