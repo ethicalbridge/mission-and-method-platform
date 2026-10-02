@@ -1,9 +1,18 @@
-import {modules} from './course-data.js';
+import {modules,legacyLessonKeys} from './course-data.js';
 export const STORAGE_KEY='mm.course.planning-system.v1';
-export const emptyState=()=>({version:1,answers:{},completed:{},tasks:[],lastLesson:'1.purpose',updatedAt:null});
+export const STATE_VERSION=2;
+export const FIRST_LESSON='0.journey';
+export const emptyState=()=>({version:STATE_VERSION,answers:{},completed:{},tasks:[],lastLesson:FIRST_LESSON,updatedAt:null});
 export const lessonKey=(m,l)=>`${m.id}.${l.id}`;
+// Version 1 backups come from the earlier 8-module course: move each lesson's work to its new home.
+function migrate(value){
+ if(value.version!==1)return value;
+ const move=obj=>Object.fromEntries(Object.entries(obj).filter(([k])=>legacyLessonKeys[k]).map(([k,v])=>[legacyLessonKeys[k],v]));
+ return {...value,version:STATE_VERSION,answers:move(value.answers),completed:move(value.completed),lastLesson:legacyLessonKeys[value.lastLesson]||FIRST_LESSON};
+}
 export function validateState(value){
- if(!value||value.version!==1||typeof value.answers!=='object'||!value.answers||typeof value.completed!=='object'||!value.completed||!Array.isArray(value.tasks))throw new Error('This is not a compatible Planning System backup.');
+ if(!value||![1,STATE_VERSION].includes(value.version)||typeof value.answers!=='object'||!value.answers||typeof value.completed!=='object'||!value.completed||!Array.isArray(value.tasks))throw new Error('This is not a compatible Planning System backup.');
+ value=migrate(value);
  const clean=emptyState();
  for(const m of modules)for(const l of m.lessons){const key=lessonKey(m,l);if(value.answers[key]){clean.answers[key]={};for(const f of l.fields||[]){const v=value.answers[key][f.key];if(v!==undefined){if(typeof v!=='string'||v.length>20000)throw new Error('An answer is too large or invalid.');clean.answers[key][f.key]=v;}}}if(value.completed[key]===true)clean.completed[key]=true;}
  if(value.tasks.length>200)throw new Error('A maximum of 200 course tasks is supported.');
