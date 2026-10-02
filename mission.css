@@ -112,19 +112,62 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
   .resources-dropdown>summary{justify-content:space-between}
 }
 
-/* ===== Method into Impact · brand lockup ===== */
-.brand{display:inline-flex;align-items:center;gap:10px;font-family:'Nunito Sans',system-ui,sans-serif;font-weight:900;font-size:21px;letter-spacing:-.02em;color:var(--deep);text-decoration:none;line-height:1}
-.brand-mark{flex-shrink:0;color:var(--deep)}
-.brand-word{display:inline-flex;align-items:baseline;gap:0}
-.brand-into{color:var(--coral);font-style:normal;margin:0 .18em}
-/* Dark backgrounds (footer, dark sections) */
+/* ===== Method into Impact · brand lockup =====
+   Two-line horizontal lockup: mark + {wordmark · tagline}.
+   Mark colour inherits currentColor so it inverts automatically
+   between light surfaces (nav, light sections) and dark surfaces
+   (footer, hm-hero, hm-final, hm-org). */
+.brand{display:inline-flex;align-items:center;gap:12px;font-family:'Nunito Sans',system-ui,sans-serif;color:var(--deep);text-decoration:none;line-height:1}
+.brand-mark{flex-shrink:0;color:var(--deep);width:auto;height:44px}
+.brand-text{display:inline-flex;flex-direction:column;gap:3px;min-width:0}
+.brand-word{display:inline-flex;align-items:baseline;gap:0;font-weight:900;font-size:25px;letter-spacing:-.025em;line-height:1}
+.brand-into{color:var(--coral);font-style:normal;margin:0 .18em;font-weight:900}
+.brand-tagline{display:block;font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--teal);text-transform:uppercase;line-height:1.1}
+
+/* Dark backgrounds — invert colours per brand manual (Cream mark, Light Teal path, Sun 'into') */
 .site-footer .brand,.hm-hero .brand,.hm-final .brand,.hm-org .brand{color:#FFFAF3}
 .site-footer .brand-mark,.hm-hero .brand-mark,.hm-final .brand-mark,.hm-org .brand-mark{color:#FFFAF3}
 .site-footer .brand-into,.hm-hero .brand-into,.hm-final .brand-into,.hm-org .brand-into{color:#F8CA68}
-/* Footer tagline */
+.site-footer .brand-tagline,.hm-hero .brand-tagline,.hm-final .brand-tagline,.hm-org .brand-tagline{color:#F8CA68}
+
+/* Legacy footer-tagline helper (used before brand-tagline existed) */
 .footer-tagline{display:block;font-weight:800;font-size:12px;letter-spacing:.14em;color:#F8CA68;margin:8px 0 10px;text-transform:uppercase}
-.nav .brand{min-width:0}
+
+/* Nav lockup bump the whole nav bar height to accommodate the two-line text + bigger mark */
+.nav{padding:4px 0}
+.nav-inner{height:84px}
+.nav .brand{min-width:0;height:auto}
+.nav .brand-mark{height:46px}
+
+/* Footer bigger lockup */
+.site-footer .brand-mark{height:52px}
+.site-footer .brand-word{font-size:28px}
+.site-footer .brand-tagline{font-size:11px}
+
+/* ===== Stacked logo variant for centered "signature" use
+   (final CTA, hero bottom, standalone brand strip). ===== */
+.brand-stacked{display:inline-flex;flex-direction:column;align-items:center;gap:14px;color:currentColor;text-decoration:none;line-height:1}
+.brand-stacked .brand-mark{height:72px}
+.brand-stacked .brand-word{font-size:34px;letter-spacing:-.025em}
+.brand-stacked .brand-tagline{font-size:12px;letter-spacing:.18em;margin-top:4px}
+/* On dark backgrounds the stacked lockup takes the same inverted colours as the horizontal one. */
+.hm-final .brand-stacked,.hm-org .brand-stacked{color:#FFFAF3}
+.hm-final .brand-stacked .brand-into,.hm-org .brand-stacked .brand-into{color:#F8CA68}
+.hm-final .brand-stacked .brand-tagline,.hm-org .brand-stacked .brand-tagline{color:#F8CA68}
+
+/* ===== Responsive ===== */
+@media (max-width:900px){
+  .nav .brand-tagline{display:none}
+  .nav-inner{height:70px}
+  .nav .brand-mark{height:38px}
+  .brand-word{font-size:21px}
+}
 @media (max-width:640px){
-  .brand{font-size:17px;gap:7px}
-  .brand-mark{width:28px;height:28px}
+  .brand{gap:9px}
+  .brand-word{font-size:19px}
+  .nav .brand-mark{height:34px}
+  .brand-stacked .brand-mark{height:56px}
+  .brand-stacked .brand-word{font-size:26px}
+  .site-footer .brand-mark{height:44px}
+  .site-footer .brand-word{font-size:23px}
 }
