@@ -200,11 +200,11 @@ function action(el){
  }
  if(a==='delete'){const g=db.grants.find(x=>x.id===id);if(!g)return;if(!confirm('Delete this grant and its reports? Cannot be undone.'))return;db.grants=db.grants.filter(x=>x.id!==id);dlg='';editing={id:null,buffer:null};save('Grant deleted.');return}
  if(a==='import-mapped'){importFromMapping();return}
- if(a==='xlsx'){try{download('Mission-and-Method-donor-tracking.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-donor-tracking.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-donor-tracking.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-donor-tracking-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-donor-tracking.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-donor-tracking-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function syncBuffer(root){
@@ -246,7 +246,7 @@ function buildWorkbook(withData){
  ];
  return buildXlsx(sheets);
 }
-function downloadCsv(){download('Mission-and-Method-donor-tracking.csv',csv([['Code','Donor','Title','Amount','Currency','Stage','ESOs','Start','End','Owner'],...db.grants.map(g=>[g.code,g.donorName,g.title,g.amount,g.currency,g.stage,g.esoCodes,g.start,g.end,g.owner])]),'text/csv;charset=utf-8')}
+function downloadCsv(){download('Method-into-Impact-donor-tracking.csv',csv([['Code','Donor','Title','Amount','Currency','Stage','ESOs','Start','End','Owner'],...db.grants.map(g=>[g.code,g.donorName,g.title,g.amount,g.currency,g.stage,g.esoCodes,g.start,g.end,g.owner])]),'text/csv;charset=utf-8')}
 
 async function importXlsxFile(file){
  try{

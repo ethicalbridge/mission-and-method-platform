@@ -161,11 +161,11 @@ function action(el){
  if(a==='new-post'){dlg=postModal();render();return}
  if(a==='edit-post'){const p=db.posts.find(x=>x.id===id);if(p){dlg=postModal(p);render()}return}
  if(a==='delete'){const c=db.campaigns.find(x=>x.id===id),p=db.posts.find(x=>x.id===id);if(c){if(!confirm('Delete this campaign? Its posts stay by code reference.'))return;db.campaigns=db.campaigns.filter(x=>x.id!==id)}else if(p){if(!confirm('Delete this post?'))return;db.posts=db.posts.filter(x=>x.id!==id)}else return;dlg='';save('Deleted.');return}
- if(a==='xlsx'){try{download('Mission-and-Method-marketing.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-marketing.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-marketing.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-marketing-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-marketing.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-marketing-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){
@@ -184,7 +184,7 @@ function buildWorkbook(withData){
  ];
  return buildXlsx(sheets);
 }
-function downloadCsv(){download('Mission-and-Method-marketing.csv',csv([['Code','Title','Campaign','Channel','Type','Scheduled','Status','ESOs'],...db.posts.map(p=>[p.code,p.title,p.campaignCode,p.channel,p.contentType,p.scheduledFor,p.status,p.esoCodes])]),'text/csv;charset=utf-8')}
+function downloadCsv(){download('Method-into-Impact-marketing.csv',csv([['Code','Title','Campaign','Channel','Type','Scheduled','Status','ESOs'],...db.posts.map(p=>[p.code,p.title,p.campaignCode,p.channel,p.contentType,p.scheduledFor,p.status,p.esoCodes])]),'text/csv;charset=utf-8')}
 async function importXlsxFile(file){try{const data=await parseXlsx(await file.arrayBuffer());const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);const cRows=rowsToObjects(findSheet(data,'Campaigns'));const pRows=rowsToObjects(findSheet(data,'Posts'));if(cRows?.length)db.campaigns=cRows.map(r=>({...blankCampaign(),code:r.Code||'',name:r.Name||'',goal:r.Goal||'',esoCodes:r.ESOs||'',start:r.Start||'',end:r.End||'',owner:r.Owner||'',budget:Number(r.Budget)||0,status:r.Status||'Planning',targetAudience:r['Target audience']||'',keyMessages:r['Key messages']||'',notes:r.Notes||''}));if(pRows?.length)db.posts=pRows.map(r=>({...blankPost(),code:r.Code||'',campaignCode:r.Campaign||'',title:r.Title||'',channel:r.Channel||'LinkedIn',contentType:r.Type||'Impact update',scheduledFor:r.Scheduled||'',publishedOn:r.Published||'',status:r.Status||'Idea',esoCodes:r.ESOs||'',owner:r.Owner||'',hook:r.Hook||'',body:r.Body||'',cta:r.CTA||'',link:r.Link||'',assets:r.Assets||'',tags:r.Tags||'',metrics:r.Metrics||'',notes:r.Notes||''}));save('Excel imported.')}catch(e){message='Excel import failed: '+e.message;render()}}
 async function importJsonFile(file){try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}}
 

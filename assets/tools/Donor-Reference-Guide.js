@@ -146,11 +146,11 @@ function action(el){
  if(a==='edit-profile'){const p=db.profiles.find(x=>x.id===id);if(p){dlg=profileModal(p);render()}return}
  if(a==='delete'){const p=db.profiles.find(x=>x.id===id);if(!p||!confirm('Delete this profile?'))return;db.profiles=db.profiles.filter(x=>x.id!==id);dlg='';save('Profile deleted.');return}
  if(a==='import-from-mapping'){importFromMapping();return}
- if(a==='xlsx'){try{download('Mission-and-Method-donor-reference-guide.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
- if(a==='csv'){download('Mission-and-Method-donor-reference-guide.csv',csv([['Code','Name','Type','Country','Typical grant','Last checked','Confirmed'],...db.profiles.map(p=>[p.code,p.name,p.type,p.country,p.typicalGrantSize,p.lastChecked,p.confirmedByDonor?'Yes':'No'])]),'text/csv;charset=utf-8');return}
+ if(a==='xlsx'){try{download('Method-into-Impact-donor-reference-guide.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){download('Method-into-Impact-donor-reference-guide.csv',csv([['Code','Name','Type','Country','Typical grant','Last checked','Confirmed'],...db.profiles.map(p=>[p.code,p.name,p.type,p.country,p.typicalGrantSize,p.lastChecked,p.confirmedByDonor?'Yes':'No'])]),'text/csv;charset=utf-8');return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-donor-reference-guide.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-donor-reference-guide-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-donor-reference-guide.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-donor-reference-guide-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function importFromMapping(){

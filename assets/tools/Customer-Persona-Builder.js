@@ -148,11 +148,11 @@ function action(el){
  if(a==='new-persona'){dlg=personaModal();render();return}
  if(a==='edit-persona'){const p=db.personas.find(x=>x.id===id);if(p){dlg=personaModal(p);render()}return}
  if(a==='delete'){const p=db.personas.find(x=>x.id===id);if(!p||!confirm('Delete this persona?'))return;db.personas=db.personas.filter(x=>x.id!==id);dlg='';save('Persona deleted.');return}
- if(a==='xlsx'){try{download('Mission-and-Method-personas.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
- if(a==='csv'){download('Mission-and-Method-personas.csv',csv([['Code','Name','Segment','Age','Occupation','ESOs','Summary'],...db.personas.map(p=>[p.code,p.name,p.segment,p.ageBand,p.occupation,p.relevantEsos,p.summary])]),'text/csv;charset=utf-8');return}
+ if(a==='xlsx'){try{download('Method-into-Impact-personas.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){download('Method-into-Impact-personas.csv',csv([['Code','Name','Segment','Age','Occupation','ESOs','Summary'],...db.personas.map(p=>[p.code,p.name,p.segment,p.ageBand,p.occupation,p.relevantEsos,p.summary])]),'text/csv;charset=utf-8');return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-personas.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-personas-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-personas.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-personas-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){

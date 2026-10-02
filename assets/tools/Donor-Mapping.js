@@ -158,11 +158,11 @@ function action(el){
  if(a==='new-donor'){dlg=donorModal();render();return}
  if(a==='edit-donor'){const d=db.donors.find(x=>x.id===id);if(d){dlg=donorModal(d);render()}return}
  if(a==='delete'){const d=db.donors.find(x=>x.id===id);if(!d)return;if(!confirm('Delete this donor? Cannot be undone.'))return;db.donors=db.donors.filter(x=>x.id!==id);dlg='';save('Donor deleted.');return}
- if(a==='xlsx'){try{download('Mission-and-Method-donor-mapping.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-donor-mapping.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-donor-mapping.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-donor-mapping-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-donor-mapping.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-donor-mapping-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){
@@ -191,7 +191,7 @@ function buildWorkbook(withData){
 }
 function downloadCsv(){
  const esos=soObjectives().filter(o=>(o.group||'External')==='External');
- download('Mission-and-Method-donor-mapping.csv',csv([['Code','Name','Type','Country','Stage','Fit %',...esos.map(o=>o.code)],...db.donors.map(d=>{const t=totalAlignment(d);return [d.code,d.name,d.type,d.country,d.stage,t.pct,...esos.map(o=>d.alignment?.[o.code]||0)]})]),'text/csv;charset=utf-8');
+ download('Method-into-Impact-donor-mapping.csv',csv([['Code','Name','Type','Country','Stage','Fit %',...esos.map(o=>o.code)],...db.donors.map(d=>{const t=totalAlignment(d);return [d.code,d.name,d.type,d.country,d.stage,t.pct,...esos.map(o=>d.alignment?.[o.code]||0)]})]),'text/csv;charset=utf-8');
 }
 async function importXlsxFile(file){
  try{

@@ -410,9 +410,9 @@ function action(el){
   if((db.pathways.length>1||db.pathways.some(p=>p.output||p.outcome))&&!confirm('Replace current pathways with an example?'))return;
   db=window.MMExample?.theoryOfChange?.()||exampleDb();persist(db);message='Example loaded (Harvest Learning Foundation — the same worked example runs across the Impact Suite).';render();return;
  }
- if(a==='download-template'){try{download('Mission-and-Method-theory-of-change-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE);message='Template downloaded.';render()}catch(e){message='Template failed: '+e.message;render()}return}
- if(a==='export-json'){download('Mission-and-Method-theory-of-change.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='xlsx'){try{download('Mission-and-Method-theory-of-change.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel workbook downloaded.';render()}catch(e){message='Export failed: '+e.message;render()}return}
+ if(a==='download-template'){try{download('Method-into-Impact-theory-of-change-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE);message='Template downloaded.';render()}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-theory-of-change.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='xlsx'){try{download('Method-into-Impact-theory-of-change.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel workbook downloaded.';render()}catch(e){message='Export failed: '+e.message;render()}return}
  if(a==='csv'){exportCsv();return}
  if(a==='print'){window.print();return}
 }
@@ -467,7 +467,7 @@ function buildWorkbook(withData){
  const snapshotRows=withData?db.snapshots.map(sn=>[sn.date,sn.reviewer||'',sn.summary||'',(sn.snapshot?.pathways||[]).length,(sn.snapshot?.indicators||[]).length,JSON.stringify(sn.snapshot||{})]):[];
  return buildXlsx([
   readmeSheet([
-   'Mission & Method — Theory of Change workbook (Module 2)',
+   'Method into Impact — Theory of Change workbook (Module 2)',
    'This workbook matches the Theory of Change Builder one-to-one.',
    '',
    'How to use',
@@ -534,7 +534,7 @@ function exportCsv(){
   const pname=pathway?.objective||'—';
   ['name','definition','baseline','target','unit','source','frequency','owner','verification'].forEach(k=>{if(ind[k])rows.push(['indicator',pname,k,ind[k]])});
  });
- download('Mission-and-Method-theory-of-change.csv',csv(rows),'text/csv;charset=utf-8');
+ download('Method-into-Impact-theory-of-change.csv',csv(rows),'text/csv;charset=utf-8');
 }
 
 // ---------- Example ----------

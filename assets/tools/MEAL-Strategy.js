@@ -186,11 +186,11 @@ function action(el){
   persist(db);dlg='';message='Review deleted.';render();return;
  }
  if(a==='edit-indicator-full'){alert('Full edit coming shortly — for now, edit any field inline in the workspace.');return}
- if(a==='xlsx'){try{download('Mission-and-Method-MEAL-strategy.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-MEAL-strategy.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-MEAL-strategy.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-MEAL-strategy-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-MEAL-strategy.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-MEAL-strategy-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){
@@ -246,7 +246,7 @@ function importToC(){
 function buildWorkbook(withData){
  const sheets=[
   readmeSheet('MEAL Strategy',[
-   'This workbook holds a MEAL strategy exported from the Mission & Method platform.',
+   'This workbook holds a MEAL strategy exported from the Method into Impact platform.',
    'Indicators are the quarterly tracking rows — planned and actual per quarter, difference calculated.',
    'Review decisions capture what you learned from the data and what you decided to change.',
    'Importing this workbook back to the tool updates every row by code. Changing codes creates new rows.'
@@ -267,7 +267,7 @@ function buildWorkbook(withData){
 function qDiff(i,q){const p=Number(i['q'+q+'Planned']),a=Number(i['q'+q+'Actual']);if(isNaN(p)||isNaN(a)||i['q'+q+'Planned']===''||i['q'+q+'Actual']==='')return '';return +(a-p).toFixed(2)}
 function downloadCsv(){
  const rows=[['Code','Source','Objective','Name','Unit','Baseline','Target','Q1 planned','Q1 actual','Q2 planned','Q2 actual','Q3 planned','Q3 actual','Q4 planned','Q4 actual'],...db.indicators.map(i=>[i.code,i.source,i.objectiveCode,i.name,i.unit,i.baseline,i.target,i.q1Planned,i.q1Actual,i.q2Planned,i.q2Actual,i.q3Planned,i.q3Actual,i.q4Planned,i.q4Actual])];
- download('Mission-and-Method-MEAL-matrix.csv',csv(rows),'text/csv;charset=utf-8');
+ download('Method-into-Impact-MEAL-matrix.csv',csv(rows),'text/csv;charset=utf-8');
 }
 
 // ---------- Live editing wiring (same pattern as ToC workspace) ----------

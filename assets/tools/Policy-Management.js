@@ -135,11 +135,11 @@ function action(el){
  if(a==='new-policy'){dlg=policyModal();render();return}
  if(a==='edit-policy'){const p=db.policies.find(x=>x.id===id);if(p){dlg=policyModal(p);render()}return}
  if(a==='delete'){const p=db.policies.find(x=>x.id===id);if(!p||!confirm('Delete this policy?'))return;db.policies=db.policies.filter(x=>x.id!==id);dlg='';save('Policy deleted.');return}
- if(a==='xlsx'){try{download('Mission-and-Method-policies.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
- if(a==='csv'){download('Mission-and-Method-policies.csv',csv([['Code','Title','Category','Version','Status','Owner','Approved','Next review'],...db.policies.map(p=>[p.code,p.title,p.category,p.version,p.status,p.owner,p.approvedOn,p.nextReview])]),'text/csv;charset=utf-8');return}
+ if(a==='xlsx'){try{download('Method-into-Impact-policies.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='csv'){download('Method-into-Impact-policies.csv',csv([['Code','Title','Category','Version','Status','Owner','Approved','Next review'],...db.policies.map(p=>[p.code,p.title,p.category,p.version,p.status,p.owner,p.approvedOn,p.nextReview])]),'text/csv;charset=utf-8');return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-policies.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-policies-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-policies.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-policies-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){

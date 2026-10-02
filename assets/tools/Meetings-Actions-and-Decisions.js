@@ -217,11 +217,11 @@ function action(el){
   if(a==='remove-action'){if(!confirm('Remove this action?'))return;editing.buffer.actions=editing.buffer.actions.filter(d=>d.id!==id)}
   dlg=meetingModal(editing.buffer);render();return;
  }
- if(a==='xlsx'){try{download('Mission-and-Method-meetings.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-meetings.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-meetings.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-meetings-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-meetings.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-meetings-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function syncBufferFromDom(root){
@@ -280,7 +280,7 @@ function buildWorkbook(withData){
 }
 function downloadCsv(){
  const all=db.meetings.flatMap(m=>m.actions.map(a=>[m.code,m.date,a.text,a.owner,a.due,a.status,(a.linkSource==='manual'?'':a.linkSource+'/'+a.linkRef),a.linkText]));
- download('Mission-and-Method-meetings-actions.csv',csv([['Meeting','Date','Action','Owner','Due','Status','Linked','Note'],...all]),'text/csv;charset=utf-8');
+ download('Method-into-Impact-meetings-actions.csv',csv([['Meeting','Date','Action','Owner','Due','Status','Linked','Note'],...all]),'text/csv;charset=utf-8');
 }
 
 async function importXlsxFile(file){

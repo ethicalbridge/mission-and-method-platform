@@ -187,11 +187,11 @@ function action(el){
   else return;
   dlg='';save('Deleted.');return;
  }
- if(a==='xlsx'){try{download('Mission-and-Method-individual-giving.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-individual-giving.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-individual-giving.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-individual-giving-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-individual-giving.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-individual-giving-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){
@@ -213,7 +213,7 @@ function buildWorkbook(withData){
  ];
  return buildXlsx(sheets);
 }
-function downloadCsv(){download('Mission-and-Method-individual-giving.csv',csv([['Supporter code','Name','Status','Lifetime','Last gift date','Gift count'],...db.supporters.map(sp=>{const g=giftsFor(sp.code).sort((a,b)=>(b.date||'').localeCompare(a.date||''));return [sp.code,sp.name,sp.status,totalFor(sp.code),g[0]?.date||'',g.length]})]),'text/csv;charset=utf-8')}
+function downloadCsv(){download('Method-into-Impact-individual-giving.csv',csv([['Supporter code','Name','Status','Lifetime','Last gift date','Gift count'],...db.supporters.map(sp=>{const g=giftsFor(sp.code).sort((a,b)=>(b.date||'').localeCompare(a.date||''));return [sp.code,sp.name,sp.status,totalFor(sp.code),g[0]?.date||'',g.length]})]),'text/csv;charset=utf-8')}
 async function importXlsxFile(file){try{const data=await parseXlsx(await file.arrayBuffer());const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);const sRows=rowsToObjects(findSheet(data,'Supporters'));const gRows=rowsToObjects(findSheet(data,'Gifts'));const iRows=rowsToObjects(findSheet(data,'Stewardship'));const toBool=v=>v==='true'||v===true||v===1||v==='1';if(sRows?.length)db.supporters=sRows.map(r=>({...blankSupporter(),code:r.Code||'',name:r.Name||'',preferredName:r['Preferred name']||'',email:r.Email||'',phone:r.Phone||'',city:r.City||'',country:r.Country||'',status:r.Status||'Prospect',personaCode:r.Persona||'',giftAid:toBool(r['Gift Aid']),anonymous:toBool(r.Anonymous),communicationPref:r['Comm pref']||'Email',interests:r.Interests||'',source:r.Source||'',notes:r.Notes||''}));if(gRows?.length)db.gifts=gRows.map(r=>({...blankGift(),code:r.Code||'',supporterCode:r.Supporter||'',date:r.Date||today(),amount:Number(r.Amount)||0,currency:r.Currency||'USD',type:r.Type||'One-off',method:r.Method||'Card',esoCode:r.ESO||'',campaign:r.Campaign||'',giftAid:toBool(r['Gift Aid']),anonymous:toBool(r.Anonymous),reference:r.Reference||'',notes:r.Notes||''}));if(iRows?.length)db.interactions=iRows.map(r=>({...blankInteraction(),supporterCode:r.Supporter||'',date:r.Date||today(),type:r.Type||'Thank you',channel:r.Channel||'',summary:r.Summary||'',outcome:r.Outcome||'',nextStep:r['Next step']||'',nextDate:r['Next date']||'',owner:r.Owner||'',notes:r.Notes||''}));save('Excel imported.')}catch(e){message='Excel import failed: '+e.message;render()}}
 async function importJsonFile(file){try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}}
 

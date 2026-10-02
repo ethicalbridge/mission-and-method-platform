@@ -1,4 +1,4 @@
-/* Mission & Method — shared worked example.
+/* Method into Impact — shared worked example.
    One fictional organisation (Harvest Learning Foundation) is shown as a
    worked example in every tool, so users can see what a filled-in workspace
    looks like with the real field structure. Each tool displays an inline

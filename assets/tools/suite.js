@@ -1,4 +1,4 @@
-/* Mission & Method Impact Suite — shared kit.
+/* Method into Impact Impact Suite — shared kit.
    Every tool uses the same look (suite.css), the same page shell, the same storage rules,
    the same Excel/CSV/JSON import and export, the same edit history and the same statuses.
    Load after MEAL-Excel.js and before the tool script. Exposes window.MMSuite. */
@@ -70,7 +70,7 @@ function shell({eyebrow,title,intro,module,tabs,active,message,content,modal:m='
  <div class="hero"><span class="eyebrow">${esc(eyebrow)}</span><h1>${esc(title)}</h1><p>${esc(intro)}</p><div class="toolbar">${moduleLink}<button class="button secondary" type="button" data-action="download-template">Download blank Excel template</button><button class="button secondary" type="button" data-action="export-json">Backup JSON</button></div></div>
  <nav class="nav" aria-label="${esc(title)} sections">${tabs.map(t=>`<button type="button" data-tab="${esc(t)}" class="${t===active?'active':''}" ${t===active?'aria-current="page"':''}>${esc(t)}</button>`).join('')}</nav>
  <main id="main" tabindex="-1">${message?`<div class="notice" role="status">${esc(message)}</div>`:''}${content}</main>
- <footer class="tiny">Saved in this browser only · Download the Excel or JSON regularly · Mission & Method</footer></div>${m}`;
+ <footer class="tiny">Saved in this browser only · Download the Excel or JSON regularly · Method into Impact</footer></div>${m}`;
 }
 // Start-tab buttons shared by every tool.
 const importButtons=(exampleLabel)=>`${exampleLabel?`<button class="button secondary" type="button" data-action="load-example">${esc(exampleLabel)}</button>`:''}<label class="button secondary">Import Excel workbook<input type="file" id="xlsx-import" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label><label class="button secondary">Import JSON<input id="import" type="file" accept=".json,application/json" hidden></label>`;

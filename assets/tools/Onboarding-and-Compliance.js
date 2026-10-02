@@ -172,11 +172,11 @@ function action(el){
   dlg=hireModal(editing.buffer);render();return;
  }
  if(a==='delete'){const h=db.hires.find(x=>x.id===id);if(!h||!confirm('Delete this hire record and their checklist?'))return;db.hires=db.hires.filter(x=>x.id!==id);dlg='';editing={id:null,buffer:null};save('Hire deleted.');return}
- if(a==='xlsx'){try{download('Mission-and-Method-onboarding.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-onboarding.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-onboarding.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-onboarding-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-onboarding.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-onboarding-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function syncBuffer(root){
@@ -209,7 +209,7 @@ function buildWorkbook(withData){
  ];
  return buildXlsx(sheets);
 }
-function downloadCsv(){const rows=[['Hire','Name','Step','Category','Owner','Due','Status'],...db.hires.flatMap(h=>h.steps.map(st=>[h.code,h.name,st.title,st.category,st.owner,st.due,st.status]))];download('Mission-and-Method-onboarding.csv',csv(rows),'text/csv;charset=utf-8')}
+function downloadCsv(){const rows=[['Hire','Name','Step','Category','Owner','Due','Status'],...db.hires.flatMap(h=>h.steps.map(st=>[h.code,h.name,st.title,st.category,st.owner,st.due,st.status]))];download('Method-into-Impact-onboarding.csv',csv(rows),'text/csv;charset=utf-8')}
 async function importXlsxFile(file){try{const data=await parseXlsx(await file.arrayBuffer());const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);const hRows=rowsToObjects(findSheet(data,'Hires'));const sRows=rowsToObjects(findSheet(data,'Steps'));if(hRows?.length){db.hires=hRows.map(r=>({...blankHire(),code:r.Code||'',name:r.Name||'',roleTitle:r.Role||'',department:r.Department||'',startDate:r.Start||'',manager:r.Manager||'',buddy:r.Buddy||'',status:r.Status||'Pre-start',notes:r.Notes||''}));const byCode=new Map(db.hires.map(h=>[h.code,h]));(sRows||[]).forEach(r=>{const h=byCode.get(r['Hire code']);if(!h)return;h.steps.push({...blankStep(),title:r.Step||'',category:r.Category||'Other',owner:r.Owner||'',due:r.Due||'',status:r.Status||'Not started',notes:r.Notes||''})})}save('Excel imported.')}catch(e){message='Excel import failed: '+e.message;render()}}
 async function importJsonFile(file){try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}}
 

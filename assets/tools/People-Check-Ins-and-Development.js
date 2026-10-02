@@ -178,11 +178,11 @@ function action(el){
   else return;
   dlg='';save('Deleted.');return;
  }
- if(a==='xlsx'){try{download('Mission-and-Method-people.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-people.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-people.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-people-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-people.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-people-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){
@@ -225,7 +225,7 @@ function buildWorkbook(withData){
  ];
  return buildXlsx(sheets);
 }
-function downloadCsv(){download('Mission-and-Method-people.csv',csv([['Person','Name','Role','Last check-in','Open goals'],...db.people.map(p=>{const lc=checkinsFor(p.code).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];return [p.code,p.name,p.roleTitle,lc?lc.date:'',goalsFor(p.code).filter(g=>g.status==='In progress'||g.status==='Planning').length]})]),'text/csv;charset=utf-8')}
+function downloadCsv(){download('Method-into-Impact-people.csv',csv([['Person','Name','Role','Last check-in','Open goals'],...db.people.map(p=>{const lc=checkinsFor(p.code).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];return [p.code,p.name,p.roleTitle,lc?lc.date:'',goalsFor(p.code).filter(g=>g.status==='In progress'||g.status==='Planning').length]})]),'text/csv;charset=utf-8')}
 async function importXlsxFile(file){try{const data=await parseXlsx(await file.arrayBuffer());const meta=metaFromSheet(findSheet(data,'Meta'));if(meta)Object.assign(db.meta,meta);const pRows=rowsToObjects(findSheet(data,'People'));const cRows=rowsToObjects(findSheet(data,'Check-ins'));const gRows=rowsToObjects(findSheet(data,'Goals'));if(pRows?.length)db.people=pRows.map(r=>({...blankPerson(),code:r.Code||'',name:r.Name||'',roleTitle:r.Role||'',manager:r.Manager||'',startDate:r.Start||'',cadence:r.Cadence||'Monthly',notes:r.Notes||''}));if(cRows?.length)db.checkins=cRows.map(r=>({...blankCheckin(),personCode:r.Person||'',date:r.Date||today(),type:r.Type||'Monthly 1:1',sentiment:r.Sentiment||'Steady',wins:r.Wins||'',blockers:r.Blockers||'',priorities:r.Priorities||'',feedback:r.Feedback||'',decisions:r.Decisions||'',nextSteps:r['Next steps']||'',nextDate:r['Next date']||'',notes:r.Notes||''}));if(gRows?.length)db.goals=gRows.map(r=>({...blankGoal(),personCode:r.Person||'',title:r.Title||'',category:r.Category||'Skill',description:r.Description||'',measure:r.Measure||'',linkedEso:r['Linked ESO']||'',linkedKpi:r['Linked KPI']||'',start:r.Start||'',target:r.Target||'',status:r.Status||'Planning',progress:Number(r.Progress)||0,notes:r.Notes||''}));save('Excel imported.')}catch(e){message='Excel import failed: '+e.message;render()}}
 async function importJsonFile(file){try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}}
 

@@ -165,11 +165,11 @@ function action(el){
  if(a==='edit-role'){const r=db.roles.find(x=>x.id===id);if(r){dlg=roleModal(r);render()}return}
  if(a==='new-role-from-name'){const name=el.dataset.name;dlg=roleModal(null,name);render();return}
  if(a==='delete'){const r=db.roles.find(x=>x.id===id);if(!r)return;if(!confirm('Delete this role? Cannot be undone.'))return;db.roles=db.roles.filter(x=>x.id!==id);dlg='';save('Role deleted.');return}
- if(a==='xlsx'){try{download('Mission-and-Method-organisation-structure.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-organisation-structure.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-organisation-structure.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
- if(a==='download-template'){try{download('Mission-and-Method-organisation-structure-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='export-json'){download('Method-into-Impact-organisation-structure.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='download-template'){try{download('Method-into-Impact-organisation-structure-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){
@@ -201,7 +201,7 @@ function buildWorkbook(withData){
  return buildXlsx(sheets);
 }
 function downloadCsv(){
- download('Mission-and-Method-organisation-structure.csv',csv([['Code','Title','Department','Holder','FTE','Reports to','Status'],...db.roles.map(r=>[r.code,r.title,r.department,r.holder,r.fte,r.reportsTo,r.status])]),'text/csv;charset=utf-8');
+ download('Method-into-Impact-organisation-structure.csv',csv([['Code','Title','Department','Holder','FTE','Reports to','Status'],...db.roles.map(r=>[r.code,r.title,r.department,r.holder,r.fte,r.reportsTo,r.status])]),'text/csv;charset=utf-8');
 }
 async function importXlsxFile(file){
  try{

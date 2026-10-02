@@ -91,3 +91,60 @@
   .pr-tools-price{flex-wrap:wrap;gap:12px}
   .pr-tools-or{display:none}
 }
+
+/* ===== Launch pricing note ===== */
+.pr-note-section{padding:36px 0 0;background:#fff}
+.pr-launch-note{max-width:860px;margin:0 auto;background:linear-gradient(90deg,rgba(248,202,104,.12),rgba(229,111,74,.08));border:1.5px solid var(--sun);border-radius:16px;padding:18px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.pr-launch-badge{display:inline-flex;align-items:center;background:var(--sun);color:var(--ink);font-size:11px;font-weight:900;letter-spacing:.14em;padding:6px 12px;border-radius:999px;flex-shrink:0}
+.pr-launch-note p{font-size:14.5px;line-height:1.55;color:var(--ink);margin:0;flex:1}
+.pr-launch-note b{color:var(--coral);font-weight:900}
+
+/* ===== Pair layout ===== */
+.pr-tier{position:relative}
+.pr-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px;align-items:stretch}
+
+/* ===== Highlight card variant ===== */
+.pr-plan-badge-teal{background:var(--teal);color:#fff}
+.pr-plan-badge-sun{background:var(--sun);color:var(--ink)}
+.pr-plan-highlight{background:#fff;border:2px solid var(--teal);box-shadow:0 20px 44px rgba(22,116,110,.1)}
+.pr-plan-highlight:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(22,116,110,.18)}
+
+/* ===== Hero / featured plan (the annual subscription) ===== */
+.pr-plan-hero{background:linear-gradient(165deg,var(--deep) 0%,#0a2831 100%);color:#fff;border:2px solid var(--sun);transform:scale(1.02);box-shadow:0 30px 60px rgba(16,46,59,.3);position:relative;overflow:hidden}
+.pr-plan-hero:before{content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;background:radial-gradient(circle,var(--coral) 0%,transparent 70%);opacity:.45;pointer-events:none}
+.pr-plan-hero:after{content:"";position:absolute;left:-60px;bottom:-60px;width:180px;height:180px;background:radial-gradient(circle,var(--sun) 0%,transparent 70%);opacity:.3;pointer-events:none}
+.pr-plan-hero:hover{transform:scale(1.02) translateY(-6px);border-color:#fff;box-shadow:0 36px 70px rgba(16,46,59,.4)}
+.pr-plan-hero .pr-plan-eyebrow{color:var(--sun);position:relative;z-index:1}
+.pr-plan-hero h3{color:#fff;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:26px;line-height:1.15;position:relative;z-index:1}
+.pr-plan-hero .pr-price{border-color:rgba(255,255,255,.2);position:relative;z-index:1}
+.pr-plan-hero .pr-price b{color:var(--sun);font-size:56px}
+.pr-plan-hero .pr-price s{color:#a8bfc3;font-size:19px}
+.pr-plan-hero .pr-price span{color:#d4e2e3}
+.pr-plan-hero .pr-plan-desc{color:#d4e2e3;position:relative;z-index:1}
+.pr-plan-hero .pr-plan-list li{color:#fff;position:relative;z-index:1}
+.pr-plan-hero .pr-plan-list li:before{background:rgba(248,202,104,.25)}
+.pr-plan-hero .pr-plan-list li:after{border-color:var(--sun)}
+.pr-plan-hero .pr-plan-list b{color:var(--sun)}
+.pr-plan-hero .pr-fine{color:#a8bfc3;position:relative;z-index:1}
+.pr-plan-cta-sun{background:var(--sun);color:var(--ink);box-shadow:0 10px 30px rgba(248,202,104,.3)}
+.pr-plan-cta-sun:hover{background:#faD685;box-shadow:0 16px 40px rgba(248,202,104,.45);transform:translateY(-2px)}
+
+/* ===== "ALL COURSES FREE" chip inside hero card ===== */
+.pr-included-chip{display:flex;align-items:center;gap:10px;background:rgba(248,202,104,.18);border:1.5px solid var(--sun);border-radius:12px;padding:12px 16px;position:relative;z-index:1;margin:4px 0 10px}
+.pr-included-chip svg{color:var(--sun);flex-shrink:0}
+.pr-included-chip span{font-size:14px;color:#fff;line-height:1.4}
+.pr-included-chip span b{color:var(--sun);font-weight:900;letter-spacing:.02em}
+
+/* ===== Pricing-tier backgrounds ===== */
+.pr-tier-featured{background:linear-gradient(180deg,var(--cream) 0%,#f5efe3 100%)}
+
+/* ===== Mini tool mock positioning inside Software tier ===== */
+.pr-tier-featured .pr-tools-visual{margin-top:40px;display:flex;justify-content:center}
+
+/* ===== Responsive ===== */
+@media (max-width: 980px){
+  .pr-pair{grid-template-columns:1fr}
+  .pr-plan-hero{transform:none}
+  .pr-plan-hero:hover{transform:translateY(-6px)}
+  .pr-launch-note{flex-direction:column;align-items:flex-start}
+}

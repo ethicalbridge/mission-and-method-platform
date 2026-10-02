@@ -285,12 +285,12 @@ function action(el){
   else return;
   dlg='';save('Deleted.');return;
  }
- if(a==='xlsx'){try{download('Mission-and-Method-issue-risk-register.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
+ if(a==='xlsx'){try{download('Method-into-Impact-issue-risk-register.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
  if(a==='print'){window.print();return}
- if(a==='export-json'){download('Mission-and-Method-issue-risk-register.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
+ if(a==='export-json'){download('Method-into-Impact-issue-risk-register.json',JSON.stringify({...db,exportedAt:now()},null,2),'application/json');return}
  if(a==='load-example'){/* placeholder — risk tool has no auto example yet */return}
- if(a==='download-template'){try{download('Mission-and-Method-issue-risk-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
+ if(a==='download-template'){try{download('Method-into-Impact-issue-risk-TEMPLATE.xlsx',buildWorkbook(false),XLSX_TYPE)}catch(e){message='Template failed: '+e.message;render()}return}
 }
 
 function submit(form){
@@ -338,7 +338,7 @@ function buildWorkbook(withData){
 }
 function downloadCsv(){
  const rows=[['Type','Code','Title','Category','Score/Sev','Owner','Due','Status'],...db.risks.map(r=>['Risk',r.code,r.title,r.category,scoreOf(r),r.mitigationOwner,r.mitigationDue,r.status]),...db.issues.map(i=>['Issue',i.code,i.title,i.category,i.severity,i.owner,i.due,i.status])];
- download('Mission-and-Method-issue-risk.csv',csv(rows),'text/csv;charset=utf-8');
+ download('Method-into-Impact-issue-risk.csv',csv(rows),'text/csv;charset=utf-8');
 }
 
 async function importXlsxFile(file){
