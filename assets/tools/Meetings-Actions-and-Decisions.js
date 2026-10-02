@@ -316,7 +316,7 @@ function wireStart(root){
 
 function render(){
  const views={'Start':startView,'Meetings':meetingsView,'Actions register':actionsRegisterView,'Decisions register':decisionsRegisterView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Cross-cutting · Meetings, actions & decisions',title:'Meetings, Actions & Decisions',intro:'Run meetings that end with owned decisions and actions, not just notes. Decisions and actions roll into their own registers across every meeting — ready for leadership review, donor reporting and audit.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=meetings',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Cross-cutting · Meetings, actions & decisions',title:'Meetings, Actions & Decisions',intro:'Run meetings that end with owned decisions and actions, not just notes. Decisions and actions roll into their own registers across every meeting — ready for leadership review, donor reporting and audit.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=3&lesson=coordination',label:'Review Module 3'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';editing={id:null,buffer:null};render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

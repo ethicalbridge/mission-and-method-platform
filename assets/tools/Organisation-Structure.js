@@ -225,7 +225,7 @@ function wireStart(root){
 
 function render(){
  const views={'Start':startView,'Roles':rolesView,'Hierarchy':hierarchyView,'Who-owns-what':whoOwnsWhatView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Foundation · Organisation structure',title:'Organisation Structure',intro:'Who holds which role, who reports to whom, and who is listed as owner across every other tool in the suite. Spot overload early.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=org',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Foundation · Organisation structure',title:'Organisation Structure',intro:'Who holds which role, who reports to whom, and who is listed as owner across every other tool in the suite. Spot overload early.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=3&lesson=structure',label:'Review Module 3'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

@@ -184,7 +184,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(box){const
 
 function render(){
  const views={'Start':startView,'Personas':personasView,'Cards':cardsView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Communications · Audience personas',title:'Customer Persona Builder',intro:'One persona per audience segment — beneficiaries, donors, volunteers, partners. Describe them from the inside: goals, barriers, messages that resonate, preferred channels. Marketing and Individual Giving reference these personas for voice, channel and ask.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=personas',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Communications · Audience personas',title:'Customer Persona Builder',intro:'One persona per audience segment — beneficiaries, donors, volunteers, partners. Describe them from the inside: goals, barriers, messages that resonate, preferred channels. Marketing and Individual Giving reference these personas for voice, channel and ask.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=8&lesson=audiences',label:'Review Module 8'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

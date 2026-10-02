@@ -233,7 +233,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 
 function render(){
  const views={'Start':startView,'Team':teamView,'Check-ins':checkinsView,'Development':developmentView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'People · Check-ins & development',title:'People Check-ins & Development',intro:'Running record of 1:1s, performance conversations and growth plans. Development goals can be tied to strategic objectives and KPIs so personal growth maps to organisational impact.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=checkins',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'People · Check-ins & development',title:'People Check-ins & Development',intro:'Running record of 1:1s, performance conversations and growth plans. Development goals can be tied to strategic objectives and KPIs so personal growth maps to organisational impact.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=4&lesson=checkins',label:'Review Module 4'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

@@ -187,7 +187,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 
 function render(){
  const views={'Start':startView,'Profiles':profilesView,'Reference standard':referenceStandardView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Funding · Donor reference guide',title:'Donor Reference Guide',intro:'Deep-reference library per donor. Every rule, cycle, format and payment term in one place, with the source link and date checked, so fundraisers never fly blind.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=donor-reference',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Funding · Donor reference guide',title:'Donor Reference Guide',intro:'Deep-reference library per donor. Every rule, cycle, format and payment term in one place, with the source link and date checked, so fundraisers never fly blind.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=11&lesson=institutional',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

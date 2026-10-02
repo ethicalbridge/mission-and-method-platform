@@ -69,7 +69,7 @@ function journeyPanel(){
   <ol class="journey-steps">
    <li class="step ${step1Done?'done':''}"><span class="step-num">1</span><div class="step-body"><b>Strategic Objectives · Module 1</b><p class="tiny">${step1Done?`<b>${soN}</b> objective${soN===1?'':'s'} ready — <button class="link" data-action="import-so-direct">bring them in</button>`:'Set multi-year direction and objectives first.'}</p></div><a class="button ${step1Done?'secondary':''} small" href="Strategic-Objectives.html">${step1Done?'Review →':'Start here →'}</a></li>
    <li class="step ${step2Done?'done':''} current"><span class="step-num">2</span><div class="step-body"><b>Theory of Change Builder <span class="pill">You are here</span></b><p class="tiny">Map the pathway from objectives to long-term impact, and name the assumptions behind each step.</p></div></li>
-   <li class="step ${step3Done?'done':''}"><span class="step-num">3</span><div class="step-body"><b>Strategy, KPIs &amp; Annual Planning · Module 6</b><p class="tiny">Turn this year's slice into measurable KPIs, an annual plan and review decisions.</p></div><a class="button secondary small" href="Strategy-KPIs-and-Annual-Planning.html">Open →</a></li>
+   <li class="step ${step3Done?'done':''}"><span class="step-num">3</span><div class="step-body"><b>Strategy, KPIs &amp; Annual Planning · Module 13</b><p class="tiny">Turn this year's slice into measurable KPIs, an annual plan and review decisions.</p></div><a class="button secondary small" href="Strategy-KPIs-and-Annual-Planning.html">Open →</a></li>
   </ol></section>`;
 }
 
@@ -304,7 +304,7 @@ function render(){
   eyebrow:'Strategy & impact · Theory of Change',
   title:'Theory of Change Builder',
   intro:'Map how your work contributes to long-term change. Build pathways from inputs to impact and name the assumptions that need to hold.',
-  module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=2',label:'Review Module Two'},
+  module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=2&lesson=understanding',label:'Review Module 2'},
   tabs:TABS, active:tab, message, content:view(), modal:modal_html
  });
  const root=document.querySelector('#app');

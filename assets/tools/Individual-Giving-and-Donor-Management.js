@@ -221,7 +221,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 
 function render(){
  const views={'Start':startView,'Supporters':supportersView,'Gifts':giftsView,'Stewardship':stewardshipView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Funding · Individual giving & supporter management',title:'Individual Giving & Donor Management',intro:'Supporter CRM for individual gifts. Match supporters to a persona for tone and channel. Designate gifts to a specific ESO so overall giving maps to strategic objectives.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=individual-giving',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Funding · Individual giving & supporter management',title:'Individual Giving & Donor Management',intro:'Supporter CRM for individual gifts. Match supporters to a persona for tone and channel. Designate gifts to a specific ESO so overall giving maps to strategic objectives.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=11&lesson=individual',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

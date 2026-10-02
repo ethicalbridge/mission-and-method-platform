@@ -269,7 +269,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 
 function render(){
  const views={'Start':startView,'Grants':grantsView,'Reporting calendar':reportingView,'Funding picture':fundingPictureView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Funding · Donor tracking',title:'Donor Tracking',intro:'Relationship side of fundraising. Grants with lifecycle, dollar amounts, ESO linkage and reporting deadlines. See which objectives are funded, which are over-funded, and which are at risk.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=donor-tracking',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Funding · Donor tracking',title:'Donor Tracking',intro:'Relationship side of fundraising. Grants with lifecycle, dollar amounts, ESO linkage and reporting deadlines. See which objectives are funded, which are over-funded, and which are at risk.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=11&lesson=pipeline',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';editing={id:null,buffer:null};render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

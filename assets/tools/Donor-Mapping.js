@@ -208,7 +208,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 
 function render(){
  const views={'Start':startView,'Prospects':prospectsView,'Alignment matrix':alignmentMatrixView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Funding · Donor mapping',title:'Donor Mapping',intro:'Prospect side of fundraising. Score each donor against your strategic objectives, qualify or disqualify, and promote qualified prospects to Donor Tracking for active cultivation.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=donor-mapping',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Funding · Donor mapping',title:'Donor Mapping',intro:'Prospect side of fundraising. Score each donor against your strategic objectives, qualify or disqualify, and promote qualified prospects to Donor Tracking for active cultivation.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=11&lesson=prospects',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

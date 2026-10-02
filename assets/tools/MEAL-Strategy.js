@@ -324,7 +324,7 @@ async function importJsonFile(file){
 
 function render(){
  const views={'Start':startView,'Reviews & learning':reviewsView,'Quality check':qualityView,'Export':exportView};
- root.innerHTML=shell({eyebrow:'Delivery & learning · MEAL Strategy',title:'MEAL Strategy',intro:'Monitoring, Evaluation, Accountability and Learning. Pull KPIs from Strategy KPIs, pull indicators from the Theory of Change, track planned vs actual per quarter, and record the decisions that follow each review.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=4',label:'Review Module Four'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Delivery & learning · MEAL Strategy',title:'MEAL Strategy',intro:'Monitoring, Evaluation, Accountability and Learning. Pull KPIs from Strategy KPIs, pull indicators from the Theory of Change, track planned vs actual per quarter, and record the decisions that follow each review.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=6&lesson=system',label:'Review Module 6'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,app);
  if(tab==='Start')wireWorkspace(root);
 }

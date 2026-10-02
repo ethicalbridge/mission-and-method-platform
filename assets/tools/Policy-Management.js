@@ -169,7 +169,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 
 function render(){
  const views={'Start':startView,'Register':registerView,'Review calendar':reviewCalendarView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Compliance · Policy management',title:'Policy Management',intro:'Compliance-grade policy register with ownership, approval trail, review cadence and acknowledgement scope. The acknowledgement scope feeds the Onboarding tool so every new hire sees the right policies.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=policy',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Compliance · Policy management',title:'Policy Management',intro:'Compliance-grade policy register with ownership, approval trail, review cadence and acknowledgement scope. The acknowledgement scope feeds the Onboarding tool so every new hire sees the right policies.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=10&lesson=lifecycle',label:'Review Module 10'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

@@ -196,7 +196,7 @@ function wireStart(root){
 
 function render(){
  const views={'Start':startView,'Calendar':calendarView,'Campaigns':campaignsView,'Posts':postsView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Communications · Marketing & social planner',title:'Marketing & Social Planner',intro:'Campaign-level grouping and post-level content calendar. Each piece can be tagged with the ESO it advances so communications effort is visible against strategic objectives.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=marketing',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Communications · Marketing & social planner',title:'Marketing & Social Planner',intro:'Campaign-level grouping and post-level content calendar. Each piece can be tagged with the ESO it advances so communications effort is visible against strategic objectives.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=8&lesson=content',label:'Review Module 8'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

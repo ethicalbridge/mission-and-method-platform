@@ -217,7 +217,7 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 
 function render(){
  const views={'Start':startView,'New hires':hiresView,'Templates':templatesView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'People · Onboarding & staff compliance',title:'Onboarding & Staff Compliance',intro:'Standardised onboarding steps, right-to-work checks, policy acknowledgements and probation reviews for every new hire. Policies to acknowledge are pulled live from Policy Management.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=onboarding',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'People · Onboarding & staff compliance',title:'Onboarding & Staff Compliance',intro:'Standardised onboarding steps, right-to-work checks, policy acknowledgements and probation reviews for every new hire. Policies to acknowledge are pulled live from Policy Management.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=4&lesson=onboarding',label:'Review Module 4'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';editing={id:null,buffer:null};render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }

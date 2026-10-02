@@ -375,7 +375,7 @@ function wireStart(root){
 
 function render(){
  const views={'Start':startView,'Risks':risksView,'Issues':issuesView,'Heatmap':heatmapView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Cross-cutting · Issue & risk management',title:'Issue & Risk Management',intro:'Compliance-grade register for everything that might go wrong (risks) or already has (issues). 5×5 likelihood × impact scoring, mitigation and approval trail, review cadence with overdue flags. Links to any item from the other tools, or stands alone.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=risk',label:'Review the module'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Cross-cutting · Issue & risk management',title:'Issue & Risk Management',intro:'Compliance-grade register for everything that might go wrong (risks) or already has (issues). 5×5 likelihood × impact scoring, mitigation and approval trail, review cadence with overdue flags. Links to any item from the other tools, or stands alone.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=10&lesson=risk-register',label:'Review Module 10'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
 }
