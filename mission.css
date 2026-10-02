@@ -111,3 +111,20 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
   .resources-dropdown-panel{position:static;width:100%;box-shadow:none;margin:4px 0 8px}
   .resources-dropdown>summary{justify-content:space-between}
 }
+
+/* ===== Method into Impact · brand lockup ===== */
+.brand{display:inline-flex;align-items:center;gap:10px;font-family:'Nunito Sans',system-ui,sans-serif;font-weight:900;font-size:21px;letter-spacing:-.02em;color:var(--deep);text-decoration:none;line-height:1}
+.brand-mark{flex-shrink:0;color:var(--deep)}
+.brand-word{display:inline-flex;align-items:baseline;gap:0}
+.brand-into{color:var(--coral);font-style:normal;margin:0 .18em}
+/* Dark backgrounds (footer, dark sections) */
+.site-footer .brand,.hm-hero .brand,.hm-final .brand,.hm-org .brand{color:#FFFAF3}
+.site-footer .brand-mark,.hm-hero .brand-mark,.hm-final .brand-mark,.hm-org .brand-mark{color:#FFFAF3}
+.site-footer .brand-into,.hm-hero .brand-into,.hm-final .brand-into,.hm-org .brand-into{color:#F8CA68}
+/* Footer tagline */
+.footer-tagline{display:block;font-weight:800;font-size:12px;letter-spacing:.14em;color:#F8CA68;margin:8px 0 10px;text-transform:uppercase}
+.nav .brand{min-width:0}
+@media (max-width:640px){
+  .brand{font-size:17px;gap:7px}
+  .brand-mark{width:28px;height:28px}
+}

@@ -1,0 +1,66 @@
+/* account-redesign.css — Account / Sign in page, ac-* namespace. */
+
+/* Hero variant */
+.hm-hero-account .hm-shape-1{background:radial-gradient(circle,var(--teal) 0%,rgba(22,116,110,0) 70%);opacity:.75}
+.hm-hero-account .hm-shape-2{background:radial-gradient(circle,var(--sun) 0%,rgba(248,202,104,0) 70%);opacity:.5}
+.hm-hero-account .hm-shape-3{background:radial-gradient(circle,var(--coral) 0%,rgba(229,111,74,0) 70%);opacity:.35}
+
+/* Notice box */
+.ac-notice{background:#fff}
+.ac-notice-box{display:grid;grid-template-columns:72px 1fr;gap:28px;align-items:flex-start;max-width:960px;margin:0 auto;background:var(--cream);border:1px solid var(--line);border-left:4px solid var(--sun);border-radius:20px;padding:36px}
+.ac-notice-icon{width:56px;height:56px;background:#fdf1cc;color:#b89a35;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ac-notice-icon svg{width:28px;height:28px}
+.ac-notice-body h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(24px,3vw,34px);line-height:1.15;color:var(--ink);margin:12px 0 14px}
+.ac-notice-body p{font-size:15.5px;line-height:1.65;color:var(--muted);margin:0 0 20px}
+.ac-notice-body p b{color:var(--ink);font-weight:800}
+.ac-notice-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+
+/* Progress card */
+.ac-progress{background:#fff;border:1px solid var(--line);border-radius:22px;padding:32px;max-width:860px;margin:0 auto;box-shadow:0 10px 28px rgba(16,46,59,.06);transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+.ac-progress:hover{transform:translateY(-4px);box-shadow:0 24px 50px rgba(16,46,59,.1);border-color:var(--teal)}
+.ac-progress-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.ac-progress-head small{display:block;color:var(--teal);font-size:11px;font-weight:900;letter-spacing:.18em;margin-bottom:4px}
+.ac-progress-head b{display:block;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:26px;color:var(--ink);line-height:1.1}
+.ac-progress-badge{background:var(--mint);color:var(--teal);font-size:11px;font-weight:900;letter-spacing:.1em;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.ac-progress-stat{font-size:15px;color:var(--muted);margin:14px 0 12px}
+.ac-progress-bar{height:8px;background:var(--mint);border-radius:999px;overflow:hidden;margin-bottom:24px;position:relative}
+.ac-progress-bar i{display:block;height:100%;width:7%;background:linear-gradient(90deg,var(--coral),var(--sun));border-radius:999px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.ac-progress-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+
+/* Tools grid */
+.ac-tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.ac-tool{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;display:flex;flex-direction:column;gap:8px;position:relative}
+.ac-tool:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(16,46,59,.08);border-color:var(--teal)}
+.ac-tool-pillar{font-size:10.5px;font-weight:900;letter-spacing:.16em;padding:4px 10px;border-radius:999px;align-self:flex-start}
+.ac-tool-build{background:var(--mint);color:var(--teal)}
+.ac-tool-strengthen{background:#fde3d6;color:#b35238}
+.ac-tool-run{background:#fdf1cc;color:#8a6b1e}
+.ac-tool h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:19px;line-height:1.15;color:var(--ink);margin:6px 0 6px}
+.ac-tool p{font-size:13.5px;line-height:1.55;color:var(--muted);margin:0 0 8px;flex:1}
+.ac-tool .hm-link{color:var(--teal);font-weight:800;font-size:13.5px}
+.ac-tools-foot{text-align:center;margin-top:40px}
+
+/* Roadmap */
+.ac-roadmap-list{list-style:none;padding:0;margin:40px 0 0;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;position:relative}
+.ac-roadmap-list li{position:relative;padding:28px 28px 28px 60px;background:#fff;border:1px solid var(--line);border-radius:18px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.ac-roadmap-list li:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(16,46,59,.08);border-color:var(--coral)}
+.ac-roadmap-dot{position:absolute;left:24px;top:30px;width:16px;height:16px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(22,116,110,.15);animation:ac-pulse 2.6s ease-in-out infinite}
+.ac-roadmap-list li:nth-child(2) .ac-roadmap-dot{background:var(--coral);box-shadow:0 0 0 4px rgba(229,111,74,.15);animation-delay:.4s}
+.ac-roadmap-list li:nth-child(3) .ac-roadmap-dot{background:var(--sun);box-shadow:0 0 0 4px rgba(248,202,104,.2);animation-delay:.8s}
+.ac-roadmap-list li:nth-child(4) .ac-roadmap-dot{background:var(--deep);box-shadow:0 0 0 4px rgba(18,60,72,.15);animation-delay:1.2s}
+@keyframes ac-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@media (prefers-reduced-motion: reduce){.ac-roadmap-dot{animation:none}}
+.ac-roadmap-list b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;color:var(--ink);display:block;margin-bottom:6px}
+.ac-roadmap-list p{font-size:14.5px;line-height:1.55;color:var(--muted);margin:0}
+
+/* Responsive */
+@media (max-width:980px){
+  .ac-notice-box{grid-template-columns:1fr;gap:18px;padding:28px}
+  .ac-tools-grid{grid-template-columns:repeat(2,1fr)}
+  .ac-roadmap-list{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .ac-tools-grid{grid-template-columns:1fr}
+  .ac-progress-head{flex-direction:column}
+  .ac-progress{padding:24px}
+}
