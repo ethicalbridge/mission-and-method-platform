@@ -9,7 +9,7 @@ test('the guest code grants browser access only to the completed tools',()=>{
  assert.equal(hasToolAccess(storage),false);assert.equal(grantToolAccess('wrong',storage),false);assert.equal(grantToolAccess('1234',storage),true);assert.equal(hasToolAccess(storage),true);assert.equal(store.get(TOOL_ACCESS_STORAGE_KEY),'granted');
  assert.equal(needsToolAccess('theory-of-change'),true);assert.equal(needsToolAccess('ethical-bridge-crm'),true);assert.equal(needsToolAccess('risk-register'),false);
  assert.deepEqual(invitationToolSlugs,['theory-of-change','ethical-bridge-crm']);
- assert.deepEqual(availableToolSlugs,['theory-of-change','ethical-bridge-crm','donor-mapping','donor-tracking','donor-reference-guide','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona']);
+ assert.deepEqual(availableToolSlugs,['theory-of-change','ethical-bridge-crm','donor-mapping','donor-tracking','donor-reference-guide','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona','policy-management','marketing-social-planner']);
  assert.equal(needsToolAccess('gantt'),false);
  assert.equal(needsToolAccess('donor-mapping'),false);
  assert.equal(softwareProducts.find(p=>p.slug==='theory-of-change').launchUrl,'assets/tools/Theory-of-Change-Builder.html');

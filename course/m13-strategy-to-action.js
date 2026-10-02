@@ -1,0 +1,132 @@
+import {module,lesson,review,field} from './kit.js';
+const plan=['strategy-kpis-annual-planning'];
+export default module({
+ id:13,slug:'strategy-to-action',phase:'Run',title:'Strategy to Action: Plan, Deliver & Review',
+ short:'Annual plan, KPIs, deliverables, capacity, dependencies, Gantt, integration and the review cycle',
+ intro:'Bring every plan from the course into one operating plan you can run. Turn multi-year objectives into this year’s priorities, KPIs, deliverables and a realistic timeline; integrate budget, risks, funding, communications and partnerships; then set the review rhythm that keeps the organisation learning and improving.',
+ output:'Organisation Operating Plan',uses:[1,2,3,6,9,10,11,12],
+ workbook:{file:'Module-13-Strategy-to-Action.xlsx',title:'Strategy to Action workbook'},
+ promo:{lesson:'timeline',tools:['strategy-kpis-annual-planning','gantt','meetings-actions-decisions'],
+  headline:'Run your year from one connected plan',
+  pitch:'Strategy, KPIs & Annual Planning turns objectives into KPIs, targets and an annual plan with owners, dates and budget, and records quarterly review decisions. Gantt & Project Planner imports that plan as a timeline with tasks, dependencies and capacity. Meetings, Actions & Decisions keeps every review’s follow-up owned.'},
+ lessons:[
+ lesson({id:'annual-plan',title:'From strategy to annual plan',stage:'Design',sheet:['Objectives','Annual plan'],tools:plan,
+  learn:[
+  'A multi-year strategy sets direction; an annual plan decides what you will actually do this year. Cascade from strategic objectives (Module 1) to this year’s priorities, then to initiatives or projects, then to deliverables and tasks, and finally to individual objectives (Module 4).',
+  'Choose a small number of annual priorities for each objective, based on your Theory of Change, your funding position and your capacity. Include internal objectives: the year you build finance systems or recruit a team is a year with less capacity for new programmes.',
+  'Distinguish three kinds of work: projects (time-bound, with a defined result), programmes (a group of related projects and ongoing services) and operations (the recurring work of running the organisation). All need capacity; only some appear in funding proposals.'
+  ],
+  weak:'This year we will do more of everything.',
+  strong:'ESO1 priorities this year: pilot employer partnerships in two sectors; second cohort of 30 young people. ISO2: recruit a delivery lead and train 12 mentors. Not this year: expansion to a second district.',
+  why:'The stronger plan cascades from objectives, makes choices and names what is postponed.',
+  reflect:'What will you deliberately not do this year?',
+  exercise:'Cascade your objectives into this year’s priorities and initiatives.',
+  fields:[field('cascade','Annual cascade','Objective code | annual priority | initiative or project | lead.'),field('notyear','Postponed this year','What is deliberately postponed and why.')],
+  check:'Does every annual priority trace back to a strategic objective?'}),
+ lesson({id:'kpis',title:'Organisational KPIs and targets',stage:'Design',sheet:['KPIs','Results'],tools:plan,
+  learn:[
+  'Key performance indicators (KPIs) show whether the organisation is on track with its annual priorities. They are different from programme indicators (Module 6), which track results for the people you serve, and from personal objectives (Module 4). Some measures overlap, but each serves a different conversation.',
+  'Choose one to three KPIs per objective, with a baseline, a yearly target and, where useful, quarterly targets. Include a balance: delivery (outputs), results (key outcomes from MEAL), money (income, cost, reserves), people (retention, wellbeing) and stakeholders (satisfaction, feedback).',
+  'A deliverable proves the work was done; a KPI shows whether it made the difference you intended. Keep the set short enough to review in a single meeting.'
+  ],
+  weak:'Our KPI is to be successful.',
+  strong:'ESO1 KPIs: graduates in work or training at six months (baseline 31%, target 50%); employer partners active (baseline 2, target 6). ISO2 KPIs: mentor retention (target 80%), months of reserves (target 3).',
+  why:'The stronger KPIs are few, balanced and have baselines and targets.',
+  reflect:'Which single number would tell you fastest that the year is going wrong?',
+  exercise:'Set your organisational KPIs and targets.',
+  fields:[field('kpis','KPIs','Objective | KPI | baseline | annual target | quarterly targets | source | owner.')],
+  check:'Is each KPI distinct from programme indicators and personal objectives, with a baseline and target?'}),
+ lesson({id:'deliverables',title:'Deliverables and acceptance',stage:'Implement',sheet:'Annual plan',tools:plan,
+  learn:[
+  'A deliverable is a tangible result that someone can review: a tested service, approved training pack, signed partnership or published report. Start with what must exist to support your priorities.',
+  'Break each deliverable into manageable tasks. Include review and acceptance rather than stopping at “draft complete”. Check that the work contributes to a strategic result.',
+  'Define what done means before starting, and who accepts the work. This reduces misunderstandings about quality and scope.'
+  ],
+  weak:'Improve our website.',
+  strong:'Publish an accessible service page, tested by three intended users and approved by the delivery lead.',
+  why:'The deliverable has a scope and an acceptance check.',
+  reflect:'Who needs to accept the work before it is useful?',
+  exercise:'Connect priorities to deliverables and acceptance criteria.',
+  fields:[field('deliverables','Deliverables','Priority | KPI it supports | deliverable | acceptance criteria | reviewer.')],
+  check:'Could the reviewer clearly distinguish finished from unfinished work?'}),
+ lesson({id:'ownership',title:'Ownership and capacity',stage:'Implement',sheet:'Capacity',tools:plan,
+  learn:[
+  'Assign an accountable owner to each deliverable and identify who contributes, using the RACI principles from Module 3. An owner needs enough authority, time and support to coordinate the work.',
+  'Estimate effort separately from elapsed time. Two days of work may take two weeks if a specialist is only available briefly each week. Add recurring operations work, which often consumes half of a small team’s time.',
+  'Check workload across all plans: programmes, fundraising, communications, partnerships, compliance and systems. If one role owns everything, change timing, reduce scope or add capacity before treating the plan as credible.'
+  ],
+  weak:'The team will finish it soon.',
+  strong:'The operations lead owns the handbook; a specialist reviews it; five working days are reserved across three weeks.',
+  why:'It distinguishes responsibility, contribution and time.',
+  reflect:'Where is your plan relying on invisible overtime?',
+  exercise:'Set ownership and a realistic capacity check.',
+  fields:[field('ownership','Responsibility and capacity','Deliverable | owner | contributors | effort | available capacity | constraint.')],
+  check:'Have owners agreed that the work fits their available time?'}),
+ lesson({id:'dependencies',title:'Milestones and dependencies',stage:'Implement',sheet:'Tasks',tools:['gantt'],
+  learn:[
+  'A milestone marks a significant decision or completed result. A dependency means one task needs something from another before it can proceed.',
+  'Identify real dependencies rather than linking everything automatically. Approval of a curriculum may need to precede printing; venue research may happen in parallel. Cross-module dependencies matter too: a grant cannot start before the agreement is signed; recruitment cannot start before the budget is approved.',
+  'Record external dependencies and uncertainty. Include room for review and revisions. A delayed prerequisite should trigger a discussion about downstream dates.'
+  ],
+  weak:'All tasks start Monday.',
+  strong:'Test learning materials before printing; confirm the venue while the materials are being tested.',
+  why:'It separates sequential and parallel work.',
+  reflect:'Which delay would affect the largest part of your plan?',
+  exercise:'List your key milestones and dependencies.',
+  fields:[field('dependencies','Dependency map','Task | prerequisite | reason | external dependency | contingency.'),field('milestones','Milestones','Result or decision | target date | acceptance owner.')],
+  check:'Are dependencies based on actual constraints?'}),
+ lesson({id:'timeline',title:'Build your work plan and Gantt',stage:'Implement',sheet:'Tasks',tools:['gantt'],
+  learn:[
+  'A Gantt chart places tasks along a calendar. It helps you see overlap and sequence, but a neat chart does not guarantee that the plan is achievable.',
+  'Use the planner below for your initial schedule. Add an owner, start and finish date to each task. Review overlaps against capacity and check dates against your dependency map.',
+  'Update the plan when conditions change. Keep a short explanation of significant changes so the team understands the new commitment. This learning planner does not automatically reschedule dependencies.'
+  ],
+  weak:'Move dates until the bars fit.',
+  strong:'Review the delayed approval with the owner, shift printing accordingly and confirm the new session date with partners.',
+  why:'The plan changes through explicit decisions rather than cosmetic edits.',
+  reflect:'What event should trigger a review of the schedule?',
+  exercise:'Add at least one task, then inspect the timeline and check its dependencies.',
+  fields:[field('scheduleReview','Schedule review rule','When will you review progress, blockers and changes?')],
+  check:'Are the dates valid and consistent with your dependencies and capacity?'}),
+ lesson({id:'integration',title:'One plan: budget, risks, funding, communications and partnerships',stage:'Manage',sheet:'Integration check',tools:plan,
+  learn:[
+  'Many organisations have a strategy, a budget, a fundraising plan, a communications plan and a risk register that do not match. This lesson brings them into one operating plan.',
+  'Check five links. Budget: every initiative is costed and the total matches the organisational budget (Module 9). Funding: the pipeline covers the gap and fundraising deliverables are in the plan (Module 11). Risks: the top risks have mitigation actions in the plan (Module 10). Communications: campaigns support the year’s priorities (Module 8). Partnerships: joint commitments appear in the plan with owners (Module 12). Add MEAL activities and reviews (Module 6) and people actions (Module 4).',
+  'Where links fail, adjust: reduce scope, re-phase, find resources or accept a risk explicitly. An integrated plan is smaller and more credible than the sum of separate wish lists.'
+  ],
+  weak:'Each team has its own plan.',
+  strong:'Integration check found three uncosted initiatives and a campaign unrelated to any priority; two initiatives were re-phased to Q3 when funding is confirmed; the campaign was refocused on recruiting employers.',
+  why:'The stronger example uses the check to make the plan coherent and realistic.',
+  reflect:'Which of your plans contradicts another?',
+  exercise:'Run an integration check across your plans.',
+  fields:[field('check','Integration check','Link (budget, funding, risk, communications, partnerships, MEAL, people) | consistent? | gap | adjustment.')],
+  check:'Is every initiative costed, resourced and connected to your risks and plans?'}),
+ lesson({id:'reviews',title:'The performance review rhythm',stage:'Manage',sheet:'Review rhythm',tools:['meetings-actions-decisions','strategy-kpis-annual-planning'],
+  learn:[
+  'Plans only work if they are reviewed. Build a rhythm: weekly team check on priorities and blockers; monthly review of finance, KPIs, pipeline and risks; quarterly review of progress against the annual plan with decisions to adjust; and a board review each quarter.',
+  'Use a simple dashboard: KPIs with status, budget versus actual, cash and runway, top risks, pipeline and key MEAL findings. Each review ends with recorded decisions and actions with owners and dates, followed up next time.',
+  'Adaptive management means using reviews to change course openly: re-prioritising, re-phasing, stopping what does not work and scaling what does. Record the reason for each significant change.'
+  ],
+  weak:'We review the plan at the end of the year.',
+  strong:'Monthly leadership review using a one-page dashboard; quarterly review with the whole team; decisions logged with owners; board receives the dashboard and the list of changes each quarter.',
+  why:'The stronger rhythm is regular, evidence-based and decision-focused.',
+  reflect:'When did a review last change what you were doing?',
+  exercise:'Design your review rhythm and dashboard.',
+  fields:[field('rhythm','Review rhythm','Review | frequency | participants | inputs | outputs.'),field('dashboard','Dashboard contents','Measures and information on your one-page dashboard.')],
+  check:'Does each review end with recorded decisions that are followed up?'}),
+ lesson({id:'refresh',title:'Annual review, strategy refresh and health check',stage:'Review',sheet:['Health check','Reviews'],tools:['strategic-objectives'],
+  learn:[
+  'Once a year, step back. Review results against objectives, the context, your Theory of Change, your evidence and feedback, your finances and risks, and your people. Ask: is our strategy still right, and is our organisation fit to deliver it?',
+  'Repeat the health check from Module 0 and compare with your baseline. Celebrate what improved, and choose next year’s priorities from the capabilities that still limit you.',
+  'Feed the results back into Module 1 (objectives), Module 2 (Theory of Change) and the next annual plan. This loop of strategy, plan, deliver, review and refresh is what keeps a purpose-led organisation resilient.'
+  ],
+  weak:'We will write a new strategy when this one ends.',
+  strong:'Annual review in January: results against objectives, context update, health check re-run (MEAL and finance improved; partnerships still informal); one objective revised; next year’s plan prioritises partnership management.',
+  why:'The stronger review compares with a baseline and changes the next plan.',
+  reflect:'What has changed in your organisation since you started this course?',
+  exercise:'Re-run the health check and decide what changes for next year.',
+  fields:[field('health','Health check repeated','Area | baseline rating | current rating | evidence.'),field('changes','Strategy and plan changes','What you will change in your objectives, Theory of Change and next annual plan.')],
+  check:'Does your annual review lead to specific changes in strategy and plans?'}),
+ review('work-plan','Your Organisation Operating Plan')
+ ]
+});

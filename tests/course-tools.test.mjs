@@ -29,5 +29,5 @@ test('retired tools point to a live tool and are gone from the catalogue',()=>{
 
 test('module and tool pages carry the generated cross-links',()=>{
  assert.match(readFileSync('strategy-to-action.html','utf8'),/Tools for this module[\s\S]*software-gantt\.html/);
- assert.match(readFileSync('software-strategy-kpis-annual-planning.html','utf8'),/Learn it in the course[\s\S]*module=6&lesson=deliverables/);
+ assert.match(readFileSync('software-strategy-kpis-annual-planning.html','utf8'),/Learn it in the course[\s\S]*module=13&lesson=deliverables/);
 });
