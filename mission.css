@@ -174,3 +174,21 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
   .site-footer .brand-mark{height:44px}
   .site-footer .brand-word{font-size:23px}
 }
+
+/* ===== Language switcher (EN / ES) in the nav =====
+   A compact pill tucked between Contact and Sign in. The active language
+   gets a filled teal pill, the inactive one is a quiet outlined link. */
+.lang-switch{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:rgba(22,116,110,.08);margin:0 4px;font-family:'Nunito Sans',system-ui,sans-serif;font-size:11px;font-weight:900;letter-spacing:.08em}
+.lang-switch > span{color:var(--teal);opacity:.4;line-height:1}
+.lang-btn{appearance:none;border:0;background:transparent;color:var(--teal);padding:4px 7px;border-radius:999px;cursor:pointer;font:inherit;letter-spacing:inherit;transition:background .2s ease,color .2s ease}
+.lang-btn:hover{color:var(--deep)}
+.lang-btn[aria-pressed="true"]{background:var(--teal);color:#fff}
+.lang-btn[aria-pressed="true"]:hover{background:#115a56;color:#fff}
+.lang-btn:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+/* Dark backgrounds (nothing uses lang-switch there yet, but just in case) */
+.site-footer .lang-switch,.hm-hero .lang-switch,.hm-final .lang-switch{background:rgba(255,255,255,.08)}
+.site-footer .lang-btn,.hm-hero .lang-btn,.hm-final .lang-btn{color:#F8CA68}
+.site-footer .lang-btn[aria-pressed="true"],.hm-hero .lang-btn[aria-pressed="true"],.hm-final .lang-btn[aria-pressed="true"]{background:#F8CA68;color:var(--ink)}
+@media (max-width:900px){
+  .lang-switch{margin:4px 0}
+}

@@ -7,7 +7,7 @@
 <title>Contact | Method into Impact</title>
 <meta name="description" content="Ask a question, share feedback or request a tailored package. Method into Impact replies within two working days.">
 <link rel="stylesheet" href="styles.css?v=brand6">
-<link rel="stylesheet" href="mission.css?v=brand6">
+<link rel="stylesheet" href="mission.css?v=brand7">
 <link rel="stylesheet" href="learning.css?v=course3">
 <link rel="stylesheet" href="pricing.css">
 <link rel="stylesheet" href="planning-system.css?v=home-redesign-6">
@@ -28,9 +28,9 @@
       <span class="hm-shape hm-shape-3"></span>
     </div>
     <div class="container hm-hero-inner">
-      <div class="hm-eyebrow">CONTACT · WE REPLY WITHIN 2 WORKING DAYS</div>
+      <div class="hm-eyebrow" data-i18n="contact.hero.eyebrow">CONTACT · WE REPLY WITHIN 2 WORKING DAYS</div>
       <h1>Let's build something <em>useful.</em></h1>
-      <p class="hm-lead">Questions about the course, the tools or a tailored package — or just want to tell us what would make Method into Impact more useful for you. We read every message.</p>
+      <p class="hm-lead" data-i18n="contact.hero.lead">Questions about the course, the tools or a tailored package — or just want to tell us what would make Method into Impact more useful for you. We read every message.</p>
     </div>
   </section>
 
@@ -82,15 +82,15 @@
         </div>
         <form class="ct-form reveal" style="--delay:140ms" id="contact-form">
           <label>
-            <span class="ct-label">Your name</span>
+            <span class="ct-label" data-i18n="contact.form.name">Your name</span>
             <input required name="name" placeholder="How should we address you?">
           </label>
           <label>
-            <span class="ct-label">Email address</span>
+            <span class="ct-label" data-i18n="contact.form.email">Email address</span>
             <input required name="email" type="email" placeholder="you@example.com">
           </label>
           <label>
-            <span class="ct-label">What's this about?</span>
+            <span class="ct-label" data-i18n="contact.form.topic">What's this about?</span>
             <select name="topic">
               <option>General question</option>
               <option>Partnership enquiry</option>
@@ -100,7 +100,7 @@
             </select>
           </label>
           <label>
-            <span class="ct-label">Message</span>
+            <span class="ct-label" data-i18n="contact.form.message">Message</span>
             <textarea required name="message" placeholder="Tell us a bit about your organisation and what would help."></textarea>
           </label>
           <button class="hm-btn hm-btn-primary ct-submit" type="submit">
@@ -168,7 +168,9 @@
 </main>
 
 <footer></footer>
-<script src="app.js?v=brand5"></script>
+<script type="module" src="i18n.js?v=i18n-1"></script>
+<script type="module" src="i18n.js?v=i18n-1"></script>
+<script src="app.js?v=brand7"></script>
 <script type="module" src="overview.js"></script>
 <script src="home.js?v=home-redesign-4"></script>
 </body>
