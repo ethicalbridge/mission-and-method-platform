@@ -1,0 +1,104 @@
+/* courses.css — Courses page redesign
+   Loads AFTER planning-system.css so .hm-* tokens and base rules are available.
+   Course-specific classes use the cc-* namespace. */
+
+/* -------- Hero variant for courses -------- */
+.hm-hero-courses .hm-shape-1{background:radial-gradient(circle,var(--sun) 0%,rgba(248,202,104,0) 70%);opacity:.75}
+.hm-hero-courses .hm-shape-2{background:radial-gradient(circle,var(--coral) 0%,rgba(229,111,74,0) 70%);opacity:.6}
+.hm-hero-courses .hm-shape-3{background:radial-gradient(circle,var(--teal) 0%,rgba(22,116,110,0) 70%);opacity:.35}
+
+/* -------- Pathway flow (horizontal 5-step journey) -------- */
+.cc-pathway-section{background:linear-gradient(180deg,#fff 0%,var(--cream) 100%)}
+.cc-flow{list-style:none;padding:0;margin:40px 0 0;display:grid;grid-template-columns:repeat(5,1fr);gap:20px;position:relative}
+.cc-flow:before{content:"";position:absolute;left:12%;right:12%;top:28px;height:3px;background:linear-gradient(90deg,var(--coral) 0%,var(--sun) 25%,var(--teal) 100%);opacity:.3;border-radius:2px;z-index:0}
+.cc-flow li{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:4px;transition:transform .25s ease}
+.cc-flow li:hover{transform:translateY(-6px)}
+.cc-flow-dot{width:52px;height:52px;border-radius:50%;background:#fff;border:3px solid var(--teal);display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:16px;transition:background .25s ease,border-color .25s ease,transform .25s ease}
+.cc-flow-dot:after{content:"";width:14px;height:14px;background:var(--teal);border-radius:50%;transition:background .25s ease}
+.cc-flow li:nth-child(1) .cc-flow-dot{border-color:var(--coral)}
+.cc-flow li:nth-child(1) .cc-flow-dot:after{background:var(--coral)}
+.cc-flow li:nth-child(2) .cc-flow-dot{border-color:#e59440}
+.cc-flow li:nth-child(2) .cc-flow-dot:after{background:#e59440}
+.cc-flow li:nth-child(3) .cc-flow-dot{border-color:var(--sun)}
+.cc-flow li:nth-child(3) .cc-flow-dot:after{background:var(--sun)}
+.cc-flow li:nth-child(4) .cc-flow-dot{border-color:#4ba891}
+.cc-flow li:nth-child(4) .cc-flow-dot:after{background:#4ba891}
+.cc-flow li:nth-child(5) .cc-flow-dot{border-color:var(--teal)}
+.cc-flow li:nth-child(5) .cc-flow-dot:after{background:var(--teal)}
+.cc-flow li:hover .cc-flow-dot{transform:scale(1.15)}
+.cc-flow small{color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.16em;margin-bottom:4px}
+.cc-flow b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;color:var(--ink);line-height:1.1;letter-spacing:-.01em;margin-bottom:8px}
+.cc-flow-q{font-size:13px;color:var(--muted);font-style:italic;line-height:1.4}
+
+/* -------- The 5 course cards -------- */
+.cc-list .hm-head{margin-bottom:56px}
+.cc-course{display:grid;grid-template-columns:300px 1fr;gap:40px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:36px;margin-bottom:28px;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;position:relative;overflow:hidden}
+.cc-course:hover{transform:translateY(-4px);box-shadow:0 24px 50px rgba(16,46,59,.08);border-color:var(--teal)}
+.cc-course:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--coral),var(--teal));opacity:0;transition:opacity .3s ease}
+.cc-course:hover:before{opacity:1}
+
+.cc-course-side{display:flex;flex-direction:column;align-items:flex-start;background:linear-gradient(160deg,var(--deep) 0%,#0d2a33 100%);color:#fff;border-radius:18px;padding:28px;position:relative;overflow:hidden}
+.cc-course-side:before{content:"";position:absolute;right:-50px;top:-50px;width:160px;height:160px;background:radial-gradient(circle,var(--coral) 0%,transparent 70%);opacity:.6}
+.cc-num{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:86px;line-height:.9;color:var(--sun);position:relative;z-index:1;margin-bottom:12px}
+.cc-side-eyebrow{color:var(--sun);font-size:11px;font-weight:900;letter-spacing:.18em;margin-bottom:4px;position:relative;z-index:1}
+.cc-course-side h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:32px;line-height:1.05;margin:0 0 8px;color:#fff;position:relative;z-index:1}
+.cc-side-tag{font-size:13.5px;line-height:1.4;color:#d4e2e3;margin:0 0 20px;position:relative;z-index:1}
+.cc-stats{list-style:none;padding:0;margin:0 0 22px;display:flex;flex-wrap:wrap;gap:16px;position:relative;z-index:1}
+.cc-stats li{display:flex;flex-direction:column;color:#a8bfc3;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.cc-stats b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;color:#fff;line-height:1;margin-bottom:2px}
+.cc-cta{position:relative;z-index:1;margin-top:auto;align-self:stretch;justify-content:center;font-size:14px;height:48px;padding:0 20px}
+
+.cc-course-body{display:flex;flex-direction:column;gap:16px}
+.cc-course-lead{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;line-height:1.3;color:var(--ink);margin:0}
+.cc-course-lead em{font-style:italic;color:var(--teal)}
+.cc-course-body > p:not(.cc-course-lead){font-size:15.5px;line-height:1.6;color:var(--muted);margin:0}
+.cc-course-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px}
+.cc-course-grid h4{font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--teal);margin:0 0 10px;text-transform:uppercase}
+.cc-course-grid ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.cc-course-grid ul li{position:relative;padding-left:22px;font-size:14px;line-height:1.5;color:var(--ink)}
+.cc-course-grid ul li:before{content:"";position:absolute;left:0;top:7px;width:12px;height:8px;border-left:2px solid var(--teal);border-bottom:2px solid var(--teal);transform:rotate(-45deg)}
+.cc-pack{background:var(--mint);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.cc-pack:before{content:"";position:absolute;right:-30px;top:-30px;width:100px;height:100px;background:radial-gradient(circle,var(--sun) 0%,transparent 70%);opacity:.3}
+.cc-pack-eyebrow{color:var(--teal);font-size:10.5px;font-weight:900;letter-spacing:.18em;margin-bottom:6px;position:relative;z-index:1}
+.cc-pack b{display:block;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;color:var(--deep);line-height:1.1;letter-spacing:-.01em;margin-bottom:6px;position:relative;z-index:1}
+.cc-pack p{font-size:13.5px;line-height:1.5;color:var(--ink);margin:0;position:relative;z-index:1}
+
+/* -------- Pricing teaser -------- */
+.cc-pricing{background:#fff}
+.cc-plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
+.cc-plan{background:#fff;border:1px solid var(--line);border-radius:22px;padding:36px;display:flex;flex-direction:column;gap:14px;position:relative;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.cc-plan:hover{transform:translateY(-4px);box-shadow:0 20px 44px rgba(16,46,59,.08);border-color:var(--teal)}
+.cc-plan-featured{background:linear-gradient(160deg,var(--deep) 0%,#0d2a33 100%);color:#fff;border-color:var(--deep)}
+.cc-plan-featured:hover{border-color:var(--sun)}
+.cc-plan-featured:before{content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;background:radial-gradient(circle,var(--coral) 0%,transparent 70%);opacity:.45;pointer-events:none}
+.cc-plan-badge{position:absolute;top:20px;right:24px;background:var(--sun);color:var(--ink);font-size:10.5px;font-weight:900;letter-spacing:.14em;padding:5px 10px;border-radius:999px;z-index:1}
+.cc-plan-eyebrow{color:var(--teal);font-size:11px;font-weight:900;letter-spacing:.18em;position:relative;z-index:1}
+.cc-plan-featured .cc-plan-eyebrow{color:var(--sun)}
+.cc-plan h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:28px;line-height:1.1;letter-spacing:-.01em;margin:0;color:var(--ink);position:relative;z-index:1}
+.cc-plan-featured h3{color:#fff}
+.cc-plan > p{font-size:15px;line-height:1.6;color:var(--muted);margin:0;position:relative;z-index:1}
+.cc-plan-featured > p{color:#d4e2e3}
+.cc-plan ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.cc-plan ul li{position:relative;padding-left:26px;font-size:14.5px;line-height:1.5;color:var(--ink)}
+.cc-plan-featured ul li{color:#fff}
+.cc-plan ul li:before{content:"";position:absolute;left:0;top:6px;width:16px;height:16px;border-radius:50%;background:var(--mint)}
+.cc-plan-featured ul li:before{background:rgba(248,202,104,.25)}
+.cc-plan ul li:after{content:"";position:absolute;left:5px;top:9px;width:6px;height:9px;border-right:2px solid var(--teal);border-bottom:2px solid var(--teal);transform:rotate(45deg)}
+.cc-plan-featured ul li:after{border-color:var(--sun)}
+.cc-plan-cta{align-self:flex-start;margin-top:16px;position:relative;z-index:1}
+
+/* -------- Responsive -------- */
+@media (max-width: 980px){
+  .cc-flow{grid-template-columns:repeat(2,1fr);gap:28px}
+  .cc-flow:before{display:none}
+  .cc-course{grid-template-columns:1fr;padding:28px;gap:28px}
+  .cc-course-side{padding:24px}
+  .cc-course-grid{grid-template-columns:1fr}
+  .cc-plan-grid{grid-template-columns:1fr}
+}
+@media (max-width: 540px){
+  .cc-flow{grid-template-columns:1fr;gap:20px}
+  .cc-num{font-size:68px}
+  .cc-course-side h3{font-size:26px}
+  .cc-stats{gap:12px}
+}

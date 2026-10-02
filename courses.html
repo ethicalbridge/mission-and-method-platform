@@ -3,34 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="cache-bust" content="202610020200">
 <title>Courses | Mission &amp; Method</title>
-<meta name="description" content="Five courses, one pathway. Open any course to see every lesson and the output you build.">
+<meta name="description" content="Five courses. Fourteen modules. One organisation. Each course answers one big question and ends with a part of your organisation pack.">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="mission.css?v=navfix1">
 <link rel="stylesheet" href="learning.css?v=course2">
 <link rel="stylesheet" href="pricing.css">
-<link rel="stylesheet" href="planning-system.css?v=ps-redesign-3">
-<style>
-  .ps-courses{display:grid;grid-template-columns:1fr;gap:18px;margin-top:28px}
-  .ps-courses article{background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:28px 32px;display:grid;grid-template-columns:72px 1fr auto;gap:24px;align-items:center}
-  .ps-courses .n{font-family:'DM Serif Display',Georgia,serif;font-size:56px;color:var(--coral);line-height:1;align-self:start}
-  .ps-courses .body{display:flex;flex-direction:column;gap:6px}
-  .ps-courses .eyebrow{color:var(--teal);font-size:12px;font-weight:900;letter-spacing:.14em}
-  .ps-courses h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:26px;line-height:1.1;letter-spacing:-.01em;margin:0}
-  .ps-courses p{font-size:15px;line-height:1.55;color:var(--muted);margin:4px 0 0}
-  .ps-courses .meta{font-size:13px;color:var(--ink);font-weight:700;margin-top:8px;letter-spacing:.02em}
-  .ps-courses .meta span{color:var(--muted);font-weight:500;margin:0 10px}
-  .ps-courses .meta span:first-child{margin-left:0}
-  .ps-courses .meta span:last-child{margin-right:0}
-  .ps-courses .cta{display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:#fff;padding:12px 20px;border-radius:999px;font-weight:800;font-size:14px;text-decoration:none;white-space:nowrap}
-  .ps-courses .cta:hover{filter:brightness(.95)}
-  @media (max-width: 780px){
-    .ps-courses article{grid-template-columns:56px 1fr;gap:16px;padding:22px}
-    .ps-courses .n{font-size:44px}
-    .ps-courses h3{font-size:22px}
-    .ps-courses .cta{grid-column:1/-1;justify-self:start;margin-top:8px}
-  }
-</style>
+<link rel="stylesheet" href="planning-system.css?v=home-redesign-4">
+<link rel="stylesheet" href="courses.css?v=courses-redesign-1">
 </head>
 <body data-page="courses" data-product="planning-system">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -39,99 +20,363 @@
 
 <main id="main">
 
-  <!-- Hero -->
-  <section class="ps-hero" style="padding-bottom:40px">
-    <div class="container" style="display:block">
-      <div style="max-width:860px;margin:0 auto;text-align:center">
-        <div class="eyebrow">THE PLANNING SYSTEM</div>
-        <h1>Five courses. One pathway.</h1>
-        <p class="lead">Each course answers one big question and ends with a part of your organisation pack. Open any course to see every module, lesson and output.</p>
-        <div class="actions" style="justify-content:center">
-          <a class="btn-primary" href="learn.html?module=0&amp;lesson=journey" data-resume data-resume-label="Continue your course →">
-            Start learning
+  <!-- ================= HERO ================= -->
+  <section class="hm-hero hm-hero-courses">
+    <div class="hm-hero-shapes" aria-hidden="true">
+      <span class="hm-shape hm-shape-1"></span>
+      <span class="hm-shape hm-shape-2"></span>
+      <span class="hm-shape hm-shape-3"></span>
+    </div>
+    <div class="container hm-hero-inner">
+      <div class="hm-eyebrow">COURSES · FIVE QUESTIONS · ONE ORGANISATION</div>
+      <h1>Five courses. <em>One organisation.</em></h1>
+      <p class="hm-lead">Each course answers one of the five questions every purpose-led organisation has to answer — and ends with a part of your organisation pack.</p>
+      <div class="hm-facts" data-counter-group>
+        <div><b data-counter="5">0</b><span>courses</span></div>
+        <div><b data-counter="14">0</b><span>modules</span></div>
+        <div><b data-counter="160">0</b><span>lessons &amp; reviews</span></div>
+        <div><b data-counter="52" data-prefix="~">~0</b><span>hours, self-paced</span></div>
+      </div>
+      <div class="hm-actions">
+        <a class="hm-btn hm-btn-primary" href="learn.html?module=0&amp;lesson=journey" data-resume data-resume-label="Continue your course →">
+          Start Module 0 free
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+        <a class="hm-btn hm-btn-ghost" href="#courses">Jump to the five courses ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PATHWAY FLOW ================= -->
+  <section class="hm-section cc-pathway-section">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">THE JOURNEY</div>
+        <h2>Five questions, in order.</h2>
+        <p class="hm-subhead">Each course builds on what the one before it produced. By the end you have a complete organisation pack.</p>
+      </div>
+      <ol class="cc-flow" aria-label="Five-course journey">
+        <li class="reveal" style="--delay:40ms">
+          <span class="cc-flow-dot"></span>
+          <small>COURSE 1</small>
+          <b>Clarify</b>
+          <span class="cc-flow-q">Why do we exist?</span>
+        </li>
+        <li class="reveal" style="--delay:100ms">
+          <span class="cc-flow-dot"></span>
+          <small>COURSE 2</small>
+          <b>Organise</b>
+          <span class="cc-flow-q">Who does what?</span>
+        </li>
+        <li class="reveal" style="--delay:160ms">
+          <span class="cc-flow-dot"></span>
+          <small>COURSE 3</small>
+          <b>Prove &amp; Show</b>
+          <span class="cc-flow-q">How do we show change?</span>
+        </li>
+        <li class="reveal" style="--delay:220ms">
+          <span class="cc-flow-dot"></span>
+          <small>COURSE 4</small>
+          <b>Protect</b>
+          <span class="cc-flow-q">What keeps us safe?</span>
+        </li>
+        <li class="reveal" style="--delay:280ms">
+          <span class="cc-flow-dot"></span>
+          <small>COURSE 5</small>
+          <b>Sustain &amp; Run</b>
+          <span class="cc-flow-q">How do we keep going?</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= THE 5 COURSES ================= -->
+  <section class="hm-section hm-section-alt cc-list" id="courses">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">THE FIVE COURSES</div>
+        <h2>Open any course to see every lesson.</h2>
+        <p class="hm-subhead">Each course ends with a Pack — a part of your organisation pack you can share with your board, team or funders.</p>
+      </div>
+
+      <article class="cc-course reveal" style="--delay:40ms">
+        <aside class="cc-course-side">
+          <span class="cc-num">1</span>
+          <div class="cc-side-eyebrow">COURSE 1</div>
+          <h3>Clarify</h3>
+          <p class="cc-side-tag">Purpose, Strategy &amp; Theory of Change</p>
+          <ul class="cc-stats">
+            <li><b>3</b>modules</li>
+            <li><b>24</b>lessons</li>
+            <li><b>~8h</b>self-paced</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary cc-cta" href="course-clarify.html">
+            About Course 1
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </aside>
+        <div class="cc-course-body">
+          <p class="cc-course-lead"><em>Why do we exist and what change are we pursuing?</em></p>
+          <p>Make the connected decisions every other module depends on — purpose, context, stakeholders, vision, mission, values, form, positioning and objectives — then build a reasoned pathway from problem to long-term impact.</p>
+          <div class="cc-course-grid">
+            <div>
+              <h4>You'll learn to</h4>
+              <ul>
+                <li>Define a purpose, vision and mission that hold up to scrutiny.</li>
+                <li>Map your context, stakeholders and comparative advantage.</li>
+                <li>Build a Theory of Change for each external objective.</li>
+              </ul>
+            </div>
+            <div class="cc-pack">
+              <div class="cc-pack-eyebrow">YOU BUILD</div>
+              <b>Clarity Pack</b>
+              <p>Strategic foundation + Theory of Change — the "why" and the "what".</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cc-course reveal" style="--delay:40ms">
+        <aside class="cc-course-side">
+          <span class="cc-num">2</span>
+          <div class="cc-side-eyebrow">COURSE 2</div>
+          <h3>Organise</h3>
+          <p class="cc-side-tag">Structure, People &amp; Internal Systems</p>
+          <ul class="cc-stats">
+            <li><b>3</b>modules</li>
+            <li><b>31</b>lessons</li>
+            <li><b>~10h</b>self-paced</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary cc-cta" href="course-organise.html">
+            About Course 2
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </aside>
+        <div class="cc-course-body">
+          <p class="cc-course-lead"><em>Who does what, and how do we actually run?</em></p>
+          <p>Design the work before the job titles, separate governance from management, find and keep the right people, and choose the minimum set of internal systems your stage needs.</p>
+          <div class="cc-course-grid">
+            <div>
+              <h4>You'll learn to</h4>
+              <ul>
+                <li>Design structure, governance and decision rights for your legal form.</li>
+                <li>Plan workforce, recruit fairly, onboard and keep people well.</li>
+                <li>Choose a minimum viable set of internal systems and SOPs.</li>
+              </ul>
+            </div>
+            <div class="cc-pack">
+              <div class="cc-pack-eyebrow">YOU BUILD</div>
+              <b>Organisation Pack</b>
+              <p>Structure &amp; accountability + People Plan + Internal Systems Blueprint.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cc-course reveal" style="--delay:40ms">
+        <aside class="cc-course-side">
+          <span class="cc-num">3</span>
+          <div class="cc-side-eyebrow">COURSE 3</div>
+          <h3>Prove &amp; Show</h3>
+          <p class="cc-side-tag">MEAL, Brand &amp; Communications</p>
+          <ul class="cc-stats">
+            <li><b>3</b>modules</li>
+            <li><b>35</b>lessons</li>
+            <li><b>~11h</b>self-paced</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary cc-cta" href="course-prove-show.html">
+            About Course 3
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </aside>
+        <div class="cc-course-body">
+          <p class="cc-course-lead"><em>How do we show the change we're creating?</em></p>
+          <p>Turn your Theory of Change into evidence you can use, translate your mission into an identity people recognise, and reach the audiences your mission needs — ethically.</p>
+          <div class="cc-course-grid">
+            <div>
+              <h4>You'll learn to</h4>
+              <ul>
+                <li>Build a MEAL framework with honest indicators, baselines and targets.</li>
+                <li>Translate mission, values and positioning into a recognisable brand.</li>
+                <li>Design a communications plan built on brand and evidence.</li>
+              </ul>
+            </div>
+            <div class="cc-pack">
+              <div class="cc-pack-eyebrow">YOU BUILD</div>
+              <b>Evidence &amp; Voice Pack</b>
+              <p>MEAL Framework + Brand Platform + Communications Plan.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cc-course reveal" style="--delay:40ms">
+        <aside class="cc-course-side">
+          <span class="cc-num">4</span>
+          <div class="cc-side-eyebrow">COURSE 4</div>
+          <h3>Protect</h3>
+          <p class="cc-side-tag">Financial Management, Legal, Compliance &amp; Risk</p>
+          <ul class="cc-stats">
+            <li><b>2</b>modules</li>
+            <li><b>25</b>lessons</li>
+            <li><b>~8h</b>self-paced</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary cc-cta" href="course-protect.html">
+            About Course 4
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </aside>
+        <div class="cc-course-body">
+          <p class="cc-course-lead"><em>What keeps the organisation safe?</em></p>
+          <p>Manage money well enough to make good decisions, map your legal duties, write the policies you actually need, and manage risk with clear owners and escalation.</p>
+          <div class="cc-course-grid">
+            <div>
+              <h4>You'll learn to</h4>
+              <ul>
+                <li>Budget, control, forecast and report on finances with confidence.</li>
+                <li>Decide which policies your form, stage and funding actually require.</li>
+                <li>Identify, assess, mitigate and monitor risk — proportionately.</li>
+              </ul>
+            </div>
+            <div class="cc-pack">
+              <div class="cc-pack-eyebrow">YOU BUILD</div>
+              <b>Protection Pack</b>
+              <p>Financial Management Pack + Compliance &amp; Risk Pack.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cc-course reveal" style="--delay:40ms">
+        <aside class="cc-course-side">
+          <span class="cc-num">5</span>
+          <div class="cc-side-eyebrow">COURSE 5</div>
+          <h3>Sustain &amp; Run</h3>
+          <p class="cc-side-tag">Funding, Partnerships &amp; Operating Plan</p>
+          <ul class="cc-stats">
+            <li><b>3</b>modules</li>
+            <li><b>45</b>lessons</li>
+            <li><b>~15h</b>self-paced</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary cc-cta" href="course-sustain-run.html">
+            About Course 5
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </aside>
+        <div class="cc-course-body">
+          <p class="cc-course-lead"><em>How do we keep going, year after year?</em></p>
+          <p>Build the resource model that fits your form, design partnerships that actually help, and bring every plan from the course into a single operating plan you run.</p>
+          <div class="cc-course-grid">
+            <div>
+              <h4>You'll learn to</h4>
+              <ul>
+                <li>Choose and diversify an income model that fits your organisation.</li>
+                <li>Form, manage and exit partnerships without losing value.</li>
+                <li>Run an annual operating plan with a real review rhythm.</li>
+              </ul>
+            </div>
+            <div class="cc-pack">
+              <div class="cc-pack-eyebrow">YOU BUILD</div>
+              <b>Delivery Pack</b>
+              <p>Resource Strategy + Partnership Strategy + Operating Plan.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= PRICING TEASER ================= -->
+  <section class="hm-section cc-pricing">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">TWO WAYS TO BUY</div>
+        <h2>One course at a time, or the full pathway.</h2>
+        <p class="hm-subhead">Every course is a one-time payment with lifetime access. The Full Pathway bundle gives you all five, with a saving.</p>
+      </div>
+      <div class="cc-plan-grid">
+        <article class="cc-plan reveal" style="--delay:60ms">
+          <div class="cc-plan-eyebrow">ONE COURSE</div>
+          <h3>Start where you need.</h3>
+          <p>Buy only the course that solves the problem in front of you. Lifetime access, Excel workbooks included.</p>
+          <ul>
+            <li>Full lessons &amp; exercises</li>
+            <li>All Excel workbooks for the course</li>
+            <li>Lifetime access</li>
+            <li>Your Organisation workspace</li>
+          </ul>
+          <a class="hm-btn hm-btn-ghost cc-plan-cta" href="pricing.html">See individual prices →</a>
+        </article>
+        <article class="cc-plan cc-plan-featured reveal" style="--delay:140ms">
+          <div class="cc-plan-badge">BEST VALUE</div>
+          <div class="cc-plan-eyebrow">FULL PATHWAY</div>
+          <h3>All five courses.</h3>
+          <p>The complete organisation pack. All 14 modules, 160 lessons, 14 workbooks — and a measurable saving over buying each course.</p>
+          <ul>
+            <li>Every lesson across all five courses</li>
+            <li>All 14 Excel workbooks</li>
+            <li>Lifetime access</li>
+            <li>Evidence Library + Legal Templates</li>
+            <li>Your Organisation workspace</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary cc-plan-cta" href="pricing.html">
+            View the Full Pathway price
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="hm-section hm-section-alt" id="faq">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">COURSE QUESTIONS</div>
+        <h2>What to know about the courses.</h2>
+      </div>
+      <div class="hm-faq">
+        <details class="reveal" style="--delay:40ms">
+          <summary>Do I have to take the courses in order?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>The courses are designed in sequence — Course 1 feeds Course 2, which feeds Course 3, and so on. You can jump ahead, but each later course assumes the outputs of the ones before it. Most people get more value working through them in order.</p>
+        </details>
+        <details class="reveal" style="--delay:80ms">
+          <summary>Can I buy just one course?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>Yes. Each course is a separate one-time purchase with lifetime access and all its Excel workbooks included. The Full Pathway bundle gives you all five at a measurable saving.</p>
+        </details>
+        <details class="reveal" style="--delay:120ms">
+          <summary>What does "You build" mean?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>Each course ends with a Pack — a set of practical outputs for your organisation (strategy, Theory of Change, People Plan, MEAL framework, and so on). Together the five Packs form your organisation pack, ready to share with your board, team or funders.</p>
+        </details>
+        <details class="reveal" style="--delay:160ms">
+          <summary>How long will each course take?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>Self-paced. The estimates (~8 to ~15 hours per course) assume you also do the guided exercises. The full pathway is around 52 hours of focused work spread over as long as you need.</p>
+        </details>
+        <details class="reveal" style="--delay:200ms">
+          <summary>Can I preview a course before buying?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>Yes. Module 0 (Start Here) is free. Open the first lesson, describe your organisation and run a baseline health check — no card required.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="hm-final">
+    <div class="hm-final-shapes" aria-hidden="true">
+      <span class="hm-shape hm-shape-f1"></span>
+      <span class="hm-shape hm-shape-f2"></span>
+    </div>
+    <div class="container">
+      <div class="hm-final-inner reveal">
+        <div class="hm-section-eyebrow hm-section-eyebrow-light">START WHERE YOU ARE</div>
+        <h2>Open Module 0. Decide the rest from there.</h2>
+        <p>Before you choose a course, meet the method and describe the organisation you are building. Takes 15 minutes. No card.</p>
+        <div class="hm-actions hm-actions-center">
+          <a class="hm-btn hm-btn-primary" href="learn.html?module=0&amp;lesson=journey" data-resume data-resume-label="Continue your course →">
+            Start Module 0 free
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
           </a>
-          <a class="btn-ghost" href="planning-system.html">About the Planning System →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- The 5 courses -->
-  <section class="ps-section" id="courses">
-    <div class="container">
-      <div class="ps-courses">
-
-        <article>
-          <span class="n">1</span>
-          <div class="body">
-            <div class="eyebrow">COURSE 1 · CLARIFY</div>
-            <h3>Purpose, Strategy &amp; Theory of Change</h3>
-            <p>Why we exist and what change we pursue. Make the connected decisions every other module depends on, and build a reasoned pathway from problem to long-term impact.</p>
-            <div class="meta"><span>3 modules</span>·<span>24 lessons</span>·<span>about 8 hours</span></div>
-          </div>
-          <a class="cta" href="course-clarify.html">About this course →</a>
-        </article>
-
-        <article>
-          <span class="n">2</span>
-          <div class="body">
-            <div class="eyebrow">COURSE 2 · ORGANISE</div>
-            <h3>Structure, People &amp; Internal Systems</h3>
-            <p>Who does what and how we run. Design the work before the job titles, find and keep the right people, and choose the minimum set of internal systems your stage needs.</p>
-            <div class="meta"><span>3 modules</span>·<span>31 lessons</span>·<span>about 10 hours</span></div>
-          </div>
-          <a class="cta" href="course-organise.html">About this course →</a>
-        </article>
-
-        <article>
-          <span class="n">3</span>
-          <div class="body">
-            <div class="eyebrow">COURSE 3 · PROVE &amp; SHOW</div>
-            <h3>MEAL, Brand &amp; Communications</h3>
-            <p>Evidence, identity and voice. Turn your Theory of Change into evidence you can use, translate your mission into an identity people recognise, and reach the audiences your mission needs.</p>
-            <div class="meta"><span>3 modules</span>·<span>35 lessons</span>·<span>about 11 hours</span></div>
-          </div>
-          <a class="cta" href="course-prove-show.html">About this course →</a>
-        </article>
-
-        <article>
-          <span class="n">4</span>
-          <div class="body">
-            <div class="eyebrow">COURSE 4 · PROTECT</div>
-            <h3>Financial Management, Legal, Compliance &amp; Risk</h3>
-            <p>Money, duties, policies and risk. Manage money well enough to make good decisions, map your legal duties, write the policies you actually need, and manage risk with clear owners.</p>
-            <div class="meta"><span>2 modules</span>·<span>25 lessons</span>·<span>about 8 hours</span></div>
-          </div>
-          <a class="cta" href="course-protect.html">About this course →</a>
-        </article>
-
-        <article>
-          <span class="n">5</span>
-          <div class="body">
-            <div class="eyebrow">COURSE 5 · SUSTAIN &amp; RUN</div>
-            <h3>Funding, Partnerships &amp; Operating Plan</h3>
-            <p>Resources, partners and a plan you run. Build a sustainable resource model, form the partnerships your mission needs, and bring every plan from the course into one operating plan.</p>
-            <div class="meta"><span>3 modules</span>·<span>45 lessons</span>·<span>about 15 hours</span></div>
-          </div>
-          <a class="cta" href="course-sustain-run.html">About this course →</a>
-        </article>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="ps-section alt">
-    <div class="container">
-      <div class="ps-cta">
-        <div>
-          <h2>Ready to begin?</h2>
-          <p>Start with Module 0. Everything else builds from there.</p>
-        </div>
-        <div class="row">
-          <a class="b1" href="learn.html?module=0&amp;lesson=journey" data-resume data-resume-label="Continue your course →">Start Module 0 →</a>
-          <a class="b2" href="pricing.html">View price &amp; packages</a>
+          <a class="hm-btn hm-btn-ghost-light" href="pricing.html">View price &amp; packages</a>
         </div>
       </div>
     </div>
@@ -142,5 +387,6 @@
 <footer></footer>
 <script src="app.js?v=nav4"></script>
 <script type="module" src="overview.js"></script>
+<script src="home.js?v=home-redesign-4"></script>
 </body>
 </html>
