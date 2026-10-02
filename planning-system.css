@@ -236,10 +236,14 @@
 .hm-trust-row li:not(:last-child):after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:5px;height:5px;background:var(--coral);border-radius:50%;opacity:.6}
 
 /* =============== GENERIC SECTION =============== */
-.hm-section{padding:96px 0;background:#fff}
+.hm-section{padding:64px 0;background:#fff}
 .hm-section-alt{background:var(--cream)}
 .hm-contrast{background:linear-gradient(180deg,#fff 0%,var(--mint) 100%)}
-.hm-head{max-width:760px;margin:0 auto 48px;text-align:center}
+.hm-head{max-width:760px;margin:0 auto 36px;text-align:center}
+/* When two sections of the same background colour sit next to each other,
+   collapse the double padding so they read as one flow. */
+.hm-section + .hm-section{padding-top:32px}
+.hm-section-alt + .hm-section-alt{padding-top:32px}
 .hm-section-eyebrow{color:var(--teal);font-size:12px;font-weight:900;letter-spacing:.2em;margin-bottom:12px}
 .hm-section-eyebrow-light{color:var(--sun)}
 .hm-head h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;color:var(--ink);margin:0 0 16px}
@@ -325,7 +329,7 @@
 .hm-dot{color:var(--line);margin:0 2px}
 
 /* =============== YOUR ORGANISATION =============== */
-.hm-org{background:var(--deep);color:#fff;padding:96px 0;overflow:hidden;position:relative}
+.hm-org{background:var(--deep);color:#fff;padding:72px 0;overflow:hidden;position:relative}
 .hm-org:before{content:"";position:absolute;left:-120px;top:-120px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,var(--teal) 0%,transparent 70%);opacity:.4}
 .hm-org-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1}
 .hm-org-body h2{color:#fff;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(32px,4vw,48px);line-height:1.1;margin:12px 0 18px}
@@ -360,7 +364,7 @@
 .hm-faq p a{color:var(--teal);font-weight:800}
 
 /* =============== FINAL CTA =============== */
-.hm-final{position:relative;background:linear-gradient(160deg,var(--deep) 0%,#0b2630 100%);color:#fff;padding:110px 0;overflow:hidden;text-align:center}
+.hm-final{position:relative;background:linear-gradient(160deg,var(--deep) 0%,#0b2630 100%);color:#fff;padding:84px 0;overflow:hidden;text-align:center}
 .hm-final-shapes{position:absolute;inset:0;pointer-events:none}
 .hm-shape-f1{width:420px;height:420px;left:-140px;top:-140px;background:radial-gradient(circle,var(--coral) 0%,transparent 70%);opacity:.6;animation:hm-float-a 16s ease-in-out infinite}
 .hm-shape-f2{width:380px;height:380px;right:-120px;bottom:-120px;background:radial-gradient(circle,var(--sun) 0%,transparent 70%);opacity:.35;animation:hm-float-b 20s ease-in-out infinite}
@@ -379,8 +383,10 @@
   .hm-org-card{max-width:420px}
 }
 @media (max-width: 640px){
-  .hm-hero{padding:84px 0 90px}
-  .hm-section,.hm-org,.hm-final{padding:72px 0}
+  .hm-hero{padding:72px 0 78px}
+  .hm-section,.hm-org,.hm-final{padding:52px 0}
+  .hm-head{margin-bottom:28px}
+  .hm-section + .hm-section,.hm-section-alt + .hm-section-alt{padding-top:24px}
   .hm-rhythm,.hm-included-grid{grid-template-columns:1fr}
   .hm-facts{gap:28px}
   .hm-facts b{font-size:32px}

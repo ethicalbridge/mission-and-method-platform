@@ -148,3 +148,19 @@
   .pr-plan-hero:hover{transform:translateY(-6px)}
   .pr-launch-note{flex-direction:column;align-items:flex-start}
 }
+
+/* ===== Tight tier flow — the three pricing tiers (Courses / Tools / Experts)
+   should read as one continuous pricing page, not three isolated sections. ===== */
+.pr-tier{padding:48px 0}
+.pr-tier .hm-head{margin-bottom:28px}
+.pr-tier .pr-pair{margin-top:24px}
+/* The first tier (Courses) sits straight under the launch note — tighter top. */
+.pr-note-section + .pr-tier{padding-top:16px}
+/* Subtle divider dot above every tier after the first, so the eye knows more follows. */
+.pr-tier + .pr-tier{position:relative}
+.pr-tier + .pr-tier:before{content:"";position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:40px;height:4px;background:linear-gradient(90deg,var(--coral),var(--teal));border-radius:999px;opacity:.4}
+
+@media (max-width:640px){
+  .pr-tier{padding:36px 0}
+  .pr-tier .pr-pair{margin-top:18px;gap:16px}
+}
