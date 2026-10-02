@@ -1,6 +1,6 @@
 import {module,lesson,review,field} from './kit.js';
 export default module({
- id:9,slug:'financial-management',phase:'Sustain & Protect',title:'Financial Management',
+ id:9,slug:'financial-management',phase:'Protect',title:'Financial Management',
  short:'Budgets, cost allocation, restricted funds, cash flow, controls, reporting, audit and financial health',
  intro:'Manage money well enough to make good decisions, protect resources and earn trust. This module is practical, not an accounting qualification: it covers what founders and leaders need to budget, forecast, control, report and oversee finances, and when to bring in a qualified accountant. How you raise income is covered separately in Module 11.',
  output:'Financial Management Pack',uses:[1,2,3,5],

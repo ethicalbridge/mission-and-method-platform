@@ -1,6 +1,9 @@
 import {pricing} from './pricing-config.js';
 import {modules} from './course-data.js';
+// The full pathway offer. Access is granted per course: see courseProducts and server/package-grants.mjs.
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:modules.map(m=>m.slug)};
+export const courseProducts=pricing.courses.map(c=>({id:c.productId,offerId:c.id,name:c.name,kind:'course',billing:'one_time',price:c.price,currency:pricing.currency,status:'preview',checkout:null,modules:c.modules}));
+export const courseProductForModule=moduleId=>courseProducts.find(c=>c.modules.includes(moduleId));
 // No price, trial, subscription, or bundle is inferred from a course purchase.
 export const availableToolSlugs=['theory-of-change','ethical-bridge-crm','donor-mapping','donor-tracking','donor-reference-guide','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona','policy-management','marketing-social-planner'];
 // Planned tools folded into a live tool, so there is one place for each job. Old pages redirect here.
@@ -49,4 +52,4 @@ export const softwareProducts=[
  ['customer-persona','Customer Persona Builder','Communications, marketing & visibility','Purpose-led teams clarifying who they need to reach','Build an evidence-informed customer persona, choose useful channels and create a portrait prompt from the completed profile.',['Persona name','Audience','Goals','Challenges','Channels']]
 ].map(([slug,name,category,audience,description,fields])=>({id:`software_${slug.replaceAll('-','_')}`,slug,name,category,audience,description,fields,launchUrl:launchUrls[slug]||null,previewOnly:previewToolSlugs.includes(slug),kind:'software',suiteIncluded:pricing.suite.toolSlugs.includes(slug),billing:['monthly','annual'],prices:{monthly:null,annual:null},currency:pricing.currency,status:previewToolSlugs.includes(slug)?'preview':availableToolSlugs.includes(slug)?'available':'coming_soon',trial:null,checkout:{monthly:null,annual:null},dataNamespace:`mm.software.${slug}.v1`,entitlements:[]}));
 // One Excel workbook per module. objectKey/version stay null until a real versioned file is uploaded privately.
-export const resourceManifest=modules.map(m=>({id:m.slug,courseId:courseProduct.id,module:m.id,name:`${m.workbook.title}`,file:m.workbook.file,version:null,objectKey:null,status:'awaiting_owner_file',requiresEntitlement:courseProduct.id}));
+export const resourceManifest=modules.map(m=>({id:m.slug,courseId:courseProductForModule(m.id).id,module:m.id,name:`${m.workbook.title}`,file:m.workbook.file,version:null,objectKey:null,status:'awaiting_owner_file',requiresEntitlement:courseProductForModule(m.id).id}));

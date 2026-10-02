@@ -1,7 +1,7 @@
 import {module,lesson,review,field} from './kit.js';
 const A='11A · Foundations',B='11B · Income streams',C='11C · Winning and keeping support',D='11D · Sustainability';
 export default module({
- id:11,slug:'fundraising-revenue',phase:'Sustain & Protect',title:'Fundraising, Revenue & Sustainable Business Models',
+ id:11,slug:'fundraising-revenue',phase:'Sustain & Run',title:'Fundraising, Revenue & Sustainable Business Models',
  short:'Resource models by organisational form, income streams, proposals, pipelines, stewardship and sustainability',
  intro:'Every organisation needs a sustainable resource model, but the model depends on what kind of organisation you are. Nonprofits, charities and foundations usually raise funds from grants and donations; companies and social enterprises earn revenue from customers; hybrids combine both. Start with the foundations, then study the income streams that fit your model, and learn how to win, keep and report on support.',
  output:'Sustainable Resource Strategy',uses:[0,1,2,6,8,9],

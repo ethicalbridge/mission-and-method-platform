@@ -2,7 +2,7 @@ import {module,lesson,review,field} from './kit.js';
 const A='Legal & compliance',B='Policies & procedures',C='Risk management';
 const pol=['policy-management'],risk=['issue-risk-management'];
 export default module({
- id:10,slug:'legal-compliance-risk',phase:'Sustain & Protect',title:'Legal, Compliance, Policies & Risk',
+ id:10,slug:'legal-compliance-risk',phase:'Protect',title:'Legal, Compliance, Policies & Risk',
  short:'Your legal map, the policies you actually need, procedures, policy lifecycle and risk management',
  intro:'Bring together your legal and compliance framework. Map your legal duties, work out which policies and controls your organisation actually needs given its form, activities, geography, size, funding and risk profile, write procedures people can follow, keep policies alive, and manage risk with clear owners and escalation. This module supports planning; legal duties depend on your jurisdiction, so obtain qualified local advice.',
  output:'Compliance & Risk Pack',uses:[0,1,3,4,5],

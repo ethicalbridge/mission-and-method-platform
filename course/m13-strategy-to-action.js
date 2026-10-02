@@ -1,7 +1,7 @@
 import {module,lesson,review,field} from './kit.js';
 const plan=['strategy-kpis-annual-planning'];
 export default module({
- id:13,slug:'strategy-to-action',phase:'Run',title:'Strategy to Action: Plan, Deliver & Review',
+ id:13,slug:'strategy-to-action',phase:'Sustain & Run',title:'Strategy to Action: Plan, Deliver & Review',
  short:'Annual plan, KPIs, deliverables, capacity, dependencies, Gantt, integration and the review cycle',
  intro:'Bring every plan from the course into one operating plan you can run. Turn multi-year objectives into this year’s priorities, KPIs, deliverables and a realistic timeline; integrate budget, risks, funding, communications and partnerships; then set the review rhythm that keeps the organisation learning and improving.',
  output:'Organisation Operating Plan',uses:[1,2,3,6,9,10,11,12],

@@ -43,3 +43,9 @@
 .ps-modules .phase-heading{margin:22px 0 4px;font-size:20px}.ps-modules .phase-heading:first-child{margin-top:0}
 .module-sections .part-row{display:block;background:var(--cream,#fffaf3);border-style:dashed}
 .tools-promo.compact .promo-tools{display:flex;flex-wrap:wrap;gap:6px}.tools-promo.compact .promo-tools li{padding:6px 10px;border-radius:999px}.tools-promo.compact .promo-tools span{display:none}.tools-promo.compact h2{font-size:24px}
+/* Five courses */
+.course-tag{margin:6px 0 16px;padding:10px 14px;border-radius:10px;background:var(--mint,#d8eee2);font-size:14px}
+.phase-label a{color:inherit;text-decoration:none}.phase-label a:hover{text-decoration:underline}
+.five-courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin:28px 0}
+.course-offer h2{font-size:22px!important;margin:8px 0!important}.course-offer ul{padding-left:18px;font-size:14px;line-height:1.6}.course-offer-price{font-size:15px}.course-offer-price b{font-size:24px;color:var(--teal)}.course-offer .button{width:auto}
+.future-course-list a{display:flex;justify-content:space-between;gap:10px;padding:6px 0;text-decoration:none;color:inherit}.future-course-list a small{color:var(--teal);font-weight:700}

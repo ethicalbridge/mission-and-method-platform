@@ -19,13 +19,19 @@ import m12 from './course/m12-partnerships.js';
 import m13 from './course/m13-strategy-to-action.js';
 export {STAGES} from './course/kit.js';
 
+// The Planning System is sold as five courses, one per phase. Each module's `phase` names its course.
+// Prices and product IDs live in pricing-config.js (courses[].id matches courses here).
 export const phases=[
- {name:'Clarify',summary:'Why we exist and what change we pursue'},
- {name:'Organise',summary:'Who does what and how we run'},
- {name:'Prove & Show',summary:'Evidence, identity and voice'},
- {name:'Sustain & Protect',summary:'Money, compliance, resources and partners'},
- {name:'Run',summary:'Plan, deliver and review'}
+ {id:'clarify',number:1,name:'Clarify',title:'Clarify: Purpose, Strategy & Theory of Change',summary:'Why we exist and what change we pursue'},
+ {id:'organise',number:2,name:'Organise',title:'Organise: Structure, People & Systems',summary:'Who does what and how we run'},
+ {id:'prove-show',number:3,name:'Prove & Show',title:'Prove & Show: MEAL, Brand & Communications',summary:'Evidence, identity and voice'},
+ {id:'protect',number:4,name:'Protect',title:'Protect: Finance, Legal, Compliance & Risk',summary:'Money, duties, policies and risk'},
+ {id:'sustain-run',number:5,name:'Sustain & Run',title:'Sustain & Run: Funding, Partnerships & Operating Plan',summary:'Resources, partners and a plan you run'}
 ];
+export const courses=phases;
+export const courseFor=m=>phases.find(p=>p.name===m.phase);
+// Modules anyone can open without buying a course.
+export const freeModules=[0];
 export const modules=[m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13];
 export const moduleCount=modules.length;
 export const lessonCount=modules.reduce((n,m)=>n+m.lessons.length,0);

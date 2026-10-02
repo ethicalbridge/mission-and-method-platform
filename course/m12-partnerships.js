@@ -1,7 +1,7 @@
 import {module,lesson,review,field} from './kit.js';
 const crm=['ethical-bridge-crm'];
 export default module({
- id:12,slug:'partnerships',phase:'Sustain & Protect',title:'Partnerships & Ecosystem Building',
+ id:12,slug:'partnerships',phase:'Sustain & Run',title:'Partnerships & Ecosystem Building',
  short:'Identify, assess, design, formalise, manage, evaluate and renew or exit partnerships',
  intro:'No purpose-led organisation achieves its mission alone. Learn to identify the partners and ecosystem actors that matter, assess fit and risk, design fair partnerships with clear roles and governance, formalise them, manage the relationship, measure its value and decide when to renew, scale or exit.',
  output:'Partnership Strategy',uses:[1,2,3,10,11],
