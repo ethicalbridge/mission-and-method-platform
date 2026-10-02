@@ -31,7 +31,7 @@ document.querySelectorAll('.nav-links a').forEach(a=>{const path=a.getAttribute(
 document.querySelectorAll('.hm-final .hm-final-inner').forEach(inner => {
   if (inner.querySelector('.brand-stacked')) return; // already injected
   const sig = document.createElement('a');
-  sig.className = 'brand-stacked hm-final-brand reveal';
+  sig.className = 'brand brand-stacked hm-final-brand reveal';
   sig.href = 'index.html';
   sig.setAttribute('aria-label', 'Method into Impact — Home');
   sig.innerHTML = `

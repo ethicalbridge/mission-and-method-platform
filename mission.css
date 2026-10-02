@@ -114,21 +114,26 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
 
 /* ===== Method into Impact · brand lockup =====
    Two-line horizontal lockup: mark + {wordmark · tagline}.
-   Mark colour inherits currentColor so it inverts automatically
-   between light surfaces (nav, light sections) and dark surfaces
-   (footer, hm-hero, hm-final, hm-org). */
+   Per brand manual page 6:
+     On light: Deep mark + name, Teal path, Coral "into", Ink tagline.
+     On deep : Cream mark + name, Light Teal path, Sun "into", Mint tagline.
+   Mark colour inherits currentColor so it inverts automatically.
+   Rules use .brand span.X specificity (0,2,0) to beat the legacy
+   .brand span rule in styles.css. */
 .brand{display:inline-flex;align-items:center;gap:12px;font-family:'Nunito Sans',system-ui,sans-serif;color:var(--deep);text-decoration:none;line-height:1}
+.brand span.brand-text{display:inline-flex;flex-direction:column;gap:3px;min-width:0;color:var(--deep)}
+.brand span.brand-word{display:inline-flex;align-items:baseline;gap:0;font-weight:900;font-size:25px;letter-spacing:-.025em;line-height:1;color:var(--deep)}
+.brand span.brand-into{color:var(--coral);font-style:normal;margin:0 .18em;font-weight:900}
+.brand .brand-tagline{display:block;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--ink);text-transform:uppercase;line-height:1.1}
 .brand-mark{flex-shrink:0;color:var(--deep);width:auto;height:44px}
-.brand-text{display:inline-flex;flex-direction:column;gap:3px;min-width:0}
-.brand-word{display:inline-flex;align-items:baseline;gap:0;font-weight:900;font-size:25px;letter-spacing:-.025em;line-height:1}
-.brand-into{color:var(--coral);font-style:normal;margin:0 .18em;font-weight:900}
-.brand-tagline{display:block;font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--teal);text-transform:uppercase;line-height:1.1}
 
-/* Dark backgrounds — invert colours per brand manual (Cream mark, Light Teal path, Sun 'into') */
+/* Dark backgrounds — invert colours per brand manual. */
 .site-footer .brand,.hm-hero .brand,.hm-final .brand,.hm-org .brand{color:#FFFAF3}
+.site-footer .brand span.brand-text,.hm-hero .brand span.brand-text,.hm-final .brand span.brand-text,.hm-org .brand span.brand-text{color:#FFFAF3}
+.site-footer .brand span.brand-word,.hm-hero .brand span.brand-word,.hm-final .brand span.brand-word,.hm-org .brand span.brand-word{color:#FFFAF3}
 .site-footer .brand-mark,.hm-hero .brand-mark,.hm-final .brand-mark,.hm-org .brand-mark{color:#FFFAF3}
-.site-footer .brand-into,.hm-hero .brand-into,.hm-final .brand-into,.hm-org .brand-into{color:#F8CA68}
-.site-footer .brand-tagline,.hm-hero .brand-tagline,.hm-final .brand-tagline,.hm-org .brand-tagline{color:#F8CA68}
+.site-footer .brand span.brand-into,.hm-hero .brand span.brand-into,.hm-final .brand span.brand-into,.hm-org .brand span.brand-into{color:#F8CA68}
+.site-footer .brand .brand-tagline,.hm-hero .brand .brand-tagline,.hm-final .brand .brand-tagline,.hm-org .brand .brand-tagline{color:#D8EEE2}
 
 /* Legacy footer-tagline helper (used before brand-tagline existed) */
 .footer-tagline{display:block;font-weight:800;font-size:12px;letter-spacing:.14em;color:#F8CA68;margin:8px 0 10px;text-transform:uppercase}
@@ -144,16 +149,14 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
 .site-footer .brand-word{font-size:28px}
 .site-footer .brand-tagline{font-size:11px}
 
-/* ===== Stacked logo variant for centered "signature" use
-   (final CTA, hero bottom, standalone brand strip). ===== */
-.brand-stacked{display:inline-flex;flex-direction:column;align-items:center;gap:14px;color:currentColor;text-decoration:none;line-height:1}
-.brand-stacked .brand-mark{height:72px}
-.brand-stacked .brand-word{font-size:34px;letter-spacing:-.025em}
-.brand-stacked .brand-tagline{font-size:12px;letter-spacing:.18em;margin-top:4px}
-/* On dark backgrounds the stacked lockup takes the same inverted colours as the horizontal one. */
-.hm-final .brand-stacked,.hm-org .brand-stacked{color:#FFFAF3}
-.hm-final .brand-stacked .brand-into,.hm-org .brand-stacked .brand-into{color:#F8CA68}
-.hm-final .brand-stacked .brand-tagline,.hm-org .brand-stacked .brand-tagline{color:#F8CA68}
+/* ===== Stacked logo variant for centered "signature" use.
+   Used on the Final CTA via app.js injection. The element also
+   carries .brand so the colour rules above apply. ===== */
+.brand.brand-stacked{flex-direction:column;align-items:center;gap:14px}
+.brand.brand-stacked .brand-mark{height:72px}
+.brand.brand-stacked span.brand-text{flex-direction:column;align-items:center;gap:8px}
+.brand.brand-stacked span.brand-word{font-size:34px;letter-spacing:-.025em}
+.brand.brand-stacked .brand-tagline{font-size:11px;letter-spacing:.1em}
 
 /* ===== Responsive ===== */
 @media (max-width:900px){
