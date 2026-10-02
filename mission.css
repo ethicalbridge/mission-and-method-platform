@@ -8,7 +8,7 @@ h1,h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;letter-spacin
 h2{font-size:clamp(38px,4.5vw,62px);line-height:1.02}
 p{color:var(--muted)}
 .nav{background:rgba(255,250,243,.95);backdrop-filter:blur(12px);border-bottom:1px solid #eadfd4}
-.brand{font-family:'DM Serif Display',serif;font-size:26px;letter-spacing:0}.brand span{color:var(--coral)}
+/* legacy .brand rules kept for backwards compatibility but colour rules removed — new rules are at the bottom of this file */
 .button{background:var(--teal);border-color:var(--teal);border-radius:999px;box-shadow:0 7px 18px #16746e30;font-weight:800}
 .button:hover{background:#0f615c;border-color:#0f615c;transform:translateY(-2px)}
 .button.ghost{background:transparent;border-color:var(--teal);color:var(--teal);box-shadow:none}
@@ -42,7 +42,7 @@ p{color:var(--muted)}
 .about-founder-photo{margin:0;background:var(--mint);padding:18px;border-radius:26px;transform:rotate(-1deg)}.about-founder-photo img{display:block;width:100%;max-height:650px;object-fit:cover;object-position:center top;border-radius:18px}.about-founder-photo figcaption{display:grid;padding:16px 8px 4px}.about-founder-photo figcaption b{font-family:'DM Serif Display';font-size:24px}.about-founder-photo figcaption small{color:var(--muted)}
 .faq-section{background:#f5efe7}.faq-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:75px}.accordions article,.curriculum article{border-bottom:1px solid #cbd5d0}.accordions button{width:100%;border:0;background:transparent;color:var(--ink);display:flex;justify-content:space-between;text-align:left;padding:20px 0;font:800 17px 'Nunito Sans';cursor:pointer}.accordions button span{font-size:24px;color:var(--coral)}.accordions article>div{display:none;padding:0 25px 17px 0}.accordions article.open>div{display:block}
 .final-cta{text-align:center;background:var(--sun);padding:85px 20px}.final-cta>div>span{font-weight:900;color:var(--coral);text-transform:uppercase;letter-spacing:.12em;font-size:12px}.final-cta h2{font-size:clamp(45px,6vw,76px);margin:16px 0}.final-cta p{color:var(--ink)}
-.footer{background:var(--deep)}.footer-inner{gap:30px}.footer-links{display:flex;gap:20px}.footer a{color:#fff}.footer .brand span{color:var(--coral)}
+.footer{background:var(--deep)}.footer-inner{gap:30px}.footer-links{display:flex;gap:20px}.footer a{color:#fff}
 
 /* Course catalogue */
 .catalogue-hero{background:linear-gradient(110deg,var(--deep) 64%,var(--coral) 64%);color:#fff;padding:100px 0}.catalogue-hero h1{font-size:clamp(55px,7vw,90px);line-height:.95;margin:20px 0}.catalogue-hero p{color:#dce8e8;font-size:19px;max-width:720px}.catalogue-hero .trust-row{color:var(--sun)}
@@ -120,20 +120,20 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
    Mark colour inherits currentColor so it inverts automatically.
    Rules use .brand span.X specificity (0,2,0) to beat the legacy
    .brand span rule in styles.css. */
-.brand{display:inline-flex;align-items:center;gap:12px;font-family:'Nunito Sans',system-ui,sans-serif;color:var(--deep);text-decoration:none;line-height:1}
-.brand span.brand-text{display:inline-flex;flex-direction:column;gap:3px;min-width:0;color:var(--deep)}
-.brand span.brand-word{display:inline-flex;align-items:baseline;gap:0;font-weight:900;font-size:25px;letter-spacing:-.025em;line-height:1;color:var(--deep)}
-.brand span.brand-into{color:var(--coral);font-style:normal;margin:0 .18em;font-weight:900}
-.brand .brand-tagline{display:block;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--ink);text-transform:uppercase;line-height:1.1}
-.brand-mark{flex-shrink:0;color:var(--deep);width:auto;height:44px}
+.brand{display:inline-flex;align-items:center;gap:12px;font-family:'Nunito Sans',system-ui,sans-serif;color:var(--deep)!important;text-decoration:none;line-height:1}
+.brand span.brand-text{display:inline-flex;flex-direction:column;gap:3px;min-width:0;color:var(--deep)!important}
+.brand span.brand-word{display:inline-flex;align-items:baseline;gap:0;font-weight:900;font-size:25px;letter-spacing:-.025em;line-height:1;color:var(--deep)!important}
+.brand span.brand-into{color:var(--coral)!important;font-style:normal;margin:0 .18em;font-weight:900}
+.brand .brand-tagline{display:block;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--ink)!important;text-transform:uppercase;line-height:1.1}
+.brand-mark{flex-shrink:0;color:var(--deep)!important;width:auto;height:44px}
 
 /* Dark backgrounds — invert colours per brand manual. */
-.site-footer .brand,.hm-hero .brand,.hm-final .brand,.hm-org .brand{color:#FFFAF3}
-.site-footer .brand span.brand-text,.hm-hero .brand span.brand-text,.hm-final .brand span.brand-text,.hm-org .brand span.brand-text{color:#FFFAF3}
-.site-footer .brand span.brand-word,.hm-hero .brand span.brand-word,.hm-final .brand span.brand-word,.hm-org .brand span.brand-word{color:#FFFAF3}
-.site-footer .brand-mark,.hm-hero .brand-mark,.hm-final .brand-mark,.hm-org .brand-mark{color:#FFFAF3}
-.site-footer .brand span.brand-into,.hm-hero .brand span.brand-into,.hm-final .brand span.brand-into,.hm-org .brand span.brand-into{color:#F8CA68}
-.site-footer .brand .brand-tagline,.hm-hero .brand .brand-tagline,.hm-final .brand .brand-tagline,.hm-org .brand .brand-tagline{color:#D8EEE2}
+.site-footer .brand,.hm-hero .brand,.hm-final .brand,.hm-org .brand{color:#FFFAF3!important}
+.site-footer .brand span.brand-text,.hm-hero .brand span.brand-text,.hm-final .brand span.brand-text,.hm-org .brand span.brand-text{color:#FFFAF3!important}
+.site-footer .brand span.brand-word,.hm-hero .brand span.brand-word,.hm-final .brand span.brand-word,.hm-org .brand span.brand-word{color:#FFFAF3!important}
+.site-footer .brand-mark,.hm-hero .brand-mark,.hm-final .brand-mark,.hm-org .brand-mark{color:#FFFAF3!important}
+.site-footer .brand span.brand-into,.hm-hero .brand span.brand-into,.hm-final .brand span.brand-into,.hm-org .brand span.brand-into{color:#F8CA68!important}
+.site-footer .brand .brand-tagline,.hm-hero .brand .brand-tagline,.hm-final .brand .brand-tagline,.hm-org .brand .brand-tagline{color:#D8EEE2!important}
 
 /* Legacy footer-tagline helper (used before brand-tagline existed) */
 .footer-tagline{display:block;font-weight:800;font-size:12px;letter-spacing:.14em;color:#F8CA68;margin:8px 0 10px;text-transform:uppercase}
