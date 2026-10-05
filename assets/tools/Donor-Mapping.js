@@ -10,7 +10,7 @@ const {esc,uid,now,today,currentYear,fmtDate,field,area,select,tip,pill,bar,card
 
 const KEY='mission-method-donor-mapping-v2',LEGACY='mission-method-donor-mapping-v1';
 const SO_KEY='mission-method-strategic-objectives-v2',TOC_KEY='mission-method-theory-of-change-v2';
-const TABS=['Start','Prospects','Alignment matrix','Export'];
+const TABS=['Start','Assessment grid','Alignment matrix','Export'];
 const DTYPES=['Foundation','Government','Bilateral','Corporate','Individual','UN agency','Multilateral','Other'];
 const STAGES=['Prospect','Qualified','Engaged','Proposing','Decided','Not fit'];
 const SIZES=['Micro (<$10k)','Small ($10k–$100k)','Medium ($100k–$1M)','Large ($1M–$10M)','Very large (>$10M)'];
@@ -331,34 +331,80 @@ function startView(){
    <div class="actions">
     <button class="button" data-action="new-donor">+ Add a donor</button>
     <button class="button secondary" data-action="load-example">Load 3 worked examples</button>
-    <a class="button secondary" href="#" data-tab="Prospects">Go to prospect pipeline →</a>
+    <a class="button secondary" href="#" data-tab="Assessment grid">Open the assessment grid →</a>
     <a class="button secondary" href="#" data-tab="Alignment matrix">See alignment matrix →</a>
     <a class="button secondary" href="Donor-Tracking.html">Open Donor Tracking →</a>
    </div>
   </section>`;
 }
 
-function prospectsView(){
+// ---------- Assessment grid (replicates the Annex 2 Excel) ----------
+// One wide, inline-editable table. Every cell saves on change and the
+// dashboard above re-renders with the live totals.
+function gridCellSelect(d,field,opts){
+ return `<select class="dm-grid-cell dm-grid-sel" data-grid-id="${esc(d.id)}" data-grid-field="${esc(field)}">${opts.map(o=>`<option value="${esc(o)}" ${(d[field]||'')===o?'selected':''}>${esc(o||'—')}</option>`).join('')}</select>`;
+}
+function gridCellYNDK(d,field){return gridCellSelect(d,field,ASSESS_OPTS)}
+function gridCellText(d,field,ph=''){
+ return `<input class="dm-grid-cell dm-grid-input" data-grid-id="${esc(d.id)}" data-grid-field="${esc(field)}" value="${esc(d[field]||'')}" placeholder="${esc(ph)}" aria-label="${esc(field)}">`;
+}
+function gridCellArea(d,field,ph=''){
+ return `<textarea class="dm-grid-cell dm-grid-area" data-grid-id="${esc(d.id)}" data-grid-field="${esc(field)}" rows="1" placeholder="${esc(ph)}" aria-label="${esc(field)}">${esc(d[field]||'')}</textarea>`;
+}
+function assessmentGridView(){
  const stageOrder={'Proposing':0,'Engaged':1,'Qualified':2,'Prospect':3,'Decided':4,'Not fit':5};
  const sorted=[...db.donors].sort((a,b)=>(stageOrder[a.stage]??9)-(stageOrder[b.stage]??9)||totalAlignment(b).pct-totalAlignment(a).pct);
+ // Build column groups to mirror the Excel exactly.
+ const generalCols=[
+  {k:'code',label:'Code',w:68},
+  {k:'name',label:'Donor',w:150},
+  {k:'fundName',label:'Fund name',w:150},
+  {k:'priority',label:'Priority',w:100,opts:PRIORITIES},
+  {k:'type',label:'Type',w:120,opts:['',...DTYPES]},
+  {k:'focusAreas',label:'Key areas of interest',w:180},
+  {k:'restrictions',label:'Restrictions',w:180},
+  {k:'amount',label:'Amount',w:150},
+  {k:'keyDates',label:'Key dates',w:140},
+  {k:'applicationStage',label:'Length (stages)',w:160,opts:APPLICATION_STAGES},
+  {k:'contact',label:'Contacts',w:140},
+  {k:'website',label:'Website',w:150},
+  {k:'notes',label:'Notes',w:180},
+  {k:'stage',label:'Pipeline stage',w:120,opts:STAGES}
+ ];
+ // Build each row's cells.
  const rows=sorted.map(d=>{
-  const align=totalAlignment(d);
   const assess=assessmentScore(d);
-  const bandClass=align.pct>=75?'risk-band-low':align.pct>=50?'risk-band-medium':align.pct>=25?'risk-band-high':'risk-band-none';
-  return `<tr>
-   <td><b>${esc(d.code)}</b></td>
-   <td><b>${esc(d.name||'Untitled donor')}</b>${d.country?`<br><small>${esc(d.country)}${d.region?' · '+esc(d.region):''}</small>`:''}</td>
-   <td>${pill(d.type)}</td>
-   <td>${esc(d.size||'—')}<br><small>${esc(d.typicalGrant||'')}</small></td>
-   <td class="risk-score-cell ${bandClass}" title="${align.sum}/${align.max}"><b>${align.pct}%</b></td>
-   <td><span class="dm-verdict-badge ${assess.verdictClass}">${esc(assess.verdict)}</span><br><small>${assess.answered}/${assess.total}</small></td>
-   <td>${pill(d.stage||'Prospect')}</td>
-   <td>${esc(fmtDate(d.nextCycle)||'—')}</td>
-   <td><div class="row-actions"><button class="link" data-action="edit-donor" data-id="${esc(d.id)}">Edit</button></div></td>
+  const align=totalAlignment(d);
+  const gen=generalCols.map(c=>`<td class="dm-grid-td dm-grid-td-${c.k}" style="min-width:${c.w}px">${c.opts?gridCellSelect(d,c.k,c.opts):(c.k==='notes'||c.k==='focusAreas'||c.k==='restrictions'?gridCellArea(d,c.k):gridCellText(d,c.k))}</td>`).join('');
+  const assessCells=ASSESS_FIELDS.map(([k])=>`<td class="dm-grid-td dm-grid-td-ynd dm-grid-ans-${(d[k]||'none').replace(/[^a-z]/gi,'').toLowerCase()}">${gridCellYNDK(d,k)}</td>`).join('');
+  return `<tr data-row="${esc(d.id)}">
+   <td class="dm-grid-verdict"><span class="dm-verdict-badge ${assess.verdictClass}">${esc(assess.verdict)}</span><br><small>${assess.answered}/${assess.total} · ${align.pct}% fit</small></td>
+   ${gen}
+   ${assessCells}
+   <td class="dm-grid-del"><button class="link" data-action="delete" data-id="${esc(d.id)}" title="Delete donor">✕</button></td>
   </tr>`;
- });
- return `<div class="rowhead section-head"><div><h2>Prospect pipeline</h2><p>Donors sorted by stage then by fit. Each row shows the ESO alignment % and the automatic verdict from the Strategy/Likelihood/Technical/Capacity/Risk questionnaire. Click Edit to open the full profile.</p></div><button class="button" data-action="new-donor">+ Add a donor</button></div>
-  ${table(['Code','Donor','Type','Size · typical grant','Fit %','Verdict','Stage','Next cycle',''],rows,'No donors yet. Click "Add a donor" to begin.')}`;
+ }).join('');
+ // Build grouped header row + column headers.
+ const groupHeader=`<tr class="dm-grid-group-row">
+  <th class="dm-grid-group dm-grid-group-verdict">Go / No-Go</th>
+  <th class="dm-grid-group dm-grid-group-general" colspan="${generalCols.length}">General information</th>
+  ${ASSESS_GROUPS.map(g=>`<th class="dm-grid-group dm-grid-group-${g.id}" colspan="${g.fields.length}">${esc(g.label)}${g.polarity==='negative'?' (Yes = risk)':''}</th>`).join('')}
+  <th class="dm-grid-group dm-grid-group-del"></th>
+ </tr>`;
+ const colHeader=`<tr class="dm-grid-col-row">
+  <th class="dm-grid-th dm-grid-th-sticky">Verdict (auto)</th>
+  ${generalCols.map(c=>`<th class="dm-grid-th" style="min-width:${c.w}px">${esc(c.label)}</th>`).join('')}
+  ${ASSESS_GROUPS.flatMap(g=>g.fields.map(([,label,q])=>`<th class="dm-grid-th dm-grid-th-ynd" title="${esc(q)}">${esc(label)}</th>`)).join('')}
+  <th class="dm-grid-th"></th>
+ </tr>`;
+ return `${visualDashboard()}
+  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>Assessment grid</h2><p>Fill the row like a spreadsheet. Every cell saves instantly and the four dashboard cards above update live. The Go/No-Go verdict comes from the Yes / No / Don't know answers — Strategy / Likelihood / Technical / Capacity reward "Yes", Risk is inverted (Yes = risk present).</p></div><div class="actions"><button class="button" data-action="new-donor">+ Add row</button><button class="button secondary" data-action="load-example">Load 3 examples</button></div></div>
+  <div class="dm-grid-wrap">
+   <table class="dm-grid">
+    <thead>${groupHeader}${colHeader}</thead>
+    <tbody>${rows||`<tr><td colspan="${1+generalCols.length+ASSESS_FIELDS.length+1}" class="muted" style="padding:30px;text-align:center">No donors yet. Click <b>+ Add row</b> or <b>Load 3 examples</b> to begin.</td></tr>`}</tbody>
+   </table>
+  </div>`;
 }
 
 function alignmentMatrixView(){
@@ -490,11 +536,42 @@ async function importJsonFile(file){try{const d=JSON.parse(await file.text());if
 
 function wireStart(root){const box=root.querySelector('.work-box');if(!box)return;const status=box.querySelector('#work-status');let timer;const schedule=()=>{if(status)status.textContent='Saving…';clearTimeout(timer);timer=setTimeout(()=>{persist(db);if(status){status.textContent='✓ Saved';setTimeout(()=>status.textContent='',1500)}},400)};box.querySelectorAll('.work-meta [data-field],.work-head [data-field]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.field;db.meta[k]=el.type==='number'?(el.value===''?'':Number(el.value)):el.value;schedule()})})}
 
+// Wire inline grid cells: every data-grid-field input/select/textarea
+// updates db.donors[i][field] on input, debounces a persist + dashboard
+// re-render so the four charts at the top track the user's edits live.
+function wireGrid(root){
+ const grid=root.querySelector('.dm-grid');
+ if(!grid)return;
+ let timer;
+ const schedule=()=>{clearTimeout(timer);timer=setTimeout(()=>{persist(db);rerenderDashboard(root)},300)};
+ grid.querySelectorAll('[data-grid-field]').forEach(el=>{
+  const ev=el.tagName==='SELECT'?'change':'input';
+  el.addEventListener(ev,()=>{
+   const id=el.dataset.gridId,f=el.dataset.gridField;
+   const d=db.donors.find(x=>x.id===id);if(!d)return;
+   d[f]=el.value;
+   stamp(d);
+   // Update the row's verdict badge inline without full re-render for snappy typing.
+   const row=el.closest('tr[data-row]');
+   if(row){const v=assessmentScore(d);const a=totalAlignment(d);const cell=row.querySelector('.dm-grid-verdict');if(cell)cell.innerHTML=`<span class="dm-verdict-badge ${v.verdictClass}">${esc(v.verdict)}</span><br><small>${v.answered}/${v.total} · ${a.pct}% fit</small>`;}
+   // Colour the Yes/No answer cell to match the response.
+   if(f && ASSESS_FIELDS.some(([k])=>k===f)){const td=el.closest('td');if(td){td.className=td.className.replace(/dm-grid-ans-\S+/,'');td.classList.add('dm-grid-ans-'+(el.value||'none').replace(/[^a-z]/gi,'').toLowerCase())}}
+   schedule();
+  });
+ });
+}
+function rerenderDashboard(root){
+ const dash=root.querySelector('.dm-dashboard');if(!dash)return;
+ const div=document.createElement('div');div.innerHTML=visualDashboard();
+ const fresh=div.querySelector('.dm-dashboard');if(fresh)dash.replaceWith(fresh);
+}
+
 function render(){
- const views={'Start':startView,'Prospects':prospectsView,'Alignment matrix':alignmentMatrixView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Funding · Donor mapping',title:'Donor Mapping',intro:'Prospect side of fundraising. Score each donor against your strategic objectives, qualify or disqualify, and promote qualified prospects to Donor Tracking for active cultivation.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=11&lesson=prospects',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ const views={'Start':startView,'Assessment grid':assessmentGridView,'Alignment matrix':alignmentMatrixView,'Export':exportViewPanel};
+ root.innerHTML=shell({eyebrow:'Funding · Donor mapping',title:'Donor Mapping',intro:'Prospect side of fundraising. Fill the assessment grid like a spreadsheet — every cell updates the Go/No-Go dashboard above live.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=11&lesson=prospects',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
+ wireGrid(root);
 }
 
 persist(db);render();
