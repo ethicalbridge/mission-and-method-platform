@@ -15,7 +15,78 @@ const DTYPES=['Foundation','Government','Bilateral','Corporate','Individual','UN
 const STAGES=['Prospect','Qualified','Engaged','Proposing','Decided','Not fit'];
 const SIZES=['Micro (<$10k)','Small ($10k–$100k)','Medium ($100k–$1M)','Large ($1M–$10M)','Very large (>$10M)'];
 
-const blankDonor=()=>({id:uid(),code:'',name:'',type:'Foundation',country:'',region:'',size:'Small ($10k–$100k)',focusAreas:'',website:'',contact:'',email:'',stage:'Prospect',typicalGrant:'',nextCycle:'',alignment:{},rationale:'',decision:'',decisionDate:'',notes:'',lastEditedBy:'',lastEditedAt:''});
+// ---------- Assessment questionnaire (feeds the go / no-go verdict) ----------
+// Five groups. Strategy / Likelihood / Technical / Capacity reward Yes (positive).
+// Risk group is inverted — Yes means risk present (negative).
+const ASSESS_GROUPS=[
+ {id:'strategy',label:'Strategy',polarity:'positive',fields:[
+  ['valuesAlignment','Values aligned','Are values and approach aligned?'],
+  ['coreWorkSupport','Supports core work','Can the donor support the organisation’s core purpose?'],
+  ['requirementsGapFit','Fits funding gap','Would this support an identified funding requirement or gap?'],
+  ['innovationFit','Fits new work','Could it support a relevant new area, innovation or opportunity?'],
+  ['coreFundingSupport','Supports core funding','Could it support unrestricted or core funding?']
+ ]},
+ {id:'likelihood',label:'Likelihood of success',polarity:'positive',fields:[
+  ['currentPosition','Current position','Is there an existing relationship or route in?'],
+  ['wellPositioned','Well positioned','Is the organisation credibly positioned to apply?'],
+  ['competitiveLandscape','Competition understood','Is the competitive landscape sufficiently understood?'],
+  ['valueForMoney','Value for money','Can a compelling value-for-money case be made?'],
+  ['connectedPartners','Connected partners','Are relevant partners or allies connected?']
+ ]},
+ {id:'technical',label:'Technical',polarity:'positive',fields:[
+  ['proposalSummary','Proposal outline','Is there a clear proposal idea or summary?'],
+  ['proposalReadiness','Proposal readiness','Can the proposal be developed to the required standard?']
+ ]},
+ {id:'capacity',label:'Capacity',polarity:'positive',fields:[
+  ['timetableStrength','Timetable works','Can the deadline and timetable realistically be met?'],
+  ['deliveryCapacity','Delivery capacity','Is there enough capacity to deliver a funded project?'],
+  ['staffingCapacity','Staffing capacity','Are the right people available to lead and support it?']
+ ]},
+ {id:'risk',label:'Risk',polarity:'negative',fields:[
+  ['donorReputationalRisk','Donor reputation risk','Could the donor’s reputation create a concern?'],
+  ['orgReputationalRisk','Organisation reputation risk','Could the work create reputational risk for the organisation?'],
+  ['financialRisk','Financial risk','Could the opportunity create an unacceptable financial risk?'],
+  ['thematicGeoRisk','Thematic / geographic risk','Could it take the organisation too far from its focus or geography?'],
+  ['governmentPartnerRisk','Government / partner risk','Could it introduce a government, judiciary or partner risk?'],
+  ['teamOverloadRisk','Team burden risk','Could it overburden the team or distract from priority work?']
+ ]}
+];
+const ASSESS_FIELDS=ASSESS_GROUPS.flatMap(g=>g.fields);
+const ASSESS_OPTS=['','Yes','No','Don’t know'];
+const blankAssessment=()=>{const a={};ASSESS_FIELDS.forEach(([k])=>a[k]='');return a};
+// Scoring: +1 per field whose answer matches the group's positive direction.
+// Positive groups: Yes = +1. Risk group: No = +1 (no risk is positive).
+// Returns counts + a verdict suggestion.
+function assessmentScore(d){
+ let positive=0,negative=0,unsure=0,answered=0,total=0;
+ ASSESS_GROUPS.forEach(g=>{
+  const want=g.polarity==='positive'?'Yes':'No';
+  const avoid=g.polarity==='positive'?'No':'Yes';
+  g.fields.forEach(([k])=>{
+   total++;
+   const v=d[k]||'';
+   if(!v)return;
+   answered++;
+   if(v===want)positive++;
+   else if(v===avoid)negative++;
+   else unsure++;
+  });
+ });
+ const pctAnswered=total?Math.round((answered/total)*100):0;
+ const score=positive-negative;
+ // Verdict: strongly positive = Go, strongly negative = No go, otherwise Review.
+ // Only suggest once at least half the questions are answered.
+ let verdict='Not assessed',verdictClass='none';
+ if(answered>=Math.ceil(total/2)){
+  if(score>=Math.ceil(total*0.5)){verdict='Go (strong)';verdictClass='go-strong'}
+  else if(score>=Math.ceil(total*0.25)){verdict='Lean go';verdictClass='go'}
+  else if(score<=-Math.ceil(total*0.25)){verdict='Lean no-go';verdictClass='nogo'}
+  else{verdict='Review';verdictClass='review'}
+ } else if(answered>0) verdict='In progress';
+ return {positive,negative,unsure,answered,total,pctAnswered,score,verdict,verdictClass};
+}
+
+const blankDonor=()=>({id:uid(),code:'',name:'',type:'Foundation',country:'',region:'',size:'Small ($10k–$100k)',focusAreas:'',website:'',contact:'',email:'',stage:'Prospect',typicalGrant:'',nextCycle:'',alignment:{},rationale:'',decision:'',decisionDate:'',notes:'',lastEditedBy:'',lastEditedAt:'',...blankAssessment()});
 const blankMeta=()=>({organisation:'',year:currentYear,preparedBy:'',currency:'USD',notes:''});
 const blank=()=>({version:2,meta:blankMeta(),donors:[]});
 
@@ -77,7 +148,19 @@ function dashboardStats(){
   else if(filled>0)partialScored++;
   else notStarted++;
  });
- return {total,go,noGo,review,strong,good,weak,poor,cells,scored,fullyScored,partialScored,notStarted,esoCount:esos.length};
+ // Assessment coverage: % of donors who have completed the full questionnaire
+ let assessFull=0,assessPartial=0,assessNone=0,assessVerdictGo=0,assessVerdictNoGo=0,assessVerdictReview=0;
+ donors.forEach(d=>{
+  const a=assessmentScore(d);
+  if(a.answered===a.total)assessFull++;
+  else if(a.answered>0)assessPartial++;
+  else assessNone++;
+  if(a.verdictClass==='go-strong'||a.verdictClass==='go')assessVerdictGo++;
+  else if(a.verdictClass==='nogo')assessVerdictNoGo++;
+  else if(a.verdictClass==='review')assessVerdictReview++;
+ });
+ const assessPct=total?Math.round((assessFull/total)*100):0;
+ return {total,go,noGo,review,strong,good,weak,poor,cells,scored,fullyScored,partialScored,notStarted,esoCount:esos.length,assessFull,assessPartial,assessNone,assessPct,assessVerdictGo,assessVerdictNoGo,assessVerdictReview};
 }
 function fitBar(label,count,total,cls){
  const share=pct(count,total);
@@ -132,6 +215,17 @@ function visualDashboard(){
     <div><dt>Not started</dt><dd>${s.notStarted}</dd></div>
    </dl>
   </article>
+  <article class="dm-card dm-assess">
+   <div class="dm-card-head"><div><p class="dm-eyebrow">Assessment · ${ASSESS_FIELDS.length} questions</p><h3>Go/no-go verdict</h3></div><span>${s.assessFull}/${s.total} fully assessed</span></div>
+   <div class="dm-coverage-num"><strong>${s.assessPct}%</strong><span>of donors fully assessed</span></div>
+   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${s.assessPct}%;background:linear-gradient(90deg,#16746e,#e56f4a)"></i></div>
+   <div class="dm-verdict-row">
+    <span class="dm-verdict-pill go"><b>${s.assessVerdictGo}</b> leaning Go</span>
+    <span class="dm-verdict-pill review"><b>${s.assessVerdictReview}</b> Review</span>
+    <span class="dm-verdict-pill nogo"><b>${s.assessVerdictNoGo}</b> leaning No-go</span>
+   </div>
+   <p class="dm-assess-hint">Each donor's profile has a <b>Strategy · Likelihood · Technical · Capacity · Risk</b> questionnaire. The verdict is derived automatically from the answers.</p>
+  </article>
  </section>`;
 }
 
@@ -180,6 +274,7 @@ function prospectsView(){
  const sorted=[...db.donors].sort((a,b)=>(stageOrder[a.stage]??9)-(stageOrder[b.stage]??9)||totalAlignment(b).pct-totalAlignment(a).pct);
  const rows=sorted.map(d=>{
   const align=totalAlignment(d);
+  const assess=assessmentScore(d);
   const bandClass=align.pct>=75?'risk-band-low':align.pct>=50?'risk-band-medium':align.pct>=25?'risk-band-high':'risk-band-none';
   return `<tr>
    <td><b>${esc(d.code)}</b></td>
@@ -187,13 +282,14 @@ function prospectsView(){
    <td>${pill(d.type)}</td>
    <td>${esc(d.size||'—')}<br><small>${esc(d.typicalGrant||'')}</small></td>
    <td class="risk-score-cell ${bandClass}" title="${align.sum}/${align.max}"><b>${align.pct}%</b></td>
+   <td><span class="dm-verdict-badge ${assess.verdictClass}">${esc(assess.verdict)}</span><br><small>${assess.answered}/${assess.total}</small></td>
    <td>${pill(d.stage||'Prospect')}</td>
    <td>${esc(fmtDate(d.nextCycle)||'—')}</td>
    <td><div class="row-actions"><button class="link" data-action="edit-donor" data-id="${esc(d.id)}">Edit</button></div></td>
   </tr>`;
  });
- return `<div class="rowhead section-head"><div><h2>Prospect pipeline</h2><p>Donors sorted by stage then by fit. Click Edit to open the full profile — type, focus areas, contact, cycle timing and the 0–3 fit score against each of your ESOs.</p></div><button class="button" data-action="new-donor">+ Add a donor</button></div>
-  ${table(['Code','Donor','Type','Size · typical grant','Fit %','Stage','Next cycle',''],rows,'No donors yet. Click "Add a donor" to begin.')}`;
+ return `<div class="rowhead section-head"><div><h2>Prospect pipeline</h2><p>Donors sorted by stage then by fit. Each row shows the ESO alignment % and the automatic verdict from the Strategy/Likelihood/Technical/Capacity/Risk questionnaire. Click Edit to open the full profile.</p></div><button class="button" data-action="new-donor">+ Add a donor</button></div>
+  ${table(['Code','Donor','Type','Size · typical grant','Fit %','Verdict','Stage','Next cycle',''],rows,'No donors yet. Click "Add a donor" to begin.')}`;
 }
 
 function alignmentMatrixView(){
@@ -232,6 +328,21 @@ function donorModal(d){
   ${area('Fit rationale','rationale',d.rationale,'Why this donor and your work are a match (or not).')}
   <h3 class="form-section">ESO alignment (0–3 per objective)</h3>
   ${esos.length?`<div class="form-grid-top">${alignFields}</div>`:'<p class="muted" style="grid-column:1/-1">No external strategic objectives found. Open Strategic Objectives first.</p>'}
+  <h3 class="form-section">Go/no-go assessment ${(()=>{const a=assessmentScore(d);return `<span class="dm-verdict-badge ${a.verdictClass}">${esc(a.verdict)}</span><small class="dm-verdict-stats">${a.answered}/${a.total} answered · ${a.positive} positive · ${a.negative} negative${a.unsure?' · '+a.unsure+' unsure':''}</small>`})()}</h3>
+  <p class="muted" style="grid-column:1/-1;font-size:12.5px;margin:-6px 0 6px">Answer the questions below to get an automatic verdict. The <b>Risk</b> group is inverted — "Yes" means a risk is present.</p>
+  <div class="dm-assess-grid" style="grid-column:1/-1">
+   ${ASSESS_GROUPS.map(g=>`<details class="dm-assess-group dm-assess-${g.id}" open>
+    <summary><b>${esc(g.label)}</b> <small>${g.polarity==='negative'?'Risk — Yes is negative':`${g.fields.length} question${g.fields.length===1?'':'s'}`}</small></summary>
+    <div class="dm-assess-rows">
+     ${g.fields.map(([k,label,q])=>`<label class="dm-assess-row">
+      <span class="dm-assess-q"><b>${esc(label)}</b><small>${esc(q)}</small></span>
+      <select name="assess_${esc(k)}" class="dm-assess-sel">
+       ${ASSESS_OPTS.map(opt=>`<option value="${esc(opt)}" ${(d[k]||'')===opt?'selected':''}>${opt||'— not set —'}</option>`).join('')}
+      </select>
+     </label>`).join('')}
+    </div>
+   </details>`).join('')}
+  </div>
   <h3 class="form-section">Decision</h3>
   ${select('Outcome','decision',['','Interested','Submitted proposal','Awarded','Declined','Withdrew'],d.decision||'')}
   ${field('Decision date','decisionDate',d.decisionDate,'date')}
@@ -261,6 +372,8 @@ function submit(form){
  const data=formData(form);
  const align={};soObjectives().filter(o=>(o.group||'External')==='External').forEach(o=>{align[o.code]=Number(data['align_'+o.code])||0});
  Object.assign(d,{code:s(data.code)||d.code||nextCode(),name:s(data.name),type:data.type,country:s(data.country),region:s(data.region),size:data.size,typicalGrant:s(data.typicalGrant),website:s(data.website),contact:s(data.contact),email:s(data.email),focusAreas:s(data.focusAreas),stage:data.stage||'Prospect',nextCycle:data.nextCycle||'',rationale:s(data.rationale),alignment:align,decision:data.decision||'',decisionDate:data.decisionDate||'',notes:s(data.notes)});
+ // Pull the Go/no-go questionnaire answers back off the form.
+ ASSESS_FIELDS.forEach(([k])=>{d[k]=data['assess_'+k]||''});
  stamp(d);
  if(!existing)db.donors.push(d);
  dlg='';save('Donor saved.');

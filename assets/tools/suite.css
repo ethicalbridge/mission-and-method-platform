@@ -485,3 +485,53 @@ tr.group td{background:#f3f8f5}
 .dm-dashboard-empty .dm-donut strong{color:#7a8e97}
 .dm-dashboard-empty .dm-coverage-num strong{color:#7a8e97}
 .dm-empty-hint{margin:4px 0 0;font-size:11.5px;color:#7a8e97;line-height:1.45;padding-top:8px;border-top:1px dashed #d4e2db;font-style:italic}
+
+/* ======================================================================
+   Go/no-go questionnaire — the five groups inside the donor modal,
+   plus the verdict badges used in the dashboard and prospect table.
+   ====================================================================== */
+.dm-assess-grid{display:grid;gap:10px;margin:4px 0 10px}
+.dm-assess-group{background:#f6faf7;border:1px solid #d4e2db;border-radius:12px;padding:0;overflow:hidden}
+.dm-assess-group summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px;font-weight:800;color:#102e3b}
+.dm-assess-group summary::-webkit-details-marker{display:none}
+.dm-assess-group summary:before{content:"▸";display:inline-block;font-size:10px;color:#16746e;margin-right:6px;transition:transform .2s ease}
+.dm-assess-group[open] summary:before{transform:rotate(90deg)}
+.dm-assess-group summary b{font-weight:800}
+.dm-assess-group summary small{color:#546974;font-weight:600;font-size:11.5px}
+.dm-assess-risk summary{background:#fef0ec;color:#8a3f27}
+.dm-assess-risk summary small{color:#8a3f27;opacity:.75}
+.dm-assess-rows{padding:4px 16px 14px;display:grid;gap:10px}
+.dm-assess-row{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid #e4ede8}
+.dm-assess-row:first-child{border-top:0}
+.dm-assess-q{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dm-assess-q b{font-size:13px;color:#102e3b;font-weight:700}
+.dm-assess-q small{font-size:11.5px;color:#546974;line-height:1.4}
+.dm-assess-sel{height:36px;padding:6px 10px;border:1px solid #c9d6ce;border-radius:8px;background:#fff;font:inherit;font-size:13px;color:#102e3b}
+.dm-assess-sel:focus{outline:0;border-color:#16746e;box-shadow:0 0 0 3px rgba(22,116,110,.15)}
+@media (max-width:600px){.dm-assess-row{grid-template-columns:1fr}}
+
+/* Verdict badge (used in modal title, prospect table and dashboard) */
+.dm-verdict-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.02em;line-height:1.2;background:#edf3f0;color:#546974;border:1px solid transparent;white-space:nowrap}
+.dm-verdict-badge.go-strong{background:#d9eee3;color:#0e5a4e;border-color:#8dc9ab}
+.dm-verdict-badge.go{background:#eaf6ef;color:#0e5a4e;border-color:#a5d7bc}
+.dm-verdict-badge.review{background:#fff5e7;color:#8a5e14;border-color:#f1c874}
+.dm-verdict-badge.nogo{background:#fef0ec;color:#8a3f27;border-color:#f3b7a2}
+.dm-verdict-badge.none{background:#edf3f0;color:#7a8e97;border-color:#d4e2db}
+.dm-verdict-stats{display:inline-block;margin-left:10px;color:#546974;font-size:11.5px;font-weight:600}
+
+/* Dashboard · verdict pills row */
+.dm-verdict-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.dm-verdict-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:700;color:#102e3b;background:#edf3f0}
+.dm-verdict-pill b{color:#102e3b;font-weight:900;font-size:12.5px}
+.dm-verdict-pill.go{background:#eaf6ef;color:#0e5a4e}
+.dm-verdict-pill.go b{color:#0e5a4e}
+.dm-verdict-pill.review{background:#fff5e7;color:#8a5e14}
+.dm-verdict-pill.review b{color:#8a5e14}
+.dm-verdict-pill.nogo{background:#fef0ec;color:#8a3f27}
+.dm-verdict-pill.nogo b{color:#8a3f27}
+.dm-assess-hint{margin:8px 0 0;font-size:11.5px;color:#546974;line-height:1.5}
+.dm-assess-hint b{color:#102e3b}
+/* 4-up dashboard on wide screens */
+.dm-dashboard{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media (max-width:1400px){.dm-dashboard{grid-template-columns:1fr 1fr!important}}
+@media (max-width:720px){.dm-dashboard{grid-template-columns:1fr!important}}
