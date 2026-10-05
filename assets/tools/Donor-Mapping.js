@@ -168,6 +168,8 @@ function migrateV1(v1){
 
 const storage=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.donor-mapping-cleanup-v2',blank)||d;if(!Array.isArray(d.donors))d.donors=[];d.donors.forEach(x=>{if(!x.alignment||typeof x.alignment!=='object')x.alignment={}});return d}});
 let db=storage.load(),tab='Start',dlg='',message='';
+// Grid filter state — persists only for the session, not written to storage.
+let filters={verdict:'',stage:'',priority:'',q:''};
 const root=document.querySelector('#app');
 const persist=d=>storage.save(d);
 function save(note=''){storage.save(db);if(note)message=note;render()}
@@ -351,9 +353,41 @@ function gridCellText(d,field,ph=''){
 function gridCellArea(d,field,ph=''){
  return `<textarea class="dm-grid-cell dm-grid-area" data-grid-id="${esc(d.id)}" data-grid-field="${esc(field)}" rows="1" placeholder="${esc(ph)}" aria-label="${esc(field)}">${esc(d[field]||'')}</textarea>`;
 }
+function matchesFilters(d){
+ const assess=assessmentScore(d);
+ if(filters.verdict){
+  const v=assess.verdictClass;
+  if(filters.verdict==='go' && !(v==='go-strong'||v==='go'))return false;
+  if(filters.verdict==='review' && v!=='review')return false;
+  if(filters.verdict==='nogo' && v!=='nogo')return false;
+  if(filters.verdict==='none' && v!=='none' && assess.answered>0)return false;
+ }
+ if(filters.stage && (d.stage||'Prospect')!==filters.stage)return false;
+ if(filters.priority && (d.priority||'')!==filters.priority)return false;
+ if(filters.q){
+  const q=filters.q.toLowerCase();
+  const hay=[d.name,d.fundName,d.country,d.region,d.focusAreas,d.notes,d.contact,d.email].join(' ').toLowerCase();
+  if(!hay.includes(q))return false;
+ }
+ return true;
+}
+function filterSelect(key,label,opts){
+ const current=filters[key]||'';
+ return `<label class="dm-filt-label"><span>${esc(label)}</span><select class="dm-filt-sel" data-filter="${esc(key)}"><option value="">All</option>${opts.map(([v,l])=>`<option value="${esc(v)}" ${current===v?'selected':''}>${esc(l)}</option>`).join('')}</select></label>`;
+}
 function assessmentGridView(){
  const stageOrder={'Proposing':0,'Engaged':1,'Qualified':2,'Prospect':3,'Decided':4,'Not fit':5};
- const sorted=[...db.donors].sort((a,b)=>(stageOrder[a.stage]??9)-(stageOrder[b.stage]??9)||totalAlignment(b).pct-totalAlignment(a).pct);
+ const matching=db.donors.filter(matchesFilters);
+ const sorted=[...matching].sort((a,b)=>(stageOrder[a.stage]??9)-(stageOrder[b.stage]??9)||totalAlignment(b).pct-totalAlignment(a).pct);
+ const filterCount=['verdict','stage','priority','q'].filter(k=>filters[k]).length;
+ const filterBar=`<div class="dm-filter-bar">
+  ${filterSelect('verdict','Verdict',[['go','Leaning Go'],['review','Review'],['nogo','Leaning No-go'],['none','Not yet assessed']])}
+  ${filterSelect('stage','Stage',STAGES.map(s=>[s,s]))}
+  ${filterSelect('priority','Priority',PRIORITIES.filter(Boolean).map(p=>[p,p]))}
+  <label class="dm-filt-label dm-filt-search"><span>Search</span><input type="search" class="dm-filt-input" data-filter="q" value="${esc(filters.q||'')}" placeholder="Donor, fund, country, notes…"></label>
+  ${filterCount?`<button class="button secondary" data-action="filter-clear" style="align-self:flex-end">Clear filters (${filterCount})</button>`:''}
+  <div class="dm-filter-count">Showing <b>${matching.length}</b> of <b>${db.donors.length}</b> donor${db.donors.length===1?'':'s'}</div>
+ </div>`;
  // Build column groups to mirror the Excel exactly.
  const generalCols=[
   {k:'code',label:'Code',w:68},
@@ -397,12 +431,14 @@ function assessmentGridView(){
   ${ASSESS_GROUPS.flatMap(g=>g.fields.map(([,label,q])=>`<th class="dm-grid-th dm-grid-th-ynd" title="${esc(q)}">${esc(label)}</th>`)).join('')}
   <th class="dm-grid-th"></th>
  </tr>`;
+ const emptyMsg=db.donors.length?`<b>No donors match these filters.</b> Clear the filters above to see all ${db.donors.length} rows.`:`<b>No donors yet.</b> Click <b>+ Add row</b> below to drop a blank row into the sheet, or <b>Load 3 examples</b> to see it in action.`;
  return `${visualDashboard()}
-  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>Assessment grid</h2><p>Fill the row like a spreadsheet. Every cell saves instantly and the four dashboard cards above update live. The Go/No-Go verdict comes from the Yes / No / Don't know answers — Strategy / Likelihood / Technical / Capacity reward "Yes", Risk is inverted (Yes = risk present).</p></div><div class="actions"><button class="button" data-action="new-donor">+ Add row</button><button class="button secondary" data-action="load-example">Load 3 examples</button></div></div>
+  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>Assessment grid</h2><p>Fill rows directly in the sheet — no pop-ups. Every cell saves instantly and the four dashboard cards above update live. The Go/No-Go verdict comes from the Yes / No / Don't know answers (Strategy / Likelihood / Technical / Capacity reward Yes; Risk is inverted so Yes = risk present).</p></div><div class="actions"><button class="button" data-action="new-donor">+ Add row</button><button class="button secondary" data-action="load-example">Load 3 examples</button></div></div>
+  ${filterBar}
   <div class="dm-grid-wrap">
    <table class="dm-grid">
     <thead>${groupHeader}${colHeader}</thead>
-    <tbody>${rows||`<tr><td colspan="${1+generalCols.length+ASSESS_FIELDS.length+1}" class="muted" style="padding:30px;text-align:center">No donors yet. Click <b>+ Add row</b> or <b>Load 3 examples</b> to begin.</td></tr>`}</tbody>
+    <tbody>${rows||`<tr><td colspan="${1+generalCols.length+ASSESS_FIELDS.length+1}" class="muted" style="padding:30px;text-align:center">${emptyMsg}</td></tr>`}</tbody>
    </table>
   </div>`;
 }
@@ -476,8 +512,18 @@ function action(el){
  const a=el.dataset.action,id=el.dataset.id,tabTarget=el.dataset.tab;
  if(tabTarget){tab=tabTarget;dlg='';message='';render();return}
  if(a==='close'){dlg='';render();return}
- if(a==='new-donor'){dlg=donorModal();render();return}
+ if(a==='new-donor'){
+  // Drop a blank row straight into the grid. No modal — the user types
+  // directly in the row that appears at the bottom of the sheet.
+  const d=blankDonor();d.code=nextCode();
+  db.donors.push(d);
+  save('New row added. Fill it in below.');
+  // Focus the Donor name cell on next frame so the user starts typing immediately.
+  setTimeout(()=>{const el=root.querySelector(`tr[data-row="${d.id}"] [data-grid-field="name"]`);if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'})}},50);
+  return;
+ }
  if(a==='edit-donor'){const d=db.donors.find(x=>x.id===id);if(d){dlg=donorModal(d);render()}return}
+ if(a==='filter-clear'){filters={verdict:'',stage:'',priority:'',q:''};render();return}
  if(a==='load-example'){
   if(db.donors.length && !confirm('Replace the current donors with the 3 worked examples? Download a backup first if you need them.'))return;
   db.donors=makeExample();
@@ -541,7 +587,8 @@ function wireStart(root){const box=root.querySelector('.work-box');if(!box)retur
 // re-render so the four charts at the top track the user's edits live.
 function wireGrid(root){
  const grid=root.querySelector('.dm-grid');
- if(!grid)return;
+ if(!grid){wireFilters(root);return}
+ wireFilters(root);
  let timer;
  const schedule=()=>{clearTimeout(timer);timer=setTimeout(()=>{persist(db);rerenderDashboard(root)},300)};
  grid.querySelectorAll('[data-grid-field]').forEach(el=>{
@@ -564,6 +611,19 @@ function rerenderDashboard(root){
  const dash=root.querySelector('.dm-dashboard');if(!dash)return;
  const div=document.createElement('div');div.innerHTML=visualDashboard();
  const fresh=div.querySelector('.dm-dashboard');if(fresh)dash.replaceWith(fresh);
+}
+function wireFilters(root){
+ const bar=root.querySelector('.dm-filter-bar');if(!bar)return;
+ let qTimer;
+ bar.querySelectorAll('[data-filter]').forEach(el=>{
+  const key=el.dataset.filter;
+  if(el.tagName==='SELECT'){
+   el.addEventListener('change',()=>{filters[key]=el.value;render()});
+  } else {
+   // Search box — debounce so we don't re-render on every keystroke
+   el.addEventListener('input',()=>{clearTimeout(qTimer);qTimer=setTimeout(()=>{filters[key]=el.value;render();const i=root.querySelector('.dm-filt-input');if(i)i.focus()},200)});
+  }
+ });
 }
 
 function render(){

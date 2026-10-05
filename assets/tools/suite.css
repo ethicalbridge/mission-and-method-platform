@@ -584,3 +584,23 @@ tr.group td{background:#f3f8f5}
 /* Sticky left column so the verdict and donor name stay in view on scroll */
 .dm-grid-td-code,.dm-grid-td-name{background:#fff}
 .dm-grid tbody tr:hover .dm-grid-td-code,.dm-grid tbody tr:hover .dm-grid-td-name{background:#fafcfb}
+
+/* ======================================================================
+   Grid filter bar — sits between the dashboard and the grid.
+   Four dropdowns + search + a running "showing N of M" count.
+   ====================================================================== */
+.dm-filter-bar{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:flex-end;padding:12px 14px;background:#f6faf7;border:1px solid #d4e2db;border-radius:12px;margin:8px 0 10px}
+.dm-filt-label{display:flex;flex-direction:column;gap:4px;min-width:0}
+.dm-filt-label span{font-size:10.5px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#16746e}
+.dm-filt-sel,.dm-filt-input{height:34px;padding:6px 28px 6px 10px;border:1px solid #c9d6ce;border-radius:8px;background:#fff;font:inherit;font-size:13px;color:#102e3b;min-width:140px;max-width:220px}
+.dm-filt-sel{appearance:none;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2316746e' stroke-width='3' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.dm-filt-sel:focus,.dm-filt-input:focus{outline:0;border-color:#16746e;box-shadow:0 0 0 2px rgba(22,116,110,.15)}
+.dm-filt-search .dm-filt-input{min-width:220px;padding-right:10px;background:#fff}
+.dm-filter-count{margin-left:auto;align-self:center;color:#546974;font-size:12.5px;font-weight:600}
+.dm-filter-count b{color:#102e3b;font-weight:900}
+@media (max-width:720px){
+ .dm-filter-bar{padding:10px}
+ .dm-filt-sel,.dm-filt-input{min-width:0;max-width:none;width:100%}
+ .dm-filt-label{flex:1 1 140px}
+ .dm-filter-count{margin-left:0;width:100%}
+}
