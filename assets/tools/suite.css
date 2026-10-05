@@ -478,3 +478,10 @@ tr.group td{background:#f3f8f5}
   .dm-coverage{grid-column:auto}
   .dm-donut-row{grid-template-columns:90px minmax(0,1fr);gap:12px}
 }
+
+/* Dashboard empty state — show the three cards with a hint under each */
+.dm-dashboard-empty .dm-card{opacity:.96}
+.dm-dashboard-empty .dm-donut{background:conic-gradient(#e8efeb 0 100%)}
+.dm-dashboard-empty .dm-donut strong{color:#7a8e97}
+.dm-dashboard-empty .dm-coverage-num strong{color:#7a8e97}
+.dm-empty-hint{margin:4px 0 0;font-size:11.5px;color:#7a8e97;line-height:1.45;padding-top:8px;border-top:1px dashed #d4e2db;font-style:italic}

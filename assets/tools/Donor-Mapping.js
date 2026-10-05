@@ -88,12 +88,17 @@ function fitBar(label,count,total,cls){
 }
 function visualDashboard(){
  const s=dashboardStats();
- if(!s.total)return `<div class="dm-dash-empty"><b>Visual dashboard</b><p>Add donors to see the go/no-go donut, fit distribution and scoring coverage come to life here.</p></div>`;
+ const isEmpty=!s.total;
  const goShare=pct(s.go,s.total);
  const noGoShare=pct(s.noGo,s.total);
  const coverage=pct(s.scored,s.cells);
  const doneShare=pct(s.fullyScored,s.total);
- return `<section class="dm-dashboard" aria-label="Donor mapping visual overview">
+ // Status badge text + class
+ let badgeClass='early',badgeText=`<b>Just getting started.</b> ${isEmpty?'Add your first donor to begin scoring.':'No donor has a complete score yet.'}`;
+ if(!isEmpty && doneShare===100){badgeClass='all-done';badgeText=`<b>✓ All done.</b> Every donor fully scored against your ESOs.`}
+ else if(!isEmpty && doneShare>=50){badgeClass='half-done';badgeText=`<b>${s.fullyScored} of ${s.total} donors fully scored.</b> ${s.partialScored} partially, ${s.notStarted} not started.`}
+ else if(!isEmpty && doneShare>0){badgeText=`<b>${s.fullyScored} of ${s.total} donors fully scored.</b> ${s.partialScored} partially, ${s.notStarted} not started.`}
+ return `<section class="dm-dashboard ${isEmpty?'dm-dashboard-empty':''}" aria-label="Donor mapping visual overview">
   <article class="dm-card dm-decision">
    <div class="dm-card-head"><div><p class="dm-eyebrow">Decision view</p><h3>Go / no-go</h3></div><span>${s.total} donor${s.total===1?'':'s'}</span></div>
    <div class="dm-donut-row">
@@ -104,6 +109,7 @@ function visualDashboard(){
      <div class="dm-leg-review"><dt>In review</dt><dd>${s.review}</dd></div>
     </dl>
    </div>
+   ${isEmpty?`<p class="dm-empty-hint">Add a donor and set its stage to light up the donut.</p>`:''}
   </article>
   <article class="dm-card dm-fit">
    <div class="dm-card-head"><div><p class="dm-eyebrow">Fit view</p><h3>Alignment distribution</h3></div><span>Where to focus</span></div>
@@ -113,16 +119,13 @@ function visualDashboard(){
     ${fitBar('Weak fit · 25–49%',s.weak,s.total,'dm-fit-weak')}
     ${fitBar('Poor fit · under 25%',s.poor,s.total,'dm-fit-poor')}
    </div>
+   ${isEmpty?`<p class="dm-empty-hint">Score donors 0–3 against each ESO to see them bucket here.</p>`:''}
   </article>
   <article class="dm-card dm-coverage">
    <div class="dm-card-head"><div><p class="dm-eyebrow">All done?</p><h3>Scoring coverage</h3></div><span>${s.fullyScored}/${s.total}</span></div>
    <div class="dm-coverage-num"><strong>${coverage}%</strong><span>of donor × ESO cells scored</span></div>
    <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${coverage}%"></i></div>
-   <div class="dm-done-badge ${doneShare===100?'all-done':doneShare>=50?'half-done':'early'}">
-    ${doneShare===100?`<b>✓ All done.</b> Every donor fully scored against your ESOs.`:
-      doneShare===0?`<b>Just getting started.</b> No donor has a complete score yet.`:
-      `<b>${s.fullyScored} of ${s.total} donors fully scored.</b> ${s.partialScored} partially, ${s.notStarted} not started.`}
-   </div>
+   <div class="dm-done-badge ${badgeClass}">${badgeText}</div>
    <dl class="dm-done-key">
     <div><dt>Fully scored</dt><dd>${s.fullyScored}</dd></div>
     <div><dt>Partially</dt><dd>${s.partialScored}</dd></div>
