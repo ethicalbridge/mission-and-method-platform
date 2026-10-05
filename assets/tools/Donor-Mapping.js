@@ -86,7 +86,75 @@ function assessmentScore(d){
  return {positive,negative,unsure,answered,total,pctAnswered,score,verdict,verdictClass};
 }
 
-const blankDonor=()=>({id:uid(),code:'',name:'',type:'Foundation',country:'',region:'',size:'Small ($10k–$100k)',focusAreas:'',website:'',contact:'',email:'',stage:'Prospect',typicalGrant:'',nextCycle:'',alignment:{},rationale:'',decision:'',decisionDate:'',notes:'',lastEditedBy:'',lastEditedAt:'',...blankAssessment()});
+const PRIORITIES=['','HIGH','MEDIUM','LOW'];
+const APPLICATION_STAGES=['','1 stage (full proposal)','2 stages (concept note and full proposal)'];
+const blankDonor=()=>({id:uid(),code:'',name:'',fundName:'',priority:'',type:'Foundation',country:'',region:'',size:'Small ($10k–$100k)',focusAreas:'',restrictions:'',amount:'',keyDates:'',applicationStage:'',length:'',website:'',contact:'',email:'',stage:'Prospect',typicalGrant:'',nextCycle:'',alignment:{},rationale:'',decision:'',decisionDate:'',notes:'',lastEditedBy:'',lastEditedAt:'',...blankAssessment()});
+
+// Three worked examples that light up the dashboard with mixed verdicts.
+// Pre-filled against the Harvest Learning Foundation worked example used
+// across the Impact Suite. Covers one strong Go, one Lean no-go and one Review.
+function makeExample(){
+ const E=(overrides)=>({...blankDonor(),...blankAssessment(),...overrides});
+ return [
+  E({
+   code:'D1',name:'Harvest Impact Fund',fundName:'Education Pathways Window',priority:'HIGH',type:'Foundation',
+   country:'United States',region:'Global',size:'Medium ($100k–$1M)',typicalGrant:'$150,000 / year',amount:'$450,000 over 3 years',
+   focusAreas:'Girls education, Sub-Saharan Africa, community-led',restrictions:'Not for infrastructure or capital works.',
+   keyDates:'LOI due 2027-03-15 · full proposal 2027-05-30',applicationStage:'2 stages (concept note and full proposal)',
+   contact:'Priya Shah',email:'priya@harvestimpact.example',website:'https://harvestimpact.example',
+   stage:'Qualified',rationale:'Perfect thematic fit, existing relationship from the 2024 convening.',
+   nextCycle:'2027-03-15',
+   // Strategy — all strong
+   valuesAlignment:'Yes',coreWorkSupport:'Yes',requirementsGapFit:'Yes',innovationFit:'Yes',coreFundingSupport:'Yes',
+   // Likelihood — mostly strong
+   currentPosition:'Yes',wellPositioned:'Yes',competitiveLandscape:'Yes',valueForMoney:'Yes',connectedPartners:'Yes',
+   // Technical
+   proposalSummary:'Yes',proposalReadiness:'Yes',
+   // Capacity
+   timetableStrength:'Yes',deliveryCapacity:'Yes',staffingCapacity:'Yes',
+   // Risk — all low
+   donorReputationalRisk:'No',orgReputationalRisk:'No',financialRisk:'No',thematicGeoRisk:'No',governmentPartnerRisk:'No',teamOverloadRisk:'No'
+  }),
+  E({
+   code:'D2',name:'Northern Lights Trust',fundName:'Infrastructure in Fragile States',priority:'LOW',type:'Government',
+   country:'Nordic',region:'Multi-regional',size:'Large ($1M–$10M)',typicalGrant:'$800,000 over 4 years',amount:'$2,400,000 over 4 years',
+   focusAreas:'Infrastructure, climate adaptation, fragile states',restrictions:'Requires government counterpart signatory. No pass-through to small CSOs.',
+   keyDates:'Rolling window · next review 2027-06',applicationStage:'1 stage (full proposal)',
+   contact:'Erik Johansen',email:'e.johansen@nltrust.example',website:'https://nltrust.example',
+   stage:'Not fit',rationale:'Scope is outside our focus and introduces government counterpart risk we are not resourced to manage.',
+   nextCycle:'2027-06-30',
+   // Strategy — mostly no
+   valuesAlignment:'No',coreWorkSupport:'No',requirementsGapFit:'No',innovationFit:'Don’t know',coreFundingSupport:'No',
+   // Likelihood — weak
+   currentPosition:'No',wellPositioned:'No',competitiveLandscape:'Don’t know',valueForMoney:'No',connectedPartners:'No',
+   // Technical — not ready
+   proposalSummary:'No',proposalReadiness:'No',
+   // Capacity
+   timetableStrength:'No',deliveryCapacity:'No',staffingCapacity:'No',
+   // Risk — several yes (risks present)
+   donorReputationalRisk:'No',orgReputationalRisk:'Yes',financialRisk:'Yes',thematicGeoRisk:'Yes',governmentPartnerRisk:'Yes',teamOverloadRisk:'Yes'
+  }),
+  E({
+   code:'D3',name:'Open Horizons Collective',fundName:'Emergent Issues Fund',priority:'MEDIUM',type:'Corporate',
+   country:'United Kingdom',region:'Sub-Saharan Africa',size:'Small ($10k–$100k)',typicalGrant:'$60,000 one-off',amount:'$120,000 over 2 years',
+   focusAreas:'Civic tech, youth-led, policy advocacy',restrictions:'No research-only or academic lead applicants.',
+   keyDates:'EOI window opens 2027-04-10 · decisions 2027-08',applicationStage:'2 stages (concept note and full proposal)',
+   contact:'Zara Mendes',email:'zara@openhorizons.example',website:'https://openhorizons.example',
+   stage:'Engaged',rationale:'Topic adjacency is strong but we are new to this funder and the competitive landscape is unclear.',
+   nextCycle:'2027-04-10',
+   // Strategy — mixed
+   valuesAlignment:'Yes',coreWorkSupport:'Yes',requirementsGapFit:'Don’t know',innovationFit:'Yes',coreFundingSupport:'No',
+   // Likelihood — mixed
+   currentPosition:'No',wellPositioned:'Don’t know',competitiveLandscape:'Don’t know',valueForMoney:'Yes',connectedPartners:'No',
+   // Technical — partial
+   proposalSummary:'Yes',proposalReadiness:'Don’t know',
+   // Capacity — mixed
+   timetableStrength:'Yes',deliveryCapacity:'Yes',staffingCapacity:'Don’t know',
+   // Risk — a couple of unknowns
+   donorReputationalRisk:'No',orgReputationalRisk:'No',financialRisk:'Don’t know',thematicGeoRisk:'No',governmentPartnerRisk:'No',teamOverloadRisk:'Don’t know'
+  })
+ ];
+}
 const blankMeta=()=>({organisation:'',year:currentYear,preparedBy:'',currency:'USD',notes:''});
 const blank=()=>({version:2,meta:blankMeta(),donors:[]});
 
@@ -262,6 +330,7 @@ function startView(){
    </div>
    <div class="actions">
     <button class="button" data-action="new-donor">+ Add a donor</button>
+    <button class="button secondary" data-action="load-example">Load 3 worked examples</button>
     <a class="button secondary" href="#" data-tab="Prospects">Go to prospect pipeline →</a>
     <a class="button secondary" href="#" data-tab="Alignment matrix">See alignment matrix →</a>
     <a class="button secondary" href="Donor-Tracking.html">Open Donor Tracking →</a>
@@ -313,11 +382,17 @@ function donorModal(d){
  return modal(isNew?'Add donor':'Edit donor',`<form data-form="donor" data-id="${esc(d.id||'')}" class="form">
   ${field('Code','code',d.code||nextCode(),'text','required')}
   ${field('Donor name','name',d.name,'text','required')}
+  ${field('Fund name','fundName',d.fundName,'text','','The specific window or programme inside the donor.')}
+  ${select('Priority','priority',PRIORITIES,d.priority||'')}
   ${select('Type','type',DTYPES,d.type)}
   ${field('Country','country',d.country)}
   ${field('Region','region',d.region,'text','','e.g. Sub-Saharan Africa, LAC, SE Asia')}
   ${select('Size','size',SIZES,d.size)}
   ${field('Typical grant size','typicalGrant',d.typicalGrant,'text','','e.g. $50,000 over 2 years')}
+  ${field('Amount this opportunity','amount',d.amount,'text','','e.g. $450,000 over 3 years')}
+  ${field('Key dates','keyDates',d.keyDates,'text','','Deadlines, review windows, decision timing.')}
+  ${select('Application stage','applicationStage',APPLICATION_STAGES,d.applicationStage||'')}
+  ${area('Restrictions','restrictions',d.restrictions,'What this donor will not fund or requires.')}
   ${field('Website','website',d.website,'url')}
   ${field('Contact person','contact',d.contact)}
   ${field('Contact email','email',d.email,'email')}
@@ -357,6 +432,13 @@ function action(el){
  if(a==='close'){dlg='';render();return}
  if(a==='new-donor'){dlg=donorModal();render();return}
  if(a==='edit-donor'){const d=db.donors.find(x=>x.id===id);if(d){dlg=donorModal(d);render()}return}
+ if(a==='load-example'){
+  if(db.donors.length && !confirm('Replace the current donors with the 3 worked examples? Download a backup first if you need them.'))return;
+  db.donors=makeExample();
+  if(!db.meta.organisation)db.meta.organisation='Harvest Learning Foundation';
+  save('Three worked examples loaded. Strong Go, Lean no-go and Review verdicts seed the dashboard — edit, keep or delete each one.');
+  return;
+ }
  if(a==='delete'){const d=db.donors.find(x=>x.id===id);if(!d)return;if(!confirm('Delete this donor? Cannot be undone.'))return;db.donors=db.donors.filter(x=>x.id!==id);dlg='';save('Donor deleted.');return}
  if(a==='xlsx'){try{download('Method-into-Impact-donor-mapping.xlsx',buildWorkbook(true),XLSX_TYPE);message='Excel downloaded.';render()}catch(e){message='Excel failed: '+e.message;render()}return}
  if(a==='csv'){downloadCsv();return}
@@ -371,7 +453,7 @@ function submit(form){
  const d=existing||{...blankDonor()};
  const data=formData(form);
  const align={};soObjectives().filter(o=>(o.group||'External')==='External').forEach(o=>{align[o.code]=Number(data['align_'+o.code])||0});
- Object.assign(d,{code:s(data.code)||d.code||nextCode(),name:s(data.name),type:data.type,country:s(data.country),region:s(data.region),size:data.size,typicalGrant:s(data.typicalGrant),website:s(data.website),contact:s(data.contact),email:s(data.email),focusAreas:s(data.focusAreas),stage:data.stage||'Prospect',nextCycle:data.nextCycle||'',rationale:s(data.rationale),alignment:align,decision:data.decision||'',decisionDate:data.decisionDate||'',notes:s(data.notes)});
+ Object.assign(d,{code:s(data.code)||d.code||nextCode(),name:s(data.name),fundName:s(data.fundName),priority:data.priority||'',type:data.type,country:s(data.country),region:s(data.region),size:data.size,typicalGrant:s(data.typicalGrant),amount:s(data.amount),keyDates:s(data.keyDates),applicationStage:data.applicationStage||'',restrictions:s(data.restrictions),website:s(data.website),contact:s(data.contact),email:s(data.email),focusAreas:s(data.focusAreas),stage:data.stage||'Prospect',nextCycle:data.nextCycle||'',rationale:s(data.rationale),alignment:align,decision:data.decision||'',decisionDate:data.decisionDate||'',notes:s(data.notes)});
  // Pull the Go/no-go questionnaire answers back off the form.
  ASSESS_FIELDS.forEach(([k])=>{d[k]=data['assess_'+k]||''});
  stamp(d);
