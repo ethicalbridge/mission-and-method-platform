@@ -47,6 +47,91 @@ function totalAlignment(donor){
  return {sum,max,pct:max?Math.round((sum/max)*100):0};
 }
 
+// ---------- Visual dashboard ----------
+// Three visual cards that give fundraisers an at-a-glance read of their
+// pipeline: go / no-go donut, fit distribution bars, and scoring coverage
+// ("all done" progress). All derived live from state.donors + ESOs.
+const pct=(a,b)=>b?Math.round((a/b)*100):0;
+function dashboardStats(){
+ const donors=db.donors;
+ const total=donors.length;
+ const esos=soObjectives().filter(o=>(o.group||'External')==='External');
+ // Go / No-go / In review
+ const go=donors.filter(d=>['Qualified','Engaged','Proposing','Decided'].includes(d.stage)).length;
+ const noGo=donors.filter(d=>d.stage==='Not fit').length;
+ const review=donors.filter(d=>!d.stage||d.stage==='Prospect').length;
+ // Fit distribution (donors by alignment %)
+ const fits=donors.map(d=>totalAlignment(d).pct);
+ const strong=fits.filter(p=>p>=75).length;
+ const good=fits.filter(p=>p>=50&&p<75).length;
+ const weak=fits.filter(p=>p>=25&&p<50).length;
+ const poor=fits.filter(p=>p<25).length;
+ // Scoring coverage: how many donor×ESO cells have a non-zero score
+ const cells=total*esos.length;
+ let scored=0,fullyScored=0,partialScored=0,notStarted=0;
+ donors.forEach(d=>{
+  const filled=esos.filter(o=>Number(d.alignment?.[o.code])>0).length;
+  scored+=filled;
+  if(!esos.length){notStarted++;return}
+  if(filled===esos.length)fullyScored++;
+  else if(filled>0)partialScored++;
+  else notStarted++;
+ });
+ return {total,go,noGo,review,strong,good,weak,poor,cells,scored,fullyScored,partialScored,notStarted,esoCount:esos.length};
+}
+function fitBar(label,count,total,cls){
+ const share=pct(count,total);
+ return `<div class="dm-fit-row">
+  <div><span>${label}</span><strong>${count} donor${count===1?'':'s'} · ${share}%</strong></div>
+  <span class="dm-fit-track"><i class="dm-fit-fill ${cls}" style="--share:${Math.max(share,count?3:0)}%"></i></span>
+ </div>`;
+}
+function visualDashboard(){
+ const s=dashboardStats();
+ if(!s.total)return `<div class="dm-dash-empty"><b>Visual dashboard</b><p>Add donors to see the go/no-go donut, fit distribution and scoring coverage come to life here.</p></div>`;
+ const goShare=pct(s.go,s.total);
+ const noGoShare=pct(s.noGo,s.total);
+ const coverage=pct(s.scored,s.cells);
+ const doneShare=pct(s.fullyScored,s.total);
+ return `<section class="dm-dashboard" aria-label="Donor mapping visual overview">
+  <article class="dm-card dm-decision">
+   <div class="dm-card-head"><div><p class="dm-eyebrow">Decision view</p><h3>Go / no-go</h3></div><span>${s.total} donor${s.total===1?'':'s'}</span></div>
+   <div class="dm-donut-row">
+    <div class="dm-donut" role="img" aria-label="${s.go} go, ${s.noGo} no-go and ${s.review} in review" style="--go-share:${goShare}%;--no-go-share:${noGoShare}%"><div><strong>${goShare}%</strong><span>Go</span></div></div>
+    <dl class="dm-legend">
+     <div class="dm-leg-go"><dt>Go</dt><dd>${s.go}</dd></div>
+     <div class="dm-leg-nogo"><dt>No go</dt><dd>${s.noGo}</dd></div>
+     <div class="dm-leg-review"><dt>In review</dt><dd>${s.review}</dd></div>
+    </dl>
+   </div>
+  </article>
+  <article class="dm-card dm-fit">
+   <div class="dm-card-head"><div><p class="dm-eyebrow">Fit view</p><h3>Alignment distribution</h3></div><span>Where to focus</span></div>
+   <div class="dm-fit-list">
+    ${fitBar('Strong fit · 75%+',s.strong,s.total,'dm-fit-strong')}
+    ${fitBar('Good fit · 50–74%',s.good,s.total,'dm-fit-good')}
+    ${fitBar('Weak fit · 25–49%',s.weak,s.total,'dm-fit-weak')}
+    ${fitBar('Poor fit · under 25%',s.poor,s.total,'dm-fit-poor')}
+   </div>
+  </article>
+  <article class="dm-card dm-coverage">
+   <div class="dm-card-head"><div><p class="dm-eyebrow">All done?</p><h3>Scoring coverage</h3></div><span>${s.fullyScored}/${s.total}</span></div>
+   <div class="dm-coverage-num"><strong>${coverage}%</strong><span>of donor × ESO cells scored</span></div>
+   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${coverage}%"></i></div>
+   <div class="dm-done-badge ${doneShare===100?'all-done':doneShare>=50?'half-done':'early'}">
+    ${doneShare===100?`<b>✓ All done.</b> Every donor fully scored against your ESOs.`:
+      doneShare===0?`<b>Just getting started.</b> No donor has a complete score yet.`:
+      `<b>${s.fullyScored} of ${s.total} donors fully scored.</b> ${s.partialScored} partially, ${s.notStarted} not started.`}
+   </div>
+   <dl class="dm-done-key">
+    <div><dt>Fully scored</dt><dd>${s.fullyScored}</dd></div>
+    <div><dt>Partially</dt><dd>${s.partialScored}</dd></div>
+    <div><dt>Not started</dt><dd>${s.notStarted}</dd></div>
+   </dl>
+  </article>
+ </section>`;
+}
+
 // ---------- Views ----------
 function startView(){
  const m=db.meta;
@@ -72,6 +157,7 @@ function startView(){
     ${card('Proposing',totals.proposing,'With a live proposal',totals.proposing>5)}
     ${card('Decided',totals.decided,'Yes or no returned')}
    </div>
+   ${visualDashboard()}
    ${esos.length?'':'<div class="notice warn"><b>No external strategic objectives found yet.</b> Open Strategic Objectives first — the alignment matrix uses your ESOs as columns.</div>'}
    <div class="work-sect-head">
     <h3>Get started</h3>
