@@ -149,3 +149,12 @@
 .sw-path article.is-next .step-label{color:var(--coral)}
 /* Later step (still available but secondary) */
 .sw-path article.is-later .step-label{color:var(--muted)}
+/* Catalogue by course → module (same design as the Evidence Library and course pages) */
+.tc-catalogue{margin-top:44px}.tc-head h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:30px;margin:0 0 6px;color:var(--ink)}.tc-head p{margin:0 0 22px;color:var(--muted);max-width:760px}
+.tc-course{margin:0 0 34px}.tc-band{margin:0 0 14px}.tc-band h3{margin:6px 0 8px;color:#fff;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(24px,3vw,32px);line-height:1.15}
+.tc-course>.cm-module{margin-left:14px}.tc-course{border-left:0}
+.tc-tools{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));margin:16px 0 4px}.tc-tools article{min-height:0;scroll-margin-top:110px}
+.tc-tools article:target{outline:3px solid var(--sun,#f8ca68);outline-offset:2px}
+.tc-used{font-size:13px;color:var(--muted)}.tc-used a{color:var(--teal);font-weight:700}.tc-also{color:var(--muted)}
+.tc-visiting{margin:14px 0 0;font-size:14px}.tc-visiting a{color:var(--teal);font-weight:700}.tc-none{margin:14px 0 0;color:var(--muted)}
+@media(max-width:600px){.tc-course>.cm-module{margin-left:0}}
