@@ -49,3 +49,21 @@
 .five-courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin:28px 0}
 .course-offer h2{font-size:22px!important;margin:8px 0!important}.course-offer ul{padding-left:18px;font-size:14px;line-height:1.6}.course-offer-price{font-size:15px}.course-offer-price b{font-size:24px;color:var(--teal)}.course-offer .button{width:auto}
 .future-course-list a{display:flex;justify-content:space-between;gap:10px;padding:6px 0;text-decoration:none;color:inherit}.future-course-list a small{color:var(--teal);font-weight:700}
+/* Lesson resources: a Resource tile beside Apply, and each source placed inside the Read step after the paragraph it supports */
+.lesson-assets.has-resource{grid-template-columns:repeat(5,minmax(0,1fr))}.lesson-assets a.asset-resource{border-color:#f0c9b8;background:#fffaf3}.lesson-assets a.asset-resource b{color:#a74925}.lesson-assets a.asset-resource span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.explore-further{margin:18px 0 22px;padding:16px 20px;border:1px solid #f0c9b8;border-left:4px solid var(--coral,#e56f4a);border-radius:12px;background:#fffaf3;scroll-margin-top:100px}
+.explore-further.role-practical{border-left-color:var(--teal,#0f6e64);border-color:#cfe3dc;background:#f6faf8}
+.explore-further.role-go{border-left-color:#8a9aa3;border-color:var(--line,#dde3e6);background:#fafbfb}
+.explore-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.explore-head .eyebrow{margin:0}
+.explore-role{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:#fff;border:1px solid currentColor;color:#a74925}
+.role-practical .explore-role{color:var(--teal,#0f6e64)}.role-go .explore-role{color:#546974}
+.explore-further h3{margin:8px 0 2px;font-size:1.05rem;line-height:1.35}.explore-further h3 a{color:var(--ink,#16323f)}
+.explore-further p{margin:6px 0;font-size:15px}.explore-source{font-size:13px!important;color:var(--muted,#546974)}
+.explore-access{display:inline-block;margin-left:4px;padding:1px 8px;border-radius:999px;background:#fdecc8;color:#6b4a00;font-size:12px}
+.explore-home{font-size:14px!important}.explore-further .resource-actions{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font-size:14px}
+.explore-more{margin:10px 0 0;font-size:14px}
+.explore-further.is-target{outline:3px solid var(--sun,#f8ca68);outline-offset:2px}
+.apply-resource{margin:10px 0 16px;padding:10px 14px;border-radius:8px;background:#f3f6f2;font-size:14px}.apply-resource ul{margin:6px 0 0;padding-left:18px}.apply-resource li{margin:3px 0}
+.tool-evidence{margin:8px 0 12px;font-size:14px;color:var(--muted,#546974)}
+@media(max-width:900px){.lesson-assets.has-resource{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.lesson-assets.has-resource{grid-template-columns:1fr}.explore-further{padding:14px 14px}}

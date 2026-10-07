@@ -674,3 +674,6 @@ body.evidence-page .catalog > .availability-note{
   .ev-hero h1{font-size:34px}
   body.evidence-page .library-controls{grid-template-columns:1fr !important}
 }
+body.evidence-page .resource-lesson{margin:10px 0 0;font-size:14px}
+body.evidence-page article.resource-card.is-target{outline:3px solid var(--sun,#f8ca68);outline-offset:2px}
+body.evidence-page .resource-card{scroll-margin-top:110px}

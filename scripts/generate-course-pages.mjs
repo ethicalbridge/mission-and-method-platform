@@ -2,7 +2,7 @@
 // Run after changing modules or lessons: node scripts/generate-course-pages.mjs && node scripts/course-tool-links.mjs
 // - Module pages (<slug>.html) and redirects from the old 8-module page names
 // - Course sections inside planning-system.html, index.html, about.html, courses.html (between generated markers)
-// - Evidence Library lesson list and module filter, course resources page
+// - Course resources page (the Evidence Library has its own script: generate-evidence-library.mjs)
 // - Course size wording on pricing and software pages
 import {readFileSync,writeFileSync,existsSync,readdirSync} from 'node:fs';
 import {modules,phases,lessonCount,moduleCount,moduleNumber,lessonSheets,readingsFor,resources,courseToolLabels,courseFor,freeModules} from '../course-data.js';
@@ -47,7 +47,7 @@ const replaceAll=(html,pairs)=>pairs.reduce((h,[a,b])=>h.split(a).join(b),html);
 
 // ---------- shared page shell, taken from an existing module page so hand-made navigation stays intact ----------
 const shellSource=read('strategic-foundation.html');
-const shellHead=shellSource.slice(0,shellSource.indexOf('<main')).replace(/learning\.css(\?v=[^"]*)?/,'learning.css?v=course2');
+const shellHead=shellSource.slice(0,shellSource.indexOf('<main')).replace(/learning\.css(\?v=[^"]*)?/,'learning.css?v=course5');
 const shellTail=shellSource.slice(shellSource.indexOf('</main>')+'</main>'.length);
 const page=(title,body)=>shellHead.replace(/<title>[^<]*<\/title>/,`<title>${e(title)} | Method into Impact</title>`)+`<main id="main">${body}</main>`+shellTail;
 
@@ -161,13 +161,7 @@ const toolHead=toolShell.slice(0,toolShell.indexOf('<main')),toolTail=toolShell.
 for(const slug of ['policy-management','marketing-social-planner']){const p=tool(slug);if(!p)continue;const f=`software-${slug}.html`;const block=existsSync(f)?(read(f).match(/<!-- course-tools:start -->[\s\S]*?<!-- course-tools:end -->/)||['<!-- course-tools:start --><!-- course-tools:end -->'])[0]:'<!-- course-tools:start --><!-- course-tools:end -->';write(f,toolHead.replace(/<title>[^<]*<\/title>/,`<title>${e(p.name)} | Method into Impact</title>`).replace(/data-product="[^"]*"/,`data-product="${slug}"`)+`<main id="main"><div class="catalog"><nav class="breadcrumbs"><a href="software.html">Impact Tools</a><span>› ${e(p.category)}</span></nav><span class="eyebrow">${e(p.category)} · Interactive preview</span><h1>${e(p.name)}</h1><p class="lead">${e(p.description)}</p><p>This browser-based preview saves work on this device. It does not yet provide secure multi-user access; avoid confidential records.</p><a class="button" href="${p.launchUrl}">Open ${e(p.name)} →</a><p><a href="software.html">← Explore all tools</a></p>${block}</div></main>`+toolTail);}
 for(const f of ['software-gantt.html','software-strategy-kpis-annual-planning.html']){if(existsSync(f))write(f,replaceAll(read(f),[['Excel round-trip with the Module 6 Gantt workbook, and imports your annual plan.','Excel round-trip with the Module 13 workbook (Tasks sheet), and imports your annual plan.'],['Excel round-trip with the Module 6 workbook.','Excel round-trip with the Module 13 workbook (Objectives, KPIs, Annual plan and Results sheets).']]));}
 
-// ---------- reading-library.html ----------
-let lib=read('reading-library.html');
-lib=lib.replace(/(<select id="module-filter"><option value="">All modules<\/option>)[\s\S]*?(<\/select>)/,`$1${modules.map(m=>`<option value="${m.id}">Module ${moduleNumber(m)} · ${e(m.title)}</option>`).join('')}$2`);
-const libLessons=modules.map(m=>taught(m).map(l=>{const items=readingsFor(m.id,l.id);if(!items.length)return '';return `<section class="library-lesson" data-module="${m.id}" id="m${m.id}-${l.id}"><div class="library-lesson-heading"><span class="eyebrow">Module ${moduleNumber(m)} · ${e(m.title)}</span><h2>${m.id}.${m.lessons.indexOf(l)+1} ${e(l.title)}</h2><a href="${lessonURL(m,l)}">Open lesson →</a></div><div class="reading-list">${items.map(item=>`<article class="resource-card" data-module="${m.id}" data-type="${e(item.type)}" data-level="${e(item.level)}" data-tags="${e(item.tags.join(' '))}" data-search="${e([item.title,item.organisation,item.why,item.use,...item.tags].join(' ').toLowerCase())}"><div class="resource-card-top"><span class="resource-type">${e(item.type)}</span><span class="resource-level">${e(item.level)}</span></div><p class="resource-category">${e(item.category)}</p><h3>${e(item.title)}</h3><p class="subtle">${e(item.organisation)}</p><p>${e(item.why)}</p><p class="resource-use"><b>Best moment →</b> ${e(item.use)}</p><div class="resource-tags">${item.tags.map(t=>`<span>${e(t)}</span>`).join('')}</div><div class="resource-actions"><a href="${item.url}" target="_blank" rel="noopener">Open resource ↗</a>${item.downloadUrl?`<a href="${item.downloadUrl}" target="_blank" rel="noopener">Download PDF ↓</a>`:''}</div></article>`).join('')}</div></section>`;}).join('')).join('');
-lib=lib.replace(/(<div id="library-results" class="evidence-results">)[\s\S]*?(<\/div><p id="library-empty")/,(_,a,b)=>a+libLessons+b);
-lib=lib.replace(/Showing all \d+ resources/,`Showing all ${resources.length} resources`);
-write('reading-library.html',lib);
+// ---------- reading-library.html: see scripts/generate-evidence-library.mjs ----------
 
 // ---------- resources.html (course workbooks) ----------
 let res=read('resources.html');
@@ -176,7 +170,7 @@ res=res.replace(/<main id="main">[\s\S]*<\/main>/,`<main id="main">${resMain}</m
 write('resources.html',res);
 
 // ---------- start links and cache-busting for the learning workspace ----------
-for(const f of [...readdirSync('.').filter(n=>n.endsWith('.html')),'app.js']){if(!existsSync(f))continue;let t=read(f);const before=t;t=t.replace(/learning\.css(\?v=[^"']*)?/g,'learning.css?v=course2');
+for(const f of [...readdirSync('.').filter(n=>n.endsWith('.html')),'app.js']){if(!existsSync(f))continue;let t=read(f);const before=t;t=t.replace(/learning\.css(\?v=[^"']*)?/g,'learning.css?v=course5');
  // The home page keeps its "write your purpose today" preview link; every other "start learning" link opens Module 0.
  if(f!=='index.html')t=t.split('learn.html?module=1&amp;lesson=purpose').join(startURL).split('learn.html?module=1&lesson=purpose').join(startURL.replace('&amp;','&'));
  if(t!==before)write(f,t);}

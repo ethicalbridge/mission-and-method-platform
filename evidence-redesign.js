@@ -3,16 +3,9 @@
   if (!document.body.classList.contains('evidence-page')) return;
 
   // ---------- 1. Group lessons by module ----------
-  const moduleNames = {
-    '1':'Strategic Foundation',
-    '2':'Theory of Change',
-    '3':'Team, Structure & Coordination',
-    '4':'Organisation Internal Systems',
-    '5':'Policies & Procedures',
-    '6':'Strategy to Action, Timeline & Gantt',
-    '7':'Business Model',
-    '8':'Fundraising, Sponsors & Partnerships',
-  };
+  // Module titles come from the generated page (data-module-title), so they always match the current course.
+  const moduleNames = {};
+  document.querySelectorAll('.library-lesson[data-module-title]').forEach(l => { moduleNames[l.dataset.module] = l.dataset.moduleTitle.replace(/^Module \d+ · /, ''); });
 
   const container = document.getElementById('library-results');
   if (container && !container.dataset.grouped) {
@@ -40,7 +33,7 @@
       header.setAttribute('tabindex', '0');
       header.setAttribute('aria-expanded', 'false');
       header.innerHTML = `
-        <div class="ev-module-num">Module ${moduleId}</div>
+        <div class="ev-module-num">Module ${String(moduleId).padStart(2,'0')}</div>
         <div class="ev-module-title-block">
           <h2>${escapeHtml(moduleNames[moduleId] || 'Module ' + moduleId)}</h2>
           <div class="ev-module-meta">${lessonEls.length} lesson${lessonEls.length === 1 ? '' : 's'} · ${totalResources} resource${totalResources === 1 ? '' : 's'}</div>
@@ -79,7 +72,8 @@
 
     const title = card.querySelector('h3')?.textContent?.trim() || '';
     const publisher = card.querySelector('p.subtle')?.textContent?.trim() || '';
-    const category = card.querySelector('p.resource-category')?.textContent?.trim() || '';
+    // Show the lesson the resource belongs to in the compact header, so the library always reads back to the course.
+    const category = card.querySelector('p.resource-category')?.textContent?.trim() || card.querySelector('.resource-lesson a')?.textContent?.trim() || '';
     const type = card.querySelector('.resource-type')?.textContent?.trim() || '';
     const level = card.querySelector('.resource-level')?.textContent?.trim() || '';
 
@@ -180,6 +174,19 @@
 
   // Initial sync (in case a filter is already applied from URL param)
   setTimeout(syncModules, 50);
+
+  // ---------- 4. Arriving from a lesson: open and highlight the linked resource or lesson ----------
+  function revealHash(){
+    if (!location.hash) return;
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!target || target.id === 'library-results') return;
+    const mod = target.closest('.ev-module');
+    if (mod) { mod.classList.add('expanded'); mod.querySelector('.ev-module-header')?.setAttribute('aria-expanded', 'true'); }
+    if (target.classList.contains('resource-card')) { target.classList.add('expanded', 'is-target'); target.setAttribute('aria-expanded', 'true'); }
+    setTimeout(() => target.scrollIntoView({ block: 'center' }), 80);
+  }
+  setTimeout(revealHash, 120);
+  window.addEventListener('hashchange', revealHash);
 
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
