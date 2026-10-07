@@ -1,4 +1,4 @@
-import {modules,legacyLessonKeys} from './course-data.js';
+import {modules,legacyLessonKeys} from './course-data.js?v=ev5';
 export const STORAGE_KEY='mm.course.planning-system.v1';
 export const STATE_VERSION=2;
 export const FIRST_LESSON='0.journey';

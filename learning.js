@@ -1,4 +1,4 @@
-import {modules,phases,readingsFor,primaryFor,toolsFor,moduleCount,moduleNumber,moduleFor,nextModule,lessonSheets,courseToolLabels,STAGES,courseFor,freeModules} from './course-data.js';
+import {modules,phases,readingsFor,primaryFor,toolsFor,moduleCount,moduleNumber,moduleFor,nextModule,lessonSheets,courseToolLabels,STAGES,courseFor,freeModules} from './course-data.js?v=ev5';
 import {pricing,money} from './pricing-config.js';
 const courseLabel=p=>`Course ${p.number} · ${p.name}`;
 import {softwareProducts,resourceManifest,previewToolSlugs} from './products.js';

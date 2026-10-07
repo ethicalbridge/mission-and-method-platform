@@ -2,7 +2,7 @@
 // Public development preview only; see docs/production-access.md before a paid launch.
 // Lesson content lives in course/mNN-*.js, one file per module. Each lesson ("section") has information,
 // an Excel sheet (lesson.sheet, in the module workbook) and a video slot (lesson.video).
-export {readingsFor,sources,resources,resourcePlan,resourceAnchor,primaryFor,ROLES} from './resource-library.js';
+export {readingsFor,sources,resources,resourcePlan,resourceAnchor,primaryFor,ROLES} from './resource-library.js?v=ev5';
 import m0 from './course/m00-start-here.js';
 import m1 from './course/m01-strategic-foundations.js';
 import m2 from './course/m02-theory-of-change.js';

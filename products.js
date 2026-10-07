@@ -1,5 +1,5 @@
 import {pricing} from './pricing-config.js';
-import {modules} from './course-data.js';
+import {modules} from './course-data.js?v=ev5';
 // The full pathway offer. Access is granted per course: see courseProducts and server/package-grants.mjs.
 export const courseProduct={id:pricing.course.productId,name:pricing.course.name,kind:'course',billing:'one_time',price:pricing.course.launch,currency:pricing.currency,status:'preview',checkout:null,resourceIds:modules.map(m=>m.slug)};
 export const courseProducts=pricing.courses.map(c=>({id:c.productId,offerId:c.id,name:c.name,kind:'course',billing:'one_time',price:c.price,currency:pricing.currency,status:'preview',checkout:null,modules:c.modules}));
