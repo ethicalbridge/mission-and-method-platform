@@ -94,3 +94,12 @@
 .cm-res-lib{margin-left:auto;white-space:nowrap;font-size:12px;font-weight:700;color:var(--teal)}
 .cm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:18px;font-size:14px}.cm-actions>a:not(.button){color:var(--teal);font-weight:700}
 @media(max-width:600px){.cm-module-header{grid-template-columns:1fr auto;gap:6px 12px;padding:16px 18px}.cm-module-num{justify-self:start}.cm-title-block{grid-column:1}.cm-expand{grid-column:2;grid-row:1/span 2}.cm-title{font-size:21px}.cm-module-body{padding:4px 18px 18px}.cm-res{margin-left:0}.cm-res li{flex-wrap:wrap;gap:4px 8px}.cm-res-lib{margin-left:0}}
+/* Course page header: numbered dark band, matching the Evidence Library course bands */
+.course-band{display:flex;align-items:center;gap:24px;margin:8px 0 24px;padding:26px 30px;border-radius:18px;background:var(--navy,#152a3a);color:#fff}
+.course-band-badge{flex:0 0 auto;display:grid;place-items:center;width:96px;height:96px;border-radius:18px;background:var(--orange,#ed7d4d);color:#fff;line-height:1;text-align:center}
+.course-band-badge small{display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:-16px}
+.course-band-badge b{display:block;font-size:50px;font-weight:800;letter-spacing:-.04em}
+.course-band-text{min-width:0}.course-band-num{display:inline-block;font-size:14px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#f8ca68}
+.course-band h1{margin:8px 0 10px;color:#fff;font-size:clamp(30px,4.2vw,48px);max-width:none}
+.course-band-meta{margin:0;color:#cad8de;font-size:15px}.course-band-meta a{color:#f8ca68;font-weight:700;text-decoration:underline}
+@media(max-width:600px){.course-band{flex-direction:column;align-items:flex-start;gap:14px;padding:20px}.course-band-badge{width:64px;height:64px;border-radius:12px}.course-band-badge b{font-size:34px}.course-band-badge small{font-size:9px;margin-bottom:-9px}}

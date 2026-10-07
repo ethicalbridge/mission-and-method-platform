@@ -18,10 +18,19 @@ function resourceList(m,l){
 
 function moduleBlock(m){
  const taught=m.lessons.filter(l=>!l.review);
- const resourceCount=taught.reduce((n,l)=>n+readingsFor(m.id,l.id).length,0);
+ const resourceCount=taught.reduce((n,l)=>n+readingsFor(m.id,l.id).filter(i=>!i.crossRef).length,0);
  const free=freeModules.includes(m.id);
  return `<details class="cm-module" id="module-${moduleNumber(m)}"><summary class="cm-module-header"><span class="cm-module-num">Module ${moduleNumber(m)}</span><span class="cm-title-block"><span class="cm-title">${e(m.title)}</span><span class="cm-meta">${m.lessons.length} lessons · ${resourceCount} resource${resourceCount===1?'':'s'}${free?' · <b>Free</b>':''}</span></span><span class="cm-expand" aria-hidden="true">+</span></summary><div class="cm-module-body"><p>${e(m.intro)}</p><p class="cm-output"><b>You create:</b> ${e(m.output)} · <b>Excel:</b> ${e(m.workbook.file)}</p><ol class="cm-lessons">${m.lessons.map((l,i)=>`<li class="cm-lesson${l.review?' cm-review':''}"><div class="cm-lesson-head"><span class="cm-lesson-no">${m.id}.${i+1}</span><a href="${lessonURL(m,l)}">${e(l.title)}</a><span class="cm-lesson-min">${l.review?'Module review':`${l.minutes} min`}</span></div>${l.review?'':resourceList(m,l)}</li>`).join('')}</ol><div class="cm-actions"><a class="button ghost" href="${m.slug}.html">Open Module ${moduleNumber(m)} →</a><a href="reading-library.html?module=${m.id}#library-results">Module ${moduleNumber(m)} in the Evidence Library →</a></div></div></details>`;
 }
+
+// Course header band: the same numbered dark band the Evidence Library uses for each course.
+export const courseBand=p=>{
+ const mods=modules.filter(m=>m.phase===p.name);
+ const lessons=mods.reduce((n,m)=>n+m.lessons.length,0);
+ const resources=mods.reduce((n,m)=>n+m.lessons.filter(l=>!l.review).reduce((k,l)=>k+readingsFor(m.id,l.id).filter(i=>!i.crossRef).length,0),0);
+ const hours=Math.round(mods.flatMap(m=>m.lessons).reduce((n,l)=>n+l.minutes,0)/60);
+ return `<header class="course-band"><div class="course-band-badge" aria-hidden="true"><small>Course</small><b>${p.number}</b></div><div class="course-band-text"><span class="course-band-num">Course ${p.number} of ${phases.length} · Planning System</span><h1>${e(p.title)}</h1><p class="course-band-meta">${e(p.summary)} · ${mods.length} modules · ${lessons} lessons · ${resources} resources · about ${hours} hours · <a href="reading-library.html?course=${p.id}#course-${p.id}">This course in the Evidence Library →</a></p></div></header>`;
+};
 
 export const courseModulesSection=p=>{
  const mods=modules.filter(m=>m.phase===p.name);
@@ -37,6 +46,10 @@ export function applyCourseModules(){
   const nextAt=html.indexOf('<p>Next:',start),endAt=html.indexOf('</div></main>',start);
   const end=nextAt>=0&&nextAt<endAt?nextAt:endAt;
   html=html.slice(0,start)+courseModulesSection(p)+html.slice(end);
+  const bandStart=html.search(/<header class="course-band">|<span class="eyebrow">Course \d+ · [^<]* of \d+ · Planning System<\/span><h1>/);
+  if(bandStart<0)throw new Error(`No course heading in ${file}`);
+  const bandEnd=html.startsWith('<header class="course-band">',bandStart)?html.indexOf('</header>',bandStart)+9:html.indexOf('</h1>',bandStart)+5;
+  html=html.slice(0,bandStart)+courseBand(p)+html.slice(bandEnd);
   writeFileSync(file,html,'utf8');console.log('wrote',file);
  }
 }
