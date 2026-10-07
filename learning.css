@@ -103,3 +103,20 @@
 .course-band h1{margin:8px 0 10px;color:#fff;font-size:clamp(30px,4.2vw,48px);max-width:none}
 .course-band-meta{margin:0;color:#cad8de;font-size:15px}.course-band-meta a{color:#f8ca68;font-weight:700;text-decoration:underline}
 @media(max-width:600px){.course-band{flex-direction:column;align-items:flex-start;gap:14px;padding:20px}.course-band-badge{width:64px;height:64px;border-radius:12px}.course-band-badge b{font-size:34px}.course-band-badge small{font-size:9px;margin-bottom:-9px}}
+/* Course complete: celebrate, then suggest the next course the learner does not own yet */
+.course-complete{margin:20px 0 28px;padding:24px;border-radius:18px;background:var(--navy,#152a3a);color:#fff;scroll-margin-top:100px}
+.course-complete-head{display:flex;gap:16px;align-items:flex-start}.course-complete-tick{flex:0 0 auto;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:var(--teal);color:#fff;font-size:24px;font-weight:800}
+.course-complete .eyebrow{color:#f8ca68}.course-complete h2{color:#fff;font-size:clamp(26px,3.4vw,36px);margin:6px 0 8px}.course-complete-head p{margin:0;color:#cad8de}.course-complete-head a{color:#f8ca68;font-weight:700;text-decoration:underline}
+.next-course{display:flex;gap:18px;align-items:flex-start;margin-top:20px;padding:20px;border-radius:14px;background:#fff;color:var(--ink)}
+.next-course h3{margin:6px 0 6px;font-size:24px}.next-course p{margin:0 0 8px;color:var(--muted)}.next-course .eyebrow{color:var(--teal)}
+.next-course-modules{margin:8px 0 14px;padding-left:18px;font-size:14px;color:var(--muted)}.next-course-modules li{margin:4px 0}.next-course-modules b{color:var(--ink)}
+.next-course .toolbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.course-later{margin:14px 0 0;font-size:14px;color:#cad8de}.course-later a{color:#fff;text-decoration:underline}
+.course-band-badge.small{width:64px;height:64px;border-radius:12px}.course-band-badge.small b{font-size:32px}.course-band-badge.small small{font-size:9px;margin-bottom:-9px}
+.courses-progress{margin:22px 0}.courses-progress h2{font-size:26px;margin:0 0 10px}.courses-progress ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.courses-progress li{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:14px 16px;border:1px solid #ede8dd;border-radius:14px;background:#fff}
+.courses-progress li.is-complete{border-color:var(--teal)}.courses-progress li:not(.is-complete):not(.is-active) .course-band-badge{background:#c9d3d6}
+.cp-text{min-width:0}.cp-text b a{color:var(--ink)}.cp-text progress{display:block;width:100%;margin:6px 0 2px}.cp-text small{color:var(--muted)}.cp-done{font-weight:800;color:var(--teal)}
+@media(max-width:600px){.next-course{flex-direction:column}.courses-progress li{grid-template-columns:auto 1fr}.cp-action{grid-column:1/-1}}
+/* Fix: the compact promo's demo placeholder had no positioned box, so it stretched over the whole page */
+.demo-slot{position:relative;aspect-ratio:16/9;width:100%;border-radius:14px;overflow:hidden}.demo-slot>.video-placeholder.demo{position:absolute;inset:0}

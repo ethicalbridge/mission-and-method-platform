@@ -48,7 +48,7 @@ const replaceAll=(html,pairs)=>pairs.reduce((h,[a,b])=>h.split(a).join(b),html);
 
 // ---------- shared page shell, taken from an existing module page so hand-made navigation stays intact ----------
 const shellSource=read('strategic-foundation.html');
-const shellHead=shellSource.slice(0,shellSource.indexOf('<main')).replace(/learning\.css(\?v=[^"]*)?/,'learning.css?v=course7');
+const shellHead=shellSource.slice(0,shellSource.indexOf('<main')).replace(/learning\.css(\?v=[^"]*)?/,'learning.css?v=course9');
 const shellTail=shellSource.slice(shellSource.indexOf('</main>')+'</main>'.length);
 const page=(title,body)=>shellHead.replace(/<title>[^<]*<\/title>/,`<title>${e(title)} | Method into Impact</title>`)+`<main id="main">${body}</main>`+shellTail;
 
@@ -171,7 +171,7 @@ res=res.replace(/<main id="main">[\s\S]*<\/main>/,`<main id="main">${resMain}</m
 write('resources.html',res);
 
 // ---------- start links and cache-busting for the learning workspace ----------
-for(const f of [...readdirSync('.').filter(n=>n.endsWith('.html')),'app.js']){if(!existsSync(f))continue;let t=read(f);const before=t;t=t.replace(/learning\.css(\?v=[^"']*)?/g,'learning.css?v=course7');
+for(const f of [...readdirSync('.').filter(n=>n.endsWith('.html')),'app.js']){if(!existsSync(f))continue;let t=read(f);const before=t;t=t.replace(/learning\.css(\?v=[^"']*)?/g,'learning.css?v=course9');
  // The home page keeps its "write your purpose today" preview link; every other "start learning" link opens Module 0.
  if(f!=='index.html')t=t.split('learn.html?module=1&amp;lesson=purpose').join(startURL).split('learn.html?module=1&lesson=purpose').join(startURL.replace('&amp;','&'));
  if(t!==before)write(f,t);}
