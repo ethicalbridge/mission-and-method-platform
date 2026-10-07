@@ -80,9 +80,12 @@
       section.id = `course-${id}`;
       section.innerHTML = `
         <header class="ev-course-header">
-          <span class="ev-course-num">Course ${escapeHtml(lesson.dataset.courseNumber || '')}</span>
+          <div class="ev-course-badge" aria-hidden="true"><small>Course</small><b>${escapeHtml(lesson.dataset.courseNumber || '')}</b></div>
+          <div class="ev-course-text">
+          <span class="ev-course-num">Course ${escapeHtml(lesson.dataset.courseNumber || '')} of 5</span>
           <h2>${escapeHtml(lesson.dataset.courseTitle || lesson.dataset.courseName || id)}</h2>
           <p class="ev-course-meta">${escapeHtml(lesson.dataset.courseSummary || '')} · ${modulesInCourse} module${modulesInCourse === 1 ? '' : 's'} · ${resourcesInCourse} resource${resourcesInCourse === 1 ? '' : 's'} · <a href="course-${escapeHtml(id)}.html">About this course →</a></p>
+          </div>
         </header>
         <div class="ev-course-body"></div>`;
       container.appendChild(section);
@@ -98,8 +101,8 @@
 
     const title = card.querySelector('h3')?.textContent?.trim() || '';
     const publisher = card.querySelector('p.subtle')?.textContent?.trim() || '';
-    // Show the lesson the resource belongs to in the compact header, so the library always reads back to the course.
-    const category = card.querySelector('p.resource-category')?.textContent?.trim() || card.querySelector('.resource-lesson a')?.textContent?.trim() || '';
+    // The lesson already heads each group, so the compact header does not repeat it.
+    const category = card.querySelector('p.resource-category')?.textContent?.trim() || '';
     const type = card.querySelector('.resource-type')?.textContent?.trim() || '';
     const level = card.querySelector('.resource-level')?.textContent?.trim() || '';
 

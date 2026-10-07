@@ -678,12 +678,18 @@ body.evidence-page .catalog > .availability-note{
 body.evidence-page .resource-lesson{margin:10px 0 0;font-size:14px}
 body.evidence-page article.resource-card.is-target{outline:3px solid var(--sun,#f8ca68);outline-offset:2px}
 body.evidence-page .resource-card{scroll-margin-top:110px}
-/* Course → module → lesson grouping */
-body.evidence-page .ev-course{margin:34px 0 10px}
+/* Course → module → lesson grouping: each course opens with a dark band and a large numbered badge */
+body.evidence-page .ev-course{margin:44px 0 10px}
 body.evidence-page .ev-course:first-child{margin-top:8px}
-body.evidence-page .ev-course-header{padding:0 4px 14px;margin-bottom:14px;border-bottom:2px solid var(--line,#d8e1df)}
-body.evidence-page .ev-course-num{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--teal,#1d6c67)}
-body.evidence-page .ev-course-header h2{margin:6px 0 6px;font-size:clamp(24px,3vw,32px)}
-body.evidence-page .ev-course-meta{margin:0;color:var(--muted,#5d7079);font-size:14px}
-body.evidence-page .ev-course-meta a{color:var(--teal,#1d6c67);font-weight:700}
-body.evidence-page .ev-course-body .ev-module{margin-left:0}
+body.evidence-page .ev-course-header{display:flex;align-items:center;gap:22px;padding:22px 26px;margin-bottom:16px;border-radius:18px;background:var(--navy,#152a3a);color:#fff}
+body.evidence-page .ev-course-badge{flex:0 0 auto;display:grid;place-items:center;width:84px;height:84px;border-radius:16px;background:var(--orange,#ed7d4d);color:#fff;line-height:1;text-align:center}
+body.evidence-page .ev-course-badge small{display:block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:-14px}
+body.evidence-page .ev-course-badge b{display:block;font-size:44px;font-weight:800;letter-spacing:-.04em}
+body.evidence-page .ev-course-text{min-width:0}
+body.evidence-page .ev-course-num{display:inline-block;font-size:14px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#f8ca68}
+body.evidence-page .ev-course-header h2{margin:6px 0 8px;font-size:clamp(24px,3vw,32px);color:#fff}
+body.evidence-page .ev-course-meta{margin:0;color:#cad8de;font-size:14px}
+body.evidence-page .ev-course-meta a{color:#f8ca68;font-weight:700;text-decoration:underline}
+body.evidence-page .ev-course-body{padding-left:14px;border-left:3px solid #f0d9cc;margin-left:14px}
+@media(max-width:600px){body.evidence-page .ev-course-header{gap:14px;padding:18px}body.evidence-page .ev-course-badge{width:60px;height:60px;border-radius:12px}body.evidence-page .ev-course-badge b{font-size:32px}body.evidence-page .ev-course-badge small{font-size:9px;margin-bottom:-8px}body.evidence-page .ev-course-body{padding-left:0;border-left:0;margin-left:0}}
+@media(max-width:600px){body.evidence-page .ev-module-header{grid-template-columns:1fr auto;gap:6px 12px;padding:16px 18px}body.evidence-page .ev-module-num{grid-column:1;justify-self:start}body.evidence-page .ev-module-title-block{grid-column:1}body.evidence-page .ev-module-expand{grid-column:2;grid-row:1/span 2}}
