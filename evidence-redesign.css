@@ -128,10 +128,11 @@ body.evidence-page .library-controls{
   margin:0 0 20px !important;
   gap:14px !important;
   display:grid !important;
-  grid-template-columns:2fr repeat(4,1fr) auto !important;
+  grid-template-columns:repeat(5,minmax(0,1fr)) auto !important;
   align-items:end !important;
   box-shadow:0 4px 20px rgba(13,44,58,.04);
 }
+body.evidence-page .library-controls > label:first-child{grid-column:1/-1}
 body.evidence-page .library-controls label{
   font-size:11px !important;
   font-weight:900 !important;
@@ -677,3 +678,12 @@ body.evidence-page .catalog > .availability-note{
 body.evidence-page .resource-lesson{margin:10px 0 0;font-size:14px}
 body.evidence-page article.resource-card.is-target{outline:3px solid var(--sun,#f8ca68);outline-offset:2px}
 body.evidence-page .resource-card{scroll-margin-top:110px}
+/* Course → module → lesson grouping */
+body.evidence-page .ev-course{margin:34px 0 10px}
+body.evidence-page .ev-course:first-child{margin-top:8px}
+body.evidence-page .ev-course-header{padding:0 4px 14px;margin-bottom:14px;border-bottom:2px solid var(--line,#d8e1df)}
+body.evidence-page .ev-course-num{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--teal,#1d6c67)}
+body.evidence-page .ev-course-header h2{margin:6px 0 6px;font-size:clamp(24px,3vw,32px)}
+body.evidence-page .ev-course-meta{margin:0;color:var(--muted,#5d7079);font-size:14px}
+body.evidence-page .ev-course-meta a{color:var(--teal,#1d6c67);font-weight:700}
+body.evidence-page .ev-course-body .ev-module{margin-left:0}

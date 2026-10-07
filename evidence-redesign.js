@@ -1,4 +1,4 @@
-// Evidence Library: group lessons by module + click-to-expand cards.
+// Evidence Library: group lessons by course → module → lesson, with click-to-expand cards.
 (function(){
   if (!document.body.classList.contains('evidence-page')) return;
 
@@ -8,9 +8,11 @@
   document.querySelectorAll('.library-lesson[data-module-title]').forEach(l => { moduleNames[l.dataset.module] = l.dataset.moduleTitle.replace(/^Module \d+ · /, ''); });
 
   const container = document.getElementById('library-results');
+  let allLessons = [];
   if (container && !container.dataset.grouped) {
     container.dataset.grouped = '1';
     const lessons = Array.from(container.querySelectorAll('.library-lesson'));
+    allLessons = lessons;
     const byModule = new Map();
     lessons.forEach(l => {
       const m = l.dataset.module || 'other';
@@ -60,8 +62,32 @@
         }
       });
 
-      container.appendChild(moduleSection);
+      courseBodyFor(lessonEls[0]).appendChild(moduleSection);
     });
+  }
+
+  // Course wrappers: each course is an open section whose modules collapse beneath it.
+  function courseBodyFor(lesson){
+    const id = lesson.dataset.course || 'other';
+    let section = container.querySelector(`.ev-course[data-course="${CSS.escape(id)}"]`);
+    if (!section) {
+      const lessonsInCourse = allLessons.filter(l => (l.dataset.course || 'other') === id);
+      const modulesInCourse = new Set(lessonsInCourse.map(l => l.dataset.module)).size;
+      const resourcesInCourse = lessonsInCourse.reduce((n, l) => n + l.querySelectorAll('.resource-card').length, 0);
+      section = document.createElement('section');
+      section.className = 'ev-course';
+      section.dataset.course = id;
+      section.id = `course-${id}`;
+      section.innerHTML = `
+        <header class="ev-course-header">
+          <span class="ev-course-num">Course ${escapeHtml(lesson.dataset.courseNumber || '')}</span>
+          <h2>${escapeHtml(lesson.dataset.courseTitle || lesson.dataset.courseName || id)}</h2>
+          <p class="ev-course-meta">${escapeHtml(lesson.dataset.courseSummary || '')} · ${modulesInCourse} module${modulesInCourse === 1 ? '' : 's'} · ${resourcesInCourse} resource${resourcesInCourse === 1 ? '' : 's'} · <a href="course-${escapeHtml(id)}.html">About this course →</a></p>
+        </header>
+        <div class="ev-course-body"></div>`;
+      container.appendChild(section);
+    }
+    return section.querySelector('.ev-course-body');
   }
 
   // ---------- 2. Transform resource cards ----------
@@ -141,7 +167,7 @@
 
   // ---------- 3. Sync module visibility + auto-expand on filter ----------
   const searchInput = document.getElementById('resource-search');
-  const filterInputs = ['module','type','level','tag'].map(n => document.getElementById(n + '-filter')).filter(Boolean);
+  const filterInputs = ['module','type','level','tag','course'].map(n => document.getElementById(n + '-filter')).filter(Boolean);
   const modules = document.querySelectorAll('.ev-module');
 
   function anyFilterActive(){
@@ -151,6 +177,7 @@
 
   function syncModules(){
     const filtering = anyFilterActive();
+    setTimeout(() => document.querySelectorAll('.ev-course').forEach(c => { c.hidden = !Array.from(c.querySelectorAll('.ev-module')).some(m => !m.hidden); }), 0);
     modules.forEach(m => {
       const lessonsInside = m.querySelectorAll('.library-lesson');
       const hasVisible = Array.from(lessonsInside).some(l => !l.hidden);
