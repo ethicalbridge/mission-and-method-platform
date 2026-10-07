@@ -9,6 +9,7 @@ import {modules,phases,lessonCount,moduleCount,moduleNumber,lessonSheets,reading
 import {softwareProducts,previewToolSlugs} from '../products.js';
 import {pricing,money,coursesTotal,pathwaySaving,bundleSaving} from '../pricing-config.js';
 import {coursePricing,suiteIntro,conversionOptions} from './pricing-sections.mjs';
+import {courseModulesSection} from './course-modules-section.mjs';
 // Five courses, one per phase.
 const courseLabel=p=>`Course ${p.number} · ${p.name}`;
 const coursePrice=p=>pricing.courses.find(c=>c.id===p.id).price;
@@ -47,7 +48,7 @@ const replaceAll=(html,pairs)=>pairs.reduce((h,[a,b])=>h.split(a).join(b),html);
 
 // ---------- shared page shell, taken from an existing module page so hand-made navigation stays intact ----------
 const shellSource=read('strategic-foundation.html');
-const shellHead=shellSource.slice(0,shellSource.indexOf('<main')).replace(/learning\.css(\?v=[^"]*)?/,'learning.css?v=course5');
+const shellHead=shellSource.slice(0,shellSource.indexOf('<main')).replace(/learning\.css(\?v=[^"]*)?/,'learning.css?v=course6');
 const shellTail=shellSource.slice(shellSource.indexOf('</main>')+'</main>'.length);
 const page=(title,body)=>shellHead.replace(/<title>[^<]*<\/title>/,`<title>${e(title)} | Method into Impact</title>`)+`<main id="main">${body}</main>`+shellTail;
 
@@ -121,7 +122,7 @@ courses=courses.replace(/<main id="main">[\s\S]*<\/main>/,`<main id="main"><div 
 write('courses.html',courses);
 for(const p of phases){
  const mods=modules.filter(m=>m.phase===p.name);
- write(coursePage(p),page(courseLabel(p),`<div class="catalog"><nav class="breadcrumbs"><a href="courses.html">Courses</a><span>› ${e(courseLabel(p))}</span></nav><span class="eyebrow">${e(courseLabel(p))} of ${phases.length} · Planning System</span><h1>${e(p.title)}</h1><p class="lead">${e(p.summary)}. ${mods.map(m=>e(m.short)).join('. ')}.</p><div class="module-page-grid"><div><p><b>${money(coursePrice(p))}</b> one-time · lifetime access · ${courseLessons(p)} lessons and reviews · about ${courseHours(p)} hours.</p><p>Every lesson has a short video, the written explanation with examples, a guided exercise that saves into your organisation pack, and a sheet in the module’s Excel workbook.</p><div class="toolbar"><a class="button" href="purchase.html?offer=${p.id}">Get ${e(p.name)} · ${money(coursePrice(p))}</a><a class="button ghost" href="${lessonURL(mods[0])}">Preview the first lesson</a></div><p class="subtle">Or get all five courses for ${money(pricing.course.launch)} and save ${money(pathwaySaving())}. <a href="courses.html">Compare →</a></p></div><div><span class="eyebrow">Course introduction</span><div class="video-slot"><div class="video-placeholder" role="img" aria-label="Course introduction video coming soon"><span class="play-icon" aria-hidden="true">▶</span><b>${e(courseLabel(p))}</b><small>Video coming soon.</small></div></div></div></div><h2>What you’ll build</h2>${mods.map(m=>`<section class="card" style="margin:14px 0"><span class="eyebrow">Module ${moduleNumber(m)}${freeModules.includes(m.id)?' · Free':''}</span><h3><a href="${m.slug}.html">${e(m.title)}</a></h3><p>${e(m.intro)}</p><p><b>You create:</b> ${e(m.output)} · ${m.lessons.length} lessons · Excel: ${e(m.workbook.file)}</p></section>`).join('')}${p.number<phases.length?`<p>Next: <a href="${coursePage(phases[p.number])}">${e(courseLabel(phases[p.number]))} →</a></p>`:''}</div>`));
+ write(coursePage(p),page(courseLabel(p),`<div class="catalog"><nav class="breadcrumbs"><a href="courses.html">Courses</a><span>› ${e(courseLabel(p))}</span></nav><span class="eyebrow">${e(courseLabel(p))} of ${phases.length} · Planning System</span><h1>${e(p.title)}</h1><p class="lead">${e(p.summary)}. ${mods.map(m=>e(m.short)).join('. ')}.</p><div class="module-page-grid"><div><p><b>${money(coursePrice(p))}</b> one-time · lifetime access · ${courseLessons(p)} lessons and reviews · about ${courseHours(p)} hours.</p><p>Every lesson has a short video, the written explanation with examples, a guided exercise that saves into your organisation pack, and a sheet in the module’s Excel workbook.</p><div class="toolbar"><a class="button" href="purchase.html?offer=${p.id}">Get ${e(p.name)} · ${money(coursePrice(p))}</a><a class="button ghost" href="${lessonURL(mods[0])}">Preview the first lesson</a></div><p class="subtle">Or get all five courses for ${money(pricing.course.launch)} and save ${money(pathwaySaving())}. <a href="courses.html">Compare →</a></p></div><div><span class="eyebrow">Course introduction</span><div class="video-slot"><div class="video-placeholder" role="img" aria-label="Course introduction video coming soon"><span class="play-icon" aria-hidden="true">▶</span><b>${e(courseLabel(p))}</b><small>Video coming soon.</small></div></div></div></div>${courseModulesSection(p)}${p.number<phases.length?`<p>Next: <a href="${coursePage(phases[p.number])}">${e(courseLabel(phases[p.number]))} →</a></p>`:''}</div>`));
 }
 
 // ---------- pricing.html (hand-built): course offer cards and course detail ----------
@@ -170,7 +171,7 @@ res=res.replace(/<main id="main">[\s\S]*<\/main>/,`<main id="main">${resMain}</m
 write('resources.html',res);
 
 // ---------- start links and cache-busting for the learning workspace ----------
-for(const f of [...readdirSync('.').filter(n=>n.endsWith('.html')),'app.js']){if(!existsSync(f))continue;let t=read(f);const before=t;t=t.replace(/learning\.css(\?v=[^"']*)?/g,'learning.css?v=course5');
+for(const f of [...readdirSync('.').filter(n=>n.endsWith('.html')),'app.js']){if(!existsSync(f))continue;let t=read(f);const before=t;t=t.replace(/learning\.css(\?v=[^"']*)?/g,'learning.css?v=course6');
  // The home page keeps its "write your purpose today" preview link; every other "start learning" link opens Module 0.
  if(f!=='index.html')t=t.split('learn.html?module=1&amp;lesson=purpose').join(startURL).split('learn.html?module=1&lesson=purpose').join(startURL.replace('&amp;','&'));
  if(t!==before)write(f,t);}
