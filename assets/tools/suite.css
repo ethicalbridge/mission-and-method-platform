@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito+Sans:wght@400;600;700;800;900&display=swap');
-:root{--ink:#173743;--deep:#123c48;--teal:#116b68;--coral:#d76549;--sun:#f8ca68;--cream:#fffaf3;--mint:#e9f3ed;--line:#d6e2dc;--muted:#536874;--warn:#fff1e5}
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;800;900&family=Nunito+Sans:wght@400;600;700;800;900&display=swap');
+:root{--ink:#173743;--deep:#123c48;--teal:#116b68;--coral:#d76549;--sun:#f8ca68;--cream:#fffaf3;--mint:#e9f3ed;--line:#d6e2dc;--muted:#536874;--warn:#fff1e5;--headline:#06161c}
 *{box-sizing:border-box}
 body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.5 'Nunito Sans',Arial,sans-serif}
 button,input,select,textarea{font:inherit}
@@ -15,10 +15,11 @@ button{cursor:pointer}
 .top a:not(.brand){color:var(--teal)}
 .hero{padding:27px 0 19px}
 .eyebrow{font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
-h1,h2,h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;line-height:1.15}
-h1{font-size:clamp(36px,4vw,52px);margin:7px 0}
-h2{font-size:30px;margin:0 0 8px}
-h3{font-size:22px;margin:0 0 8px}
+h1,h2,h3{font-family:'Playfair Display','DM Serif Display',Georgia,serif;font-weight:800;line-height:1.1;color:var(--headline);letter-spacing:-.01em}
+h1{font-size:clamp(36px,4vw,52px);margin:7px 0;font-weight:900}
+h2{font-size:30px;margin:0 0 8px;font-weight:800}
+h3{font-size:22px;margin:0 0 8px;font-weight:800}
+.hero p{color:#1e3942;font-weight:500}
 p{color:var(--muted);margin:5px 0 12px}
 .hero p{max-width:840px}
 .nav{display:flex;gap:7px;overflow:auto;background:var(--mint);padding:7px;border-radius:13px;margin-bottom:20px}
