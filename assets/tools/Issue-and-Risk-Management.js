@@ -1,8 +1,8 @@
 /* Issue & Risk Management — compliance-grade register.
-   Donor Mapping style: inline-editable wide grid, live dashboard at the top.
-   5×5 L×I scoring, mitigation / approval trail, review cadence with overdue
-   flags. Risks (what might happen) and Issues (what has happened) are kept
-   separate; each can link to any item from the other tools, or stand alone.
+   Overview (heatmap + how-it-works) · Risks grid · Issues grid · Settings
+   (customise categories, statuses, cadences) · Export. All grids are
+   inline-editable, auto-grow their cells so no text is cut, and feed the
+   dashboard above them live.
 */
 (()=>{'use strict';
 const S=window.MMSuite;if(!S){console.error('MMSuite missing');return}
@@ -10,12 +10,12 @@ const {esc,uid,now,today,currentYear,fmtDate,field,area,select,tip,pill,bar,card
 
 const KEY='mission-method-issue-risk-v2',LEGACY='mission-method-issue-risk-v1';
 const SO_KEY='mission-method-strategic-objectives-v2',TOC_KEY='mission-method-theory-of-change-v2',SK_KEY='mission-method-strategy-kpis-v2',MEAL_KEY='mission-method-meal-strategy-v3',GANTT_KEY='mission-method-gantt-v2';
-const TABS=['Start','Risks grid','Issues grid','Heatmap','Export'];
-const R_STATUS=['Open','Monitoring','Mitigating','Closed'];
-const I_STATUS=['Open','In progress','Resolved','Closed'];
-const M_STATUS=['Not started','In progress','Done','Blocked'];
-const CADENCES=['Weekly','Monthly','Quarterly','Semi-annual','Annual','Ad hoc'];
-const CATEGORIES=['Financial','Programming','Partners','Compliance','HR','Operations','Safeguarding','MEAL quality','Donor compliance','Reputation','Legal','Other'];
+const TABS=['Overview','Risks','Issues','Settings','Export'];
+const DEFAULT_R_STATUS=['Open','Monitoring','Mitigating','Closed'];
+const DEFAULT_I_STATUS=['Open','In progress','Resolved','Closed'];
+const DEFAULT_M_STATUS=['Not started','In progress','Done','Blocked'];
+const DEFAULT_CADENCES=['Weekly','Monthly','Quarterly','Semi-annual','Annual','Ad hoc'];
+const DEFAULT_CATEGORIES=['Financial','Programming','Partners','Compliance','HR','Operations','Safeguarding','MEAL quality','Donor compliance','Reputation','Legal','Other'];
 const LIKELIHOOD_OPTS=[['1','1 · Rare'],['2','2 · Unlikely'],['3','3 · Possible'],['4','4 · Likely'],['5','5 · Almost certain']];
 const IMPACT_OPTS=[['1','1 · Negligible'],['2','2 · Minor'],['3','3 · Moderate'],['4','4 · Major'],['5','5 · Severe']];
 const SEVERITY_OPTS=[['1','1 · Minor'],['2','2 · Noticeable'],['3','3 · Significant'],['4','4 · Serious'],['5','5 · Critical']];
@@ -23,7 +23,8 @@ const SEVERITY_OPTS=[['1','1 · Minor'],['2','2 · Noticeable'],['3','3 · Signi
 const blankRisk=()=>({id:uid(),code:'',title:'',description:'',threatensSource:'manual',threatensRef:'',threatens:'',category:'Other',likelihood:3,impact:3,mitigation:'',mitigationOwner:'',mitigationDue:'',mitigationStatus:'Not started',approvedBy:'',approvedOn:'',reviewCadence:'Quarterly',nextReview:'',lastReview:'',status:'Open',notes:'',createdAt:now(),lastEditedBy:'',lastEditedAt:''});
 const blankIssue=()=>({id:uid(),code:'',title:'',description:'',affectsSource:'manual',affectsRef:'',affects:'',category:'Other',severity:3,happenedOn:today(),resolution:'',owner:'',due:'',status:'Open',reportedBy:'',resolvedOn:'',linkedRiskCode:'',notes:'',createdAt:now(),lastEditedBy:'',lastEditedAt:''});
 const blankMeta=()=>({organisation:'',project:'',year:currentYear,preparedBy:'',defaultCadence:'Quarterly',notes:''});
-const blank=()=>({version:2,meta:blankMeta(),risks:[],issues:[]});
+const blankSettings=()=>({categories:[...DEFAULT_CATEGORIES],rStatus:[...DEFAULT_R_STATUS],iStatus:[...DEFAULT_I_STATUS],mStatus:[...DEFAULT_M_STATUS],cadences:[...DEFAULT_CADENCES]});
+const blank=()=>({version:2,meta:blankMeta(),settings:blankSettings(),risks:[],issues:[]});
 
 function migrateV1(v1){
  const out=blank();
@@ -31,19 +32,18 @@ function migrateV1(v1){
   if(v1.settings?.organisation)out.meta.organisation=v1.settings.organisation;
   (v1.risks||[]).forEach((r,i)=>{
    const code=r.id||'R'+(i+1);
-   out.risks.push({...blankRisk(),code,title:r.title||'',description:r.description||'',threatens:[r.project,r.department].filter(Boolean).join(' · '),category:CATEGORIES.includes(r.category)?r.category:'Other',likelihood:clamp(r.likelihood,1,5)||3,impact:clamp(r.impact,1,5)||3,mitigation:r.mitigation||r.controls||'',mitigationOwner:r.mitigationOwner||r.owner||'',mitigationDue:r.due||'',mitigationStatus:'In progress',status:R_STATUS.includes(r.status)?r.status:'Open',notes:r.notes||'',createdAt:r.history?.[r.history.length-1]?.at||now()});
+   out.risks.push({...blankRisk(),code,title:r.title||'',description:r.description||'',threatens:[r.project,r.department].filter(Boolean).join(' · '),category:DEFAULT_CATEGORIES.includes(r.category)?r.category:'Other',likelihood:clamp(r.likelihood,1,5)||3,impact:clamp(r.impact,1,5)||3,mitigation:r.mitigation||r.controls||'',mitigationOwner:r.mitigationOwner||r.owner||'',mitigationDue:r.due||'',mitigationStatus:'In progress',status:DEFAULT_R_STATUS.includes(r.status)?r.status:'Open',notes:r.notes||'',createdAt:r.history?.[r.history.length-1]?.at||now()});
   });
   (v1.issues||[]).forEach((is,i)=>{
    const code=is.id||'I'+(i+1);
    const link=(is.riskIds||[])[0];const linkedCode=link?(v1.risks||[]).find(r=>r.id===link)?.id:'';
-   out.issues.push({...blankIssue(),code,title:is.title||'',description:is.description||'',affects:[is.project,is.department].filter(Boolean).join(' · '),category:CATEGORIES.includes(is.category)?is.category:'Other',severity:is.severity==='Critical'?5:is.severity==='High'?4:is.severity==='Medium'?3:is.severity==='Low'?2:3,happenedOn:is.identified||today(),resolution:is.resolution||'',owner:is.owner||'',due:is.due||'',status:I_STATUS.includes(is.status)?is.status:'Open',resolvedOn:is.closedAt||'',linkedRiskCode:linkedCode||'',notes:is.notes||'',createdAt:is.identified||now()});
+   out.issues.push({...blankIssue(),code,title:is.title||'',description:is.description||'',affects:[is.project,is.department].filter(Boolean).join(' · '),category:DEFAULT_CATEGORIES.includes(is.category)?is.category:'Other',severity:is.severity==='Critical'?5:is.severity==='High'?4:is.severity==='Medium'?3:is.severity==='Low'?2:3,happenedOn:is.identified||today(),resolution:is.resolution||'',owner:is.owner||'',due:is.due||'',status:DEFAULT_I_STATUS.includes(is.status)?is.status:'Open',resolvedOn:is.closedAt||'',linkedRiskCode:linkedCode||'',notes:is.notes||'',createdAt:is.identified||now()});
   });
  }catch(e){console.warn('risk migrate failed',e)}
  return out;
 }
 
 // ---------- Three worked examples for each register ----------
-// Realistic risks that light up the dashboard: one Critical, one High, one Medium.
 function makeExampleRisks(){
  const R=(o)=>({...blankRisk(),...o});
  const in30=new Date(Date.now()+30*86400000).toISOString().slice(0,10);
@@ -52,43 +52,12 @@ function makeExampleRisks(){
  const past45=new Date(Date.now()-45*86400000).toISOString().slice(0,10);
  const past90=new Date(Date.now()-90*86400000).toISOString().slice(0,10);
  return [
-  R({
-   code:'R1',title:'Harvest Impact Fund grant decision delays',description:'Delays to the $450k Harvest Impact Fund decision would leave a $120k gap in the 2027 budget and force a reduction in the Q2 cohort size.',
-   threatens:'2027 annual budget · girls education programme · Q2 cohort delivery',category:'Financial',
-   likelihood:4,impact:5,
-   mitigation:'Keep the Harvest relationship warm with monthly check-ins. Fast-track two reserve prospects (Open Horizons Collective, Mercator Education Fund) so a 90-day gap is survivable. Maintain a 3-month operating reserve.',
-   mitigationOwner:'Priya Shah (Dev. Director)',mitigationDue:in30,mitigationStatus:'In progress',
-   approvedBy:'Board, Finance committee',approvedOn:past45,
-   reviewCadence:'Monthly',nextReview:in14,lastReview:past15,
-   status:'Mitigating',
-   notes:'Linked to issue I1 — the previous grant report was already late, which may be affecting trust.'
-  }),
-  R({
-   code:'R2',title:'Loss of lead safeguarding officer',description:'The lead safeguarding officer is also our MEAL lead and the only trained Child Protection focal point. If they leave or go on extended leave, we lose both institutional memory and compliance cover simultaneously.',
-   threatens:'Safeguarding compliance · MEAL data quality · donor reporting · programme continuity',category:'Safeguarding',
-   likelihood:3,impact:5,
-   mitigation:'Hire a MEAL officer by Q2 to split the role. Cross-train two programme managers on the Child Protection focal-point protocol. Document all MEAL procedures in a handover pack by month-end.',
-   mitigationOwner:'Aiko Tanaka (Ops Director)',mitigationDue:past15,mitigationStatus:'In progress',
-   approvedBy:'Director, HR',approvedOn:past45,
-   reviewCadence:'Monthly',nextReview:in14,lastReview:past15,
-   status:'Open',
-   notes:'The mitigation due date has already slipped — the MEAL officer recruitment is 15 days late.'
-  }),
-  R({
-   code:'R3',title:'Partner MoU with Northern Lights lapsing',description:'The MoU with Northern Lights Trust (our in-country infrastructure partner) expires in Q4 and no renewal discussion has started yet. If it lapses mid-project, programme delivery in two districts stops.',
-   threatens:'Northern districts delivery · 2027 cohort · partner reporting line',category:'Partners',
-   likelihood:3,impact:4,
-   mitigation:'Open renewal discussion by month-end. Review the partnership terms with Legal in parallel so the renewal is not held up by paperwork. Identify one backup delivery partner as a contingency.',
-   mitigationOwner:'Erik Johansen (Partnerships)',mitigationDue:in30,mitigationStatus:'Not started',
-   approvedBy:'Director',approvedOn:past90,
-   reviewCadence:'Quarterly',nextReview:past15,lastReview:past90,
-   status:'Open',
-   notes:'Review date already overdue — this needs to move to Monitoring once renewal is in flight.'
-  })
+  R({code:'R1',title:'Harvest Impact Fund grant decision delays',description:'Delays to the $450k Harvest Impact Fund decision would leave a $120k gap in the 2027 budget and force a reduction in the Q2 cohort size.',threatens:'2027 annual budget · girls education programme · Q2 cohort delivery',category:'Financial',likelihood:4,impact:5,mitigation:'Keep the Harvest relationship warm with monthly check-ins. Fast-track two reserve prospects (Open Horizons Collective, Mercator Education Fund) so a 90-day gap is survivable. Maintain a 3-month operating reserve.',mitigationOwner:'Priya Shah (Dev. Director)',mitigationDue:in30,mitigationStatus:'In progress',approvedBy:'Board, Finance committee',approvedOn:past45,reviewCadence:'Monthly',nextReview:in14,lastReview:past15,status:'Mitigating',notes:'Linked to issue I1 — the previous grant report was already late, which may be affecting trust.'}),
+  R({code:'R2',title:'Loss of lead safeguarding officer',description:'The lead safeguarding officer is also our MEAL lead and the only trained Child Protection focal point. If they leave or go on extended leave, we lose both institutional memory and compliance cover simultaneously.',threatens:'Safeguarding compliance · MEAL data quality · donor reporting · programme continuity',category:'Safeguarding',likelihood:3,impact:5,mitigation:'Hire a MEAL officer by Q2 to split the role. Cross-train two programme managers on the Child Protection focal-point protocol. Document all MEAL procedures in a handover pack by month-end.',mitigationOwner:'Aiko Tanaka (Ops Director)',mitigationDue:past15,mitigationStatus:'In progress',approvedBy:'Director, HR',approvedOn:past45,reviewCadence:'Monthly',nextReview:in14,lastReview:past15,status:'Open',notes:'The mitigation due date has already slipped — the MEAL officer recruitment is 15 days late.'}),
+  R({code:'R3',title:'Partner MoU with Northern Lights lapsing',description:'The MoU with Northern Lights Trust (our in-country infrastructure partner) expires in Q4 and no renewal discussion has started yet. If it lapses mid-project, programme delivery in two districts stops.',threatens:'Northern districts delivery · 2027 cohort · partner reporting line',category:'Partners',likelihood:3,impact:4,mitigation:'Open renewal discussion by month-end. Review the partnership terms with Legal in parallel so the renewal is not held up by paperwork. Identify one backup delivery partner as a contingency.',mitigationOwner:'Erik Johansen (Partnerships)',mitigationDue:in30,mitigationStatus:'Not started',approvedBy:'Director',approvedOn:past90,reviewCadence:'Quarterly',nextReview:past15,lastReview:past90,status:'Open',notes:'Review date already overdue — this needs to move to Monitoring once renewal is in flight.'})
  ];
 }
 
-// Three worked issues: one overdue high-severity, one resolved, one in progress.
 function makeExampleIssues(){
  const I=(o)=>({...blankIssue(),...o});
  const in7=new Date(Date.now()+7*86400000).toISOString().slice(0,10);
@@ -96,56 +65,41 @@ function makeExampleIssues(){
  const past10=new Date(Date.now()-10*86400000).toISOString().slice(0,10);
  const past20=new Date(Date.now()-20*86400000).toISOString().slice(0,10);
  const past30=new Date(Date.now()-30*86400000).toISOString().slice(0,10);
- const past60=new Date(Date.now()-60*86400000).toISOString().slice(0,10);
  return [
-  I({
-   code:'I1',title:'Harvest Impact Fund Q3 narrative report submitted late',description:'The Q3 narrative report to Harvest Impact Fund was submitted 11 days after the contractual deadline, triggering a formal reminder from the grants team.',
-   affects:'Harvest Impact Fund grant · Q4 2026 drawdown · donor relationship',category:'Donor compliance',
-   severity:4,happenedOn:past30,reportedBy:'Priya Shah',
-   resolution:'Issued a written apology with a corrective action plan. Set up a 10-day pre-deadline reminder in the grants calendar. Appointed Priya as the single accountable owner for all Harvest deliverables.',
-   owner:'Priya Shah (Dev. Director)',due:past20,status:'Resolved',resolvedOn:past20,
-   linkedRiskCode:'R1',notes:'Resolved on time. Still, repeat occurrences would trigger a formal donor compliance review — monitor Q4 report submission closely.'
-  }),
-  I({
-   code:'I2',title:'MEAL data loss — tablet lost in the field',description:'A field tablet carrying unsubmitted survey data for the Q3 cohort baseline was lost during a transport incident. ~40 responses are affected.',
-   affects:'Q3 cohort baseline data · MEAL framework indicators I-01 and I-04',category:'MEAL quality',
-   severity:3,happenedOn:past10,reportedBy:'Maria Lopez (MEAL)',
-   resolution:'Re-collect the 40 baseline surveys in the coming cohort visit. Enable auto-sync to cloud on all field tablets. Review device encryption policy with IT.',
-   owner:'Maria Lopez',due:in7,status:'In progress',resolvedOn:'',
-   linkedRiskCode:'R2',notes:'Low privacy exposure — no personally identifying data was on the device beyond first names. Still, the device encryption gap is a wider ops issue.'
-  }),
-  I({
-   code:'I3',title:'Safeguarding complaint from community volunteer',description:'A community volunteer raised a safeguarding concern about the conduct of one of our training facilitators during a session on 14 Sep. The concern was raised through the official grievance channel.',
-   affects:'Safeguarding compliance · trainer accreditation · community trust',category:'Safeguarding',
-   severity:5,happenedOn:past5,reportedBy:'Anonymous (via grievance line)',
-   resolution:'Lead safeguarding officer is leading a formal investigation per the organisation’s safeguarding policy. The facilitator has been suspended from community-facing work pending the outcome.',
-   owner:'Aiko Tanaka (Safeguarding lead)',due:in7,status:'Open',resolvedOn:'',
-   linkedRiskCode:'R2',notes:'High-severity. Donor safeguarding focal points (Harvest, Northern Lights) will be informed per MoU within 72h of investigation outcome.'
-  })
+  I({code:'I1',title:'Harvest Impact Fund Q3 narrative report submitted late',description:'The Q3 narrative report to Harvest Impact Fund was submitted 11 days after the contractual deadline, triggering a formal reminder from the grants team.',affects:'Harvest Impact Fund grant · Q4 2026 drawdown · donor relationship',category:'Donor compliance',severity:4,happenedOn:past30,reportedBy:'Priya Shah',resolution:'Issued a written apology with a corrective action plan. Set up a 10-day pre-deadline reminder in the grants calendar. Appointed Priya as the single accountable owner for all Harvest deliverables.',owner:'Priya Shah (Dev. Director)',due:past20,status:'Resolved',resolvedOn:past20,linkedRiskCode:'R1',notes:'Resolved on time. Still, repeat occurrences would trigger a formal donor compliance review — monitor Q4 report submission closely.'}),
+  I({code:'I2',title:'MEAL data loss — tablet lost in the field',description:'A field tablet carrying unsubmitted survey data for the Q3 cohort baseline was lost during a transport incident. ~40 responses are affected.',affects:'Q3 cohort baseline data · MEAL framework indicators I-01 and I-04',category:'MEAL quality',severity:3,happenedOn:past10,reportedBy:'Maria Lopez (MEAL)',resolution:'Re-collect the 40 baseline surveys in the coming cohort visit. Enable auto-sync to cloud on all field tablets. Review device encryption policy with IT.',owner:'Maria Lopez',due:in7,status:'In progress',resolvedOn:'',linkedRiskCode:'R2',notes:'Low privacy exposure — no personally identifying data was on the device beyond first names. Still, the device encryption gap is a wider ops issue.'}),
+  I({code:'I3',title:'Safeguarding complaint from community volunteer',description:'A community volunteer raised a safeguarding concern about the conduct of one of our training facilitators during a session on 14 Sep. The concern was raised through the official grievance channel.',affects:'Safeguarding compliance · trainer accreditation · community trust',category:'Safeguarding',severity:5,happenedOn:past5,reportedBy:'Anonymous (via grievance line)',resolution:'Lead safeguarding officer is leading a formal investigation per the organisation’s safeguarding policy. The facilitator has been suspended from community-facing work pending the outcome.',owner:'Aiko Tanaka (Safeguarding lead)',due:in7,status:'Open',resolvedOn:'',linkedRiskCode:'R2',notes:'High-severity. Donor safeguarding focal points (Harvest, Northern Lights) will be informed per MoU within 72h of investigation outcome.'})
  ];
 }
 
-const storage=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{d=window.MMExample?.cleanupStaleExample?.(d,'mm.risk-cleanup-v2',blank)||d;if(!Array.isArray(d.risks))d.risks=[];if(!Array.isArray(d.issues))d.issues=[];return d}});
-let db=storage.load(),tab='Start',dlg='',message='';
-// Grid filter state — persists only for the session, not written to storage.
+const storage=S.store({key:KEY,version:2,blank,legacy:[{key:LEGACY,migrate:migrateV1}],normalise:d=>{
+ d=window.MMExample?.cleanupStaleExample?.(d,'mm.risk-cleanup-v2',blank)||d;
+ if(!Array.isArray(d.risks))d.risks=[];
+ if(!Array.isArray(d.issues))d.issues=[];
+ if(!d.settings||typeof d.settings!=='object')d.settings=blankSettings();
+ else{
+  const s=d.settings;
+  if(!Array.isArray(s.categories)||!s.categories.length)s.categories=[...DEFAULT_CATEGORIES];
+  if(!Array.isArray(s.rStatus)||!s.rStatus.length)s.rStatus=[...DEFAULT_R_STATUS];
+  if(!Array.isArray(s.iStatus)||!s.iStatus.length)s.iStatus=[...DEFAULT_I_STATUS];
+  if(!Array.isArray(s.mStatus)||!s.mStatus.length)s.mStatus=[...DEFAULT_M_STATUS];
+  if(!Array.isArray(s.cadences)||!s.cadences.length)s.cadences=[...DEFAULT_CADENCES];
+ }
+ return d;
+}});
+let db=storage.load(),tab='Overview',dlg='',message='';
 let riskFilters={status:'',category:'',band:'',q:''};
 let issueFilters={status:'',category:'',sevBand:'',q:''};
 const root=document.querySelector('#app');
 const persist=d=>storage.save(d);
 function save(note=''){storage.save(db);if(note)message=note;render()}
 
-// ---------- Cross-tool: items users may want to link a risk/issue to ----------
-const readStore=k=>{try{const r=localStorage.getItem(k);if(!r)return null;const o=JSON.parse(r);return o&&typeof o==='object'?o:null}catch{return null}};
-function suiteItems(){
- const items=[];
- const so=readStore(SO_KEY);(so?.objectives||[]).forEach(o=>items.push({group:'Strategic objectives',source:'so',ref:o.code,label:`${o.code} · ${o.title}`}));
- const toc=readStore(TOC_KEY);(toc?.pathways||[]).forEach(p=>items.push({group:'Theory of Change pathways',source:'toc',ref:p.id,label:p.objective||'Untitled pathway'}));
- const sk=readStore(SK_KEY);(sk?.kpis||[]).forEach(k=>items.push({group:'Strategy KPIs',source:'sk-kpi',ref:k.code,label:`${k.code} · ${k.name}`}));(sk?.initiatives||[]).forEach(i=>items.push({group:'Strategy KPIs initiatives',source:'sk-init',ref:i.code,label:`${i.code} · ${i.title}`}));
- const meal=readStore(MEAL_KEY);(meal?.indicators||[]).forEach(i=>items.push({group:'MEAL indicators',source:'meal',ref:i.code,label:`${i.code} · ${i.name||'untitled'}`}));
- const gantt=readStore(GANTT_KEY);(gantt?.tasks||[]).filter(t=>t.title).forEach(t=>items.push({group:'Gantt tasks',source:'gantt',ref:t.code,label:`${t.code||'·'} · ${t.title}`}));
- return items;
-}
-const toolHref=src=>({so:'Strategic-Objectives.html',toc:'Theory-of-Change-Builder.html','sk-kpi':'Strategy-KPIs-and-Annual-Planning.html','sk-init':'Strategy-KPIs-and-Annual-Planning.html',meal:'MEAL-Strategy.html',gantt:'Gantt-Project-Planner.html'}[src]||'#');
+// Dynamic getters — all dropdowns read from db.settings
+const getCategories=()=>db.settings.categories;
+const getRStatus=()=>db.settings.rStatus;
+const getIStatus=()=>db.settings.iStatus;
+const getMStatus=()=>db.settings.mStatus;
+const getCadences=()=>db.settings.cadences;
 
 // ---------- Scoring helpers (5×5) ----------
 const scoreOf=r=>Number(r.likelihood||0)*Number(r.impact||0);
@@ -156,62 +110,44 @@ const isOverdue=d=>d&&d<today();
 const nextCode=prefix=>{const list=prefix==='R'?db.risks:db.issues;const nums=list.map(x=>Number(String(x.code||'').replace(prefix,''))).filter(n=>!isNaN(n));return prefix+(Math.max(0,...nums)+1)};
 
 // ---------- Visual dashboard ----------
-// Four cards that give a compliance-grade read of the register at a glance.
 const pct=(a,b)=>b?Math.round((a/b)*100):0;
 function dashboardStats(){
  const risks=db.risks,issues=db.issues;
  const openRisks=risks.filter(r=>r.status!=='Closed');
  const closedRisks=risks.filter(r=>r.status==='Closed').length;
- // Bands (open risks only — closed risks are history)
  const critical=openRisks.filter(r=>scoreBand(scoreOf(r))==='critical').length;
  const high=openRisks.filter(r=>scoreBand(scoreOf(r))==='high').length;
  const medium=openRisks.filter(r=>scoreBand(scoreOf(r))==='medium').length;
  const low=openRisks.filter(r=>scoreBand(scoreOf(r))==='low').length;
- // Risk status
- const sOpen=risks.filter(r=>r.status==='Open').length;
- const sMon=risks.filter(r=>r.status==='Monitoring').length;
- const sMit=risks.filter(r=>r.status==='Mitigating').length;
- const sClosed=closedRisks;
- // Overdue counters
  const overdueMit=risks.filter(r=>isOverdue(r.mitigationDue)&&r.mitigationStatus!=='Done'&&r.status!=='Closed').length;
  const overdueRev=risks.filter(r=>isOverdue(r.nextReview)&&r.status!=='Closed').length;
  const overdueIssues=issues.filter(i=>isOverdue(i.due)&&i.status!=='Closed'&&i.status!=='Resolved').length;
  const totalOverdue=overdueMit+overdueRev+overdueIssues;
- // Issues
  const iOpen=issues.filter(i=>i.status==='Open').length;
  const iProg=issues.filter(i=>i.status==='In progress').length;
  const iRes=issues.filter(i=>i.status==='Resolved').length;
  const iClosed=issues.filter(i=>i.status==='Closed').length;
  const iCritical=issues.filter(i=>i.status!=='Closed'&&i.status!=='Resolved'&&Number(i.severity)>=5).length;
  const iHigh=issues.filter(i=>i.status!=='Closed'&&i.status!=='Resolved'&&Number(i.severity)===4).length;
- // Approval + review hygiene
  const approved=risks.filter(r=>r.approvedBy&&r.approvedOn).length;
  const approvedPct=risks.length?Math.round((approved/risks.length)*100):0;
- return {total:risks.length,openRisks:openRisks.length,closedRisks,critical,high,medium,low,sOpen,sMon,sMit,sClosed,overdueMit,overdueRev,overdueIssues,totalOverdue,issuesTotal:issues.length,iOpen,iProg,iRes,iClosed,iCritical,iHigh,approved,approvedPct};
+ return {total:risks.length,openRisks:openRisks.length,closedRisks,critical,high,medium,low,overdueMit,overdueRev,overdueIssues,totalOverdue,issuesTotal:issues.length,iOpen,iProg,iRes,iClosed,iCritical,iHigh,approved,approvedPct};
 }
 function bandBar(label,count,total,cls){
  const share=pct(count,total);
- return `<div class="dm-fit-row">
-  <div><span>${label}</span><strong>${count} risk${count===1?'':'s'} · ${share}%</strong></div>
-  <span class="dm-fit-track"><i class="dm-fit-fill ${cls}" style="--share:${Math.max(share,count?3:0)}%"></i></span>
- </div>`;
+ return `<div class="dm-fit-row"><div><span>${label}</span><strong>${count} risk${count===1?'':'s'} · ${share}%</strong></div><span class="dm-fit-track"><i class="dm-fit-fill ${cls}" style="--share:${Math.max(share,count?3:0)}%"></i></span></div>`;
 }
 function visualDashboard(){
  const s=dashboardStats();
  const isEmpty=!s.total && !s.issuesTotal;
- // Donut shares: Critical+High = red; Medium = amber; Low = green; Closed = grey
  const totalForDonut=s.critical+s.high+s.medium+s.low+s.closedRisks;
  const critShare=pct(s.critical+s.high,totalForDonut);
  const medShare=pct(s.medium,totalForDonut);
- // "all done" style badge for the overdue card
  let overdueClass='all-done',overdueText=`<b>✓ All clear.</b> Nothing overdue right now.`;
  if(s.totalOverdue>5){overdueClass='early';overdueText=`<b>${s.totalOverdue} items overdue.</b> ${s.overdueMit} mitigation${s.overdueMit===1?'':'s'}, ${s.overdueRev} review${s.overdueRev===1?'':'s'}, ${s.overdueIssues} issue${s.overdueIssues===1?'':'s'}.`}
  else if(s.totalOverdue>0){overdueClass='half-done';overdueText=`<b>${s.totalOverdue} overdue.</b> ${s.overdueMit} mitigation${s.overdueMit===1?'':'s'}, ${s.overdueRev} review${s.overdueRev===1?'':'s'}, ${s.overdueIssues} issue${s.overdueIssues===1?'':'s'}.`}
- // Approval hygiene badge for issues card
- let apprClass='early',apprText=`<b>${s.approvedPct}% approved.</b> ${s.approved} of ${s.total} risks have a sign-off trail.`;
+ let apprText=`<b>${s.approvedPct}% approved.</b> ${s.approved} of ${s.total} risks have a sign-off trail.`;
  if(!s.total)apprText=`<b>No risks yet.</b> Approval trail will appear here.`;
- else if(s.approvedPct===100)apprClass='all-done';
- else if(s.approvedPct>=50)apprClass='half-done';
  return `<section class="dm-dashboard ${isEmpty?'dm-dashboard-empty':''}" aria-label="Issue and risk register visual overview">
   <article class="dm-card dm-decision">
    <div class="dm-card-head"><div><p class="dm-eyebrow">Live risks</p><h3>Severity view</h3></div><span>${s.openRisks} open · ${s.closedRisks} closed</span></div>
@@ -260,44 +196,99 @@ function visualDashboard(){
  </section>`;
 }
 
-// ---------- Views ----------
-function startView(){
+// ---------- Heatmap (5×5) ----------
+function heatmapGrid(){
+ const grid={};for(let l=1;l<=5;l++)for(let i=1;i<=5;i++)grid[l+'_'+i]=[];
+ db.risks.filter(r=>r.status!=='Closed').forEach(r=>{const key=r.likelihood+'_'+r.impact;if(grid[key])grid[key].push(r)});
+ const cells=[];
+ for(let l=5;l>=1;l--){
+  const row=['<tr>'];
+  row.push(`<th class="hm-y">L${l}</th>`);
+  for(let i=1;i<=5;i++){
+   const list=grid[l+'_'+i]||[],sc=l*i,band=scoreBand(sc);
+   const tooltip=list.map(r=>`${r.code} ${r.title}`).join('\n')||'No risks here';
+   row.push(`<td class="hm-cell risk-band-${band}" title="${esc(tooltip)}"><div class="hm-count">${list.length||''}</div><div class="hm-sc">${sc}</div>${list.length?`<div class="hm-codes">${list.slice(0,3).map(r=>esc(r.code)).join(' ')}${list.length>3?' +'+(list.length-3):''}</div>`:''}</td>`);
+  }
+  row.push('</tr>');
+  cells.push(row.join(''));
+ }
+ const headerRow='<tr><th></th>'+[1,2,3,4,5].map(i=>`<th class="hm-x">I${i}</th>`).join('')+'</tr>';
+ const bandCount=b=>db.risks.filter(r=>r.status!=='Closed'&&scoreBand(scoreOf(r))===b).length;
+ return `<div class="grid four" style="margin-bottom:16px">
+   ${card('Low',bandCount('low'),'1–4',false)}${card('Medium',bandCount('medium'),'5–9',false)}${card('High',bandCount('high'),'10–14',bandCount('high')>0)}${card('Critical',bandCount('critical'),'15–25',bandCount('critical')>0)}
+  </div>
+  <section class="panel"><div class="tablewrap"><table class="hm-table">${headerRow}${cells.join('')}</table></div><p class="tiny" style="margin-top:10px">Likelihood: 1 Rare · 2 Unlikely · 3 Possible · 4 Likely · 5 Almost certain. Impact: 1 Negligible · 2 Minor · 3 Moderate · 4 Major · 5 Severe.</p></section>`;
+}
+
+// ---------- Small helpers ----------
+const infoTip=(text)=>text?`<span class="dm-info" title="${esc(text)}" aria-label="${esc(text)}" tabindex="0">i</span>`:'';
+
+// ---------- Overview tab (replaces old Start) ----------
+function overviewView(){
  const m=db.meta;
- const s=dashboardStats();
  return `${window.MMExample?.renderIntegration?.('issue-risk')||''}
   <section class="work-box">
    <div class="work-head">
-    <span class="work-badge">Your workspace</span>
+    <span class="work-badge">Workspace</span>
     <input class="work-org" data-field="organisation" value="${esc(m.organisation)}" placeholder="Add your organisation name →" aria-label="Organisation name">
     <span class="work-status" id="work-status"></span>
    </div>
-   <p class="work-hint">Compliance-grade register. 5×5 likelihood × impact scoring, mitigation and approval trail, review cadence with overdue flags. Risks (<i>might</i> happen) and Issues (<i>have</i> happened) are kept separate; both grids feed the dashboard below.</p>
    <div class="work-meta">
     <label class="work-field"><span>Project / programme</span><input data-field="project" value="${esc(m.project)}" placeholder="e.g. 2027 annual plan"></label>
     <label class="work-field"><span>Planning year</span><input data-field="year" type="number" value="${esc(m.year)}" min="2000" max="2200"></label>
     <label class="work-field"><span>Prepared by</span><input data-field="preparedBy" value="${esc(m.preparedBy)}" placeholder="Your name or team"></label>
-    <label class="work-field"><span>Default review cadence</span><select data-field="defaultCadence">${CADENCES.map(c=>`<option ${m.defaultCadence===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
-    <label class="work-field full"><span>Notes</span><textarea data-field="notes" placeholder="Context — reporting lines, who signs off, when the register goes to the Board.">${esc(m.notes)}</textarea></label>
+    <label class="work-field"><span>Default review cadence</span><select data-field="defaultCadence">${getCadences().map(c=>`<option ${m.defaultCadence===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
    </div>
    ${visualDashboard()}
-   <div class="work-sect-head">
-    <h3>Get started</h3>
-    <p class="tiny">Fill the grids directly — no pop-ups. Every cell saves on edit and the dashboard above tracks your changes live. <b>Risks</b> focus on prevention (likelihood × impact, mitigation, review). <b>Issues</b> focus on resolution (severity, owner, due, linked risk). Each row can link to an objective, pathway, KPI, indicator or Gantt task, or just stand alone.</p>
+   <div class="work-sect-head" style="margin-top:16px"><h3>5×5 risk heatmap</h3><p class="tiny">Open risks placed by likelihood (vertical) × impact (horizontal). Hover a cell to see which risks sit there.</p></div>
+   ${heatmapGrid()}
+   <div class="work-sect-head" style="margin-top:20px"><h3>How this tool works</h3></div>
+   <div class="dm-readme">
+    <article>
+     <h4>Risks vs issues</h4>
+     <p><b>Risks</b> are things that <i>might</i> happen and would set you back — focus is on prevention. <b>Issues</b> are things that <i>have</i> happened and need resolving — focus is on getting back on track. Each is kept on its own grid so neither crowds the other out.</p>
+    </article>
+    <article>
+     <h4>5×5 scoring</h4>
+     <p>Each risk gets a <b>likelihood</b> (1 Rare → 5 Almost certain) × an <b>impact</b> (1 Negligible → 5 Severe). The product (1–25) places it on the standard compliance heatmap: 1–4 Low, 5–9 Medium, 10–14 High, 15–25 Critical. Issues use a single <b>severity</b> score (1 Minor → 5 Critical).</p>
+    </article>
+    <article>
+     <h4>Compliance trail</h4>
+     <p>Every risk carries an <b>approval trail</b> (who signed it off, when) and a <b>review cadence</b> (how often it is re-reviewed, when the next review falls). An "overdue" flag appears automatically on any mitigation or review past its date — the dashboard's Compliance pulse card totals them.</p>
+    </article>
+    <article>
+     <h4>Linking issues to risks</h4>
+     <p>An issue can link to a known risk via the <b>Linked risk</b> column. Repeated issues against the same risk mean the mitigation plan is not working — a signal to revisit it rather than keep closing the issues one at a time.</p>
+    </article>
+    <article>
+     <h4>Customising categories & statuses</h4>
+     <p>Open the <b>Settings</b> tab to change the category list, the risk statuses, the issue statuses, the mitigation statuses or the review cadences. Changes save instantly and feed every dropdown on both grids. You can always reset to defaults.</p>
+    </article>
+    <article>
+     <h4>Exporting & round-trip</h4>
+     <p>Open the <b>Export</b> tab for an Excel workbook that mirrors the on-screen register. Importing that workbook back updates every row by code — safe for sharing with a reviewer, editing offline, and bringing changes back in.</p>
+    </article>
    </div>
-   <div class="actions">
+   <div class="actions" style="margin-top:18px">
     <button class="button" data-action="new-risk">+ Add a risk</button>
     <button class="button" data-action="new-issue">+ Add an issue</button>
     <button class="button secondary" data-action="load-example">Load 3 risk + 3 issue examples</button>
-    <a class="button secondary" href="#" data-tab="Risks grid">Open the risks grid →</a>
-    <a class="button secondary" href="#" data-tab="Issues grid">Open the issues grid →</a>
-    <a class="button secondary" href="#" data-tab="Heatmap">View 5×5 heatmap →</a>
+    <a class="button secondary" href="#" data-tab="Risks">Open the risks grid →</a>
+    <a class="button secondary" href="#" data-tab="Issues">Open the issues grid →</a>
+    <a class="button secondary" href="#" data-tab="Settings">Customise lists →</a>
    </div>
   </section>`;
 }
 
-// ---------- Inline grid helpers (match the Donor Mapping pattern) ----------
+// ---------- Inline grid cell helpers ----------
+// Select cell always includes the current value, even if it was removed from
+// the Settings list — so a stored "Mitigating" never disappears.
 function gridCellSelect(d,field,opts,kind){
- const options=opts.map(o=>{const [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${String(d[field]||'')===String(v)?'selected':''}>${esc(l||'—')}</option>`}).join('');
+ const current=String(d[field]||'');
+ const flat=opts.map(o=>Array.isArray(o)?String(o[0]):String(o));
+ const needsExtra=current&&!flat.includes(current);
+ const allOpts=needsExtra?[[current,current+' (not in list)'],...opts]:opts;
+ const options=allOpts.map(o=>{const [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${current===String(v)?'selected':''}>${esc(l||'—')}</option>`}).join('');
  return `<select class="dm-grid-cell dm-grid-sel" data-grid-id="${esc(d.id)}" data-grid-field="${esc(field)}" data-grid-kind="${esc(kind)}">${options}</select>`;
 }
 function gridCellText(d,field,kind,ph=''){
@@ -336,58 +327,100 @@ function matchesIssueFilters(i){
  return true;
 }
 
+// Column defs are built here so info tooltips and (dynamic) options read fresh
+function riskColumns(){
+ const CATS=getCategories(),RSTAT=getRStatus(),MSTAT=getMStatus(),CAD=getCadences();
+ return {
+  general:[
+   {k:'code',label:'Code',w:46,type:'text',info:'Short reference like R1, R2. Auto-filled when you add a row — change it to match your own numbering if you have one.'},
+   {k:'title',label:'Risk title',w:220,type:'area',info:'One line that names the risk. Keep it factual — "Lead safeguarding officer leaves" beats "Staffing problems".'},
+   {k:'description',label:'Description',w:260,type:'area',info:'What might happen and under what conditions. Enough detail for someone new to the risk to understand it without you in the room.'},
+   {k:'threatens',label:'What it threatens',w:200,type:'area',info:'Which strategic objective, programme, budget line, deadline or compliance obligation would take the hit. Can list several.'},
+   {k:'category',label:'Category',w:140,type:'select',opts:CATS,info:'Broad grouping so you can filter and roll up. Edit the list in the Settings tab if your categories differ.'}
+  ],
+  scoring:[
+   {k:'likelihood',label:'L (1–5)',w:110,type:'select',opts:LIKELIHOOD_OPTS,info:'How likely this is to happen in the planning horizon. 1 = Rare (<10%), 3 = Possible (~50%), 5 = Almost certain (>90%).'},
+   {k:'impact',label:'I (1–5)',w:110,type:'select',opts:IMPACT_OPTS,info:'How bad it would be if it did happen. 1 = Negligible (brush off), 3 = Moderate (noticeable disruption), 5 = Severe (programme-ending or reputational).'}
+  ],
+  mitigation:[
+   {k:'mitigation',label:'Mitigation plan',w:260,type:'area',info:'What is actually being done to reduce the likelihood or the impact. Specific actions, not aspirations.'},
+   {k:'mitigationOwner',label:'Owner',w:140,type:'text',info:'The one person accountable for the mitigation. Not a team — a named individual.'},
+   {k:'mitigationDue',label:'Due',w:130,type:'date',info:'When the mitigation plan is meant to be in place. An "overdue" flag appears automatically if this date passes without the status being set to Done.'},
+   {k:'mitigationStatus',label:'Status',w:120,type:'select',opts:MSTAT,info:'How far along the mitigation plan is. Edit the available statuses in the Settings tab.'}
+  ],
+  approval:[
+   {k:'approvedBy',label:'Approved by',w:140,type:'text',info:'Who signed off on this risk and its mitigation plan — e.g. "Board", "Director", "Finance Committee". Needed for audit trail.'},
+   {k:'approvedOn',label:'Approved on',w:130,type:'date',info:'When the sign-off happened. The "approved" flag on the Score column only shows when both this and Approved by are filled.'}
+  ],
+  review:[
+   {k:'reviewCadence',label:'Cadence',w:120,type:'select',opts:CAD,info:'How often this risk is re-reviewed. Edit the available cadences in the Settings tab.'},
+   {k:'nextReview',label:'Next review',w:130,type:'date',info:'When the next re-review is due. "rev overdue" flag appears when this date is in the past.'},
+   {k:'lastReview',label:'Last review',w:130,type:'date',info:'When the risk was most recently re-reviewed. Fill this in when you refresh the risk.'}
+  ],
+  final:[
+   {k:'status',label:'Overall',w:120,type:'select',opts:RSTAT,info:'Where this risk sits now. Closed risks drop out of the dashboard and heatmap. Edit the available statuses in the Settings tab.'},
+   {k:'notes',label:'Notes',w:220,type:'area',info:'Anything else useful — recent discussions, who to involve on the next review, links to related issues.'}
+  ]
+ };
+}
+function issueColumns(){
+ const CATS=getCategories(),ISTAT=getIStatus();
+ const riskOpts=[['',' — none —'],...db.risks.map(r=>[r.code,`${r.code} · ${r.title||'untitled'}`])];
+ return {
+  general:[
+   {k:'code',label:'Code',w:46,type:'text',info:'Short reference like I1, I2. Auto-filled when you add a row — change it to match your own numbering if you have one.'},
+   {k:'title',label:'Issue title',w:220,type:'area',info:'One line that names what has gone wrong. Factual, not aspirational — "Q3 report submitted 11 days late" beats "Reporting problems".'},
+   {k:'description',label:'Description',w:260,type:'area',info:'What has happened — the specific incident, who found it, how. Enough detail that a reviewer can decide what to do without talking to you.'},
+   {k:'affects',label:'What it affects',w:200,type:'area',info:'Which objective, programme, grant, deadline or compliance obligation is affected right now. Can list several.'},
+   {k:'category',label:'Category',w:140,type:'select',opts:CATS,info:'Broad grouping so you can filter and roll up. Edit the list in the Settings tab.'}
+  ],
+  severity:[
+   {k:'severity',label:'Severity (1–5)',w:140,type:'select',opts:SEVERITY_OPTS,info:'How serious this is. 1 = Minor (brush off), 3 = Significant (visible but manageable), 5 = Critical (requires immediate escalation).'},
+   {k:'happenedOn',label:'Happened on',w:130,type:'date',info:'When the incident actually took place — not when it was logged.'},
+   {k:'reportedBy',label:'Reported by',w:140,type:'text',info:'Who flagged this issue. Can be anonymous (e.g. a safeguarding grievance line).'}
+  ],
+  resolution:[
+   {k:'resolution',label:'Resolution plan',w:260,type:'area',info:'What is being done — or what was done — to resolve this issue and stop it recurring. Specific actions.'},
+   {k:'owner',label:'Owner',w:140,type:'text',info:'The one person accountable for resolving this issue.'},
+   {k:'due',label:'Due',w:130,type:'date',info:'When resolution is meant to be complete. "overdue" flag appears when this date passes without the status being set to Resolved or Closed.'},
+   {k:'status',label:'Status',w:120,type:'select',opts:ISTAT,info:'Where this issue sits now. Edit the available statuses in the Settings tab.'},
+   {k:'resolvedOn',label:'Resolved on',w:130,type:'date',info:'When the issue was actually closed off. Fill this when you set status to Resolved.'}
+  ],
+  context:[
+   {k:'linkedRiskCode',label:'Linked risk',w:160,type:'select',opts:riskOpts,info:'If this issue is an instance of a known risk, link it here. Repeated issues against the same risk tell you the mitigation needs changing.'},
+   {k:'notes',label:'Notes',w:220,type:'area',info:'Anything else useful — donor notifications sent, next escalation step, links to related issues or risks.'}
+  ]
+ };
+}
+function cellFor(d,c,kind){
+ if(c.type==='select')return gridCellSelect(d,c.k,c.opts,kind);
+ if(c.type==='area')return gridCellArea(d,c.k,kind);
+ if(c.type==='date')return gridCellDate(d,c.k,kind);
+ return gridCellText(d,c.k,kind);
+}
+function buildCells(d,cols,kind){
+ return cols.map(c=>`<td class="dm-grid-td dm-grid-td-${c.k}" style="min-width:${c.w}px;max-width:${Math.max(c.w,160)}px">${cellFor(d,c,kind)}</td>`).join('');
+}
+function buildHeaders(cols){
+ return cols.map(c=>`<th class="dm-grid-th" style="min-width:${c.w}px">${esc(c.label)}${infoTip(c.info)}</th>`).join('');
+}
+
 // ---------- Risks grid ----------
 function risksGridView(){
  const statusOrder={'Open':0,'Monitoring':1,'Mitigating':2,'Closed':9};
  const matching=db.risks.filter(matchesRiskFilters);
  const sorted=[...matching].sort((a,b)=>(statusOrder[a.status]??5)-(statusOrder[b.status]??5)||scoreOf(b)-scoreOf(a));
  const filterCount=['status','category','band','q'].filter(k=>riskFilters[k]).length;
+ const CATS=getCategories(),RSTAT=getRStatus();
  const filterBar=`<div class="dm-filter-bar">
-  ${filterSelect('risk','status','Status',R_STATUS.map(x=>[x,x]))}
-  ${filterSelect('risk','category','Category',CATEGORIES.map(x=>[x,x]))}
+  ${filterSelect('risk','status','Status',RSTAT.map(x=>[x,x]))}
+  ${filterSelect('risk','category','Category',CATS.map(x=>[x,x]))}
   ${filterSelect('risk','band','Risk level',[['critical','Critical (15–25)'],['high','High (10–14)'],['medium','Medium (5–9)'],['low','Low (1–4)']])}
   <label class="dm-filt-label dm-filt-search"><span>Search</span><input type="search" class="dm-filt-input" data-filter="q" data-filter-scope="risk" value="${esc(riskFilters.q||'')}" placeholder="Code, title, threatens, owner…"></label>
   ${filterCount?`<button class="button secondary" data-action="risk-filter-clear" style="align-self:flex-end">Clear filters (${filterCount})</button>`:''}
   <div class="dm-filter-count">Showing <b>${matching.length}</b> of <b>${db.risks.length}</b> risk${db.risks.length===1?'':'s'}</div>
  </div>`;
- // Column groups (General · Scoring · Mitigation · Approval · Review)
- const generalCols=[
-  {k:'code',label:'Code',w:60,type:'text'},
-  {k:'title',label:'Risk title',w:200,type:'text'},
-  {k:'description',label:'Description',w:220,type:'area'},
-  {k:'threatens',label:'What it threatens',w:200,type:'area'},
-  {k:'category',label:'Category',w:140,type:'select',opts:CATEGORIES}
- ];
- const scoringCols=[
-  {k:'likelihood',label:'L (1–5)',w:100,type:'select',opts:LIKELIHOOD_OPTS},
-  {k:'impact',label:'I (1–5)',w:100,type:'select',opts:IMPACT_OPTS}
- ];
- const mitCols=[
-  {k:'mitigation',label:'Mitigation plan',w:220,type:'area'},
-  {k:'mitigationOwner',label:'Owner',w:130,type:'text'},
-  {k:'mitigationDue',label:'Due',w:130,type:'date'},
-  {k:'mitigationStatus',label:'Status',w:120,type:'select',opts:M_STATUS}
- ];
- const apprCols=[
-  {k:'approvedBy',label:'Approved by',w:140,type:'text'},
-  {k:'approvedOn',label:'Approved on',w:130,type:'date'}
- ];
- const revCols=[
-  {k:'reviewCadence',label:'Cadence',w:120,type:'select',opts:CADENCES},
-  {k:'nextReview',label:'Next review',w:130,type:'date'},
-  {k:'lastReview',label:'Last review',w:130,type:'date'}
- ];
- const finalCols=[
-  {k:'status',label:'Overall',w:120,type:'select',opts:R_STATUS},
-  {k:'notes',label:'Notes',w:200,type:'area'}
- ];
- const cellFor=(d,c,kind)=>{
-  if(c.type==='select')return gridCellSelect(d,c.k,c.opts,kind);
-  if(c.type==='area')return gridCellArea(d,c.k,kind);
-  if(c.type==='date')return gridCellDate(d,c.k,kind);
-  return gridCellText(d,c.k,kind);
- };
- const buildCells=(d,cols)=>cols.map(c=>`<td class="dm-grid-td dm-grid-td-${c.k}" style="min-width:${c.w}px">${cellFor(d,c,'risk')}</td>`).join('');
+ const cols=riskColumns();
  const rows=sorted.map(r=>{
   const sc=scoreOf(r),band=scoreBand(sc);
   const mitOverdue=isOverdue(r.mitigationDue)&&r.mitigationStatus!=='Done'&&r.status!=='Closed';
@@ -397,36 +430,40 @@ function risksGridView(){
   if(revOverdue)flags.push('<small class="dm-grid-flag dm-grid-flag-bad">rev overdue</small>');
   if(r.approvedBy&&r.approvedOn)flags.push('<small class="dm-grid-flag dm-grid-flag-ok">approved</small>');
   return `<tr data-row="${esc(r.id)}" data-kind="risk">
-   <td class="dm-grid-verdict dm-grid-score-cell" data-grid-score="1"><span class="dm-verdict-badge dm-risk-band-${band}">${sc||'—'}<br><small>${esc(bandLabel(band))}</small></span>${flags.length?`<div class="dm-grid-flags">${flags.join(' ')}</div>`:''}</td>
-   ${buildCells(r,generalCols)}
-   ${buildCells(r,scoringCols)}
-   ${buildCells(r,mitCols)}
-   ${buildCells(r,apprCols)}
-   ${buildCells(r,revCols)}
-   ${buildCells(r,finalCols)}
+   <td class="dm-grid-verdict dm-grid-score-cell"><span class="dm-verdict-badge dm-risk-band-${band}">${sc||'—'}<br><small>${esc(bandLabel(band))}</small></span>${flags.length?`<div class="dm-grid-flags">${flags.join(' ')}</div>`:''}</td>
+   ${buildCells(r,cols.general,'risk')}
+   ${buildCells(r,cols.scoring,'risk')}
+   ${buildCells(r,cols.mitigation,'risk')}
+   ${buildCells(r,cols.approval,'risk')}
+   ${buildCells(r,cols.review,'risk')}
+   ${buildCells(r,cols.final,'risk')}
    <td class="dm-grid-del"><button class="link" data-action="delete-risk" data-id="${esc(r.id)}" title="Delete risk">✕</button></td>
   </tr>`;
  }).join('');
- const totalCols=1+generalCols.length+scoringCols.length+mitCols.length+apprCols.length+revCols.length+finalCols.length+1;
+ const totalCols=1+cols.general.length+cols.scoring.length+cols.mitigation.length+cols.approval.length+cols.review.length+cols.final.length+1;
  const groupHeader=`<tr class="dm-grid-group-row">
   <th class="dm-grid-group dm-grid-group-verdict">Score</th>
-  <th class="dm-grid-group dm-grid-group-general" colspan="${generalCols.length}">General information</th>
-  <th class="dm-grid-group dm-grid-group-strategy" colspan="${scoringCols.length}">5×5 scoring</th>
-  <th class="dm-grid-group dm-grid-group-likelihood" colspan="${mitCols.length}">Mitigation</th>
-  <th class="dm-grid-group dm-grid-group-technical" colspan="${apprCols.length}">Approval trail</th>
-  <th class="dm-grid-group dm-grid-group-capacity" colspan="${revCols.length}">Review cadence</th>
-  <th class="dm-grid-group dm-grid-group-risk" colspan="${finalCols.length}">Status</th>
+  <th class="dm-grid-group dm-grid-group-general" colspan="${cols.general.length}">General information</th>
+  <th class="dm-grid-group dm-grid-group-strategy" colspan="${cols.scoring.length}">5×5 scoring</th>
+  <th class="dm-grid-group dm-grid-group-likelihood" colspan="${cols.mitigation.length}">Mitigation</th>
+  <th class="dm-grid-group dm-grid-group-technical" colspan="${cols.approval.length}">Approval trail</th>
+  <th class="dm-grid-group dm-grid-group-capacity" colspan="${cols.review.length}">Review cadence</th>
+  <th class="dm-grid-group dm-grid-group-risk" colspan="${cols.final.length}">Status</th>
   <th class="dm-grid-group dm-grid-group-del"></th>
  </tr>`;
- const allCols=[...generalCols,...scoringCols,...mitCols,...apprCols,...revCols,...finalCols];
  const colHeader=`<tr class="dm-grid-col-row">
-  <th class="dm-grid-th dm-grid-th-sticky">L × I<br><small>Score · band</small></th>
-  ${allCols.map(c=>`<th class="dm-grid-th" style="min-width:${c.w}px">${esc(c.label)}</th>`).join('')}
+  <th class="dm-grid-th dm-grid-th-sticky">L × I${infoTip('Likelihood × Impact = Score (1–25). The band (Low/Medium/High/Critical) comes from the compliance scale below.')}<br><small>Score · band</small></th>
+  ${buildHeaders(cols.general)}
+  ${buildHeaders(cols.scoring)}
+  ${buildHeaders(cols.mitigation)}
+  ${buildHeaders(cols.approval)}
+  ${buildHeaders(cols.review)}
+  ${buildHeaders(cols.final)}
   <th class="dm-grid-th"></th>
  </tr>`;
- const emptyMsg=db.risks.length?`<b>No risks match these filters.</b> Clear the filters above to see all ${db.risks.length} risks.`:`<b>No risks yet.</b> Click <b>+ Add row</b> below to drop a blank row into the sheet, or <b>Load examples</b> on Start to seed with 3 realistic risks.`;
+ const emptyMsg=db.risks.length?`<b>No risks match these filters.</b> Clear the filters above to see all ${db.risks.length} risks.`:`<b>No risks yet.</b> Click <b>+ Add row</b> below to drop a blank row into the sheet, or <b>Load examples</b> on Overview to seed with 3 realistic risks.`;
  return `${visualDashboard()}
-  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>Risk register</h2><p>Things that <i>might</i> happen. Edit cells directly — the Score column (L × I) and the Risk-level band on the dashboard update live. "Approved" trail flags whether a sign-off exists; "overdue" flags appear when the mitigation or review date is in the past.</p></div><div class="actions"><button class="button" data-action="new-risk">+ Add row</button><button class="button secondary" data-action="load-example">Load examples</button></div></div>
+  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>Risk register</h2><p>Things that <i>might</i> happen. Hover a column header's <span class="dm-info-inline">i</span> for a brief explanation. Every cell auto-sizes to show everything you type — nothing is hidden.</p></div><div class="actions"><button class="button" data-action="new-risk">+ Add row</button><button class="button secondary" data-action="load-example">Load examples</button></div></div>
   ${filterBar}
   <div class="dm-grid-wrap">
    <table class="dm-grid">
@@ -442,45 +479,16 @@ function issuesGridView(){
  const matching=db.issues.filter(matchesIssueFilters);
  const sorted=[...matching].sort((a,b)=>(statusOrder[a.status]??5)-(statusOrder[b.status]??5)||Number(b.severity||0)-Number(a.severity||0));
  const filterCount=['status','category','sevBand','q'].filter(k=>issueFilters[k]).length;
- const riskOpts=[['',' — none —'],...db.risks.map(r=>[r.code,`${r.code} · ${r.title||'untitled'}`])];
+ const CATS=getCategories(),ISTAT=getIStatus();
  const filterBar=`<div class="dm-filter-bar">
-  ${filterSelect('issue','status','Status',I_STATUS.map(x=>[x,x]))}
-  ${filterSelect('issue','category','Category',CATEGORIES.map(x=>[x,x]))}
+  ${filterSelect('issue','status','Status',ISTAT.map(x=>[x,x]))}
+  ${filterSelect('issue','category','Category',CATS.map(x=>[x,x]))}
   ${filterSelect('issue','sevBand','Severity',[['critical','Critical (5)'],['high','High (4)'],['medium','Medium (3)'],['low','Low (1–2)']])}
   <label class="dm-filt-label dm-filt-search"><span>Search</span><input type="search" class="dm-filt-input" data-filter="q" data-filter-scope="issue" value="${esc(issueFilters.q||'')}" placeholder="Code, title, affects, owner…"></label>
   ${filterCount?`<button class="button secondary" data-action="issue-filter-clear" style="align-self:flex-end">Clear filters (${filterCount})</button>`:''}
   <div class="dm-filter-count">Showing <b>${matching.length}</b> of <b>${db.issues.length}</b> issue${db.issues.length===1?'':'s'}</div>
  </div>`;
- const generalCols=[
-  {k:'code',label:'Code',w:60,type:'text'},
-  {k:'title',label:'Issue title',w:200,type:'text'},
-  {k:'description',label:'Description',w:220,type:'area'},
-  {k:'affects',label:'What it affects',w:200,type:'area'},
-  {k:'category',label:'Category',w:140,type:'select',opts:CATEGORIES}
- ];
- const sevCols=[
-  {k:'severity',label:'Severity (1–5)',w:140,type:'select',opts:SEVERITY_OPTS},
-  {k:'happenedOn',label:'Happened on',w:130,type:'date'},
-  {k:'reportedBy',label:'Reported by',w:140,type:'text'}
- ];
- const resCols=[
-  {k:'resolution',label:'Resolution plan',w:220,type:'area'},
-  {k:'owner',label:'Owner',w:140,type:'text'},
-  {k:'due',label:'Due',w:130,type:'date'},
-  {k:'status',label:'Status',w:120,type:'select',opts:I_STATUS},
-  {k:'resolvedOn',label:'Resolved on',w:130,type:'date'}
- ];
- const linkCols=[
-  {k:'linkedRiskCode',label:'Linked risk',w:160,type:'select',opts:riskOpts},
-  {k:'notes',label:'Notes',w:200,type:'area'}
- ];
- const cellFor=(d,c,kind)=>{
-  if(c.type==='select')return gridCellSelect(d,c.k,c.opts,kind);
-  if(c.type==='area')return gridCellArea(d,c.k,kind);
-  if(c.type==='date')return gridCellDate(d,c.k,kind);
-  return gridCellText(d,c.k,kind);
- };
- const buildCells=(d,cols)=>cols.map(c=>`<td class="dm-grid-td dm-grid-td-${c.k}" style="min-width:${c.w}px">${cellFor(d,c,'issue')}</td>`).join('');
+ const cols=issueColumns();
  const rows=sorted.map(i=>{
   const sb=sevBand(Number(i.severity||0));
   const overdue=isOverdue(i.due)&&i.status!=='Closed'&&i.status!=='Resolved';
@@ -490,31 +498,33 @@ function issuesGridView(){
   if(i.linkedRiskCode)flags.push(`<small class="dm-grid-flag dm-grid-flag-neutral">↳ ${esc(i.linkedRiskCode)}</small>`);
   return `<tr data-row="${esc(i.id)}" data-kind="issue">
    <td class="dm-grid-verdict dm-grid-score-cell"><span class="dm-verdict-badge dm-risk-band-${sb}">${i.severity||'—'}<br><small>${esc(bandLabel(sb))}</small></span>${flags.length?`<div class="dm-grid-flags">${flags.join(' ')}</div>`:''}</td>
-   ${buildCells(i,generalCols)}
-   ${buildCells(i,sevCols)}
-   ${buildCells(i,resCols)}
-   ${buildCells(i,linkCols)}
+   ${buildCells(i,cols.general,'issue')}
+   ${buildCells(i,cols.severity,'issue')}
+   ${buildCells(i,cols.resolution,'issue')}
+   ${buildCells(i,cols.context,'issue')}
    <td class="dm-grid-del"><button class="link" data-action="delete-issue" data-id="${esc(i.id)}" title="Delete issue">✕</button></td>
   </tr>`;
  }).join('');
- const totalCols=1+generalCols.length+sevCols.length+resCols.length+linkCols.length+1;
+ const totalCols=1+cols.general.length+cols.severity.length+cols.resolution.length+cols.context.length+1;
  const groupHeader=`<tr class="dm-grid-group-row">
   <th class="dm-grid-group dm-grid-group-verdict">Severity</th>
-  <th class="dm-grid-group dm-grid-group-general" colspan="${generalCols.length}">General information</th>
-  <th class="dm-grid-group dm-grid-group-strategy" colspan="${sevCols.length}">Reporting</th>
-  <th class="dm-grid-group dm-grid-group-likelihood" colspan="${resCols.length}">Resolution</th>
-  <th class="dm-grid-group dm-grid-group-technical" colspan="${linkCols.length}">Context</th>
+  <th class="dm-grid-group dm-grid-group-general" colspan="${cols.general.length}">General information</th>
+  <th class="dm-grid-group dm-grid-group-strategy" colspan="${cols.severity.length}">Reporting</th>
+  <th class="dm-grid-group dm-grid-group-likelihood" colspan="${cols.resolution.length}">Resolution</th>
+  <th class="dm-grid-group dm-grid-group-technical" colspan="${cols.context.length}">Context</th>
   <th class="dm-grid-group dm-grid-group-del"></th>
  </tr>`;
- const allCols=[...generalCols,...sevCols,...resCols,...linkCols];
  const colHeader=`<tr class="dm-grid-col-row">
-  <th class="dm-grid-th dm-grid-th-sticky">Severity<br><small>Score · band</small></th>
-  ${allCols.map(c=>`<th class="dm-grid-th" style="min-width:${c.w}px">${esc(c.label)}</th>`).join('')}
+  <th class="dm-grid-th dm-grid-th-sticky">Severity${infoTip('How bad the issue is right now, from 1 (Minor) to 5 (Critical). Band comes from the same compliance scale as the risk register.')}<br><small>Score · band</small></th>
+  ${buildHeaders(cols.general)}
+  ${buildHeaders(cols.severity)}
+  ${buildHeaders(cols.resolution)}
+  ${buildHeaders(cols.context)}
   <th class="dm-grid-th"></th>
  </tr>`;
- const emptyMsg=db.issues.length?`<b>No issues match these filters.</b> Clear the filters above to see all ${db.issues.length} issues.`:`<b>No issues yet.</b> Click <b>+ Add row</b> below to drop a blank row into the sheet, or <b>Load examples</b> on Start to seed with 3 realistic issues.`;
+ const emptyMsg=db.issues.length?`<b>No issues match these filters.</b> Clear the filters above to see all ${db.issues.length} issues.`:`<b>No issues yet.</b> Click <b>+ Add row</b> below to drop a blank row into the sheet, or <b>Load examples</b> on Overview to seed with 3 realistic issues.`;
  return `${visualDashboard()}
-  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>Issue log</h2><p>Things that <i>have</i> happened. Each issue can link to a known risk — recurring issues against the same risk mean the mitigation is not working. The "closed" or "overdue" flag follows directly from status and due date.</p></div><div class="actions"><button class="button" data-action="new-issue">+ Add row</button><button class="button secondary" data-action="load-example">Load examples</button></div></div>
+  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>Issue log</h2><p>Things that <i>have</i> happened. Hover a column header's <span class="dm-info-inline">i</span> for a brief explanation. Cells auto-size to show everything you type.</p></div><div class="actions"><button class="button" data-action="new-issue">+ Add row</button><button class="button secondary" data-action="load-example">Load examples</button></div></div>
   ${filterBar}
   <div class="dm-grid-wrap">
    <table class="dm-grid">
@@ -524,29 +534,24 @@ function issuesGridView(){
   </div>`;
 }
 
-function heatmapView(){
- const grid={};for(let l=1;l<=5;l++)for(let i=1;i<=5;i++)grid[l+'_'+i]=[];
- db.risks.filter(r=>r.status!=='Closed').forEach(r=>{const key=r.likelihood+'_'+r.impact;if(grid[key])grid[key].push(r)});
- const cells=[];
- for(let l=5;l>=1;l--){
-  const row=['<tr>'];
-  row.push(`<th class="hm-y">L${l}</th>`);
-  for(let i=1;i<=5;i++){
-   const list=grid[l+'_'+i]||[],sc=l*i,band=scoreBand(sc);
-   const tooltip=list.map(r=>`${r.code} ${r.title}`).join('\n')||'No risks here';
-   row.push(`<td class="hm-cell risk-band-${band}" title="${esc(tooltip)}"><div class="hm-count">${list.length||''}</div><div class="hm-sc">${sc}</div>${list.length?`<div class="hm-codes">${list.slice(0,3).map(r=>esc(r.code)).join(' ')}${list.length>3?' +'+(list.length-3):''}</div>`:''}</td>`);
-  }
-  row.push('</tr>');
-  cells.push(row.join(''));
- }
- const headerRow='<tr><th></th>'+[1,2,3,4,5].map(i=>`<th class="hm-x">I${i}</th>`).join('')+'</tr>';
- const bandCount=b=>db.risks.filter(r=>r.status!=='Closed'&&scoreBand(scoreOf(r))===b).length;
- return `${visualDashboard()}
-  <div class="rowhead section-head" style="margin:16px 0 8px"><div><h2>5×5 risk heatmap</h2><p>Open risks placed by likelihood (vertical) × impact (horizontal). Hover a cell to see which risks sit there. Standard compliance bands: 1–4 Low, 5–9 Medium, 10–14 High, 15–25 Critical.</p></div></div>
-  <div class="grid four" style="margin-bottom:16px">
-   ${card('Low',bandCount('low'),'1–4',false)}${card('Medium',bandCount('medium'),'5–9',false)}${card('High',bandCount('high'),'10–14',bandCount('high')>0)}${card('Critical',bandCount('critical'),'15–25',bandCount('critical')>0)}
+// ---------- Settings tab (customise categories & statuses) ----------
+function settingsView(){
+ const s=db.settings;
+ const listBlock=(key,label,arr,help)=>`<article class="dm-settings-block">
+  <h3>${esc(label)} ${infoTip(help)}</h3>
+  <p class="muted">One value per line. First value is the fallback default on new rows.</p>
+  <textarea class="dm-settings-area" data-settings-key="${esc(key)}" rows="${Math.max(arr.length+1,6)}">${esc(arr.join('\n'))}</textarea>
+  <small class="dm-settings-count">${arr.length} value${arr.length===1?'':'s'}</small>
+ </article>`;
+ return `<div class="rowhead section-head"><div><h2>Customise categories & statuses</h2><p>Adapt these lists to your organisation. Every change feeds the dropdowns on the Risks and Issues grids straight away. If an existing row's value is removed from a list, that row keeps it (shown as "<i>not in list</i>" in the dropdown) so no data is ever lost.</p></div><button class="button secondary" data-action="settings-reset">Reset all to defaults</button></div>
+  <div class="dm-settings-grid">
+   ${listBlock('categories','Risk & issue categories',s.categories,'The list that appears in the Category dropdown on both grids. Keep it short — a long list hides the useful ones. Examples: Financial, Programming, Safeguarding, Legal.')}
+   ${listBlock('rStatus','Risk status (overall)',s.rStatus,'The overall risk status options. Default: Open · Monitoring · Mitigating · Closed. Keep "Closed" if you want closed risks to drop out of the dashboard.')}
+   ${listBlock('iStatus','Issue status',s.iStatus,'The issue status options. Default: Open · In progress · Resolved · Closed. "Resolved" and "Closed" are what drop an issue out of the active-issues count.')}
+   ${listBlock('mStatus','Mitigation status',s.mStatus,'How you track progress on each mitigation plan. Default: Not started · In progress · Done · Blocked. "Done" is what removes a mitigation from the overdue count.')}
+   ${listBlock('cadences','Review cadences',s.cadences,'How often each risk is scheduled for re-review. Default: Weekly · Monthly · Quarterly · Semi-annual · Annual · Ad hoc.')}
   </div>
-  <section class="panel"><div class="tablewrap"><table class="hm-table">${headerRow}${cells.join('')}</table></div><p class="tiny" style="margin-top:10px">Likelihood: 1 Rare · 2 Unlikely · 3 Possible · 4 Likely · 5 Almost certain. Impact: 1 Negligible · 2 Minor · 3 Moderate · 4 Major · 5 Severe.</p></section>`;
+  <p class="tiny" style="margin-top:14px">Changes save as you type. To undo your customisation, use <b>Reset all to defaults</b> above.</p>`;
 }
 
 function exportViewPanel(){
@@ -561,7 +566,7 @@ function action(el){
  if(a==='new-risk'){
   const r=blankRisk();r.code=nextCode('R');
   db.risks.push(r);
-  if(tab==='Start')tab='Risks grid';
+  if(tab==='Overview')tab='Risks';
   save('New risk row added. Fill it in below.');
   setTimeout(()=>{const el=root.querySelector(`tr[data-row="${r.id}"] [data-grid-field="title"]`);if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'})}},50);
   return;
@@ -569,7 +574,7 @@ function action(el){
  if(a==='new-issue'){
   const i=blankIssue();i.code=nextCode('I');
   db.issues.push(i);
-  if(tab==='Start')tab='Issues grid';
+  if(tab==='Overview')tab='Issues';
   save('New issue row added. Fill it in below.');
   setTimeout(()=>{const el=root.querySelector(`tr[data-row="${i.id}"] [data-grid-field="title"]`);if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'})}},50);
   return;
@@ -578,6 +583,11 @@ function action(el){
  if(a==='delete-issue'){const i=db.issues.find(x=>x.id===id);if(!i)return;if(!confirm('Delete this issue? Cannot be undone.'))return;db.issues=db.issues.filter(x=>x.id!==id);save('Issue deleted.');return}
  if(a==='risk-filter-clear'){riskFilters={status:'',category:'',band:'',q:''};render();return}
  if(a==='issue-filter-clear'){issueFilters={status:'',category:'',sevBand:'',q:''};render();return}
+ if(a==='settings-reset'){
+  if(!confirm('Reset all categories, statuses and cadences to defaults? Your risks and issues keep their stored values — only the dropdown lists are reset.'))return;
+  db.settings=blankSettings();
+  save('Lists reset to defaults.');return;
+ }
  if(a==='load-example'){
   const hasData=db.risks.length||db.issues.length;
   if(hasData && !confirm('Replace the current risks and issues with the worked examples? Download a backup first if you need them.'))return;
@@ -598,11 +608,7 @@ function action(el){
 // ---------- Excel ----------
 function buildWorkbook(withData){
  const sheets=[
-  readmeSheet('Issue & Risk Management',[
-   'Compliance-grade register. 5×5 L×I scoring, mitigation trail, approval trail and review cadence.',
-   'Risks are what might happen; Issues are what has happened. Each row has a code for round-trip import.',
-   'Importing this file back to the tool updates every row by code. Changing codes creates new rows.'
-  ]),
+  readmeSheet('Issue & Risk Management',['Compliance-grade register. 5×5 L×I scoring, mitigation trail, approval trail and review cadence.','Risks are what might happen; Issues are what has happened. Each row has a code for round-trip import.','Importing this file back to the tool updates every row by code. Changing codes creates new rows.']),
   metaSheet(db.meta),
   {name:'Risks',rows:[
    ['Code','Title','Description','What it threatens (source)','What it threatens (ref)','What it threatens (text)','Category','Likelihood','Impact','Score','Band','Mitigation','Mitigation owner','Mitigation due','Mitigation status','Approved by','Approved on','Review cadence','Next review','Last reviewed','Status','Notes'],
@@ -636,7 +642,14 @@ async function importJsonFile(file){
  try{const d=JSON.parse(await file.text());if(!d||d.version!==2)throw new Error('Not a v2 backup');db=d;save('JSON imported.')}catch(e){message='Import failed: '+e.message;render()}
 }
 
-// ---------- Wire Start workspace ----------
+// ---------- Autosize textarea so no text is ever cut ----------
+function autosize(el){
+ if(!el||el.tagName!=='TEXTAREA')return;
+ el.style.height='auto';
+ el.style.height=Math.max(el.scrollHeight,30)+'px';
+}
+
+// ---------- Wire Overview workspace meta ----------
 function wireStart(root){
  const box=root.querySelector('.work-box');if(!box)return;
  const status=box.querySelector('#work-status');
@@ -647,11 +660,33 @@ function wireStart(root){
  });
 }
 
-// ---------- Wire grid cells (live persist + dashboard re-render) ----------
+// ---------- Wire Settings tab (customise lists) ----------
+function wireSettings(root){
+ const areas=root.querySelectorAll('[data-settings-key]');
+ if(!areas.length)return;
+ let timer;
+ areas.forEach(el=>{
+  autosize(el);
+  el.addEventListener('input',()=>{
+   const key=el.dataset.settingsKey;
+   const list=el.value.split('\n').map(x=>x.trim()).filter(Boolean);
+   if(list.length)db.settings[key]=list;
+   // Update the "N values" counter inline
+   const cnt=el.parentElement.querySelector('.dm-settings-count');
+   if(cnt)cnt.textContent=`${list.length} value${list.length===1?'':'s'}`;
+   autosize(el);
+   clearTimeout(timer);timer=setTimeout(()=>persist(db),400);
+  });
+ });
+}
+
+// ---------- Wire grid cells (live persist + dashboard re-render + autosize) ----------
 function wireGrid(root){
  const grid=root.querySelector('.dm-grid');
  wireFilters(root);
  if(!grid)return;
+ // Initial autosize of every textarea so pre-filled rows show full text.
+ grid.querySelectorAll('textarea.dm-grid-area').forEach(autosize);
  let timer;
  const schedule=()=>{clearTimeout(timer);timer=setTimeout(()=>{persist(db);rerenderDashboard(root)},300)};
  grid.querySelectorAll('[data-grid-field]').forEach(el=>{
@@ -661,10 +696,9 @@ function wireGrid(root){
    const list=kind==='risk'?db.risks:db.issues;
    const d=list.find(x=>x.id===id);if(!d)return;
    d[f]=el.value;
-   // Coerce numbers for scoring fields so the dashboard scores correctly.
    if(f==='likelihood'||f==='impact'||f==='severity')d[f]=Number(el.value)||0;
    stamp(d);
-   // Live update of the score cell for snappy typing.
+   if(el.tagName==='TEXTAREA')autosize(el);
    const row=el.closest('tr[data-row]');
    if(row){
     const cell=row.querySelector('.dm-grid-score-cell');
@@ -713,10 +747,12 @@ function wireFilters(root){
 }
 
 function render(){
- const views={'Start':startView,'Risks grid':risksGridView,'Issues grid':issuesGridView,'Heatmap':heatmapView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Cross-cutting · Issue & risk management',title:'Issue & Risk Management',intro:'Compliance-grade register. Fill the grids like a spreadsheet — every cell updates the dashboard above live. Risks (might happen) and Issues (have happened) kept separate. 5×5 L×I scoring, mitigation and approval trail, review cadence with overdue flags.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=10&lesson=risk-register',label:'Review Module 10'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ const views={'Overview':overviewView,'Risks':risksGridView,'Issues':issuesGridView,'Settings':settingsView,'Export':exportViewPanel};
+ if(!views[tab])tab='Overview';
+ root.innerHTML=shell({eyebrow:'Cross-cutting · Issue & risk management',title:'Issue & Risk Management',intro:'Compliance-grade register. Risks (might happen) and Issues (have happened) kept separate. 5×5 L×I scoring, mitigation and approval trail, review cadence with overdue flags. Customise the lists in Settings.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=10&lesson=risk-register',label:'Review Module 10'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit:()=>{},importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
+ wireSettings(root);
  wireGrid(root);
 }
 
