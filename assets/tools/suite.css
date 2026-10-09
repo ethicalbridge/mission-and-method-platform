@@ -604,3 +604,32 @@ tr.group td{background:#f3f8f5}
  .dm-filt-label{flex:1 1 140px}
  .dm-filter-count{margin-left:0;width:100%}
 }
+
+/* ======================================================================
+   Risk grid additions — band-coloured score badge in the sticky Score
+   column plus small "overdue / approved / closed" flag chips underneath.
+   Shared between Issue & Risk Management risks and issues grids.
+   ====================================================================== */
+.dm-grid-score-cell{text-align:center}
+.dm-grid-score-cell .dm-verdict-badge{min-width:60px;flex-direction:column;line-height:1.1;padding:5px 10px;font-size:13px;font-weight:900}
+.dm-grid-score-cell .dm-verdict-badge small{display:block;margin-top:2px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.dm-verdict-badge.dm-risk-band-low{background:#d9eee3;color:#0e5a4e;border-color:#8dc9ab}
+.dm-verdict-badge.dm-risk-band-medium{background:#fff5e7;color:#8a5e14;border-color:#f1c874}
+.dm-verdict-badge.dm-risk-band-high{background:#ffdfc5;color:#88452b;border-color:#f0b48a}
+.dm-verdict-badge.dm-risk-band-critical{background:var(--coral,#e56f4a);color:#fff;border-color:#c7442b}
+.dm-verdict-badge.dm-risk-band-none{background:#edf3f0;color:#7a8e97;border-color:#d4e2db}
+.dm-grid-flags{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:6px}
+.dm-grid-flag{display:inline-flex;align-items:center;padding:1px 6px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.02em;line-height:1.3;white-space:nowrap;border:1px solid transparent}
+.dm-grid-flag-bad{background:#fef0ec;color:#8a3f27;border-color:#f3b7a2}
+.dm-grid-flag-ok{background:#eaf6ef;color:#0e5a4e;border-color:#a5d7bc}
+.dm-grid-flag-neutral{background:#edf3f0;color:#546974;border-color:#d4e2db}
+
+/* Date cells in the grid — same height/visual as text inputs */
+.dm-grid-date{height:30px;color:#102e3b}
+.dm-grid-date::-webkit-calendar-picker-indicator{opacity:.5;cursor:pointer}
+.dm-grid-date:hover::-webkit-calendar-picker-indicator{opacity:.9}
+
+/* Risk-themed donut variant — red/amber gradient to match severity instead
+   of go/no-go green. Reuses .dm-donut's --go-share / --no-go-share vars. */
+.dm-donut.dm-donut-risk{background:conic-gradient(var(--coral,#e56f4a) 0 var(--go-share,0%),#f1c874 var(--go-share,0%) calc(var(--go-share,0%) + var(--no-go-share,0%)),#8dc9ab calc(var(--go-share,0%) + var(--no-go-share,0%)) 100%)}
+.dm-donut.dm-donut-risk > div strong{color:var(--coral,#e56f4a)}
