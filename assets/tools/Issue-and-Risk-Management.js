@@ -749,7 +749,7 @@ function wireFilters(root){
 function render(){
  const views={'Overview':overviewView,'Risks':risksGridView,'Issues':issuesGridView,'Settings':settingsView,'Export':exportViewPanel};
  if(!views[tab])tab='Overview';
- root.innerHTML=shell({eyebrow:'Cross-cutting · Issue & risk management',title:'Issue & Risk Management',intro:'Compliance-grade register. Risks (might happen) and Issues (have happened) kept separate. 5×5 L×I scoring, mitigation and approval trail, review cadence with overdue flags. Customise the lists in Settings.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=10&lesson=risk-register',label:'Review Module 10'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Cross-cutting · Issue & risk management · build 2026-10-09',title:'Issue & Risk Management',intro:'Compliance-grade register. Risks (might happen) and Issues (have happened) kept separate. 5×5 L×I scoring, mitigation and approval trail, review cadence with overdue flags. Customise the lists in Settings.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=10&lesson=risk-register',label:'Review Module 10'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit:()=>{},importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
  wireSettings(root);
