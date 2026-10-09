@@ -692,6 +692,47 @@ tr.group td{background:#f3f8f5}
 /* Not-applicable cell */
 .dm-grid-na{display:flex;align-items:center;justify-content:center;height:30px;color:#9fb4bb;font-size:12.5px;font-style:italic;letter-spacing:.02em}
 
+/* ======================================================================
+   Meetings-tool banded register. The grid has three column bands —
+   Meeting · Decisions · Actions — and one row per meeting. Decisions and
+   actions each render in their own sub-rows inside the band; the meeting
+   cells span those sub-rows via rowspan.
+   ====================================================================== */
+.dm-grid-meetings .dm-grid-td-m{background:#f8fbfa;border-right:1px solid #cfddd5}
+.dm-grid-meetings .dm-grid-td-d{background:#fbfdfb;border-right:1px solid #e3ece6}
+.dm-grid-meetings .dm-grid-td-a{background:#fcfdfb}
+.dm-grid-meetings .dm-grid-th-m{background:#eef4f0}
+.dm-grid-meetings .dm-grid-th-d{background:#f1f6ef}
+.dm-grid-meetings .dm-grid-th-a{background:#fdf4e5}
+/* Thicker divider between whole meeting rows */
+.dm-grid-meetings tr.dm-row-sub-first > td{border-top:3px solid #16746e}
+.dm-grid-meetings tr.dm-row-sub-first > td.dm-grid-td-m{border-top-color:#102e3b}
+/* Nested-cell helpers */
+.dm-nest-add{text-align:center;background:#f6faf7;padding:4px 10px !important}
+.dm-nest-add .link{color:#16746e;font-weight:700;font-size:12px;padding:4px 10px;background:transparent;border:1px dashed #c9d6ce;border-radius:6px;cursor:pointer}
+.dm-nest-add .link:hover{background:#eaf6ef;border-color:#16746e}
+.dm-nest-empty{color:#c7d4cc;text-align:center;font-size:14px;background:#fcfdfc}
+/* Standalone pseudo-meeting block */
+.dm-standalone-head{background:#fff5e7 !important;vertical-align:middle;padding:12px 14px !important;border-top:3px solid #e56f4a}
+.dm-standalone-head b{color:#8a3f27;font-size:13px}
+.dm-standalone-head small{color:#8a5e14;font-size:11.5px;line-height:1.5}
+
+/* Linked-to cell stacks the dropdown and the free-text note */
+.dm-grid-linked-stack{display:flex;flex-direction:column;gap:3px}
+.dm-grid-linked-stack .dm-grid-linknote{font-size:11.5px}
+
+/* Column editor — split into Meeting / Decisions / Actions scopes */
+.dm-col-scopes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:12px}
+@media (max-width:900px){.dm-col-scopes{grid-template-columns:1fr}}
+.dm-col-scope{background:#fff;border:1px solid #e0ebe4;border-radius:10px;padding:12px}
+.dm-col-scope h4{margin:0 0 8px;font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#16746e}
+.dm-col-scope .dm-col-list{margin:0}
+.dm-col-scope .dm-col-row{grid-template-columns:92px 1fr 100px 22px;padding:6px 8px}
+.dm-col-scope .dm-col-label{height:28px;font-size:12px}
+.dm-col-scope .dm-col-type{font-size:9.5px}
+.dm-col-scope .dm-col-vis{font-size:11px;gap:4px}
+.dm-col-scope .dm-col-vis input[type="checkbox"]{width:14px;height:14px}
+
 /* Column editor panel (toggled from the register's toolbar) */
 .dm-col-panel{margin:10px 0 14px;padding:16px 18px;background:#f6faf7;border:1px solid #d4e2db;border-radius:12px}
 .dm-col-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
