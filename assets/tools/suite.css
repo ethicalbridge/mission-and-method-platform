@@ -667,3 +667,55 @@ tr.group td{background:#f3f8f5}
 .dm-settings-area{width:100%;padding:8px 10px;border:1px solid #c9d6ce;border-radius:8px;font:inherit;font-size:13px;background:#fff;color:#102e3b;line-height:1.55;resize:vertical;min-height:120px}
 .dm-settings-area:focus{outline:0;border-color:#16746e;box-shadow:0 0 0 2px rgba(22,116,110,.15)}
 .dm-settings-count{display:inline-block;margin-top:6px;font-size:11px;color:#546974;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+
+/* ======================================================================
+   Integrated register (Meetings tool): one grid holding Meetings, Actions
+   and Decisions. A per-row kind badge, "not applicable" placeholders, and
+   a Columns editor panel for adding/renaming/hiding/deleting columns.
+   ====================================================================== */
+.dm-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dm-toolbar .button.is-active{background:#102e3b;color:#fff;border-color:#102e3b}
+
+.dm-kind-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.02em;line-height:1.2;border:1px solid transparent;white-space:nowrap}
+.dm-kind-meeting{background:#eaf1f6;color:#1b4660;border-color:#b6cfdd}
+.dm-kind-action{background:#fff5e7;color:#8a5e14;border-color:#f1c874}
+.dm-kind-decision{background:#eef3eb;color:#2d5c33;border-color:#b7cfaf}
+.dm-grid-kind-sel{min-width:98px;font-weight:700}
+
+/* Row tint by kind — subtle, keeps meetings legible as "group headers" */
+.dm-row-meeting > td{background:#f6faf7}
+.dm-row-meeting:hover > td{background:#eef4f0}
+.dm-row-meeting > td.dm-grid-score-cell{background:#eaf1f6}
+.dm-row-action > td.dm-grid-score-cell{background:#fff8ec}
+.dm-row-decision > td.dm-grid-score-cell{background:#f1f7ec}
+
+/* Not-applicable cell */
+.dm-grid-na{display:flex;align-items:center;justify-content:center;height:30px;color:#9fb4bb;font-size:12.5px;font-style:italic;letter-spacing:.02em}
+
+/* Column editor panel (toggled from the register's toolbar) */
+.dm-col-panel{margin:10px 0 14px;padding:16px 18px;background:#f6faf7;border:1px solid #d4e2db;border-radius:12px}
+.dm-col-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dm-col-head h3{margin:0;font-size:15px;color:#102e3b;font-weight:800}
+.dm-col-list{list-style:none;padding:0;margin:0 0 14px;display:flex;flex-direction:column;gap:6px}
+.dm-col-row{display:grid;grid-template-columns:120px 1fr 150px 28px;gap:10px;align-items:center;padding:7px 10px;background:#fff;border:1px solid #e0ebe4;border-radius:8px}
+.dm-col-vis{display:flex;align-items:center;gap:6px;font-size:12px;color:#546974;font-weight:700}
+.dm-col-vis input[type="checkbox"]{accent-color:#16746e;width:16px;height:16px}
+.dm-col-label{height:30px;padding:5px 9px;border:1px solid #c9d6ce;border-radius:6px;font:inherit;font-size:13px;color:#102e3b;background:#fff;min-width:0}
+.dm-col-label:focus{outline:0;border-color:#16746e;box-shadow:0 0 0 2px rgba(22,116,110,.15)}
+.dm-col-type{font-size:10.5px;color:#546974;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-align:right}
+.dm-col-row .link.danger{color:#b35238;font-size:14px;padding:2px 6px;border:0;background:transparent;cursor:pointer}
+.dm-col-row .link.danger:hover{color:#8a3f27}
+.dm-col-add{display:grid;grid-template-columns:1fr 180px auto;gap:10px;align-items:end;padding-top:14px;border-top:1px dashed #d4e2db}
+.dm-col-add label{display:flex;flex-direction:column;gap:4px}
+.dm-col-add label span{font-size:10.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#16746e}
+.dm-col-add input,.dm-col-add select,.dm-col-add textarea{padding:7px 10px;border:1px solid #c9d6ce;border-radius:6px;font:inherit;font-size:13px;background:#fff;color:#102e3b}
+.dm-col-add input:focus,.dm-col-add select:focus,.dm-col-add textarea:focus{outline:0;border-color:#16746e;box-shadow:0 0 0 2px rgba(22,116,110,.15)}
+.dm-col-opts{grid-column:1/-1}
+.dm-col-opts textarea{resize:vertical;min-height:46px}
+.dm-col-add .button{align-self:end}
+@media (max-width:720px){
+ .dm-col-row{grid-template-columns:1fr}
+ .dm-col-vis{order:3}
+ .dm-col-type{text-align:left;order:4}
+ .dm-col-add{grid-template-columns:1fr}
+}
