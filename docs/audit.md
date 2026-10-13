@@ -1,6 +1,6 @@
 # Mission & Method audit and implementation
 
-Target: https://ethicalbridge.github.io/mission-and-method-platform/
+Target: https://methodintoimpact.com/
 
 Baseline: `84f5cd25ae4c4ea3dd48d2bd7d996dba2f50697d`.
 The Impact Accelerator repository was inspected only while clarifying the URL; it was not changed.

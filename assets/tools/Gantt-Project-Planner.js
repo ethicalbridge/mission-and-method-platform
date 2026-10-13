@@ -197,7 +197,7 @@ function mergeAnnualPlan(n){
 // ---------- wiring ----------
 function render(){
  const views={'Start':start,'Timeline':timelineView,'Tasks':tasksView,'Capacity':capacityView,'Review':reviewView,'Export':exportView};
- root.innerHTML=S.shell({eyebrow:'Project management · Gantt & project planner',title:'Gantt & Project Planner',intro:'Plan objectives, activities, tasks and milestones on one timeline, with owners, dependencies, progress and budget, and review the plan as it moves.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=13&lesson=timeline',label:'Review Module 13'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=S.shell({eyebrow:'Project management · Gantt & project planner',title:'Gantt & Project Planner',intro:'Plan objectives, activities, tasks and milestones on one timeline, with owners, dependencies, progress and budget, and review the plan as it moves.',module:{href:'https://methodintoimpact.com/learn.html?module=13&lesson=timeline',label:'Review Module 13'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  S.bind(root,app);
  root.querySelectorAll('[data-filter]').forEach(x=>x.addEventListener('change',()=>{if(x.dataset.filter==='owner')ownerFilter=x.value;else statusFilter=x.value;render()}));
 }

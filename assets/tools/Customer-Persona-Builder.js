@@ -512,7 +512,7 @@ function wireFilters(root){const bar=root.querySelector('.dm-filter-bar');if(!ba
 function render(){
  const views={'Overview':overviewView,'Register':registerView,'Cards':cardsView,'Settings':settingsView,'Export':exportViewPanel};
  if(!views[tab])tab='Overview';
- root.innerHTML=shell({eyebrow:'Communications · Audience personas · build 2026-10-09d',title:'Customer Persona Builder',intro:'One persona per audience segment, in five banded groups: Identity · Context · Motivation · Communication · Relationship. Inline-editable, column-customisable, with three worked examples ready to load.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=8&lesson=audiences',label:'Review Module 8'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Communications · Audience personas · build 2026-10-09d',title:'Customer Persona Builder',intro:'One persona per audience segment, in five banded groups: Identity · Context · Motivation · Communication · Relationship. Inline-editable, column-customisable, with three worked examples ready to load.',module:{href:'https://methodintoimpact.com/learn.html?module=8&lesson=audiences',label:'Review Module 8'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';columnsOpen=false;render()},action,submit:()=>{},importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
  wireSettings(root);

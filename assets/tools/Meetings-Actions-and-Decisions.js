@@ -730,7 +730,7 @@ function wireFilters(root){
 function render(){
  const views={'Overview':overviewView,'Register':registerView,'Settings':settingsView,'Export':exportViewPanel};
  if(!views[tab])tab='Overview';
- root.innerHTML=shell({eyebrow:'Cross-cutting · Meetings · one row per meeting · build 2026-10-09c',title:'Meetings, Actions & Decisions',intro:'One grid, three bands: Meeting · Decisions · Actions. Each meeting is a single row — its decisions and actions stack vertically in their bands, so everything that came out of a meeting is read horizontally in that meeting\'s row. Columns are fully customisable per band.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=3&lesson=coordination',label:'Review Module 3'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Cross-cutting · Meetings · one row per meeting · build 2026-10-09c',title:'Meetings, Actions & Decisions',intro:'One grid, three bands: Meeting · Decisions · Actions. Each meeting is a single row — its decisions and actions stack vertically in their bands, so everything that came out of a meeting is read horizontally in that meeting\'s row. Columns are fully customisable per band.',module:{href:'https://methodintoimpact.com/learn.html?module=3&lesson=coordination',label:'Review Module 3'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';columnsOpen=false;render()},action,submit:()=>{},importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
  wireSettings(root);

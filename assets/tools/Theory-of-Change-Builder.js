@@ -304,7 +304,7 @@ function render(){
   eyebrow:'Strategy & impact · Theory of Change',
   title:'Theory of Change Builder',
   intro:'Map how your work contributes to long-term change. Build pathways from inputs to impact and name the assumptions that need to hold.',
-  module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=2&lesson=understanding',label:'Review Module 2'},
+  module:{href:'https://methodintoimpact.com/learn.html?module=2&lesson=understanding',label:'Review Module 2'},
   tabs:TABS, active:tab, message, content:view(), modal:modal_html
  });
  const root=document.querySelector('#app');

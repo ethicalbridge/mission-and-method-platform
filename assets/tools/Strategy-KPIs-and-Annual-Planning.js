@@ -250,7 +250,7 @@ function exportCsv(){
 // ---------- wiring ----------
 function render(){
  const views={'Start':start,'Objectives':objectivesView,'KPIs & results':kpisView,'Annual plan':planView,'Calendar':calendarView,'Review':reviewView,'Export':exportView};
- root.innerHTML=S.shell({eyebrow:'Strategy & impact · Strategy, KPIs & annual planning',title:'Strategy, KPIs & Annual Planning',intro:'Turn objectives into measures and a year of work: KPIs with targets and dated results, an annual plan with owners, dates and budget, and quarterly reviews that record decisions.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=13&lesson=annual-plan',label:'Review Module 13'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=S.shell({eyebrow:'Strategy & impact · Strategy, KPIs & annual planning',title:'Strategy, KPIs & Annual Planning',intro:'Turn objectives into measures and a year of work: KPIs with targets and dated results, an annual plan with owners, dates and budget, and quarterly reviews that record decisions.',module:{href:'https://methodintoimpact.com/learn.html?module=13&lesson=annual-plan',label:'Review Module 13'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  S.bind(root,app);
  if(tab==='Start')window.MMExample?.bindLive?.(root,db,'strategy-kpis');
 }

@@ -628,7 +628,7 @@ function wireFilters(root){
 
 function render(){
  const views={'Start':startView,'Assessment grid':assessmentGridView,'Alignment matrix':alignmentMatrixView,'Export':exportViewPanel};
- root.innerHTML=shell({eyebrow:'Funding · Donor mapping',title:'Donor Mapping',intro:'Prospect side of fundraising. Fill the assessment grid like a spreadsheet — every cell updates the Go/No-Go dashboard above live.',module:{href:'https://ethicalbridge.github.io/mission-and-method-platform/learn.html?module=11&lesson=prospects',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
+ root.innerHTML=shell({eyebrow:'Funding · Donor mapping',title:'Donor Mapping',intro:'Prospect side of fundraising. Fill the assessment grid like a spreadsheet — every cell updates the Go/No-Go dashboard above live.',module:{href:'https://methodintoimpact.com/learn.html?module=11&lesson=prospects',label:'Review Module 11'},tabs:TABS,active:tab,message,content:views[tab](),modal:dlg});
  bind(root,{tab:t=>{tab=t;message='';dlg='';render()},action,submit,importXlsx:importXlsxFile,importJson:importJsonFile});
  wireStart(root);
  wireGrid(root);
