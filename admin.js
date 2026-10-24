@@ -135,7 +135,7 @@ async function loadContacts({ selectFirst = false } = {}) {
   console.log('[admin] loadContacts: querying crm_contacts…');
   const { data, error } = await supabase
     .from('crm_contacts')
-    .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang')
+    .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang, meeting_at, meeting_notes, proposal_sent_at, proposal_due_at, proposal_reply_at, proposal_outcome, next_steps, next_steps_due_at')
     .order('created_at', { ascending: false })
     .limit(500);
 
@@ -236,24 +236,24 @@ function renderList() {
 // ============== Detail panel ==============
 async function openDetail(id) {
   selectedId = id;
-  // Highlight the card
   listEl.querySelectorAll('.dash-card').forEach(el => el.classList.toggle('active', el.dataset.id === id));
 
   detailBody.innerHTML = '<p style="color:#6a7a85">Loading…</p>';
 
-  const [briefRes, bookingsRes, eventsRes] = await Promise.all([
+  const [briefRes, bookingsRes, eventsRes, attachmentsRes] = await Promise.all([
     supabase.from('crm_briefs').select('*').eq('contact_id', id).order('submitted_at', { ascending: false }).limit(1).maybeSingle(),
     supabase.from('crm_bookings').select('*').eq('contact_id', id).order('scheduled_at', { ascending: false }),
     supabase.from('crm_events').select('*').eq('contact_id', id).order('created_at', { ascending: false }).limit(100),
+    supabase.from('crm_attachments').select('*').eq('contact_id', id).order('uploaded_at', { ascending: false }),
   ]);
 
   const contact = allContacts.find(c => c.id === id);
   if (!contact) { detailBody.innerHTML = '<p>Not found.</p>'; return; }
 
-  renderDetail(contact, briefRes.data, bookingsRes.data || [], eventsRes.data || []);
+  renderDetail(contact, briefRes.data, bookingsRes.data || [], eventsRes.data || [], attachmentsRes.data || []);
 }
 
-function renderDetail(c, brief, bookings, events) {
+function renderDetail(c, brief, bookings, events, attachments) {
   const answers = (brief && brief.answers) || {};
   const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
@@ -280,6 +280,18 @@ function renderDetail(c, brief, bookings, events) {
   if (c.country)          subMetaBits.push(esc(c.country));
   if (c.lang && c.lang !== 'en') subMetaBits.push(c.lang.toUpperCase());
 
+  const attachmentsHtml = attachments.length ? attachments.map(a => `
+    <div class="dash-attachment">
+      <div class="dash-attachment-info">
+        <b>${esc(a.filename)}</b>
+        <small>${a.label ? esc(a.label) + ' · ' : ''}${fmtDateTime(a.uploaded_at)}${a.size_bytes ? ' · ' + fmtSize(a.size_bytes) : ''}</small>
+      </div>
+      <div class="dash-attachment-actions">
+        <button type="button" class="dash-mini-btn" data-download="${a.id}" data-path="${esc(a.storage_path)}">Open</button>
+        <button type="button" class="dash-mini-btn dash-mini-btn-del" data-delete="${a.id}" data-path="${esc(a.storage_path)}" title="Delete">×</button>
+      </div>
+    </div>`).join('') : '<p style="color:#6a7a85;font-size:13px;margin:0 0 8px">No files uploaded yet.</p>';
+
   detailBody.innerHTML = `
     <div class="dash-detail-head">
       <div>
@@ -304,10 +316,61 @@ function renderDetail(c, brief, bookings, events) {
     <h3>Bookings</h3>
     ${bookingsHtml}
 
-    <h3>Notes (private)</h3>
+    <h3>Meeting</h3>
+    <div class="dash-pipeline-section" data-section="meeting">
+      <div class="dash-pipeline-row">
+        <label><span>When did it happen?</span><input type="datetime-local" name="meeting_at" value="${toDtLocal(c.meeting_at)}"></label>
+      </div>
+      <label><span>Meeting notes</span><textarea name="meeting_notes" rows="4" placeholder="What came up on the call. Decisions, concerns, their language.">${esc(c.meeting_notes || '')}</textarea></label>
+      <button class="dash-save-btn" data-save-section="meeting">Save meeting</button>
+    </div>
+
+    <h3>Proposal</h3>
+    <div class="dash-pipeline-section" data-section="proposal">
+      <div class="dash-pipeline-row dash-pipeline-row-3">
+        <label><span>Sent on</span><input type="date" name="proposal_sent_at" value="${toDate(c.proposal_sent_at)}"></label>
+        <label><span>Reply due by</span><input type="date" name="proposal_due_at" value="${toDate(c.proposal_due_at)}"></label>
+        <label><span>Reply received</span><input type="date" name="proposal_reply_at" value="${toDate(c.proposal_reply_at)}"></label>
+      </div>
+      <label><span>Outcome</span>
+        <select name="proposal_outcome">
+          <option value="">—</option>
+          <option value="waiting"           ${c.proposal_outcome === 'waiting' ? 'selected' : ''}>Waiting for reply</option>
+          <option value="accepted"          ${c.proposal_outcome === 'accepted' ? 'selected' : ''}>Accepted</option>
+          <option value="changes_requested" ${c.proposal_outcome === 'changes_requested' ? 'selected' : ''}>Changes requested</option>
+          <option value="declined"          ${c.proposal_outcome === 'declined' ? 'selected' : ''}>Declined</option>
+          <option value="ghosted"           ${c.proposal_outcome === 'ghosted' ? 'selected' : ''}>No reply (ghosted)</option>
+        </select>
+      </label>
+      <button class="dash-save-btn" data-save-section="proposal">Save proposal</button>
+    </div>
+
+    <h3>Next steps</h3>
+    <div class="dash-pipeline-section" data-section="next_steps">
+      <div class="dash-pipeline-row">
+        <label><span>Due by</span><input type="date" name="next_steps_due_at" value="${toDate(c.next_steps_due_at)}"></label>
+      </div>
+      <label><span>What's next</span><textarea name="next_steps" rows="3" placeholder="Kick-off date, deliverable, next check-in — whatever we agreed.">${esc(c.next_steps || '')}</textarea></label>
+      <button class="dash-save-btn" data-save-section="next_steps">Save next steps</button>
+    </div>
+
+    <h3>Documents</h3>
+    <div class="dash-attachments-wrap">
+      <div id="attachments-list" class="dash-attachments-list">${attachmentsHtml}</div>
+      <div class="dash-upload">
+        <label class="dash-upload-label">
+          <input type="file" id="file-input" multiple>
+          <span>+ Upload file(s)</span>
+        </label>
+        <input type="text" id="file-label" placeholder="Optional label (e.g. 'ToR v2', 'Signed agreement')" maxlength="140">
+        <p id="upload-status" class="dash-upload-status"></p>
+      </div>
+    </div>
+
+    <h3>Private notes</h3>
     <div class="dash-notes-field">
-      <textarea id="notes-field" placeholder="Call notes, next step, anything you want to remember about this contact.">${esc(c.notes || '')}</textarea>
-      <button class="dash-save-btn" id="save-notes">Save note</button>
+      <textarea id="notes-field" placeholder="Running notes about this contact.">${esc(c.notes || '')}</textarea>
+      <button class="dash-save-btn" id="save-notes">Save notes</button>
     </div>
 
     <h3>Timeline</h3>
@@ -318,6 +381,97 @@ function renderDetail(c, brief, bookings, events) {
     btn.addEventListener('click', () => setStage(c.id, btn.dataset.setStage));
   });
   detailBody.querySelector('#save-notes').addEventListener('click', () => saveNotes(c.id));
+  detailBody.querySelectorAll('[data-save-section]').forEach(btn => {
+    btn.addEventListener('click', () => savePipelineSection(c.id, btn.dataset.saveSection));
+  });
+  detailBody.querySelector('#file-input').addEventListener('change', (ev) => uploadFiles(c.id, ev.target));
+  detailBody.querySelectorAll('[data-download]').forEach(btn => {
+    btn.addEventListener('click', () => downloadAttachment(btn.dataset.path));
+  });
+  detailBody.querySelectorAll('[data-delete]').forEach(btn => {
+    btn.addEventListener('click', () => deleteAttachment(btn.dataset.delete, btn.dataset.path));
+  });
+}
+
+// ---------- Pipeline section save ----------
+async function savePipelineSection(contactId, section) {
+  const root = detailBody.querySelector(`[data-section="${section}"]`);
+  if (!root) return;
+  const updates = {};
+  root.querySelectorAll('input, textarea, select').forEach(el => {
+    const name = el.name;
+    if (!name) return;
+    if (el.type === 'datetime-local' || el.type === 'date') {
+      updates[name] = el.value ? new Date(el.value).toISOString() : null;
+    } else {
+      updates[name] = el.value;
+    }
+  });
+  const btn = root.querySelector('.dash-save-btn');
+  const originalText = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await supabase.from('crm_contacts').update(updates).eq('id', contactId);
+  if (error) {
+    btn.textContent = originalText; btn.disabled = false;
+    alert('Could not save: ' + error.message);
+    return;
+  }
+  await supabase.from('crm_events').insert({
+    contact_id: contactId,
+    type: `${section}_updated`,
+    message: `${section.replace('_',' ')} updated`,
+  });
+  // Refresh in-memory contact for subsequent renders
+  const c = allContacts.find(c => c.id === contactId);
+  if (c) Object.assign(c, updates);
+  btn.textContent = '✓ Saved'; setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+}
+
+// ---------- Attachments ----------
+async function uploadFiles(contactId, input) {
+  const status = detailBody.querySelector('#upload-status');
+  const label  = detailBody.querySelector('#file-label').value.trim() || null;
+  const files = Array.from(input.files || []);
+  if (!files.length) return;
+  status.textContent = `Uploading ${files.length} file(s)…`;
+  let okCount = 0, failCount = 0;
+  for (const file of files) {
+    const safeName = file.name.replace(/[^\w.\-]+/g, '_');
+    const path = `${contactId}/${Date.now()}-${safeName}`;
+    const { error: upErr } = await supabase.storage.from('crm-docs').upload(path, file, { upsert: false });
+    if (upErr) { console.error('upload failed', upErr); failCount++; continue; }
+    const { error: insErr } = await supabase.from('crm_attachments').insert({
+      contact_id: contactId,
+      filename: file.name,
+      mime: file.type || null,
+      size_bytes: file.size,
+      storage_path: path,
+      label,
+      uploaded_by: (await supabase.auth.getUser()).data?.user?.email || null,
+    });
+    if (insErr) { console.error('attachment row insert failed', insErr); failCount++; continue; }
+    await supabase.from('crm_events').insert({
+      contact_id: contactId, type: 'file_uploaded',
+      message: `Uploaded ${file.name}${label ? ' (' + label + ')' : ''}`,
+    });
+    okCount++;
+  }
+  status.textContent = `Uploaded ${okCount}${failCount ? ' · ' + failCount + ' failed' : ''}`;
+  input.value = ''; // reset
+  openDetail(contactId); // refresh list + timeline
+}
+
+async function downloadAttachment(path) {
+  const { data, error } = await supabase.storage.from('crm-docs').createSignedUrl(path, 300);
+  if (error) { alert('Could not open: ' + error.message); return; }
+  window.open(data.signedUrl, '_blank', 'noopener');
+}
+
+async function deleteAttachment(id, path) {
+  if (!confirm('Delete this file? This cannot be undone.')) return;
+  await supabase.storage.from('crm-docs').remove([path]);
+  await supabase.from('crm_attachments').delete().eq('id', id);
+  if (selectedId) openDetail(selectedId);
 }
 
 function fieldHtml(f, answers) {
@@ -438,6 +592,22 @@ function fmtRelative(iso) {
   if (diff < 86400)    return `${Math.floor(diff/3600)}h ago`;
   if (diff < 604800)   return `${Math.floor(diff/86400)}d ago`;
   return fmtDate(iso);
+}
+function toDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toISOString().slice(0, 10); // YYYY-MM-DD
+}
+function toDtLocal(iso) {
+  if (!iso) return '';
+  // The datetime-local input needs "YYYY-MM-DDTHH:MM" in LOCAL time.
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function fmtSize(bytes) {
+  if (bytes < 1024)        return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 boot();

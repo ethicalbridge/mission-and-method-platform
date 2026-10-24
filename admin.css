@@ -312,6 +312,86 @@ body {
   font-size: 13px; margin: 0;
 }
 
+/* ---------- Pipeline sections (meeting, proposal, next steps) ---------- */
+.dash-pipeline-section {
+  background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.dash-pipeline-row {
+  display: grid; grid-template-columns: 1fr; gap: 10px;
+}
+.dash-pipeline-row-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+@media (max-width: 760px) {
+  .dash-pipeline-row-3 { grid-template-columns: 1fr; }
+}
+.dash-pipeline-section label {
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.04em;
+  color: var(--teal); text-transform: uppercase;
+}
+.dash-pipeline-section input,
+.dash-pipeline-section select,
+.dash-pipeline-section textarea {
+  font: inherit; font-size: 13.5px; padding: 8px 10px;
+  border: 1px solid #c9d6ce; border-radius: 6px; background: #fff; color: var(--ink);
+  text-transform: none; font-weight: 400; letter-spacing: normal;
+  font-family: inherit;
+}
+.dash-pipeline-section input:focus,
+.dash-pipeline-section select:focus,
+.dash-pipeline-section textarea:focus {
+  outline: 0; border-color: var(--teal); box-shadow: 0 0 0 2px rgba(22, 116, 110, 0.15);
+}
+.dash-pipeline-section textarea { min-height: 70px; resize: vertical; line-height: 1.5; }
+.dash-pipeline-section .dash-save-btn { align-self: flex-start; }
+
+/* ---------- Documents / attachments ---------- */
+.dash-attachments-wrap {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.dash-attachments-list { display: flex; flex-direction: column; gap: 6px; }
+.dash-attachment {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--cream);
+}
+.dash-attachment-info b { display: block; font-size: 13.5px; color: var(--ink); }
+.dash-attachment-info small { color: var(--ink-dim); font-size: 11.5px; }
+.dash-attachment-actions { display: flex; gap: 6px; }
+.dash-mini-btn {
+  background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 10px; font: inherit; font-size: 12px; font-weight: 700;
+  color: var(--ink-dim); cursor: pointer;
+}
+.dash-mini-btn:hover { background: var(--cream-2); color: var(--ink); border-color: var(--teal); }
+.dash-mini-btn-del { color: #c7442b; }
+.dash-mini-btn-del:hover { background: #fff5ef; color: #8e2e2e; border-color: #e56f4a; }
+
+.dash-upload {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--cream); border: 1px dashed var(--border); border-radius: 8px;
+  padding: 12px 14px;
+}
+.dash-upload-label {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 800; color: var(--teal);
+  padding: 6px 0;
+}
+.dash-upload-label input[type="file"] { display: none; }
+.dash-upload-label span {
+  display: inline-block; background: #fff; border: 1px solid var(--teal);
+  border-radius: 6px; padding: 7px 14px;
+}
+.dash-upload-label:hover span { background: var(--teal); color: #fff; }
+.dash-upload input[type="text"] {
+  font: inherit; font-size: 13px; padding: 7px 10px;
+  border: 1px solid var(--border); border-radius: 6px; color: var(--ink); background: #fff;
+}
+.dash-upload input[type="text"]:focus { outline: 0; border-color: var(--teal); }
+.dash-upload-status { margin: 0; font-size: 12px; color: var(--ink-dim); min-height: 16px; }
+
 .dash-chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
 .dash-chip { background: var(--cream-2); color: var(--ink); border-radius: 999px; padding: 3px 10px; font-size: 11.5px; }
 
