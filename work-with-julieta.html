@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Work With Julieta | Method into Impact</title><meta name="description" content="Tailored consultancy for founders and small organisations. Start with a free discovery call with Julieta Castiñeira de Dios. Legal background, compliance and fundraising practitioner, founder of Method into Impact."><link rel="stylesheet" href="styles.css?v=brand6"><link rel="stylesheet" href="mission.css?v=branched-form-2"><link rel="stylesheet" href="learning.css?v=course9"><link rel="stylesheet" href="work-with-julieta.css?v=branched-form-2"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Work With Julieta | Method into Impact</title><meta name="description" content="Tailored consultancy for founders and small organisations. Start with a free discovery call with Julieta Castiñeira de Dios. Legal background, compliance and fundraising practitioner, founder of Method into Impact."><link rel="stylesheet" href="styles.css?v=brand6"><link rel="stylesheet" href="mission.css?v=form-polish-1"><link rel="stylesheet" href="learning.css?v=course9"><link rel="stylesheet" href="work-with-julieta.css?v=form-polish-1"></head>
 <body class="wwj-page"><a class="skip-link" href="#main">Skip to content</a><nav class="nav" aria-label="Main navigation"></nav>
 
 <main id="main" class="wwj-main">
@@ -321,7 +321,13 @@
     <span class="eyebrow" data-i18n="wwj.dialog.eyebrow">Free discovery call</span>
     <h2 id="discovery-title" data-i18n="wwj.dialog.title">Start a conversation</h2>
    </div>
-   <button class="wwj-modal-close" type="button" data-close aria-label="Close brief form">×</button>
+   <div class="wwj-modal-top-right">
+    <div class="wwj-dialog-lang" role="group" aria-label="Language">
+     <button type="button" data-lang-switch="en">EN</button>
+     <button type="button" data-lang-switch="es">ES</button>
+    </div>
+    <button class="wwj-modal-close" type="button" data-close aria-label="Close brief form">×</button>
+   </div>
   </div>
 
   <div id="discovery-content">
@@ -426,9 +432,24 @@
      </fieldset>
 
      <fieldset class="wwj-fieldset">
-      <legend data-i18n="wwj.dialog.f.sec_context">Context <small data-i18n="wwj.dialog.f.sec_context_sub">(optional)</small></legend>
-      <label><span data-i18n="wwj.dialog.f.q10_label">Timeline and budget — anything you want to share? <em data-i18n="wwj.dialog.f.q10_hint">(totally fine to leave blank; this isn't a quote request)</em></span>
-       <textarea name="f_timeline" rows="2" maxlength="500" placeholder="e.g. We need a first version ready by March; a small family grant covers the first phase." data-i18n-attr="placeholder:wwj.dialog.f.q10_placeholder"></textarea></label>
+      <legend data-i18n="wwj.dialog.f.sec_context">Context <small data-i18n="wwj.dialog.f.sec_context_sub">(both optional)</small></legend>
+      <label><span data-i18n="wwj.dialog.f.q10_label">When would you ideally want to start?</span>
+       <select name="f_start">
+        <option value="" data-i18n="wwj.dialog.f.q10_select">Open / not sure</option>
+        <option data-i18n="wwj.dialog.f.q10_opt1">In the next month</option>
+        <option data-i18n="wwj.dialog.f.q10_opt2">1–3 months</option>
+        <option data-i18n="wwj.dialog.f.q10_opt3">3–6 months</option>
+        <option data-i18n="wwj.dialog.f.q10_opt4">Just exploring for now</option>
+       </select></label>
+      <label><span data-i18n="wwj.dialog.f.q10b_label">Comfortable range to invest (USD)</span>
+       <select name="f_budget">
+        <option value="" data-i18n="wwj.dialog.f.q10b_select">Rather talk about it on the call</option>
+        <option data-i18n="wwj.dialog.f.q10b_opt1">Under $3k</option>
+        <option data-i18n="wwj.dialog.f.q10b_opt2">$3–7k</option>
+        <option data-i18n="wwj.dialog.f.q10b_opt3">$7–15k</option>
+        <option data-i18n="wwj.dialog.f.q10b_opt4">$15–30k</option>
+        <option data-i18n="wwj.dialog.f.q10b_opt5">$30k+</option>
+       </select></label>
      </fieldset>
 
      <fieldset class="wwj-fieldset">
@@ -512,25 +533,23 @@
 
      <fieldset class="wwj-fieldset">
       <legend data-i18n="wwj.dialog.o.sec_fit">Fit and timing <small data-i18n="wwj.dialog.o.sec_fit_sub">(both optional)</small></legend>
-      <div class="wwj-grid-2">
-       <label><span data-i18n="wwj.dialog.o.q11_label">If we work together, what's a comfortable range to invest?</span>
-        <select name="o_budget">
-         <option value="" data-i18n="wwj.dialog.o.q11_select">Rather talk about it on the call</option>
-         <option data-i18n="wwj.dialog.o.q11_opt1">Under €3k</option>
-         <option data-i18n="wwj.dialog.o.q11_opt2">€3–7k</option>
-         <option data-i18n="wwj.dialog.o.q11_opt3">€7–15k</option>
-         <option data-i18n="wwj.dialog.o.q11_opt4">€15–30k</option>
-         <option data-i18n="wwj.dialog.o.q11_opt5">€30k+</option>
-        </select></label>
-       <label><span data-i18n="wwj.dialog.o.q12_label">When would you ideally want to start?</span>
-        <select name="o_start">
-         <option value="" data-i18n="wwj.dialog.o.q12_select">Open / not sure</option>
-         <option data-i18n="wwj.dialog.o.q12_opt1">In the next month</option>
-         <option data-i18n="wwj.dialog.o.q12_opt2">1–3 months</option>
-         <option data-i18n="wwj.dialog.o.q12_opt3">3–6 months</option>
-         <option data-i18n="wwj.dialog.o.q12_opt4">Just exploring for now</option>
-        </select></label>
-      </div>
+      <label><span data-i18n="wwj.dialog.o.q12_label">When would you ideally want to start?</span>
+       <select name="o_start">
+        <option value="" data-i18n="wwj.dialog.o.q12_select">Open / not sure</option>
+        <option data-i18n="wwj.dialog.o.q12_opt1">In the next month</option>
+        <option data-i18n="wwj.dialog.o.q12_opt2">1–3 months</option>
+        <option data-i18n="wwj.dialog.o.q12_opt3">3–6 months</option>
+        <option data-i18n="wwj.dialog.o.q12_opt4">Just exploring for now</option>
+       </select></label>
+      <label><span data-i18n="wwj.dialog.o.q11_label">Comfortable range to invest (USD)</span>
+       <select name="o_budget">
+        <option value="" data-i18n="wwj.dialog.o.q11_select">Rather talk about it on the call</option>
+        <option data-i18n="wwj.dialog.o.q11_opt1">Under $3k</option>
+        <option data-i18n="wwj.dialog.o.q11_opt2">$3–7k</option>
+        <option data-i18n="wwj.dialog.o.q11_opt3">$7–15k</option>
+        <option data-i18n="wwj.dialog.o.q11_opt4">$15–30k</option>
+        <option data-i18n="wwj.dialog.o.q11_opt5">$30k+</option>
+       </select></label>
      </fieldset>
 
      <fieldset class="wwj-fieldset">
@@ -552,7 +571,7 @@
  </div>
 </dialog>
 
-<script type="module" src="i18n.js?v=branched-form-2"></script>
+<script type="module" src="i18n.js?v=form-polish-1"></script>
 <script src="app.js?v=brand14"></script>
-<script src="work-with-julieta.js?v=branched-form-2" defer></script>
+<script src="work-with-julieta.js?v=form-polish-1" defer></script>
 </body></html>

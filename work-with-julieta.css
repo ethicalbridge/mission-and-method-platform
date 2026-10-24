@@ -263,15 +263,16 @@
  background:#fcfaf5; border:1px solid #ece4d2; border-radius:8px; padding:10px 12px;
 }
 .wwj-radio-list label, .wwj-check-list label {
- display:flex; gap:8px; align-items:flex-start;
+ display:flex; flex-direction:row; gap:10px; align-items:center;
  font-size:13.5px; color:#1e3942; font-weight:500; text-transform:none; letter-spacing:normal;
- cursor:pointer; line-height:1.45;
+ cursor:pointer; line-height:1.4;
 }
 .wwj-radio-list label:hover, .wwj-check-list label:hover { color:#06161c; }
 .wwj-radio-list input, .wwj-check-list input {
- width:auto; margin:3px 0 0; padding:0; accent-color:#16746e;
- flex:0 0 auto;
+ width:16px; height:16px; min-width:16px; margin:0; padding:0; accent-color:#16746e;
+ flex:0 0 auto; border:0; background:transparent;
 }
+.wwj-radio-list label > span, .wwj-check-list label > span { flex:1 1 auto; }
 
 .wwj-check-group { display:flex; flex-direction:column; gap:6px; }
 .wwj-check-label { color:#16746e; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
@@ -279,6 +280,30 @@
 
 /* Field hint under a textarea */
 .wwj-field-hint { color:#6a7a85; font-size:12px; font-weight:400; text-transform:none; letter-spacing:normal; margin-top:-2px; }
+
+/* Required-field marker: coral asterisk after the label text */
+.wwj-form label:has(> input[required]) > span:first-child::after,
+.wwj-form label:has(> textarea[required]) > span:first-child::after,
+.wwj-form label:has(> select[required]) > span:first-child::after,
+.wwj-radio-group:has(input[required]) > span:first-child::after,
+.wwj-check-group:has(input[required]) > .wwj-check-label::after {
+ content:' *'; color:#e56f4a; font-weight:900; margin-left:2px;
+}
+/* Legend of the path chooser (one radio group across two options) */
+.wwj-path-chooser:has(input[required]) legend::after {
+ content:' *'; color:#e56f4a; font-weight:900; margin-left:2px;
+}
+
+/* Dialog header language toggle */
+.wwj-modal-top-right { display:flex; align-items:center; gap:10px; }
+.wwj-dialog-lang { display:inline-flex; background:#f4ede0; border-radius:999px; padding:2px; gap:0; }
+.wwj-dialog-lang button {
+ background:transparent; border:0; cursor:pointer; padding:4px 10px;
+ font:inherit; font-size:11px; font-weight:800; letter-spacing:.06em;
+ color:#6a7a85; border-radius:999px; text-transform:uppercase;
+}
+.wwj-dialog-lang button[aria-pressed="true"] { background:#16746e; color:#fff; }
+.wwj-dialog-lang button:hover:not([aria-pressed="true"]) { color:#06161c; }
 
 /* Submit footer */
 .wwj-form-footer { margin-top:22px; padding-top:16px; border-top:1px solid #ece4d2; }
