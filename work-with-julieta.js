@@ -44,7 +44,7 @@
   // Cal.com inline-embed placeholder.
   // To wire the real picker: replace CAL_LINK with your Cal.com event link
   // (e.g. "julieta/discovery-30") and uncomment the <script> block.
-  const CAL_LINK = 'methodintoimpact'; // or 'methodintoimpact/<event-slug>' to deep-link one event
+  const CAL_LINK = 'methodintoimpact/30min'; // deep-link to the 30-min discovery event
   const calEmbed = CAL_LINK
    ? `<div class="wwj-cal-embed">
        <!-- Cal.com inline embed -->
