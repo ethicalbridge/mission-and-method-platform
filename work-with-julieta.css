@@ -16,7 +16,7 @@
 .wwj-hero-note { font-size:13px; color:#546974; margin:0; }
 
 .wwj-hero-card { background:#fff; border:1px solid #e0dbcd; border-radius:16px; padding:0; overflow:hidden; box-shadow:0 12px 36px rgba(10,22,28,.08); }
-.wwj-hero-card img { display:block; width:100%; aspect-ratio:4/5; object-fit:cover; object-position:center 25%; background:#f5efe3; }
+.wwj-hero-card img { display:block; width:100%; aspect-ratio:1/1; object-fit:cover; object-position:center 15%; background:#f5efe3; }
 .wwj-card-body { padding:20px 22px 22px; }
 .wwj-card-body .eyebrow { color:#16746e; font-size:11px; }
 .wwj-card-body h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; color:#06161c; font-size:20px; margin:6px 0 8px; }
@@ -82,6 +82,21 @@
 .wwj-pkg-cta-note { font-size:13px; color:#546974; margin:12px 0 0; }
 
 @media (max-width:900px) { .wwj-pkg-grid { grid-template-columns:1fr; } .wwj-pkg-feature { transform:none; } }
+
+/* ---------- Paths chooser (two-paths intro) ---------- */
+.wwj-paths-chooser { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; max-width:860px; margin:0 auto; }
+.wwj-path-pick { display:block; background:#fff; border:1px solid #e0dbcd; border-radius:14px; padding:20px 22px; text-decoration:none; color:inherit; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.wwj-path-pick:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(10,22,28,.08); border-color:#16746e; }
+.wwj-path-pick-tag { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#e56f4a; margin-bottom:6px; }
+.wwj-path-pick b { display:block; font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; font-size:22px; color:#06161c; margin-bottom:6px; letter-spacing:-.005em; line-height:1.15; }
+.wwj-path-pick small { display:block; font-size:14px; color:#1e3942; line-height:1.5; }
+@media (max-width:720px) { .wwj-paths-chooser { grid-template-columns:1fr; } }
+
+/* Distinguish the two path sections (Path B gets a cream tint; A stays white) */
+.wwj-path-b { background:#f6f1e5 !important; }
+.wwj-path-a { background:#fff !important; }
+.wwj-path-a .wwj-sect-head .eyebrow { color:#16746e; }
+.wwj-path-b .wwj-sect-head .eyebrow { color:#e56f4a; }
 
 /* ---------- Areas ---------- */
 .wwj-areas-cols { display:grid; grid-template-columns:1fr 1fr; gap:24px 36px; max-width:980px; margin:0 auto; }
