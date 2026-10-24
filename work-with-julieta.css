@@ -174,8 +174,20 @@
 @media (max-width:600px) { .wwj-how-grid { grid-template-columns:1fr; } }
 
 /* ---------- Final CTA ---------- */
-.wwj-final { background:#16746e; color:#fff; padding:36px 0; border-bottom:4px solid #e56f4a; }
-.wwj-final-inner { display:grid; grid-template-columns:1.5fr 1fr; gap:32px; align-items:center; }
+/* Final CTA: contained dark-teal rounded card on the page background */
+.wwj-final { background:transparent; color:#fff; padding:36px 0; }
+.wwj-final-inner {
+ background:#0d3836;
+ border-radius:24px;
+ padding:32px 40px;
+ max-width:1024px;
+ margin:0 auto;
+ display:grid; grid-template-columns:1.5fr 1fr; gap:32px; align-items:center;
+}
+@media (max-width:640px){
+ .wwj-final{padding:24px 0}
+ .wwj-final-inner{padding:28px 24px;border-radius:18px}
+}
 .wwj-final-inner .eyebrow { color:#f1c874; }
 .wwj-final-inner h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; color:#fff; font-size:clamp(24px,2.6vw,34px); margin:8px 0 12px; letter-spacing:-.01em; }
 .wwj-final-inner p { color:#eef7f5; margin:0; max-width:55ch; }
@@ -277,6 +289,13 @@
 .wwj-check-group { display:flex; flex-direction:column; gap:6px; }
 .wwj-check-label { color:#16746e; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
 .wwj-check-label em { color:#6a7a85; font-style:normal; font-weight:500; font-size:11px; margin-left:4px; text-transform:none; letter-spacing:0; }
+
+/* "Other" open-text field below a check-list */
+.wwj-other-field { margin-top:12px; padding-top:12px; border-top:1px dashed #d6dfd9; }
+.wwj-other-field > span:first-child {
+ color:#6a7a85; font-size:10.5px; font-weight:800; letter-spacing:.06em;
+ text-transform:uppercase; display:block; margin-bottom:5px;
+}
 
 /* Field hint under a textarea */
 .wwj-field-hint { color:#6a7a85; font-size:12px; font-weight:400; text-transform:none; letter-spacing:normal; margin-top:-2px; }

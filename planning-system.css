@@ -364,8 +364,21 @@
 .hm-faq p a{color:var(--teal);font-weight:800}
 
 /* =============== FINAL CTA =============== */
-.hm-final{position:relative;background:#16746e;color:#fff;padding:36px 0;overflow:hidden;text-align:center;border-bottom:4px solid #e56f4a}
+/* Final CTA: contained dark-teal rounded card on the page background */
+.hm-final{position:relative;background:transparent;color:#fff;padding:44px 0;overflow:hidden;text-align:center}
 .hm-final-shapes{display:none !important}
+.hm-final-inner{
+ background:#0d3836;
+ border-radius:24px;
+ padding:44px 44px;
+ max-width:860px;
+ margin:0 auto;
+ position:relative; z-index:1;
+}
+@media (max-width:640px){
+ .hm-final{padding:28px 0}
+ .hm-final-inner{padding:32px 24px;border-radius:18px}
+}
 .hm-final-shapes{position:absolute;inset:0;pointer-events:none}
 .hm-shape-f1{width:420px;height:420px;left:-140px;top:-140px;background:radial-gradient(circle,var(--coral) 0%,transparent 70%);opacity:.6;animation:hm-float-a 16s ease-in-out infinite}
 .hm-shape-f2{width:380px;height:380px;right:-120px;bottom:-120px;background:radial-gradient(circle,var(--sun) 0%,transparent 70%);opacity:.35;animation:hm-float-b 20s ease-in-out infinite}
