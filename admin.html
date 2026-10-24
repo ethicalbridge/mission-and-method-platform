@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin · Method into Impact</title>
+<link rel="stylesheet" href="admin.css?v=admin-1">
+</head>
+<body>
+
+<!-- ============== Sign-in screen ============== -->
+<main id="signin" class="ad-signin" hidden>
+  <div class="ad-signin-card">
+    <h1>Admin</h1>
+    <p>Sign in with the admin email. You'll receive a one-time magic link in your inbox.</p>
+    <form id="signin-form">
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" required autocomplete="email" placeholder="hello@methodintoimpact.com">
+      </label>
+      <button type="submit">Send magic link</button>
+    </form>
+    <p id="signin-msg" class="ad-signin-msg" aria-live="polite"></p>
+  </div>
+</main>
+
+<!-- ============== Admin app ============== -->
+<div id="app" hidden>
+
+  <header class="ad-topbar">
+    <div class="ad-brand">
+      <span class="ad-brand-mark" aria-hidden="true"></span>
+      <strong>Admin</strong>
+      <span class="ad-brand-sub">Method into Impact</span>
+    </div>
+    <nav class="ad-nav">
+      <button type="button" data-stage-filter="all" class="active">All</button>
+      <button type="button" data-stage-filter="new">New</button>
+      <button type="button" data-stage-filter="booked">Booked</button>
+      <button type="button" data-stage-filter="met">Met</button>
+      <button type="button" data-stage-filter="proposal_sent">Proposal</button>
+      <button type="button" data-stage-filter="won">Won</button>
+      <button type="button" data-stage-filter="lost">Lost</button>
+    </nav>
+    <div class="ad-user">
+      <input id="search" type="search" placeholder="Search name, org, email…" aria-label="Search">
+      <button id="export-csv" type="button" title="Download CSV">⬇ CSV</button>
+      <span id="user-email" class="ad-user-email"></span>
+      <button id="signout" type="button" title="Sign out">Sign out</button>
+    </div>
+  </header>
+
+  <section class="ad-stats" aria-label="Pipeline stats">
+    <div class="ad-stat"><b id="stat-new">0</b><span>New</span></div>
+    <div class="ad-stat"><b id="stat-booked">0</b><span>Booked</span></div>
+    <div class="ad-stat"><b id="stat-met">0</b><span>Met</span></div>
+    <div class="ad-stat"><b id="stat-proposal">0</b><span>Proposal</span></div>
+    <div class="ad-stat"><b id="stat-won">0</b><span>Won</span></div>
+    <div class="ad-stat ad-stat-dim"><b id="stat-lost">0</b><span>Lost</span></div>
+  </section>
+
+  <main class="ad-main">
+    <section class="ad-list">
+      <table class="ad-table">
+        <thead>
+          <tr>
+            <th>Received</th>
+            <th>Name</th>
+            <th>Organisation / Idea</th>
+            <th>Path</th>
+            <th>Stage</th>
+            <th>Booking</th>
+          </tr>
+        </thead>
+        <tbody id="contacts-body">
+          <tr class="ad-empty"><td colspan="6">Loading…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <aside id="detail" class="ad-detail" hidden>
+      <button class="ad-detail-close" id="detail-close" type="button" aria-label="Close">×</button>
+      <div id="detail-body"></div>
+    </aside>
+  </main>
+
+</div>
+
+<script type="module" src="admin.js?v=admin-1"></script>
+</body>
+</html>
