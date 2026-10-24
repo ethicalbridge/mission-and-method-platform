@@ -1,6 +1,6 @@
 // Method into Impact · admin dashboard
-// Signed-in users whose email is in crm_admins can read/write the CRM tables.
-// Everyone else is blocked by RLS, even if they reach this page.
+// Signed-in users whose email is in crm_admins can read/write.
+// Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 
@@ -10,6 +10,33 @@ const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
 });
+
+// Pretty labels for brief fields — grouped per path.
+const FOUNDER_FIELDS = [
+  { k: 'f_country',      label: 'Where it will operate' },
+  { k: 'f_name_project', label: 'Working name' },
+  { k: 'f_pitch',        label: 'One-sentence pitch' },
+  { k: 'f_stage',        label: 'Where they are' },
+  { k: 'f_people',       label: 'Who\'s with them' },
+  { k: 'f_got',          label: 'What they already have', other: 'f_got_other' },
+  { k: 'f_help',         label: 'Where they need help',   other: 'f_help_other' },
+  { k: 'f_start',        label: 'Ideal start' },
+  { k: 'f_budget',       label: 'Budget (USD)' },
+  { k: 'f_story',        label: 'The honest story', long: true },
+];
+const ORG_FIELDS = [
+  { k: 'o_org',     label: 'Organisation' },
+  { k: 'o_role',    label: 'Their role' },
+  { k: 'o_link',    label: 'Link',  isLink: true },
+  { k: 'o_who',     label: 'Where they are / who they serve' },
+  { k: 'o_team',    label: 'Team size' },
+  { k: 'o_moment',  label: 'Where the org is right now' },
+  { k: 'o_trigger', label: 'What tipped them in', long: true },
+  { k: 'o_help',    label: 'Where they want help', other: 'o_help_other' },
+  { k: 'o_start',   label: 'Ideal start' },
+  { k: 'o_budget',  label: 'Budget (USD)' },
+  { k: 'o_story',   label: 'The honest version', long: true },
+];
 
 // ============== Elements ==============
 const $ = (sel) => document.querySelector(sel);
@@ -22,10 +49,10 @@ const signoutBtn   = $('#signout');
 const searchInput  = $('#search');
 const exportBtn    = $('#export-csv');
 const navBtns      = document.querySelectorAll('[data-stage-filter]');
-const tbody        = $('#contacts-body');
-const detailPanel  = $('#detail');
+const statTiles    = document.querySelectorAll('.ad-stat[data-stage]');
+const listEl       = $('#contacts-list');
+const listCountEl  = $('#list-count');
 const detailBody   = $('#detail-body');
-const detailClose  = $('#detail-close');
 
 // ============== State ==============
 let allContacts = [];
@@ -53,7 +80,7 @@ async function showApp(session) {
   signinScreen.hidden = true;
   appScreen.hidden = false;
   userEmail.textContent = session.user.email;
-  await loadContacts();
+  await loadContacts({ selectFirst: true });
   subscribeToChanges();
 }
 
@@ -104,7 +131,7 @@ pwdForm.addEventListener('submit', async (ev) => {
 });
 
 // ============== Data load ==============
-async function loadContacts() {
+async function loadContacts({ selectFirst = false } = {}) {
   const { data, error } = await supabase
     .from('crm_contacts')
     .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang')
@@ -112,15 +139,15 @@ async function loadContacts() {
     .limit(500);
 
   if (error) {
-    tbody.innerHTML = `<tr class="ad-empty"><td colspan="6">
-      ${error.code === 'PGRST116' || error.message.includes('row-level security')
-        ? 'You are signed in but not an admin. Ask the owner to add your email to crm_admins.'
+    listEl.innerHTML = `<li class="ad-empty">
+      ${error.message.includes('row-level security')
+        ? 'You\'re signed in but not an admin. Ask the owner to add your email to crm_admins.'
         : 'Error loading contacts: ' + error.message}
-    </td></tr>`;
+    </li>`;
     return;
   }
 
-  // Also load latest booking per contact for the table.
+  // Latest booking per contact for the list card badges.
   const ids = (data || []).map(c => c.id);
   let bookings = [];
   if (ids.length) {
@@ -131,17 +158,20 @@ async function loadContacts() {
       .order('scheduled_at', { ascending: false });
     bookings = r.data || [];
   }
-
   const byContact = {};
-  bookings.forEach(b => {
-    if (!byContact[b.contact_id]) byContact[b.contact_id] = [];
-    byContact[b.contact_id].push(b);
-  });
+  bookings.forEach(b => { (byContact[b.contact_id] = byContact[b.contact_id] || []).push(b); });
   (data || []).forEach(c => { c._bookings = byContact[c.id] || []; });
 
   allContacts = data || [];
   renderStats();
-  renderTable();
+  renderList();
+
+  if (selectFirst && allContacts.length && !selectedId) {
+    openDetail(allContacts[0].id);
+  } else if (selectedId) {
+    // Keep selection; refresh detail
+    openDetail(selectedId);
+  }
 }
 
 function renderStats() {
@@ -153,6 +183,8 @@ function renderStats() {
   $('#stat-proposal').textContent = counts.proposal_sent;
   $('#stat-won').textContent      = counts.won;
   $('#stat-lost').textContent     = counts.lost;
+
+  statTiles.forEach(t => t.classList.toggle('active', t.dataset.stage === currentFilter));
 }
 
 function filteredContacts() {
@@ -167,46 +199,43 @@ function filteredContacts() {
   });
 }
 
-function renderTable() {
+function renderList() {
   const rows = filteredContacts();
+  listCountEl.textContent = rows.length;
+
   if (!rows.length) {
-    tbody.innerHTML = `<tr class="ad-empty"><td colspan="6">No contacts in this view yet.</td></tr>`;
+    listEl.innerHTML = `<li class="ad-empty">No contacts in this view.</li>`;
     return;
   }
-  tbody.innerHTML = rows.map(c => {
-    const latestBooking = c._bookings[0];
-    const bookingCell = latestBooking
-      ? `<div class="ad-booking-when">
-          <b>${fmtDate(latestBooking.scheduled_at)}</b>
-          ${latestBooking.status !== 'confirmed' ? latestBooking.status : 'confirmed'}
-        </div>`
-      : `<span class="ad-cell-sub">—</span>`;
+
+  listEl.innerHTML = rows.map(c => {
+    const booking = c._bookings[0];
     return `
-    <tr data-id="${c.id}" class="${c.id === selectedId ? 'selected' : ''}">
-      <td class="ad-cell-when">${fmtRelative(c.created_at)}</td>
-      <td>
-        <div class="ad-cell-name">${esc(c.name)}</div>
-        <div class="ad-cell-sub">${esc(c.email)}</div>
-      </td>
-      <td class="ad-cell-org">${esc(c.organisation || '—')}
-        ${c.role ? `<div class="ad-cell-sub">${esc(c.role)}</div>` : ''}
-      </td>
-      <td><span class="ad-pill ad-pill-path-${c.path}">${c.path}</span></td>
-      <td><span class="ad-pill ad-pill-stage-${c.stage}">${c.stage.replace('_', ' ')}</span></td>
-      <td>${bookingCell}</td>
-    </tr>`;
+      <li class="ad-card ${c.id === selectedId ? 'active' : ''}" data-id="${c.id}">
+        <div class="ad-card-row">
+          <div class="ad-card-name">${esc(c.name)}</div>
+          <div class="ad-card-when">${fmtRelative(c.created_at)}</div>
+        </div>
+        <div class="ad-card-email">${esc(c.email)}</div>
+        <div class="ad-card-pills">
+          <span class="ad-pill ad-pill-path-${c.path}">${c.path}</span>
+          <span class="ad-pill ad-pill-stage-${c.stage}">${c.stage.replace('_',' ')}</span>
+          ${booking ? `<span class="ad-pill ad-pill-stage-booked">${fmtDate(booking.scheduled_at)}</span>` : ''}
+        </div>
+      </li>`;
   }).join('');
 
-  tbody.querySelectorAll('tr').forEach(tr => {
-    tr.addEventListener('click', () => openDetail(tr.dataset.id));
+  listEl.querySelectorAll('.ad-card').forEach(el => {
+    el.addEventListener('click', () => openDetail(el.dataset.id));
   });
 }
 
 // ============== Detail panel ==============
 async function openDetail(id) {
   selectedId = id;
-  renderTable();
-  detailPanel.hidden = false;
+  // Highlight the card
+  listEl.querySelectorAll('.ad-card').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+
   detailBody.innerHTML = '<p style="color:#6a7a85">Loading…</p>';
 
   const [briefRes, bookingsRes, eventsRes] = await Promise.all([
@@ -221,43 +250,9 @@ async function openDetail(id) {
   renderDetail(contact, briefRes.data, bookingsRes.data || [], eventsRes.data || []);
 }
 
-detailClose.addEventListener('click', () => {
-  detailPanel.hidden = true;
-  selectedId = null;
-  renderTable();
-});
-
 function renderDetail(c, brief, bookings, events) {
   const answers = (brief && brief.answers) || {};
-  const path = c.path;
-
-  // Only the fields relevant to the path. Everything else lives in the collapsed JSON below.
-  const founderFields = [
-    ['Country / city',                 answers.f_country],
-    ['Working name',                   answers.f_name_project],
-    ['One-sentence pitch',             answers.f_pitch],
-    ['Where they are',                 answers.f_stage],
-    ['Who\'s with them',               answers.f_people],
-    ['What they\'ve got',              arrOrOther(answers.f_got, answers.f_got_other)],
-    ['Where they need help',           arrOrOther(answers.f_help, answers.f_help_other)],
-    ['Ideal start',                    answers.f_start],
-    ['Budget (USD)',                   answers.f_budget],
-    ['The honest story',               answers.f_story, true],
-  ];
-  const orgFields = [
-    ['Organisation',          answers.o_org],
-    ['Role',                  answers.o_role],
-    ['Link',                  answers.o_link],
-    ['Where / who they serve',answers.o_who],
-    ['Team size',             answers.o_team],
-    ['Which sounds like us',  answers.o_moment],
-    ['What tipped them in',   answers.o_trigger, true],
-    ['Where they need help',  arrOrOther(answers.o_help, answers.o_help_other)],
-    ['Budget (USD)',          answers.o_budget],
-    ['Ideal start',           answers.o_start],
-    ['The honest version',    answers.o_story, true],
-  ];
-  const fields = path === 'founder' ? founderFields : orgFields;
+  const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
   const stageButtons = ['new','booked','met','proposal_sent','won','lost','archived'].map(s => `
     <button class="ad-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
@@ -266,43 +261,54 @@ function renderDetail(c, brief, bookings, events) {
   const timeline = events.map(e => `
     <li>
       <b>${esc(e.message || e.type)}</b>
-      ${fmtDateTime(e.created_at)}
+      <small>${fmtDateTime(e.created_at)}</small>
     </li>
   `).join('');
 
   const bookingsHtml = bookings.length ? bookings.map(b => `
-    <div class="ad-detail-field">
-      <span class="k">${b.status === 'confirmed' ? 'Booked' : b.status}</span>
-      <span class="v">${fmtDateTime(b.scheduled_at)}
-        ${b.meeting_url ? ` · <a href="${esc(b.meeting_url)}" target="_blank" rel="noopener">meeting link</a>` : ''}
-      </span>
+    <div class="ad-booking-card">
+      <b>${fmtDateTime(b.scheduled_at)}</b>
+      <small>Status: ${b.status}${b.meeting_url ? ` · <a href="${esc(b.meeting_url)}" target="_blank" rel="noopener">Join / meeting link ↗</a>` : ''}</small>
     </div>`).join('') : '<p style="color:#6a7a85;font-size:13px;margin:0">No booking yet.</p>';
 
+  const subMetaBits = [];
+  if (c.organisation)     subMetaBits.push(esc(c.organisation));
+  if (c.role)             subMetaBits.push(esc(c.role));
+  if (c.country)          subMetaBits.push(esc(c.country));
+  if (c.lang && c.lang !== 'en') subMetaBits.push(c.lang.toUpperCase());
+
   detailBody.innerHTML = `
-    <h2>${esc(c.name)}</h2>
-    <p class="ad-detail-sub">
-      <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>
-      · <span class="ad-pill ad-pill-path-${c.path}">${c.path}</span>
-      ${c.organisation ? ' · ' + esc(c.organisation) : ''}
-    </p>
+    <div class="ad-detail-head">
+      <div>
+        <h2>${esc(c.name)}</h2>
+        <p class="ad-detail-sub">
+          <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>
+          · <span class="ad-pill ad-pill-path-${c.path}">${c.path}</span>
+          ${subMetaBits.length ? ' · ' + subMetaBits.join(' · ') : ''}
+          · <small>received ${fmtRelative(c.created_at)}</small>
+        </p>
+      </div>
+    </div>
 
     <h3>Stage</h3>
     <div class="ad-detail-stage-row">${stageButtons}</div>
 
     <h3>Brief</h3>
-    ${fields.map(([k, v, long]) => fieldHtml(k, v, long)).join('')}
+    <div class="ad-detail-grid">
+      ${fields.map(f => fieldHtml(f, answers)).join('')}
+    </div>
 
     <h3>Bookings</h3>
     ${bookingsHtml}
 
     <h3>Notes (private)</h3>
     <div class="ad-notes-field">
-      <textarea id="notes-field">${esc(c.notes || '')}</textarea>
+      <textarea id="notes-field" placeholder="Call notes, next step, anything you want to remember about this contact.">${esc(c.notes || '')}</textarea>
       <button class="ad-save-btn" id="save-notes">Save note</button>
     </div>
 
     <h3>Timeline</h3>
-    <ul class="ad-timeline">${timeline || '<li>No events yet.</li>'}</ul>
+    <ul class="ad-timeline">${timeline || '<li><b>No events yet.</b></li>'}</ul>
   `;
 
   detailBody.querySelectorAll('[data-set-stage]').forEach(btn => {
@@ -311,40 +317,48 @@ function renderDetail(c, brief, bookings, events) {
   detailBody.querySelector('#save-notes').addEventListener('click', () => saveNotes(c.id));
 }
 
-function fieldHtml(k, v, long) {
-  if (v == null || v === '' || (Array.isArray(v) && !v.length)) return '';
-  if (Array.isArray(v)) {
-    return `<div class="ad-detail-field">
-      <span class="k">${esc(k)}</span>
-      <span class="ad-chip-row">${v.map(x => `<span class="ad-chip">${esc(String(x))}</span>`).join('')}</span>
+function fieldHtml(f, answers) {
+  let v = answers[f.k];
+  const other = f.other ? answers[f.other] : null;
+
+  if (Array.isArray(v) || other) {
+    const parts = [];
+    if (Array.isArray(v)) parts.push(...v);
+    else if (v) parts.push(String(v));
+    if (other && String(other).trim()) parts.push(`Other: ${other}`);
+    if (!parts.length) return '';
+    return `<div class="ad-detail-field ${f.long ? 'ad-detail-field-long' : ''}">
+      <span class="k">${esc(f.label)}</span>
+      <span class="ad-chip-row">${parts.map(x => `<span class="ad-chip">${esc(String(x))}</span>`).join('')}</span>
     </div>`;
   }
-  return `<div class="ad-detail-field ${long ? 'ad-detail-field-long' : ''}">
-    <span class="k">${esc(k)}</span>
+
+  if (v == null || v === '') return '';
+
+  if (f.isLink) {
+    return `<div class="ad-detail-field">
+      <span class="k">${esc(f.label)}</span>
+      <span class="v"><a href="${esc(String(v))}" target="_blank" rel="noopener">${esc(String(v))}</a></span>
+    </div>`;
+  }
+
+  return `<div class="ad-detail-field ${f.long ? 'ad-detail-field-long' : ''}">
+    <span class="k">${esc(f.label)}</span>
     <span class="v">${esc(String(v))}</span>
   </div>`;
-}
-
-function arrOrOther(arr, other) {
-  const parts = [];
-  if (Array.isArray(arr)) parts.push(...arr);
-  else if (arr) parts.push(String(arr));
-  if (other && String(other).trim()) parts.push(`Other: ${other}`);
-  return parts;
 }
 
 async function setStage(id, stage) {
   const { error } = await supabase.from('crm_contacts').update({ stage }).eq('id', id);
   if (error) { alert('Could not update stage: ' + error.message); return; }
   await supabase.from('crm_events').insert({
-    contact_id: id,
-    type: 'stage_change',
+    contact_id: id, type: 'stage_change',
     message: `Stage set to ${stage.replace('_', ' ')}`,
   });
   const c = allContacts.find(c => c.id === id);
   if (c) c.stage = stage;
   renderStats();
-  renderTable();
+  renderList();
   openDetail(id);
 }
 
@@ -361,24 +375,23 @@ async function saveNotes(id) {
 
 // ============== Live updates ==============
 function subscribeToChanges() {
-  supabase.channel('crm-contacts')
+  supabase.channel('crm-live')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_contacts' }, () => loadContacts())
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_bookings' }, () => loadContacts())
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_events'   }, () => { if (selectedId) openDetail(selectedId); })
     .subscribe();
 }
 
-// ============== Filters + search ==============
-navBtns.forEach(btn => btn.addEventListener('click', () => {
-  navBtns.forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentFilter = btn.dataset.stageFilter;
-  renderTable();
-}));
-
-searchInput.addEventListener('input', (ev) => {
-  currentSearch = ev.target.value;
-  renderTable();
-});
+// ============== Filter buttons + stat tile clicks ==============
+function applyFilter(stage) {
+  currentFilter = stage;
+  navBtns.forEach(b => b.classList.toggle('active', b.dataset.stageFilter === stage));
+  statTiles.forEach(t => t.classList.toggle('active', t.dataset.stage === stage));
+  renderList();
+}
+navBtns.forEach(btn => btn.addEventListener('click', () => applyFilter(btn.dataset.stageFilter)));
+statTiles.forEach(t => t.addEventListener('click', () => applyFilter(t.dataset.stage)));
+searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); });
 
 // ============== CSV export ==============
 exportBtn.addEventListener('click', () => {
@@ -408,13 +421,11 @@ function esc(s) {
 }
 function fmtDate(iso) {
   if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 function fmtDateTime(iso) {
   if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 function fmtRelative(iso) {
   if (!iso) return '—';
