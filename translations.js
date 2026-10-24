@@ -307,7 +307,7 @@ export const translations = {
     "wwj.areas.h2": "The ground I know, mapped to the five foundation steps.",
     "wwj.areas.intro_pre": "These are the five steps that make up the ",
     "wwj.areas.intro_link": "Method into Impact courses",
-    "wwj.areas.intro_post": ", and the same five that shape any package we scope. Each one I've done hands-on at Save the Children, Lutheran World Federation, AdvocAid, Consulting Base, the Argentine Public Defence or at Ethical Bridge and Method into Impact.",
+    "wwj.areas.intro_post": ", and the same five that shape any package we scope. Each draws on skills and knowledge I built across my roles at Save the Children, Lutheran World Federation, AdvocAid, Consulting Base and the Argentine Public Defence, and through founding Ethical Bridge and Method into Impact.",
     "wwj.areas.col1_eyebrow": "01 · Clarify",
     "wwj.areas.col1_h3": "Why we exist and the change we pursue.",
     "wwj.areas.col1_b1": "Start Here: Your Organisation Journey",
@@ -351,7 +351,7 @@ export const translations = {
     "wwj.limits.h2": "Clear limits, so expectations are honest.",
     "wwj.limits.intro": "Scope is as important as scope. These are the lines I don't cross.",
     "wwj.limits.item1_lead": "I don't invent what you'll do.",
-    "wwj.limits.item1_body": "I work with founders and teams who already have an idea, a cause or a working organisation; my job is to turn it into something (strategy, systems, launch), not to generate the idea itself. If you're still deciding what to build, you need a different kind of advisor.",
+    "wwj.limits.item1_body": "You bring the idea or the organisation; I turn it into something you can run. If you're still deciding what to build, you need a different kind of advisor.",
     "wwj.limits.item2_lead": "I'm not part of your team.",
     "wwj.limits.item2_body": "I prepare, review and coach, but the outputs are owned, held and run by the organisation. The aim is capability, not dependence.",
     "wwj.limits.item3_lead": "I don't promise funding.",
@@ -379,7 +379,7 @@ export const translations = {
 
     "wwj.final.eyebrow": "Pick up where you are",
     "wwj.final.h2": "Ready to work together?",
-    "wwj.final.body": "Start with a short brief and a free discovery call. If the fit is right, I come back with a tailored proposal. If it isn't, I say so and point you somewhere useful.",
+    "wwj.final.body": "Short brief, free discovery call. If it fits, I come back with a proposal. If not, I say so.",
     "wwj.final.cta": "Start a conversation",
 
     "wwj.dialog.eyebrow": "Free discovery call",
@@ -731,7 +731,7 @@ export const translations = {
     "wwj.areas.h2": "El terreno que conozco, mapeado a los cinco pasos fundacionales.",
     "wwj.areas.intro_pre": "Estos son los cinco pasos que forman los ",
     "wwj.areas.intro_link": "cursos de Method into Impact",
-    "wwj.areas.intro_post": ", y los mismos cinco que dan forma a cualquier paquete que acordemos. Cada uno lo he hecho de forma práctica en Save the Children, Lutheran World Federation, AdvocAid, Consulting Base, la Defensa Pública Argentina, o en Ethical Bridge y Method into Impact.",
+    "wwj.areas.intro_post": ", y los mismos cinco que dan forma a cualquier paquete que acordemos. Cada uno se apoya en habilidades y conocimientos que construí a lo largo de mis roles en Save the Children, Lutheran World Federation, AdvocAid, Consulting Base y la Defensa Pública Argentina, y al fundar Ethical Bridge y Method into Impact.",
     "wwj.areas.col1_eyebrow": "01 · Clarify",
     "wwj.areas.col1_h3": "Por qué existimos y el cambio que buscamos.",
     "wwj.areas.col1_b1": "Start Here: Your Organisation Journey",
@@ -775,7 +775,7 @@ export const translations = {
     "wwj.limits.h2": "Límites claros, para que las expectativas sean honestas.",
     "wwj.limits.intro": "El alcance es tan importante como el trabajo mismo. Estas son las líneas que no cruzo.",
     "wwj.limits.item1_lead": "No invento lo que vas a hacer.",
-    "wwj.limits.item1_body": "Trabajo con fundadoras y equipos que ya tienen una idea, una causa o una organización en marcha; mi trabajo es convertir eso en algo, estrategia, sistemas, lanzamiento, no generar la idea en sí. Si todavía estás decidiendo qué construir, necesitas otro tipo de asesora.",
+    "wwj.limits.item1_body": "Tú traes la idea o la organización; yo la convierto en algo que puedes operar. Si todavía estás decidiendo qué construir, necesitas otro tipo de asesora.",
     "wwj.limits.item2_lead": "No soy parte de tu equipo.",
     "wwj.limits.item2_body": "Preparo, reviso y acompaño, pero los entregables son propiedad de la organización, los mantiene y los ejecuta la organización. El objetivo es capacidad, no dependencia.",
     "wwj.limits.item3_lead": "No prometo financiamiento.",
@@ -803,7 +803,7 @@ export const translations = {
 
     "wwj.final.eyebrow": "Retoma desde donde estás",
     "wwj.final.h2": "¿Lista para trabajar juntas?",
-    "wwj.final.body": "Comienza con un breve resumen y una llamada de descubrimiento gratuita. Si hay encaje, vuelvo con una propuesta a medida. Si no, lo digo y te oriento hacia algo útil.",
+    "wwj.final.body": "Un brief corto, una llamada gratuita. Si encaja, vuelvo con una propuesta. Si no, lo digo.",
     "wwj.final.cta": "Iniciemos una conversación",
 
     "wwj.dialog.eyebrow": "Llamada de descubrimiento gratuita",

@@ -32,7 +32,7 @@
 }
 
 /* ---------- Sections ---------- */
-.wwj-section { padding:40px 0; }
+.wwj-section { padding:24px 0; }
 .wwj-section:nth-of-type(even) { background:#fff; }
 .wwj-sect-head { max-width:760px; margin:0 auto 20px; text-align:center; }
 .wwj-sect-head .eyebrow { color:#e56f4a; }
@@ -174,7 +174,7 @@
 @media (max-width:600px) { .wwj-how-grid { grid-template-columns:1fr; } }
 
 /* ---------- Final CTA ---------- */
-.wwj-final { background:#102e3b; color:#fff; padding:56px 0; }
+.wwj-final { background:#102e3b; color:#fff; padding:36px 0; }
 .wwj-final-inner { display:grid; grid-template-columns:1.5fr 1fr; gap:32px; align-items:center; }
 .wwj-final-inner .eyebrow { color:#f1c874; }
 .wwj-final-inner h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; color:#fff; font-size:clamp(24px,2.6vw,34px); margin:8px 0 12px; letter-spacing:-.01em; }
