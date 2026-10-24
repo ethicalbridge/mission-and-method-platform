@@ -384,7 +384,7 @@ export const translations = {
 
     "wwj.dialog.eyebrow": "Free discovery call",
     "wwj.dialog.title": "Start a conversation",
-    "wwj.dialog.note": "Prototype. The brief is captured and will be emailed to me once the submission integration is connected. No payment, no commitment.",
+    "wwj.dialog.note": "I'll see your answers before we talk. No payment, no commitment.",
     "wwj.dialog.label_name": "Your name",
     "wwj.dialog.label_email": "Email",
     "wwj.dialog.label_org": "Organisation or project",
@@ -979,7 +979,7 @@ export const translations = {
 
     "wwj.dialog.eyebrow": "Llamada de descubrimiento gratuita",
     "wwj.dialog.title": "Iniciemos una conversación",
-    "wwj.dialog.note": "Prototipo. El resumen se registra y me llegará por correo cuando esté conectada la integración de envíos. Sin pago, sin compromiso.",
+    "wwj.dialog.note": "Veré tus respuestas antes de que hablemos. Sin pago, sin compromiso.",
     "wwj.dialog.label_name": "Tu nombre",
     "wwj.dialog.label_email": "Correo electrónico",
     "wwj.dialog.label_org": "Organización o proyecto",

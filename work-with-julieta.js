@@ -33,6 +33,48 @@
   if (footer) footer.hidden = !picked;
  }
 
+ // ---------- Backend submission ----------
+ const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
+ const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
+
+ function collectAnswers (form) {
+  // Walk the active path's form fields and build a JSON payload.
+  // Checkboxes with the same name are collected as arrays; everything else is a string.
+  const data = { path: form.querySelector('input[name="path"]:checked')?.value };
+  try { data.lang = window.MIM_i18n?.lang; } catch { /* noop */ }
+
+  const activePrefix = data.path === 'founder' ? 'f_' : 'o_';
+  const fields = form.querySelectorAll(`[name^="${activePrefix}"]`);
+  const multi = {};
+
+  fields.forEach(el => {
+   if (el.disabled || !el.name) return;
+   if (el.type === 'checkbox') {
+    if (!multi[el.name]) multi[el.name] = [];
+    if (el.checked) multi[el.name].push(el.value);
+   } else if (el.type === 'radio') {
+    if (el.checked) data[el.name] = el.value;
+   } else {
+    data[el.name] = el.value;
+   }
+  });
+  Object.assign(data, multi);
+  return data;
+ }
+
+ async function postBrief (payload) {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/submit-brief`, {
+   method: 'POST',
+   headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${SUPABASE_ANON}`,
+   },
+   body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`submit-brief ${res.status}`);
+  return res.json();
+ }
+
  function validateMinChecks (form) {
   const groups = form.querySelectorAll('[data-require-min]');
   for (const group of groups) {
@@ -148,14 +190,27 @@
    r.addEventListener('change', () => activePathBlocks(form))
   );
 
-  form.onsubmit = ev => {
+  form.onsubmit = async ev => {
    ev.preventDefault();
    // Native validation first (required text/select/radio).
    if (!form.reportValidity()) return;
    // Then our custom "at least N" check for multi-selects.
    if (!validateMinChecks(form)) return;
+
    const name = firstNameOf(form);
-   // TODO: POST FormData(form) to the form backend here before showing confirmation.
+   const submitBtn = form.querySelector('button[type="submit"]');
+   const originalBtnText = submitBtn?.textContent;
+   if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+
+   const payload = collectAnswers(form);
+   // Fire-and-await: we still show the confirmation even if the backend fails,
+   // because Cal.com booking is independent — never block the person from booking.
+   try {
+    await postBrief(payload);
+   } catch (err) {
+    console.error('submit-brief failed:', err);
+   }
+   if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalBtnText; }
    showConfirmation(name);
   };
 
