@@ -262,3 +262,47 @@ nav.nav .nav-links a.nav-coming-soon em {
   margin-left: 6px;
   vertical-align: 1px;
 }
+
+/* ---- Slim footer (mirrors top nav) ---- */
+.site-footer .footer-map {
+  grid-template-columns: 1.4fr 1fr !important;
+  gap: 48px !important;
+  padding: 44px 0 36px !important;
+}
+.site-footer .footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-self: end;
+  text-align: right;
+}
+.site-footer .footer-nav a {
+  color: #cfd8d9;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 2px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color .18s;
+}
+.site-footer .footer-nav a:hover { color: #fff; }
+.site-footer .footer-nav em.footer-soon {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #ffe9dc;
+  background: rgba(229,111,74,.25);
+  border: 1px solid rgba(229,111,74,.5);
+  padding: 2px 7px;
+  border-radius: 999px;
+  line-height: 1;
+}
+@media (max-width: 760px) {
+  .site-footer .footer-map { grid-template-columns: 1fr !important; gap: 28px !important; }
+  .site-footer .footer-nav { justify-self: start; text-align: left; }
+}
