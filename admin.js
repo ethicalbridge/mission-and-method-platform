@@ -49,7 +49,7 @@ const signoutBtn   = $('#signout');
 const searchInput  = $('#search');
 const exportBtn    = $('#export-csv');
 const navBtns      = document.querySelectorAll('[data-stage-filter]');
-const statTiles    = document.querySelectorAll('.ad-stat[data-stage]');
+const statTiles    = document.querySelectorAll('.dash-stat[data-stage]');
 const listEl       = $('#contacts-list');
 const listCountEl  = $('#list-count');
 const detailBody   = $('#detail-body');
@@ -86,7 +86,7 @@ async function showApp(session) {
 
 signinForm.addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  signinMsg.className = 'ad-signin-msg';
+  signinMsg.className = 'dash-signin-msg';
   signinMsg.textContent = 'Signing in…';
   const fd = new FormData(signinForm);
   const { error } = await supabase.auth.signInWithPassword({
@@ -94,7 +94,7 @@ signinForm.addEventListener('submit', async (ev) => {
     password: fd.get('password'),
   });
   if (error) {
-    signinMsg.className = 'ad-signin-msg err';
+    signinMsg.className = 'dash-signin-msg err';
     signinMsg.textContent = error.message || 'Sign-in failed.';
   } else {
     signinMsg.className = '';
@@ -122,11 +122,11 @@ pwdForm.addEventListener('submit', async (ev) => {
   const fd = new FormData(pwdForm);
   const p1 = fd.get('new_password');
   const p2 = fd.get('confirm_password');
-  if (p1 !== p2) { pwdMsg.className = 'ad-signin-msg err'; pwdMsg.textContent = 'Passwords do not match.'; return; }
-  pwdMsg.className = 'ad-signin-msg'; pwdMsg.textContent = 'Saving…';
+  if (p1 !== p2) { pwdMsg.className = 'dash-signin-msg err'; pwdMsg.textContent = 'Passwords do not match.'; return; }
+  pwdMsg.className = 'dash-signin-msg'; pwdMsg.textContent = 'Saving…';
   const { error } = await supabase.auth.updateUser({ password: p1 });
-  if (error) { pwdMsg.className = 'ad-signin-msg err'; pwdMsg.textContent = error.message; return; }
-  pwdMsg.className = 'ad-signin-msg ok'; pwdMsg.textContent = 'Password updated.';
+  if (error) { pwdMsg.className = 'dash-signin-msg err'; pwdMsg.textContent = error.message; return; }
+  pwdMsg.className = 'dash-signin-msg ok'; pwdMsg.textContent = 'Password updated.';
   setTimeout(() => pwdDialog.close(), 900);
 });
 
@@ -141,7 +141,7 @@ async function loadContacts({ selectFirst = false } = {}) {
 
   if (error) {
     console.error('[admin] loadContacts error:', error);
-    listEl.innerHTML = `<li class="ad-empty">
+    listEl.innerHTML = `<li class="dash-empty">
       ${error.message.includes('row-level security') || error.message.includes('permission denied')
         ? 'You\'re signed in but not an admin. Ask the owner to add your email to crm_admins.'
         : 'Error loading contacts: ' + error.message}
@@ -207,28 +207,28 @@ function renderList() {
   listCountEl.textContent = rows.length;
 
   if (!rows.length) {
-    listEl.innerHTML = `<li class="ad-empty">No contacts in this view.</li>`;
+    listEl.innerHTML = `<li class="dash-empty">No contacts in this view.</li>`;
     return;
   }
 
   listEl.innerHTML = rows.map(c => {
     const booking = c._bookings[0];
     return `
-      <li class="ad-card ${c.id === selectedId ? 'active' : ''}" data-id="${c.id}">
-        <div class="ad-card-row">
-          <div class="ad-card-name">${esc(c.name)}</div>
-          <div class="ad-card-when">${fmtRelative(c.created_at)}</div>
+      <li class="dash-card ${c.id === selectedId ? 'active' : ''}" data-id="${c.id}">
+        <div class="dash-card-row">
+          <div class="dash-card-name">${esc(c.name)}</div>
+          <div class="dash-card-when">${fmtRelative(c.created_at)}</div>
         </div>
-        <div class="ad-card-email">${esc(c.email)}</div>
-        <div class="ad-card-pills">
-          <span class="ad-pill ad-pill-path-${c.path}">${c.path}</span>
-          <span class="ad-pill ad-pill-stage-${c.stage}">${c.stage.replace('_',' ')}</span>
-          ${booking ? `<span class="ad-pill ad-pill-stage-booked">${fmtDate(booking.scheduled_at)}</span>` : ''}
+        <div class="dash-card-email">${esc(c.email)}</div>
+        <div class="dash-card-pills">
+          <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>
+          <span class="dash-pill dash-pill-stage-${c.stage}">${c.stage.replace('_',' ')}</span>
+          ${booking ? `<span class="dash-pill dash-pill-stage-booked">${fmtDate(booking.scheduled_at)}</span>` : ''}
         </div>
       </li>`;
   }).join('');
 
-  listEl.querySelectorAll('.ad-card').forEach(el => {
+  listEl.querySelectorAll('.dash-card').forEach(el => {
     el.addEventListener('click', () => openDetail(el.dataset.id));
   });
 }
@@ -237,7 +237,7 @@ function renderList() {
 async function openDetail(id) {
   selectedId = id;
   // Highlight the card
-  listEl.querySelectorAll('.ad-card').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+  listEl.querySelectorAll('.dash-card').forEach(el => el.classList.toggle('active', el.dataset.id === id));
 
   detailBody.innerHTML = '<p style="color:#6a7a85">Loading…</p>';
 
@@ -258,7 +258,7 @@ function renderDetail(c, brief, bookings, events) {
   const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
   const stageButtons = ['new','booked','met','proposal_sent','won','lost','archived'].map(s => `
-    <button class="ad-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
+    <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
   `).join('');
 
   const timeline = events.map(e => `
@@ -269,7 +269,7 @@ function renderDetail(c, brief, bookings, events) {
   `).join('');
 
   const bookingsHtml = bookings.length ? bookings.map(b => `
-    <div class="ad-booking-card">
+    <div class="dash-booking-card">
       <b>${fmtDateTime(b.scheduled_at)}</b>
       <small>Status: ${b.status}${b.meeting_url ? ` · <a href="${esc(b.meeting_url)}" target="_blank" rel="noopener">Join / meeting link ↗</a>` : ''}</small>
     </div>`).join('') : '<p style="color:#6a7a85;font-size:13px;margin:0">No booking yet.</p>';
@@ -281,12 +281,12 @@ function renderDetail(c, brief, bookings, events) {
   if (c.lang && c.lang !== 'en') subMetaBits.push(c.lang.toUpperCase());
 
   detailBody.innerHTML = `
-    <div class="ad-detail-head">
+    <div class="dash-detail-head">
       <div>
         <h2>${esc(c.name)}</h2>
-        <p class="ad-detail-sub">
+        <p class="dash-detail-sub">
           <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>
-          · <span class="ad-pill ad-pill-path-${c.path}">${c.path}</span>
+          · <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>
           ${subMetaBits.length ? ' · ' + subMetaBits.join(' · ') : ''}
           · <small>received ${fmtRelative(c.created_at)}</small>
         </p>
@@ -294,10 +294,10 @@ function renderDetail(c, brief, bookings, events) {
     </div>
 
     <h3>Stage</h3>
-    <div class="ad-detail-stage-row">${stageButtons}</div>
+    <div class="dash-detail-stage-row">${stageButtons}</div>
 
     <h3>Brief</h3>
-    <div class="ad-detail-grid">
+    <div class="dash-detail-grid">
       ${fields.map(f => fieldHtml(f, answers)).join('')}
     </div>
 
@@ -305,13 +305,13 @@ function renderDetail(c, brief, bookings, events) {
     ${bookingsHtml}
 
     <h3>Notes (private)</h3>
-    <div class="ad-notes-field">
+    <div class="dash-notes-field">
       <textarea id="notes-field" placeholder="Call notes, next step, anything you want to remember about this contact.">${esc(c.notes || '')}</textarea>
-      <button class="ad-save-btn" id="save-notes">Save note</button>
+      <button class="dash-save-btn" id="save-notes">Save note</button>
     </div>
 
     <h3>Timeline</h3>
-    <ul class="ad-timeline">${timeline || '<li><b>No events yet.</b></li>'}</ul>
+    <ul class="dash-timeline">${timeline || '<li><b>No events yet.</b></li>'}</ul>
   `;
 
   detailBody.querySelectorAll('[data-set-stage]').forEach(btn => {
@@ -330,22 +330,22 @@ function fieldHtml(f, answers) {
     else if (v) parts.push(String(v));
     if (other && String(other).trim()) parts.push(`Other: ${other}`);
     if (!parts.length) return '';
-    return `<div class="ad-detail-field ${f.long ? 'ad-detail-field-long' : ''}">
+    return `<div class="dash-detail-field ${f.long ? 'dash-detail-field-long' : ''}">
       <span class="k">${esc(f.label)}</span>
-      <span class="ad-chip-row">${parts.map(x => `<span class="ad-chip">${esc(String(x))}</span>`).join('')}</span>
+      <span class="dash-chip-row">${parts.map(x => `<span class="dash-chip">${esc(String(x))}</span>`).join('')}</span>
     </div>`;
   }
 
   if (v == null || v === '') return '';
 
   if (f.isLink) {
-    return `<div class="ad-detail-field">
+    return `<div class="dash-detail-field">
       <span class="k">${esc(f.label)}</span>
       <span class="v"><a href="${esc(String(v))}" target="_blank" rel="noopener">${esc(String(v))}</a></span>
     </div>`;
   }
 
-  return `<div class="ad-detail-field ${f.long ? 'ad-detail-field-long' : ''}">
+  return `<div class="dash-detail-field ${f.long ? 'dash-detail-field-long' : ''}">
     <span class="k">${esc(f.label)}</span>
     <span class="v">${esc(String(v))}</span>
   </div>`;

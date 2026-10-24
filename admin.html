@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=admin-6">
+<link rel="stylesheet" href="admin.css?v=dash-1">
 </head>
 <body>
 
 <!-- ============== Sign-in screen ============== -->
-<main id="signin" class="ad-signin" hidden>
-  <div class="ad-signin-card">
-    <div class="ad-signin-brand">
+<main id="signin" class="dash-signin" hidden>
+  <div class="dash-signin-card">
+    <div class="dash-signin-brand">
       <svg viewBox="5 5 178 189" width="48" height="52" aria-hidden="true">
         <path d="M7 79 Q7 75 10.5 77.5 L77 131 Q80 134 77 136.5 L10.5 189.5 Q7 192 7 188 Z" fill="#0d3836"></path>
         <path d="M151 82 C116 99 70 139 43 188 L82 188 C91 151 117 111 151 82 Z" fill="#16746E"></path>
@@ -39,12 +39,12 @@
       </label>
       <button type="submit">Sign in</button>
     </form>
-    <p id="signin-msg" class="ad-signin-msg" aria-live="polite"></p>
+    <p id="signin-msg" class="dash-signin-msg" aria-live="polite"></p>
   </div>
 </main>
 
 <!-- ============== Change-password dialog ============== -->
-<dialog id="pwd-dialog" class="ad-pwd-dialog">
+<dialog id="pwd-dialog" class="dash-pwd-dialog">
   <form id="pwd-form" method="dialog">
     <h2>Change password</h2>
     <label>
@@ -55,8 +55,8 @@
       <span>Confirm new password</span>
       <input type="password" name="confirm_password" required minlength="8" autocomplete="new-password">
     </label>
-    <p id="pwd-msg" class="ad-signin-msg" aria-live="polite"></p>
-    <div class="ad-pwd-actions">
+    <p id="pwd-msg" class="dash-signin-msg" aria-live="polite"></p>
+    <div class="dash-pwd-actions">
       <button type="button" id="pwd-cancel">Cancel</button>
       <button type="submit" id="pwd-save">Save</button>
     </div>
@@ -66,20 +66,20 @@
 <!-- ============== Admin app ============== -->
 <div id="app" hidden>
 
-  <header class="ad-topbar">
-    <a class="ad-brand" href="/admin.html" aria-label="Method into Impact admin home">
+  <header class="dash-topbar">
+    <a class="dash-brand" href="/admin.html" aria-label="Method into Impact admin home">
       <svg viewBox="5 5 178 189" width="34" height="36" aria-hidden="true">
         <path d="M7 79 Q7 75 10.5 77.5 L77 131 Q80 134 77 136.5 L10.5 189.5 Q7 192 7 188 Z" fill="#0d3836"></path>
         <path d="M151 82 C116 99 70 139 43 188 L82 188 C91 151 117 111 151 82 Z" fill="#16746E"></path>
         <path d="M181 74 Q181 70 177.5 72 Q155 85 139 105 Q137 107.5 137 111 L137 189 Q137 192 140 192 L178 192 Q181 192 181 189 Z" fill="#0d3836"></path>
         <circle cx="159" cy="29.5" r="23" fill="#E56F4A"></circle>
       </svg>
-      <div class="ad-brand-text">
-        <strong>Method <span class="ad-brand-into">into</span> Impact</strong>
+      <div class="dash-brand-text">
+        <strong>Method <span class="dash-brand-into">into</span> Impact</strong>
         <small>Admin dashboard</small>
       </div>
     </a>
-    <nav class="ad-nav">
+    <nav class="dash-nav">
       <button type="button" data-stage-filter="all" class="active">All</button>
       <button type="button" data-stage-filter="new">New</button>
       <button type="button" data-stage-filter="booked">Booked</button>
@@ -88,37 +88,37 @@
       <button type="button" data-stage-filter="won">Won</button>
       <button type="button" data-stage-filter="lost">Lost</button>
     </nav>
-    <div class="ad-user">
+    <div class="dash-user">
       <input id="search" type="search" placeholder="Search…" aria-label="Search">
       <button id="export-csv" type="button" title="Download CSV">⬇ CSV</button>
-      <span id="user-email" class="ad-user-email"></span>
-      <button id="change-pwd" type="button" class="ad-user-sm" title="Change password">Password</button>
-      <button id="signout" type="button" class="ad-user-sm" title="Sign out">Sign out</button>
+      <span id="user-email" class="dash-user-email"></span>
+      <button id="change-pwd" type="button" class="dash-user-sm" title="Change password">Password</button>
+      <button id="signout" type="button" class="dash-user-sm" title="Sign out">Sign out</button>
     </div>
   </header>
 
-  <section class="ad-stats" aria-label="Pipeline stats">
-    <div class="ad-stat" data-stage="new"><b id="stat-new">0</b><span>New</span></div>
-    <div class="ad-stat" data-stage="booked"><b id="stat-booked">0</b><span>Booked</span></div>
-    <div class="ad-stat" data-stage="met"><b id="stat-met">0</b><span>Met</span></div>
-    <div class="ad-stat" data-stage="proposal_sent"><b id="stat-proposal">0</b><span>Proposal</span></div>
-    <div class="ad-stat" data-stage="won"><b id="stat-won">0</b><span>Won</span></div>
-    <div class="ad-stat ad-stat-dim" data-stage="lost"><b id="stat-lost">0</b><span>Lost</span></div>
+  <section class="dash-stats" aria-label="Pipeline stats">
+    <div class="dash-stat" data-stage="new"><b id="stat-new">0</b><span>New</span></div>
+    <div class="dash-stat" data-stage="booked"><b id="stat-booked">0</b><span>Booked</span></div>
+    <div class="dash-stat" data-stage="met"><b id="stat-met">0</b><span>Met</span></div>
+    <div class="dash-stat" data-stage="proposal_sent"><b id="stat-proposal">0</b><span>Proposal</span></div>
+    <div class="dash-stat" data-stage="won"><b id="stat-won">0</b><span>Won</span></div>
+    <div class="dash-stat dash-stat-dim" data-stage="lost"><b id="stat-lost">0</b><span>Lost</span></div>
   </section>
 
-  <main class="ad-main">
-    <aside class="ad-list" aria-label="Contacts">
-      <h2 class="ad-list-head">
-        Contacts <span id="list-count" class="ad-list-count">0</span>
+  <main class="dash-main">
+    <aside class="dash-list" aria-label="Contacts">
+      <h2 class="dash-list-head">
+        Contacts <span id="list-count" class="dash-list-count">0</span>
       </h2>
-      <ul id="contacts-list" class="ad-cards">
-        <li class="ad-empty">Loading…</li>
+      <ul id="contacts-list" class="dash-cards">
+        <li class="dash-empty">Loading…</li>
       </ul>
     </aside>
 
-    <section id="detail" class="ad-detail" aria-live="polite">
+    <section id="detail" class="dash-detail" aria-live="polite">
       <div id="detail-body">
-        <div class="ad-detail-blank">
+        <div class="dash-detail-blank">
           <svg viewBox="5 5 178 189" width="56" height="60" aria-hidden="true" style="opacity:.4">
             <path d="M7 79 Q7 75 10.5 77.5 L77 131 Q80 134 77 136.5 L10.5 189.5 Q7 192 7 188 Z" fill="#0d3836"></path>
             <path d="M151 82 C116 99 70 139 43 188 L82 188 C91 151 117 111 151 82 Z" fill="#16746E"></path>
@@ -133,6 +133,6 @@
 
 </div>
 
-<script type="module" src="admin.js?v=admin-6"></script>
+<script type="module" src="admin.js?v=dash-1"></script>
 </body>
 </html>
