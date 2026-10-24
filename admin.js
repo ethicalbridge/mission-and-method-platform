@@ -132,6 +132,7 @@ pwdForm.addEventListener('submit', async (ev) => {
 
 // ============== Data load ==============
 async function loadContacts({ selectFirst = false } = {}) {
+  console.log('[admin] loadContacts: querying crm_contacts…');
   const { data, error } = await supabase
     .from('crm_contacts')
     .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang')
@@ -139,13 +140,15 @@ async function loadContacts({ selectFirst = false } = {}) {
     .limit(500);
 
   if (error) {
+    console.error('[admin] loadContacts error:', error);
     listEl.innerHTML = `<li class="ad-empty">
-      ${error.message.includes('row-level security')
+      ${error.message.includes('row-level security') || error.message.includes('permission denied')
         ? 'You\'re signed in but not an admin. Ask the owner to add your email to crm_admins.'
         : 'Error loading contacts: ' + error.message}
     </li>`;
     return;
   }
+  console.log('[admin] loadContacts got', (data || []).length, 'rows');
 
   // Latest booking per contact for the list card badges.
   const ids = (data || []).map(c => c.id);
