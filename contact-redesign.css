@@ -53,3 +53,72 @@
   .ct-reasons-grid{grid-template-columns:1fr}
   .ct-form{padding:24px}
 }
+
+/* ---- "Write directly" email cards (new, replaces download-draft form) ---- */
+.ct-email-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.ct-email-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e0dbcd;
+  border-radius: 14px;
+  padding: 28px 28px 24px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 6px 18px rgba(10,22,28,.05);
+  transition: transform .18s, box-shadow .18s, border-color .18s;
+}
+.ct-email-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(10,22,28,.09);
+  border-color: #16746e;
+}
+.ct-email-eyebrow {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #e56f4a;
+}
+.ct-email-card h3 {
+  font-family: 'Playfair Display','DM Serif Display',Georgia,serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: #0a1419;
+  margin: 2px 0 6px;
+  letter-spacing: -.005em;
+  line-height: 1.25;
+  word-break: break-word;
+}
+.ct-email-card p {
+  font-size: 14.5px;
+  color: #4b6270;
+  line-height: 1.55;
+  margin: 0 0 6px;
+}
+.ct-email-cta {
+  display: inline-block;
+  color: #16746e;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  margin-top: auto;
+  padding-top: 4px;
+  border-bottom: 1px solid rgba(22,116,110,.35);
+  padding-bottom: 2px;
+  align-self: flex-start;
+}
+.ct-email-card:hover .ct-email-cta {
+  color: #0e4e4a;
+  border-color: #0e4e4a;
+}
+@media (max-width: 780px) {
+  .ct-email-grid { grid-template-columns: 1fr; }
+}

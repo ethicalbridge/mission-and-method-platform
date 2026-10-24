@@ -2,7 +2,7 @@
 // Reads language preference from localStorage, applies translations to any
 // element carrying a `data-i18n` attribute, and wires up the EN/ES switcher.
 
-import { translations } from './translations.js?v=i18n-2';
+import { translations } from './translations.js?v=i18n-3';
 
 const STORAGE_KEY = 'mim-lang';
 const DEFAULT_LANG = 'en';

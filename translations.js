@@ -116,16 +116,6 @@ export const translations = {
     "home.values.v5.title": "Built from experience",
     "home.values.v5.body": "We teach and apply what we tested building real organisations.",
 
-    "home.ecosystem.eyebrow": "OUR PLACE IN THE ECOSYSTEM",
-    "home.ecosystem.title": "Sister initiatives. One purpose.",
-    "home.ecosystem.sub": "Method into Impact sits inside a wider ecosystem of purpose-led work. Each initiative does one job, and they strengthen each other.",
-    "home.ecosystem.mim.name": "Method into Impact",
-    "home.ecosystem.mim.tag": "CONSULTANCY · LEARN · RUN",
-    "home.ecosystem.mim.body": "One-to-one consultancy today, with courses and resources opening next.",
-    "home.ecosystem.eb.name": "Ethical Bridge",
-    "home.ecosystem.eb.tag": "CONNECT · SHOWCASE",
-    "home.ecosystem.eb.body": "The global hub for meaningful work: a curated directory, opportunities and stories.",
-    "home.ecosystem.eb.link": "ethicalbridge.org ↗",
 
     "home.faq.eyebrow": "QUESTIONS, ANSWERED",
     "home.faq.title": "What to know before you begin.",
@@ -553,16 +543,6 @@ export const translations = {
     "home.values.v5.title": "Construido desde la experiencia",
     "home.values.v5.body": "Enseñamos y aplicamos lo que probamos construyendo organizaciones reales.",
 
-    "home.ecosystem.eyebrow": "NUESTRO LUGAR EN EL ECOSISTEMA",
-    "home.ecosystem.title": "Iniciativas hermanas. Un propósito.",
-    "home.ecosystem.sub": "Method into Impact se inscribe en un ecosistema más amplio de trabajo con propósito. Cada iniciativa cumple un rol y se fortalecen entre sí.",
-    "home.ecosystem.mim.name": "Method into Impact",
-    "home.ecosystem.mim.tag": "CONSULTORÍA · APRENDE · GESTIONA",
-    "home.ecosystem.mim.body": "Consultoría uno a uno hoy, con cursos y recursos abriendo después.",
-    "home.ecosystem.eb.name": "Ethical Bridge",
-    "home.ecosystem.eb.tag": "CONECTA · MUESTRA",
-    "home.ecosystem.eb.body": "El hub global para el trabajo con propósito: un directorio curado, oportunidades e historias.",
-    "home.ecosystem.eb.link": "ethicalbridge.org ↗",
 
     "home.faq.eyebrow": "PREGUNTAS, RESPONDIDAS",
     "home.faq.title": "Lo que necesitas saber antes de empezar.",

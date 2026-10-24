@@ -178,19 +178,19 @@ nav.nav .nav-links .account-link:hover{
 .site-footer .footer-contact-button{
   display:inline-flex;
   align-items:center;
-  padding:10px 18px !important;
+  padding:12px 22px !important;
   border-radius:999px !important;
-  background:transparent !important;
-  border:1px solid #f8ca68 !important;
-  color:#f8ca68 !important;
+  background:#e56f4a !important;
+  border:0 !important;
+  color:#fff !important;
   font-weight:800 !important;
-  font-size:13px !important;
+  font-size:13.5px !important;
   white-space:nowrap;
   transition:background .15s ease, color .15s ease;
 }
 .site-footer .footer-contact-button:hover{
-  background:#f8ca68 !important;
-  color:#0f2b37 !important;
+  background:#c7442b !important;
+  color:#fff !important;
 }
 
 /* Bottom line */
