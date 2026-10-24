@@ -49,10 +49,10 @@ export const translations = {
 
     // ===== Home / shared marketing =====
     "home.hero.eyebrow": "Method into Impact · Build, strengthen and run",
-    "home.hero.title": "Everything a purpose-led organisation needs to build, strengthen and run.",
-    "home.hero.lead": "One-to-one consultancy with Julieta today, with courses, impact tools, an evidence library and legal templates opening next. One method running through all of it.",
+    "home.hero.title": "Hands-on consultancy for founders turning an idea into an organisation.",
+    "home.hero.lead": "One-to-one work with Julieta to shape strategy, build structure, and leave you with the policies, systems and plan your next stage needs. Courses and resources follow in 2027.",
     "home.hero.cta_primary": "Book a free discovery call",
-    "home.hero.cta_ghost": "See everything we do →",
+    "home.hero.cta_ghost": "How the consultancy works →",
 
     "home.trust.label": "BUILT FOR PEOPLE BUILDING SOMETHING THAT MATTERS",
     "home.trust.ngo": "NGO founders",
@@ -66,10 +66,10 @@ export const translations = {
 
     "home.instructor.eyebrow": "ABOUT JULIETA",
     "home.instructor.title": "Built by someone who has done it.",
-    "home.instructor.role": "Julieta Castineira de Dios · Lawyer · Strategist · Founder of Ethical Bridge",
+    "home.instructor.role": "Julieta Castiñeira de Dios · Legal background · Strategist · Founder of Ethical Bridge",
     "home.what.eyebrow": "What we do",
     "home.what.title": "Five parts, one method.",
-    "home.what.sub": "Each one does one job. The consultancy is open now; the four resources open through 2027. Any one of them stands on its own; together they're one connected system.",
+    "home.what.sub": "The consultancy is open now. The four resources follow through 2027. One method runs through all of it, so what you learn in one carries into the others.",
     "home.what.consult.badge": "Available now",
     "home.what.consult.title": "Consultancy with Julieta",
     "home.what.consult.body": "One-to-one work with Julieta for founders turning an idea into an organisation and for small teams ready to scale. A free discovery call, a tailored proposal, an agreed Terms of Reference, and the deliverables your next stage actually needs.",
@@ -94,7 +94,7 @@ export const translations = {
     "home.what.note": "All four resources open through 2027. Notify me opens your mail app. No account, no spam, one email per launch.",
     "home.instructor.badge": "years<br>building purpose-led<br>organisations",
     "home.instructor.quote": "\"Purpose-led founders don't need another textbook. They need a sequence they can actually follow, and outputs they can share with a board the next morning.\"",
-    "home.instructor.bio": "Lawyer, strategist and organisation builder. Founded Ethical Bridge. 13+ years across Save the Children, Lutheran World Federation, AdvocAid, Consulting Base and the Argentine Public Defence.",
+    "home.instructor.bio": "Legal background, strategist and organisation builder. Founded Ethical Bridge. 13+ years across Save the Children, Lutheran World Federation, AdvocAid, Consulting Base and the Argentine Public Defence.",
     "home.instructor.full": "Full profile →",
     "home.instructor.work": "Work with Julieta →",
 
@@ -103,13 +103,13 @@ export const translations = {
     "home.values.v1.title": "Practical",
     "home.values.v1.body": "Every conversation and output leaves you with something you can use.",
     "home.values.v2.title": "Evidence-informed",
-    "home.values.v2.body": "We test assumptions against credible sources, not trends.",
+    "home.values.v2.body": "I test assumptions against credible sources, not trends.",
     "home.values.v3.title": "Accessible",
     "home.values.v3.body": "Pace, language and pricing suit small teams, with fair rates by country.",
     "home.values.v4.title": "Honest about limits",
-    "home.values.v4.body": "We say what is ready, what is not, and what we cannot promise.",
+    "home.values.v4.body": "I say what is ready, what is not, and what I cannot promise.",
     "home.values.v5.title": "Built from experience",
-    "home.values.v5.body": "We teach and apply what we tested building real organisations.",
+    "home.values.v5.body": "I teach and apply what I tested building real organisations.",
 
 
     "home.faq.eyebrow": "QUESTIONS, ANSWERED",
@@ -201,7 +201,7 @@ export const translations = {
     "wwj.hero.pledge": "One practitioner, one point of contact. No multi-partner teams, no handoffs.",
     "wwj.hero.cta_primary": "Start a conversation",
     "wwj.hero.cta_secondary": "See how we'd work together",
-    "wwj.hero.portrait_role": "Lawyer, strategist and organisation builder. · Founder of Method into Impact.",
+    "wwj.hero.portrait_role": "Legal background, strategist and organisation builder. · Founder of Method into Impact.",
     "wwj.hero.portrait_link": "Full profile",
 
     "wwj.start.eyebrow": "How we start · Free discovery",
@@ -356,8 +356,8 @@ export const translations = {
     "wwj.limits.item3_lead": "I don't promise funding.",
     "wwj.limits.item3_body": "No donor, platform or grant round can be guaranteed. I prepare you well; the decision stays with the funder.",
     "wwj.limits.item4_lead": "I don't commit your funds, sign contracts or speak publicly in your name.",
-    "wwj.limits.item5_lead": "I don't give formal legal opinions.",
-    "wwj.limits.item5_body": "I provide templates and legal-literacy guidance; where you need a formal opinion, work with a lawyer licensed in your jurisdiction.",
+    "wwj.limits.item5_lead": "Nothing provided is legal advice.",
+    "wwj.limits.item5_body": "No lawyer-client relationship is formed. For jurisdiction-specific matters, engage counsel licensed where you operate.",
     "wwj.limits.item6_lead": "I don't run operations day-to-day.",
     "wwj.limits.item6_body": "Running the organisation is the team's job; I help build what makes that running possible.",
 
@@ -374,7 +374,7 @@ export const translations = {
     "wwj.how.c5_lead": "05 · We leave a handover, not a cliff",
     "wwj.how.c5_body": "Every engagement ends with the handover we agreed in the Terms of Reference. Typically a named owner on your side for each output, a short guide, and a plan for how your team keeps running it alone.",
     "wwj.how.c6_lead": "06 · Fees sustain the platform",
-    "wwj.how.c6_body": "Consultation and package fees sustain Method into Impact. They keep the library free, the courses and tools priced low, and both accessible to organisations with limited budgets.",
+    "wwj.how.c6_body": "Clear scope, clear price, agreed in writing before anything starts. Fees reflect the work done and the risk taken, nothing more.",
 
     "wwj.final.eyebrow": "Pick up where you are",
     "wwj.final.h2": "Ready to work together?",
@@ -473,10 +473,10 @@ export const translations = {
 
     // ===== Inicio / marketing compartido =====
     "home.hero.eyebrow": "Method into Impact · Construye, fortalece y gestiona",
-    "home.hero.title": "Todo lo que una organización con propósito necesita para construirse, fortalecerse y funcionar.",
+    "home.hero.title": "Consultoría práctica para fundadoras que convierten una idea en una organización.",
     "home.hero.lead": "Trabajo uno a uno con fundadores y equipos pequeños con propósito para transformar una idea o una organización que ya no da abasto en algo que funciona. Estrategia, estructura, sistemas, políticas y un plan que los financiadores puedan leer.",
     "home.hero.cta_primary": "Reserva una llamada de descubrimiento gratis",
-    "home.hero.cta_ghost": "Ver todo lo que hacemos →",
+    "home.hero.cta_ghost": "Cómo funciona la consultoría →",
 
     "home.trust.label": "HECHO PARA PERSONAS QUE CONSTRUYEN ALGO QUE IMPORTA",
     "home.trust.ngo": "Fundadores de ONG",
@@ -493,7 +493,7 @@ export const translations = {
     "home.instructor.role": "Julieta Castiñeira de Dios · Abogada · Estratega · Fundadora de Ethical Bridge",
     "home.what.eyebrow": "Qué hacemos",
     "home.what.title": "Cinco partes, un mismo método.",
-    "home.what.sub": "Cada una cumple un rol. La consultoría está abierta ahora; los cuatro recursos abren a lo largo de 2027. Cada una se sostiene sola; juntas forman un sistema conectado.",
+    "home.what.sub": "La consultoría está abierta ahora. Los cuatro recursos abren a lo largo de 2027. Un mismo método atraviesa todo, para que lo que aprendas en uno se traslade al resto.",
     "home.what.consult.badge": "Disponible ahora",
     "home.what.consult.title": "Consultoría con Julieta",
     "home.what.consult.body": "Trabajo uno a uno con Julieta para fundadoras que convierten una idea en una organización y para equipos pequeños listos para crecer. Una llamada de descubrimiento gratuita, una propuesta a medida, Términos de Referencia acordados y los entregables que realmente necesita tu próxima etapa.",
@@ -518,7 +518,7 @@ export const translations = {
     "home.what.note": "Los cuatro recursos abren a lo largo de 2027. Avísame abre tu aplicación de correo. Sin cuenta, sin spam, un email por lanzamiento.",
     "home.instructor.badge": "años<br>construyendo organizaciones<br>con propósito",
     "home.instructor.quote": "\"Las fundadoras con propósito no necesitan otro manual. Necesitan una secuencia que puedan seguir de verdad, y entregables que puedan compartir con una junta a la mañana siguiente.\"",
-    "home.instructor.bio": "Abogada, estratega y constructora de organizaciones. Fundadora de Ethical Bridge. Más de 13 años en Save the Children, Lutheran World Federation, AdvocAid, Consulting Base y la Defensa Pública Argentina.",
+    "home.instructor.bio": "Formación jurídica, estratega y constructora de organizaciones. Fundadora de Ethical Bridge. Más de 13 años en Save the Children, Lutheran World Federation, AdvocAid, Consulting Base y la Defensa Pública Argentina.",
     "home.instructor.full": "Perfil completo →",
     "home.instructor.work": "Trabaja con Julieta →",
 
@@ -531,9 +531,9 @@ export const translations = {
     "home.values.v3.title": "Accesible",
     "home.values.v3.body": "Ritmo, lenguaje y precios pensados para equipos pequeños, con tarifas justas por país.",
     "home.values.v4.title": "Honesto con los límites",
-    "home.values.v4.body": "Decimos qué está listo, qué no, y qué no podemos prometer.",
+    "home.values.v4.body": "Digo qué está listo, qué no, y qué no puedo prometer.",
     "home.values.v5.title": "Construido desde la experiencia",
-    "home.values.v5.body": "Enseñamos y aplicamos lo que probamos construyendo organizaciones reales.",
+    "home.values.v5.body": "Enseño y aplico lo que probé construyendo organizaciones reales.",
 
 
     "home.faq.eyebrow": "PREGUNTAS, RESPONDIDAS",
@@ -624,7 +624,7 @@ export const translations = {
     "wwj.hero.pledge": "Una sola profesional, un solo punto de contacto. Sin equipos multi-socio, sin traspasos.",
     "wwj.hero.cta_primary": "Iniciemos una conversación",
     "wwj.hero.cta_secondary": "Mira cómo trabajaríamos juntos",
-    "wwj.hero.portrait_role": "Abogada, estratega y constructora de organizaciones. · Fundadora de Method into Impact.",
+    "wwj.hero.portrait_role": "Formación jurídica, estratega y constructora de organizaciones. · Fundadora de Method into Impact.",
     "wwj.hero.portrait_link": "Perfil completo",
 
     "wwj.start.eyebrow": "Cómo empezamos · Descubrimiento gratuito",
@@ -779,7 +779,7 @@ export const translations = {
     "wwj.limits.item3_lead": "No prometo financiamiento.",
     "wwj.limits.item3_body": "Ningún donante, plataforma o convocatoria se puede garantizar. Te preparo bien; la decisión queda en manos del financiador.",
     "wwj.limits.item4_lead": "No comprometo tus fondos, no firmo contratos ni hablo públicamente en tu nombre.",
-    "wwj.limits.item5_lead": "No doy opiniones legales formales.",
+    "wwj.limits.item5_lead": "Nada de lo que ofrezco es asesoramiento legal.",
     "wwj.limits.item5_body": "Proveo plantillas y orientación de alfabetización legal; cuando necesites una opinión formal, trabaja con un abogado habilitado en tu jurisdicción.",
     "wwj.limits.item6_lead": "No llevo las operaciones del día a día.",
     "wwj.limits.item6_body": "Hacer funcionar la organización es trabajo del equipo; yo ayudo a construir lo que hace posible ese funcionamiento.",
@@ -797,7 +797,7 @@ export const translations = {
     "wwj.how.c5_lead": "05 · Dejamos un traspaso, no un vacío",
     "wwj.how.c5_body": "Cada trabajo termina con el traspaso que acordamos en los Términos de Referencia. Generalmente un responsable nombrado de tu lado para cada entregable, una guía breve y un plan de cómo tu equipo lo sigue ejecutando solo.",
     "wwj.how.c6_lead": "06 · Los honorarios sostienen la plataforma",
-    "wwj.how.c6_body": "Los honorarios de consultoría y paquetes sostienen Method into Impact. Mantienen la biblioteca gratuita, los cursos y las herramientas a precio bajo, y ambos accesibles para organizaciones con presupuesto limitado.",
+    "wwj.how.c6_body": "Alcance claro, precio claro, acordado por escrito antes de empezar. Los honorarios reflejan el trabajo realizado y el riesgo asumido, nada más.",
 
     "wwj.final.eyebrow": "Retoma desde donde estás",
     "wwj.final.h2": "¿Lista para trabajar juntas?",

@@ -192,3 +192,58 @@ body{background:#f7f8f6}.language-bar{min-height:30px;background:#f7f8f6;border-
 @media (max-width:900px){
   .lang-switch{margin:4px 0}
 }
+
+/* ======= Design unification pass (audit items) ======= */
+
+/* 1. Unify H1 serif on home + contact to Playfair (currently inherit DM Serif Display) */
+.hm-hero h1, .hm-hero-contact h1 {
+  font-family: 'Playfair Display','DM Serif Display',Georgia,serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -.012em !important;
+}
+.hm-hero h1 em, .hm-hero-contact h1 em {
+  font-family: 'Playfair Display','DM Serif Display',Georgia,serif !important;
+  font-style: italic;
+  font-weight: 700;
+}
+
+/* 2. Unify buttons: alias .button and .fp-cta to the .hm-btn-* visual system */
+.button, .fp-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #e56f4a;
+  color: #fff !important;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .18s, transform .18s;
+}
+.button:hover, .fp-cta:hover { background: #c7442b; transform: translateY(-1px); }
+.button.ghost {
+  background: transparent;
+  color: #16746e !important;
+  border: 1.5px solid #16746e;
+}
+.button.ghost:hover { background: #16746e; color: #fff !important; }
+
+/* 3. Focus-visible outline on the primary coral button */
+.hm-btn-primary:focus-visible, .button:focus-visible, .fp-cta:focus-visible {
+  outline: 2px solid #0d3836;
+  outline-offset: 3px;
+}
+
+/* 4. Nav "coming soon" labels: don't dim the whole label, let the chip carry state */
+nav.nav .nav-links .nav-coming-soon,
+nav.nav .nav-links a.nav-coming-soon {
+  opacity: 1 !important;
+}
+
+/* 5. Consult (work-with-julieta) section padding — match home's rhythm */
+.wwj-section { padding: 72px 0 !important; }
+.wwj-hero { padding: 72px 0 56px !important; }
