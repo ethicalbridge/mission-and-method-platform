@@ -51,7 +51,7 @@ export const translations = {
     "home.hero.eyebrow": "Method into Impact · Build, strengthen and run",
     "home.hero.title": "Hands-on consultancy for founders turning an idea into an organisation.",
     "home.hero.lead": "One-to-one work with Julieta to shape strategy, build structure, and leave you with the policies, systems and plan your next stage needs. Courses and resources follow in 2027.",
-    "home.hero.cta_primary": "Book a free discovery call",
+    "home.hero.cta_primary": "Start a conversation",
     "home.hero.cta_ghost": "How the consultancy works →",
 
     "home.trust.label": "BUILT FOR PEOPLE BUILDING SOMETHING THAT MATTERS",
@@ -131,7 +131,7 @@ export const translations = {
     "home.final.eyebrow": "PICK UP WHERE YOU ARE",
     "home.final.title": "Ready to work together?",
     "home.final.sub": "Send a short brief and we'll set up a free 30-minute discovery call.",
-    "home.final.cta_primary": "Book a free discovery call",
+    "home.final.cta_primary": "Start a conversation",
 
     // ===== Courses =====
     "courses.hero.eyebrow": "COURSES · FIVE QUESTIONS · ONE ORGANISATION",
@@ -605,7 +605,7 @@ export const translations = {
     "home.hero.eyebrow": "Method into Impact · Construye, fortalece y gestiona",
     "home.hero.title": "Consultoría práctica para fundadoras que convierten una idea en una organización.",
     "home.hero.lead": "Trabajo uno a uno con fundadores y equipos pequeños con propósito para transformar una idea o una organización que ya no da abasto en algo que funciona. Estrategia, estructura, sistemas, políticas y un plan que los financiadores puedan leer.",
-    "home.hero.cta_primary": "Reserva una llamada de descubrimiento gratis",
+    "home.hero.cta_primary": "Iniciar una conversación",
     "home.hero.cta_ghost": "Cómo funciona la consultoría →",
 
     "home.trust.label": "HECHO PARA PERSONAS QUE CONSTRUYEN ALGO QUE IMPORTA",
@@ -684,7 +684,7 @@ export const translations = {
     "home.final.eyebrow": "RETOMA DONDE ESTÁS",
     "home.final.title": "¿Lista para trabajar juntas?",
     "home.final.sub": "Envíame un brief corto y agendamos una llamada de descubrimiento gratis de 30 minutos.",
-    "home.final.cta_primary": "Reserva una llamada de descubrimiento gratis",
+    "home.final.cta_primary": "Iniciar una conversación",
 
     // ===== Cursos =====
     "courses.hero.eyebrow": "CURSOS · CINCO PREGUNTAS · UNA ORGANIZACIÓN",
