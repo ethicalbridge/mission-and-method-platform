@@ -297,9 +297,9 @@ function renderDetail(c, brief, bookings, events) {
     <div class="dash-detail-stage-row">${stageButtons}</div>
 
     <h3>Brief</h3>
-    <div class="dash-detail-grid">
-      ${fields.map(f => fieldHtml(f, answers)).join('')}
-    </div>
+    ${brief
+      ? `<div class="dash-detail-grid">${fields.map(f => fieldHtml(f, answers)).join('')}</div>`
+      : `<p class="dash-detail-no-brief">No brief submitted. This contact booked directly on Cal.com without filling the form.</p>`}
 
     <h3>Bookings</h3>
     ${bookingsHtml}
