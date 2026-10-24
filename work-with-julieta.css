@@ -4,7 +4,7 @@
 .wwj-main  { padding-bottom:72px; }
 
 /* ---------- Hero (editorial profile, not SaaS hero) ---------- */
-.wwj-hero { background:linear-gradient(165deg,#fffaf3 0%,#f5efe3 55%,#efe6d1 100%); padding:56px 0 56px; border-bottom:1px solid #e6ddc9; }
+.wwj-hero { background:linear-gradient(165deg,#fffaf3 0%,#f5efe3 55%,#efe6d1 100%); padding:48px 0 36px; border-bottom:1px solid #e6ddc9; }
 .wwj-hero-inner { display:grid; grid-template-columns:1.5fr 1fr; gap:72px; align-items:center; }
 
 .wwj-hero-lead h1 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; color:#0a1419; font-size:clamp(34px,4.4vw,54px); line-height:1.04; margin:0 0 24px; letter-spacing:-.018em; text-wrap:balance; }
@@ -32,7 +32,7 @@
 }
 
 /* ---------- Sections ---------- */
-.wwj-section { padding:56px 0; }
+.wwj-section { padding:40px 0; }
 .wwj-section:nth-of-type(even) { background:#fff; }
 .wwj-sect-head { max-width:760px; margin:0 auto 28px; text-align:center; }
 .wwj-sect-head .eyebrow { color:#e56f4a; }
