@@ -436,3 +436,134 @@
   .hm-coming-grid{grid-template-columns:1fr;gap:18px}
   .hm-coming-card{padding:28px 24px 24px}
 }
+
+/* ---- "What we do" unified section (replaces pillars + coming-soon) ---- */
+.hm-what-featured {
+  display: block;
+  background: #fff;
+  border: 1px solid #e0dbcd;
+  border-radius: 16px;
+  padding: 36px 36px 32px;
+  margin: 0 auto 24px;
+  max-width: 1080px;
+  box-shadow: 0 10px 28px rgba(10,22,28,.07);
+  border-top: 3px solid #16746e;
+}
+.hm-what-featured .hm-what-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: #e9f4ef;
+  color: #0e4e4a;
+  margin-bottom: 14px;
+}
+.hm-what-featured h3 {
+  font-family: 'Playfair Display','DM Serif Display',Georgia,serif;
+  font-weight: 700;
+  font-size: clamp(26px, 2.8vw, 34px);
+  color: #0a1419;
+  margin: 0 0 12px;
+  letter-spacing: -.012em;
+  line-height: 1.15;
+}
+.hm-what-featured p {
+  font-size: 16px;
+  color: #243743;
+  line-height: 1.6;
+  margin: 0 0 20px;
+  max-width: 70ch;
+}
+.hm-what-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+.hm-what-mini-link {
+  color: #16746e;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  border-bottom: 1.5px solid rgba(22,116,110,.4);
+  padding-bottom: 2px;
+}
+.hm-what-mini-link:hover { color: #0e4e4a; border-color: #0e4e4a; }
+
+.hm-what-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.hm-what-card {
+  background: #fff;
+  border: 1px solid #e0dbcd;
+  border-radius: 14px;
+  padding: 22px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 3px solid #e56f4a;
+}
+.hm-what-card .hm-what-badge {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #ffe9dc;
+  color: #c7442b;
+}
+.hm-what-card h3 {
+  font-family: 'Playfair Display','DM Serif Display',Georgia,serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #0a1419;
+  margin: 2px 0 4px;
+  letter-spacing: -.005em;
+  line-height: 1.2;
+}
+.hm-what-card p {
+  font-size: 13.5px;
+  color: #4b6270;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+.hm-what-notify {
+  display: inline-block;
+  color: #e56f4a;
+  font-weight: 800;
+  font-size: 13px;
+  text-decoration: none;
+  margin-top: 8px;
+  letter-spacing: .01em;
+  border-bottom: 1.5px solid rgba(229,111,74,.4);
+  padding-bottom: 2px;
+  align-self: flex-start;
+}
+.hm-what-notify:hover { color: #c7442b; border-color: #c7442b; }
+
+.hm-what-note {
+  text-align: center;
+  font-size: 13px;
+  color: #4b6270;
+  margin: 24px auto 0;
+  max-width: 760px;
+  font-style: italic;
+}
+
+@media (max-width: 1024px) {
+  .hm-what-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .hm-what-grid { grid-template-columns: 1fr; }
+  .hm-what-featured { padding: 26px 22px 24px; }
+}
