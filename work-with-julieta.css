@@ -196,14 +196,106 @@
 .wwj-modal-close { background:transparent; border:0; font-size:28px; color:#546974; cursor:pointer; line-height:1; padding:0 4px; }
 .wwj-modal-close:hover { color:#06161c; }
 
-.wwj-form { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.wwj-form .full { grid-column:1/-1; }
-.wwj-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; font-weight:800; color:#16746e; letter-spacing:.02em; text-transform:uppercase; }
-.wwj-form input, .wwj-form select, .wwj-form textarea { font:inherit; font-size:14px; padding:9px 11px; border:1px solid #c9d6ce; border-radius:8px; background:#fff; color:#102e3b; text-transform:none; font-weight:400; letter-spacing:normal; }
+/* Dialog gets wider — branched form has a lot more content now */
+.wwj-modal { max-width:720px; max-height:90vh; overflow-y:auto; }
+
+.wwj-form { display:block; }
+.wwj-form .full { display:block; }
+.wwj-form > *:not(:last-child) { margin-bottom:18px; }
+
+/* Fieldset = one logical section */
+.wwj-fieldset { border:0; margin:0; padding:0; }
+.wwj-fieldset + .wwj-fieldset { margin-top:22px; }
+.wwj-fieldset legend {
+ display:block; font-family:'Playfair Display','DM Serif Display',Georgia,serif;
+ font-weight:700; color:#06161c; font-size:17px; letter-spacing:-.005em;
+ margin:0 0 10px; padding:0;
+}
+.wwj-fieldset legend small { color:#6a7a85; font-weight:400; font-size:13px; margin-left:4px; font-family:'Nunito Sans',system-ui,sans-serif; }
+
+.wwj-fieldset > label,
+.wwj-fieldset .wwj-check-group,
+.wwj-fieldset .wwj-grid-2 { margin-bottom:12px; }
+.wwj-fieldset > label:last-child,
+.wwj-fieldset .wwj-check-group:last-child,
+.wwj-fieldset .wwj-grid-2:last-child { margin-bottom:0; }
+
+/* Standard label + control */
+.wwj-form label { display:flex; flex-direction:column; gap:5px; font-size:11.5px; font-weight:800; color:#16746e; letter-spacing:.03em; text-transform:uppercase; }
+.wwj-form label em { color:#6a7a85; font-style:normal; font-weight:500; font-size:11px; margin-left:4px; text-transform:none; letter-spacing:0; }
+.wwj-form input, .wwj-form select, .wwj-form textarea {
+ font:inherit; font-size:14px; padding:10px 12px;
+ border:1px solid #c9d6ce; border-radius:8px; background:#fff; color:#102e3b;
+ text-transform:none; font-weight:400; letter-spacing:normal;
+ width:100%; box-sizing:border-box;
+}
 .wwj-form input:focus, .wwj-form select:focus, .wwj-form textarea:focus { outline:0; border-color:#16746e; box-shadow:0 0 0 2px rgba(22,116,110,.15); }
-.wwj-form textarea { min-height:90px; resize:vertical; }
-.wwj-form .button.full { grid-column:1/-1; background:#e56f4a; color:#fff; border:0; padding:12px; font-weight:800; font-size:15px; }
-.wwj-form .button.full:hover { background:#c7442b; }
+.wwj-form textarea { min-height:110px; resize:vertical; line-height:1.5; }
+.wwj-form input:invalid:not(:placeholder-shown),
+.wwj-form select:invalid:not(:focus),
+.wwj-form textarea:invalid:not(:placeholder-shown) { border-color:#e56f4a; }
+
+/* 2-column pair (name+email, role+org, etc.) */
+.wwj-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:560px) { .wwj-grid-2 { grid-template-columns:1fr; } }
+
+/* ---------- Path chooser (step 0) ---------- */
+.wwj-path-chooser legend { color:#16746e; font-size:14px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; font-family:'Nunito Sans',system-ui,sans-serif; }
+.wwj-radio-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:560px) { .wwj-radio-cards { grid-template-columns:1fr; } }
+.wwj-radio-card {
+ display:flex; align-items:flex-start; gap:10px;
+ padding:14px 14px 14px 12px; border:1.5px solid #d6dfd9; border-radius:12px;
+ background:#fff; cursor:pointer; transition:border-color .15s, background .15s;
+}
+.wwj-radio-card:hover { border-color:#16746e; background:#f6fbfa; }
+.wwj-radio-card input { margin-top:3px; accent-color:#16746e; width:16px; height:16px; }
+.wwj-radio-card:has(input:checked) { border-color:#16746e; background:#eaf6f3; }
+.wwj-radio-card-body { display:flex; flex-direction:column; gap:3px; }
+.wwj-radio-card-body b { font-size:14px; color:#06161c; font-weight:800; text-transform:none; letter-spacing:normal; font-family:'Nunito Sans',system-ui,sans-serif; }
+.wwj-radio-card-body small { font-size:12.5px; color:#546974; line-height:1.45; font-weight:400; text-transform:none; letter-spacing:normal; }
+
+/* ---------- Radio and checkbox groups ---------- */
+.wwj-radio-group { gap:8px; }
+.wwj-radio-group > span:first-child { color:#16746e; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
+.wwj-radio-list, .wwj-check-list {
+ display:flex; flex-direction:column; gap:6px;
+ background:#fcfaf5; border:1px solid #ece4d2; border-radius:8px; padding:10px 12px;
+}
+.wwj-radio-list label, .wwj-check-list label {
+ display:flex; gap:8px; align-items:flex-start;
+ font-size:13.5px; color:#1e3942; font-weight:500; text-transform:none; letter-spacing:normal;
+ cursor:pointer; line-height:1.45;
+}
+.wwj-radio-list label:hover, .wwj-check-list label:hover { color:#06161c; }
+.wwj-radio-list input, .wwj-check-list input {
+ width:auto; margin:3px 0 0; padding:0; accent-color:#16746e;
+ flex:0 0 auto;
+}
+
+.wwj-check-group { display:flex; flex-direction:column; gap:6px; }
+.wwj-check-label { color:#16746e; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
+.wwj-check-label em { color:#6a7a85; font-style:normal; font-weight:500; font-size:11px; margin-left:4px; text-transform:none; letter-spacing:0; }
+
+/* Field hint under a textarea */
+.wwj-field-hint { color:#6a7a85; font-size:12px; font-weight:400; text-transform:none; letter-spacing:normal; margin-top:-2px; }
+
+/* Submit footer */
+.wwj-form-footer { margin-top:22px; padding-top:16px; border-top:1px solid #ece4d2; }
+.wwj-form-footer .button.full {
+ display:block; width:100%; background:#e56f4a; color:#fff; border:0;
+ padding:14px; font-weight:800; font-size:15px; border-radius:10px; cursor:pointer;
+}
+.wwj-form-footer .button.full:hover { background:#c7442b; }
+
+/* Cal.com placeholder + eventual embed */
+.wwj-cal-placeholder {
+ margin-top:14px; padding:14px 16px;
+ border:1px dashed #c9d6ce; border-radius:10px; background:#f6fbfa; color:#1e3942;
+}
+.wwj-cal-placeholder b { display:block; color:#06161c; font-size:14px; margin-bottom:4px; }
+.wwj-cal-placeholder p { margin:0; font-size:13px; color:#546974; line-height:1.5; }
+.wwj-cal-embed { margin-top:14px; }
 .wwj-booking-price { text-align:right; color:#546974; font-size:13px; margin:4px 0 8px; }
 .form-help { font-size:12px; color:#546974; margin:-2px 0 0; }
 .wwj-prototype-note { background:#fff5e7; border:1px solid #f1c874; border-radius:8px; padding:10px 12px; font-size:12.5px; color:#8a5e14; margin:0 0 16px; }

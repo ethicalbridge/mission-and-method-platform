@@ -122,6 +122,19 @@
 @media (max-width: 780px) {
   .ct-email-grid { grid-template-columns: 1fr; }
 }
+/* Single-card variant: narrower column, centered under the heading */
+.ct-email-grid-single {
+  grid-template-columns: minmax(0, 560px);
+  justify-content: center;
+}
+.ct-email-alias {
+  display: block;
+  font-size: 13px;
+  color: #6a7a85;
+  line-height: 1.5;
+  margin: 2px 0 10px;
+}
+.ct-email-alias b { color: #0a1419; font-weight: 700; }
 
 /* ---- Fix .hm-lead washing out on light section backgrounds ---- */
 /* The base .hm-lead (planning-system.css line 197) is coloured for the dark
