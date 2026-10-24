@@ -5,7 +5,7 @@
 
 /* ---------- Hero ---------- */
 .wwj-hero { background:linear-gradient(180deg,#f5efe3 0%, #fffaf3 100%); padding:48px 0 44px; border-bottom:1px solid #e6ddc9; }
-.wwj-hero-inner { display:grid; grid-template-columns:1.3fr 1fr; gap:40px; align-items:center; }
+.wwj-hero-inner { display:grid; grid-template-columns:1.5fr 1fr; gap:40px; align-items:center; }
 .wwj-hero-lead .eyebrow { color:#16746e; }
 .wwj-hero-lead h1 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; color:#06161c; font-size:clamp(30px,3.8vw,44px); line-height:1.1; margin:12px 0 16px; letter-spacing:-.01em; text-wrap:balance; }
 .wwj-hero-lead .subtitle { font-size:16px; line-height:1.55; color:#1e3942; margin:0 0 22px; max-width:62ch; }
@@ -15,7 +15,7 @@
 .wwj-hero-actions .button.ghost:hover { background:#16746e; color:#fff; }
 .wwj-hero-note { font-size:13px; color:#546974; margin:0; }
 
-.wwj-hero-card { background:#fff; border:1px solid #e0dbcd; border-radius:16px; padding:0; overflow:hidden; box-shadow:0 12px 36px rgba(10,22,28,.08); }
+.wwj-hero-card { background:#fff; border:1px solid #e0dbcd; border-radius:16px; padding:0; overflow:hidden; box-shadow:0 12px 36px rgba(10,22,28,.08); max-width:320px; margin-left:auto; margin-right:auto; }
 .wwj-hero-card img { display:block; width:100%; aspect-ratio:1/1; object-fit:cover; object-position:center 15%; background:#f5efe3; }
 .wwj-card-body { padding:20px 22px 22px; }
 .wwj-card-body .eyebrow { color:#16746e; font-size:11px; }
