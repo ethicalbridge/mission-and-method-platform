@@ -409,3 +409,30 @@
 @media (max-width:640px){
   .hm-final-brand{margin-bottom:28px}
 }
+
+/* =============== CONSULTANCY-FIRST HOME ADD-ONS =============== */
+
+/* "SOON" pill badge used inside pillar eyebrows (matches the nav .nav-coming-soon em). */
+.hm-pillar-soon{display:inline-block;font-style:normal;font-size:9.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#e56f4a;background:#ffe9dc;padding:2px 6px;border-radius:999px;margin-left:6px;vertical-align:1px}
+
+/* "What's coming" section cards. */
+.hm-coming-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:40px}
+.hm-coming-card{position:relative;background:var(--cream);border:1px solid var(--line);border-radius:22px;padding:32px 28px 28px;display:flex;flex-direction:column;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;overflow:hidden}
+.hm-coming-card:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--coral)}
+.hm-coming-card:hover{transform:translateY(-4px);box-shadow:0 20px 44px rgba(16,46,59,.08);border-color:var(--coral)}
+.hm-coming-eyebrow{color:var(--coral);font-size:11px;font-weight:900;letter-spacing:.18em;margin-bottom:10px}
+.hm-coming-card h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;line-height:1.2;color:var(--ink);margin:0 0 10px}
+.hm-coming-card p{font-size:15px;line-height:1.6;color:var(--muted);margin:0 0 20px}
+.hm-coming-notify{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;height:46px;padding:0 22px;border-radius:999px;background:var(--coral);color:#fff;font-weight:800;font-size:14.5px;text-decoration:none;border:0;transition:transform .2s ease,background .2s ease}
+.hm-coming-notify:hover{background:#d85a35;transform:translateY(-1px)}
+.hm-coming-note{font-size:13px;color:var(--muted);margin:14px 0 0 !important;line-height:1.5}
+
+/* About Julieta links row. */
+.hm-instructor-bio{font-size:15px;line-height:1.65;color:var(--muted);margin:14px 0 18px}
+.hm-instructor-links{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0;font-size:14px}
+.hm-instructor-links .hm-dot{color:var(--muted);opacity:.6}
+
+@media (max-width: 760px){
+  .hm-coming-grid{grid-template-columns:1fr;gap:18px}
+  .hm-coming-card{padding:28px 24px 24px}
+}
