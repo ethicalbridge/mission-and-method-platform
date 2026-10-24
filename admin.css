@@ -211,6 +211,29 @@ body {
 }
 .ad-timeline li b { color: var(--ink); display: block; font-size: 13px; }
 
+/* ---------- Change-password dialog ---------- */
+.ad-pwd-dialog {
+  border: 0; border-radius: 14px; padding: 0; max-width: 420px; width: 92%;
+  background: var(--surface); box-shadow: 0 24px 60px rgba(10, 22, 28, 0.3);
+}
+.ad-pwd-dialog::backdrop { background: rgba(10, 22, 28, 0.55); }
+.ad-pwd-dialog form { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.ad-pwd-dialog h2 { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; margin: 0; font-size: 22px; color: var(--ink); }
+.ad-pwd-dialog label { display: flex; flex-direction: column; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.04em; color: var(--teal); text-transform: uppercase; }
+.ad-pwd-dialog input {
+  font: inherit; font-size: 14px; padding: 10px 12px; border: 1px solid #c9d6ce;
+  border-radius: 8px; color: var(--ink); text-transform: none; font-weight: 400; letter-spacing: normal;
+}
+.ad-pwd-dialog input:focus { outline: 0; border-color: var(--teal); box-shadow: 0 0 0 2px rgba(22, 116, 110, 0.15); }
+.ad-pwd-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+.ad-pwd-actions button {
+  background: var(--cream-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 14px; font: inherit; font-weight: 700; font-size: 13px; cursor: pointer;
+  color: var(--ink);
+}
+.ad-pwd-actions #pwd-save { background: var(--coral); color: #fff; border-color: var(--coral); }
+.ad-pwd-actions #pwd-save:hover { background: var(--coral-deep); }
+
 @media (max-width: 980px) {
   .ad-main:has(.ad-detail:not([hidden])) { grid-template-columns: 1fr; }
   .ad-detail { position: static; max-height: none; }

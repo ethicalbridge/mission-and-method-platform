@@ -60,24 +60,47 @@ async function showApp(session) {
 signinForm.addEventListener('submit', async (ev) => {
   ev.preventDefault();
   signinMsg.className = 'ad-signin-msg';
-  signinMsg.textContent = 'Sending…';
-  const email = new FormData(signinForm).get('email');
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: window.location.origin + window.location.pathname },
+  signinMsg.textContent = 'Signing in…';
+  const fd = new FormData(signinForm);
+  const { error } = await supabase.auth.signInWithPassword({
+    email: fd.get('email'),
+    password: fd.get('password'),
   });
   if (error) {
     signinMsg.className = 'ad-signin-msg err';
     signinMsg.textContent = error.message || 'Sign-in failed.';
   } else {
-    signinMsg.className = 'ad-signin-msg ok';
-    signinMsg.textContent = 'Check your inbox for the magic link.';
+    signinMsg.className = '';
+    signinMsg.textContent = '';
   }
 });
 
 signoutBtn.addEventListener('click', async () => {
   await supabase.auth.signOut();
   showSignin();
+});
+
+// ============== Change password ==============
+const pwdDialog = $('#pwd-dialog');
+const pwdForm   = $('#pwd-form');
+const pwdMsg    = $('#pwd-msg');
+$('#change-pwd').addEventListener('click', () => {
+  pwdMsg.textContent = '';
+  pwdForm.reset();
+  pwdDialog.showModal();
+});
+$('#pwd-cancel').addEventListener('click', (ev) => { ev.preventDefault(); pwdDialog.close(); });
+pwdForm.addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const fd = new FormData(pwdForm);
+  const p1 = fd.get('new_password');
+  const p2 = fd.get('confirm_password');
+  if (p1 !== p2) { pwdMsg.className = 'ad-signin-msg err'; pwdMsg.textContent = 'Passwords do not match.'; return; }
+  pwdMsg.className = 'ad-signin-msg'; pwdMsg.textContent = 'Saving…';
+  const { error } = await supabase.auth.updateUser({ password: p1 });
+  if (error) { pwdMsg.className = 'ad-signin-msg err'; pwdMsg.textContent = error.message; return; }
+  pwdMsg.className = 'ad-signin-msg ok'; pwdMsg.textContent = 'Password updated.';
+  setTimeout(() => pwdDialog.close(), 900);
 });
 
 // ============== Data load ==============

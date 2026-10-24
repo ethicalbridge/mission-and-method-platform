@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin · Method into Impact</title>
-<link rel="stylesheet" href="admin.css?v=admin-1">
+<link rel="stylesheet" href="admin.css?v=admin-2">
 </head>
 <body>
 
@@ -13,17 +13,41 @@
 <main id="signin" class="ad-signin" hidden>
   <div class="ad-signin-card">
     <h1>Admin</h1>
-    <p>Sign in with the admin email. You'll receive a one-time magic link in your inbox.</p>
+    <p>Sign in to the Method into Impact admin.</p>
     <form id="signin-form">
       <label>
         <span>Email</span>
         <input type="email" name="email" required autocomplete="email" placeholder="hello@methodintoimpact.com">
       </label>
-      <button type="submit">Send magic link</button>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button type="submit">Sign in</button>
     </form>
     <p id="signin-msg" class="ad-signin-msg" aria-live="polite"></p>
   </div>
 </main>
+
+<!-- ============== Change-password dialog ============== -->
+<dialog id="pwd-dialog" class="ad-pwd-dialog">
+  <form id="pwd-form" method="dialog">
+    <h2>Change password</h2>
+    <label>
+      <span>New password (min 8 chars)</span>
+      <input type="password" name="new_password" required minlength="8" autocomplete="new-password">
+    </label>
+    <label>
+      <span>Confirm new password</span>
+      <input type="password" name="confirm_password" required minlength="8" autocomplete="new-password">
+    </label>
+    <p id="pwd-msg" class="ad-signin-msg" aria-live="polite"></p>
+    <div class="ad-pwd-actions">
+      <button type="button" id="pwd-cancel">Cancel</button>
+      <button type="submit" id="pwd-save">Save</button>
+    </div>
+  </form>
+</dialog>
 
 <!-- ============== Admin app ============== -->
 <div id="app" hidden>
@@ -47,6 +71,7 @@
       <input id="search" type="search" placeholder="Search name, org, email…" aria-label="Search">
       <button id="export-csv" type="button" title="Download CSV">⬇ CSV</button>
       <span id="user-email" class="ad-user-email"></span>
+      <button id="change-pwd" type="button" title="Change password">Change password</button>
       <button id="signout" type="button" title="Sign out">Sign out</button>
     </div>
   </header>
@@ -87,6 +112,6 @@
 
 </div>
 
-<script type="module" src="admin.js?v=admin-1"></script>
+<script type="module" src="admin.js?v=admin-2"></script>
 </body>
 </html>
