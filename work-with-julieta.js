@@ -23,7 +23,7 @@
    document.querySelector('#discovery-content').innerHTML =
     `<div class="wwj-form-success" role="status">
       <strong>Thanks ${name} — your brief is in.</strong>
-      <p>I'll reply within three working days to confirm a time for a free discovery call (45–60 minutes). After the call, I come back with a tailored proposal.</p>
+      <p>I'll reply within a week to confirm a time for a free 30-minute discovery call. After the call, I come back with a tailored proposal.</p>
       <small>Prototype — the submission integration is being connected. In the meantime you can also email <b>hello@methodintoimpact.com</b>.</small>
      </div>`;
   };

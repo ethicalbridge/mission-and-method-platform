@@ -106,8 +106,30 @@
 .wwj-path-a .wwj-sect-head .eyebrow { color:#16746e; }
 .wwj-path-b .wwj-sect-head .eyebrow { color:#e56f4a; }
 
-/* ---------- Areas ---------- */
-.wwj-areas-cols { display:grid; grid-template-columns:1fr 1fr; gap:24px 36px; max-width:980px; margin:0 auto; }
+/* Five foundation steps strip (Path A scope) */
+.wwj-scope-steps { max-width:980px; margin:0 auto 28px; text-align:center; padding:18px 22px 20px; background:#f8f4ea; border:1px dashed #d9cfb5; border-radius:14px; }
+.wwj-scope-label { display:block; font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#16746e; margin-bottom:10px; }
+.wwj-scope-list { list-style:none; padding:0; margin:0 0 12px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.wwj-scope-list li { display:inline-flex; align-items:center; gap:6px; background:#fff; border:1px solid #e0dbcd; border-radius:999px; padding:7px 14px; font-size:13.5px; font-weight:700; color:#06161c; }
+.wwj-scope-list li b { color:#16746e; font-weight:900; letter-spacing:.02em; }
+.wwj-scope-note { font-size:13px; color:#546974; margin:0; line-height:1.5; }
+.wwj-scope-note a { color:#16746e; font-weight:700; }
+@media (max-width:600px) { .wwj-scope-list li { font-size:12.5px; padding:6px 11px; } }
+
+/* ---------- Areas (now five course-step columns) ---------- */
+.wwj-steps-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; width:100%; margin-inline:auto; align-items:stretch; }
+.wwj-step-col { background:#fff; border:1px solid #e0dbcd; border-radius:12px; padding:20px 18px 22px; display:flex; flex-direction:column; }
+.wwj-step-eyebrow { font-size:10.5px; font-weight:900; letter-spacing:.14em; color:#16746e; text-transform:uppercase; margin-bottom:8px; }
+.wwj-step-col h3 { font-family:'Inter','Nunito Sans',Arial,sans-serif; font-weight:800; font-size:14px; color:#06161c; margin:0 0 14px; line-height:1.3; letter-spacing:-.005em; text-transform:none; }
+.wwj-step-col .wwj-area-list { margin-top:auto; }
+.wwj-step-col .wwj-area-list li { font-size:12.5px; line-height:1.45; padding-left:14px; }
+.wwj-step-col .wwj-area-list li::before { top:6px; width:5px; height:5px; border-radius:50%; }
+@media (max-width:1100px) { .wwj-steps-grid { grid-template-columns:repeat(3,1fr); } .wwj-step-col:nth-last-child(-n+2) { grid-column:span 1; } }
+@media (max-width:800px)  { .wwj-steps-grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:520px)  { .wwj-steps-grid { grid-template-columns:1fr; } }
+
+/* Legacy two-column Areas layout (kept for compatibility; no longer used here) */
+.wwj-areas-cols { display:grid; grid-template-columns:1fr 1fr; gap:24px 36px; width:min(980px,100%); margin-inline:auto; }
 .wwj-areas-cols h3 { font-family:'Inter','Nunito Sans',Arial,sans-serif; font-weight:800; font-size:15px; color:#16746e; margin:0 0 10px; letter-spacing:-.005em; text-transform:none; }
 .wwj-area-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:7px; }
 .wwj-area-list li { font-size:14.5px; color:#1e3942; line-height:1.55; padding-left:16px; position:relative; }
