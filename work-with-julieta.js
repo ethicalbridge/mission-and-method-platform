@@ -33,6 +33,25 @@
   if (footer) footer.hidden = !picked;
  }
 
+ function validateMinChecks (form) {
+  const groups = form.querySelectorAll('[data-require-min]');
+  for (const group of groups) {
+   // Skip anything hidden (non-active path block, etc.)
+   if (group.hidden || group.closest('[hidden]')) continue;
+   const min = parseInt(group.dataset.requireMin || '1', 10);
+   const checked = group.querySelectorAll('input[type="checkbox"]:checked').length;
+   if (checked < min) {
+    group.classList.add('wwj-check-error');
+    group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Focus the first checkbox so a keyboard user lands in the right place.
+    group.querySelector('input[type="checkbox"]')?.focus();
+    return false;
+   }
+   group.classList.remove('wwj-check-error');
+  }
+  return true;
+ }
+
  function firstNameOf (form) {
   const picked = form.querySelector('input[name="path"]:checked')?.value;
   const nameField = picked === 'founder' ? form.f_name : form.o_name;
@@ -40,22 +59,47 @@
   return esc(value || 'there');
  }
 
+ // Set up the Cal.com embed queue + load the real script.
+ // Browsers skip <script> tags inserted via innerHTML, so this has to run
+ // as real code — not inside the HTML we're about to inject.
+ function loadCalCom () {
+  if (window.Cal) return;
+  (function (C, L) {
+   C.Cal = function () {
+    const cal = C.Cal;
+    const ar = arguments;
+    if (!cal.loaded) {
+     cal.ns = {};
+     cal.q = cal.q || [];
+     const s = C.document.createElement('script');
+     s.src = 'https://app.cal.com/embed/embed.js';
+     s.async = true;
+     C.document.head.appendChild(s);
+     cal.loaded = true;
+    }
+    if (ar[0] === L) {
+     const api = function () { api.q.push(arguments); };
+     const namespace = ar[1];
+     api.q = api.q || [];
+     if (typeof namespace === 'string') {
+      cal.ns[namespace] = cal.ns[namespace] || api;
+      api.q.push(ar);
+      cal.q.push(['initNamespace', namespace]);
+     } else {
+      cal.q.push(ar);
+     }
+     return;
+    }
+    cal.q.push(ar);
+   };
+  })(window, 'init');
+ }
+
  function showConfirmation (name) {
-  // Cal.com inline-embed placeholder.
-  // To wire the real picker: replace CAL_LINK with your Cal.com event link
-  // (e.g. "julieta/discovery-30") and uncomment the <script> block.
-  const CAL_LINK = 'methodintoimpact/30min'; // deep-link to the 30-min discovery event
-  const calEmbed = CAL_LINK
-   ? `<div class="wwj-cal-embed">
-       <!-- Cal.com inline embed -->
-       <div id="cal-inline" style="width:100%;height:620px;overflow:scroll"></div>
-       <script type="text/javascript">
-        (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-        Cal("init", "discovery", {origin:"https://app.cal.com"});
-        Cal.ns.discovery("inline", {elementOrSelector:"#cal-inline", config:{layout:"month_view"}, calLink:"${CAL_LINK}"});
-        Cal.ns.discovery("ui", {hideEventTypeDetails:false, layout:"month_view"});
-       </script>
-      </div>`
+  const CAL_LINK = 'methodintoimpact/30min'; // Cal.com username/event-slug
+
+  const calBlock = CAL_LINK
+   ? `<div class="wwj-cal-embed"><div id="cal-inline"></div></div>`
    : `<div class="wwj-cal-placeholder" role="status">
        <b data-i18n="wwj.success.cal_placeholder_title">Calendar coming here.</b>
        <p data-i18n="wwj.success.cal_placeholder_body">Julieta's Cal.com picker will embed here so you can pick a slot directly. Until then, she'll reply within a week with a time and the meeting link.</p>
@@ -65,12 +109,26 @@
    <div class="wwj-form-success" role="status">
     <strong><span data-i18n="wwj.success.greet_pre">Thanks</span> ${name} — <span data-i18n="wwj.success.greet_post">your brief is in.</span></strong>
     <p data-i18n="wwj.success.body">Pick a time for the free 30-minute discovery call. After the call, I come back with a tailored proposal (or, if it isn't a fit, I say so and point you somewhere useful).</p>
-    ${calEmbed}
+    ${calBlock}
     <small data-i18n="wwj.success.footnote">You'll get a confirmation email with the meeting link. If anything changes, you can reschedule from that email.</small>
    </div>`;
 
-  // Re-run i18n on the just-injected markup if the i18n engine is present.
   window.MIM_i18n?.apply?.();
+
+  // Boot the Cal.com embed into #cal-inline (real DOM, after innerHTML).
+  if (CAL_LINK) {
+   loadCalCom();
+   window.Cal('init', 'discovery', { origin: 'https://app.cal.com' });
+   window.Cal.ns.discovery('inline', {
+    elementOrSelector: '#cal-inline',
+    config: { layout: 'month_view' },
+    calLink: CAL_LINK,
+   });
+   window.Cal.ns.discovery('ui', {
+    hideEventTypeDetails: false,
+    layout: 'month_view',
+   });
+  }
  }
 
  /* -------- open / wire -------- */
@@ -92,12 +150,21 @@
 
   form.onsubmit = ev => {
    ev.preventDefault();
-   // Make the browser surface its own validation UI (focus the first bad field).
+   // Native validation first (required text/select/radio).
    if (!form.reportValidity()) return;
+   // Then our custom "at least N" check for multi-selects.
+   if (!validateMinChecks(form)) return;
    const name = firstNameOf(form);
-   // In the future, POST FormData(form) here before showing confirmation.
+   // TODO: POST FormData(form) to the form backend here before showing confirmation.
    showConfirmation(name);
   };
+
+  // Clear min-check error styling the moment the person starts ticking.
+  form.querySelectorAll('[data-require-min] input[type="checkbox"]').forEach(cb =>
+   cb.addEventListener('change', () => {
+    cb.closest('[data-require-min]')?.classList.remove('wwj-check-error');
+   })
+  );
 
   if (typeof discoveryDialog.showModal === 'function') {
    discoveryDialog.showModal();

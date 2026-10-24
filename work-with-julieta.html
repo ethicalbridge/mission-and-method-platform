@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Work With Julieta | Method into Impact</title><meta name="description" content="Tailored consultancy for founders and small organisations. Start with a free discovery call with Julieta Castiñeira de Dios. Legal background, compliance and fundraising practitioner, founder of Method into Impact."><link rel="stylesheet" href="styles.css?v=brand6"><link rel="stylesheet" href="mission.css?v=cta-box-1"><link rel="stylesheet" href="learning.css?v=course9"><link rel="stylesheet" href="work-with-julieta.css?v=cta-box-1"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Work With Julieta | Method into Impact</title><meta name="description" content="Tailored consultancy for founders and small organisations. Start with a free discovery call with Julieta Castiñeira de Dios. Legal background, compliance and fundraising practitioner, founder of Method into Impact."><link rel="stylesheet" href="styles.css?v=brand6"><link rel="stylesheet" href="mission.css?v=cta-box-2"><link rel="stylesheet" href="learning.css?v=course9"><link rel="stylesheet" href="work-with-julieta.css?v=cta-box-2"></head>
 <body class="wwj-page"><a class="skip-link" href="#main">Skip to content</a><nav class="nav" aria-label="Main navigation"></nav>
 
 <main id="main" class="wwj-main">
@@ -402,7 +402,7 @@
       </label>
      </fieldset>
 
-     <fieldset class="wwj-fieldset">
+     <fieldset class="wwj-fieldset" data-require-min="1">
       <legend data-i18n="wwj.dialog.f.sec_got">What you've already got <small data-i18n="wwj.dialog.f.sec_got_sub">(tick anything that's real, even if rough)</small></legend>
       <span class="wwj-check-list">
        <label><input type="checkbox" name="f_got" value="mission"> <span data-i18n="wwj.dialog.f.q8_opt1">Written mission / vision / values</span></label>
@@ -422,7 +422,7 @@
        <input type="text" name="f_got_other" maxlength="200" placeholder="e.g. a mentor, co-working space, a partner organisation…" data-i18n-attr="placeholder:wwj.dialog.f.q8_other_placeholder"></label>
      </fieldset>
 
-     <fieldset class="wwj-fieldset">
+     <fieldset class="wwj-fieldset" data-require-min="1">
       <legend data-i18n="wwj.dialog.f.sec_need">Where you need help <small data-i18n="wwj.dialog.f.sec_need_sub">(tick any that apply)</small></legend>
       <span class="wwj-check-list">
        <label><input type="checkbox" name="f_help" value="strategy"> <span data-i18n="wwj.dialog.f.q9_opt1">Strategic planning and direction</span></label>
@@ -448,18 +448,20 @@
      </fieldset>
 
      <fieldset class="wwj-fieldset">
-      <legend data-i18n="wwj.dialog.f.sec_context">Context <small data-i18n="wwj.dialog.f.sec_context_sub">(both optional)</small></legend>
+      <legend data-i18n="wwj.dialog.f.sec_context">Context</legend>
       <label><span data-i18n="wwj.dialog.f.q10_label">When would you ideally want to start?</span>
-       <select name="f_start">
-        <option value="" data-i18n="wwj.dialog.f.q10_select">Open / not sure</option>
+       <select name="f_start" required>
+        <option value="" disabled selected hidden data-i18n="wwj.dialog.f.q10_placeholder">Select one…</option>
+        <option value="open" data-i18n="wwj.dialog.f.q10_select">Open / not sure</option>
         <option data-i18n="wwj.dialog.f.q10_opt1">In the next month</option>
         <option data-i18n="wwj.dialog.f.q10_opt2">1–3 months</option>
         <option data-i18n="wwj.dialog.f.q10_opt3">3–6 months</option>
         <option data-i18n="wwj.dialog.f.q10_opt4">Just exploring for now</option>
        </select></label>
       <label><span data-i18n="wwj.dialog.f.q10b_label">Comfortable range to invest (USD)</span>
-       <select name="f_budget">
-        <option value="" data-i18n="wwj.dialog.f.q10b_select">Rather talk about it on the call</option>
+       <select name="f_budget" required>
+        <option value="" disabled selected hidden data-i18n="wwj.dialog.f.q10b_placeholder">Select one…</option>
+        <option value="talk" data-i18n="wwj.dialog.f.q10b_select">Rather talk about it on the call</option>
         <option data-i18n="wwj.dialog.f.q10b_opt1">Under $1k</option>
         <option data-i18n="wwj.dialog.f.q10b_opt2">$1–3k</option>
         <option data-i18n="wwj.dialog.f.q10b_opt3">$3–7k</option>
@@ -531,7 +533,7 @@
        <textarea name="o_trigger" rows="3" minlength="120" maxlength="1500" required placeholder="Why now, not six months ago? A lost grant, a resignation, a board nudge, a scale moment — whatever it was." data-i18n-attr="placeholder:wwj.dialog.o.q9_placeholder"></textarea>
        <small class="wwj-field-hint" data-i18n="wwj.dialog.o.q9_hint">At least 120 characters.</small></label>
 
-      <div class="wwj-check-group">
+      <div class="wwj-check-group" data-require-min="1">
        <span class="wwj-check-label" data-i18n="wwj.dialog.o.q10_label">Where would you most want help?</span>
        <span class="wwj-check-list">
         <label><input type="checkbox" name="o_help" value="strategy"> <span data-i18n="wwj.dialog.o.q10_opt1">Strategic planning and direction</span></label>
@@ -557,18 +559,20 @@
      </fieldset>
 
      <fieldset class="wwj-fieldset">
-      <legend data-i18n="wwj.dialog.o.sec_fit">Fit and timing <small data-i18n="wwj.dialog.o.sec_fit_sub">(both optional)</small></legend>
+      <legend data-i18n="wwj.dialog.o.sec_fit">Fit and timing</legend>
       <label><span data-i18n="wwj.dialog.o.q12_label">When would you ideally want to start?</span>
-       <select name="o_start">
-        <option value="" data-i18n="wwj.dialog.o.q12_select">Open / not sure</option>
+       <select name="o_start" required>
+        <option value="" disabled selected hidden data-i18n="wwj.dialog.o.q12_placeholder">Select one…</option>
+        <option value="open" data-i18n="wwj.dialog.o.q12_select">Open / not sure</option>
         <option data-i18n="wwj.dialog.o.q12_opt1">In the next month</option>
         <option data-i18n="wwj.dialog.o.q12_opt2">1–3 months</option>
         <option data-i18n="wwj.dialog.o.q12_opt3">3–6 months</option>
         <option data-i18n="wwj.dialog.o.q12_opt4">Just exploring for now</option>
        </select></label>
       <label><span data-i18n="wwj.dialog.o.q11_label">Comfortable range to invest (USD)</span>
-       <select name="o_budget">
-        <option value="" data-i18n="wwj.dialog.o.q11_select">Rather talk about it on the call</option>
+       <select name="o_budget" required>
+        <option value="" disabled selected hidden data-i18n="wwj.dialog.o.q11_placeholder">Select one…</option>
+        <option value="talk" data-i18n="wwj.dialog.o.q11_select">Rather talk about it on the call</option>
         <option data-i18n="wwj.dialog.o.q11_opt1">Under $1k</option>
         <option data-i18n="wwj.dialog.o.q11_opt2">$1–3k</option>
         <option data-i18n="wwj.dialog.o.q11_opt3">$3–7k</option>
@@ -597,7 +601,7 @@
  </div>
 </dialog>
 
-<script type="module" src="i18n.js?v=cta-box-1"></script>
+<script type="module" src="i18n.js?v=cta-box-2"></script>
 <script src="app.js?v=brand15"></script>
-<script src="work-with-julieta.js?v=cta-box-1" defer></script>
+<script src="work-with-julieta.js?v=cta-box-2" defer></script>
 </body></html>

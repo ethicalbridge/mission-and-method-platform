@@ -305,9 +305,15 @@
 .wwj-form label:has(> textarea[required]) > span:first-child::after,
 .wwj-form label:has(> select[required]) > span:first-child::after,
 .wwj-radio-group:has(input[required]) > span:first-child::after,
-.wwj-check-group:has(input[required]) > .wwj-check-label::after {
+.wwj-check-group:has(input[required]) > .wwj-check-label::after,
+.wwj-fieldset[data-require-min] > legend::after,
+.wwj-check-group[data-require-min] > .wwj-check-label::after {
  content:' *'; color:#e56f4a; font-weight:900; margin-left:2px;
 }
+/* Error state on a check-group that didn't meet its min */
+.wwj-check-error .wwj-check-list { border-color:#e56f4a; background:#fff5ef; }
+.wwj-check-error > legend,
+.wwj-check-error > .wwj-check-label { color:#c7442b; }
 /* Legend of the path chooser (one radio group across two options) */
 .wwj-path-chooser:has(input[required]) legend::after {
  content:' *'; color:#e56f4a; font-weight:900; margin-left:2px;
