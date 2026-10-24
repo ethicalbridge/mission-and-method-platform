@@ -4,10 +4,11 @@
    gate while content is being built — NOT real auth. */
 (function () {
  'use strict';
- var KEY  = 'mip_gate_v1';
+ var KEY  = 'mip_gate_v2';
  var CODE = '1234';
-
- try { if (localStorage.getItem(KEY) === 'ok') return; }
+ // sessionStorage: cleared when the tab/browser closes, so the gate
+ // re-prompts on every fresh session (matches owner expectation).
+ try { if (sessionStorage.getItem(KEY) === 'ok') return; }
  catch (e) { return; /* storage unavailable → fail open */ }
 
  // Hide body as early as possible to avoid a flash of gated content.
@@ -73,7 +74,7 @@
    input.focus(); input.select();
   }
   function succeed () {
-   try { localStorage.setItem(KEY, 'ok'); } catch (e) {}
+   try { sessionStorage.setItem(KEY, 'ok'); } catch (e) {}
    document.documentElement.classList.remove('mip-gated');
    overlay.remove(); style.remove();
   }
