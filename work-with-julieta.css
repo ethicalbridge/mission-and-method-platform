@@ -105,6 +105,9 @@
 .wwj-path-a { background:#fff !important; }
 .wwj-path-a .wwj-sect-head .eyebrow { color:#16746e; }
 .wwj-path-b .wwj-sect-head .eyebrow { color:#e56f4a; }
+/* Path A now has only two options (people); render as 2 centered cards */
+.wwj-path-a .wwj-pkg-grid { grid-template-columns:repeat(2,1fr); max-width:800px; margin-inline:auto; }
+@media (max-width:900px) { .wwj-path-a .wwj-pkg-grid { grid-template-columns:1fr; } }
 
 /* Five foundation steps strip (Path A scope) */
 .wwj-scope-steps { max-width:980px; margin:0 auto 28px; text-align:center; padding:18px 22px 20px; background:#f8f4ea; border:1px dashed #d9cfb5; border-radius:14px; }
