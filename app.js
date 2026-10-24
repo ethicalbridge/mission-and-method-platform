@@ -26,22 +26,8 @@ const resourcePages=page=>page==='reading-library.html'||page==='software.html'|
 if(resourcePages(page))document.querySelector('.resources-dropdown')?.classList.add('active');
 document.querySelectorAll('.nav-links a').forEach(a=>{const path=a.getAttribute('href');const isHome=path==='index.html'&&homePages.includes(page);const isCourses=path==='courses.html'&&(coursePages.includes(page)||page.startsWith('course-'));const isSoftware=path==='software.html'&&page.startsWith('software-');const isLegal=path==='legal-templates.html'&&page.startsWith('legal-templates-');if(path===page||isHome||isCourses||isSoftware||isLegal){a.classList.add('active');a.setAttribute('aria-current','page');}else a.classList.remove('active');});
 
-// --- Inject the stacked brand signature into every Final CTA (hm-final) ---
-// Centred, bigger lockup that acts as a brand signature at the bottom of every page.
-document.querySelectorAll('.hm-final .hm-final-inner').forEach(inner => {
-  if (inner.querySelector('.brand-stacked')) return; // already injected
-  const sig = document.createElement('a');
-  sig.className = 'brand brand-stacked hm-final-brand reveal';
-  sig.href = 'index.html';
-  sig.setAttribute('aria-label', 'Method into Impact — Home');
-  sig.innerHTML = `
-    <svg class="brand-mark" viewBox="5 5 178 189" aria-hidden="true"><path d="M7 79 Q7 75 10.5 77.5 L77 131 Q80 134 77 136.5 L10.5 189.5 Q7 192 7 188 Z" fill="currentColor"></path><path d="M151 82 C116 99 70 139 43 188 L82 188 C91 151 117 111 151 82 Z" fill="#7CC2AD"></path><path d="M181 74 Q181 70 177.5 72 Q155 85 139 105 Q137 107.5 137 111 L137 189 Q137 192 140 192 L178 192 Q181 192 181 189 Z" fill="currentColor"></path><circle cx="159" cy="29.5" r="23" fill="#E56F4A"></circle></svg>
-    <span class="brand-text">
-      <span class="brand-word">Method <span class="brand-into">into</span> Impact</span>
-      <small class="brand-tagline">Better foundations. Stronger organisations.</small>
-    </span>`;
-  inner.prepend(sig);
-});
+// (Previously injected a large brand signature into .hm-final; removed so the
+// final CTA stays compact and visually distinct from the footer logo.)
 
 // --- Generic UI wiring ---
 document.querySelectorAll('[data-accordion]').forEach(item=>{const button=item.querySelector('button');button?.addEventListener('click',()=>{const open=item.classList.toggle('open');button.setAttribute('aria-expanded',String(open));const marker=button.querySelector('i');if(marker)marker.textContent=open?'−':'+';});});

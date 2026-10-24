@@ -364,13 +364,14 @@
 .hm-faq p a{color:var(--teal);font-weight:800}
 
 /* =============== FINAL CTA =============== */
-.hm-final{position:relative;background:linear-gradient(160deg,var(--deep) 0%,#0b2630 100%);color:#fff;padding:40px 0;overflow:hidden;text-align:center}
+.hm-final{position:relative;background:#16746e;color:#fff;padding:36px 0;overflow:hidden;text-align:center;border-bottom:4px solid #e56f4a}
+.hm-final-shapes{display:none !important}
 .hm-final-shapes{position:absolute;inset:0;pointer-events:none}
 .hm-shape-f1{width:420px;height:420px;left:-140px;top:-140px;background:radial-gradient(circle,var(--coral) 0%,transparent 70%);opacity:.6;animation:hm-float-a 16s ease-in-out infinite}
 .hm-shape-f2{width:380px;height:380px;right:-120px;bottom:-120px;background:radial-gradient(circle,var(--sun) 0%,transparent 70%);opacity:.35;animation:hm-float-b 20s ease-in-out infinite}
 .hm-final-inner{position:relative;z-index:1;max-width:720px;margin:0 auto}
 .hm-final h2{color:#fff;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(26px,3.4vw,38px);line-height:1.1;letter-spacing:-.02em;margin:8px 0 10px}
-.hm-final p{font-size:15.5px;color:#d4e2e3;margin:0 0 20px;line-height:1.55}
+.hm-final p{font-size:15.5px;color:#eef7f5;margin:0 0 20px;line-height:1.55}
 
 /* =============== RESPONSIVE =============== */
 @media (max-width: 980px){

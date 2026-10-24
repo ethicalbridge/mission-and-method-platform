@@ -1,7 +1,7 @@
 /* Work With Julieta — single-practitioner consultation page. */
 
 .wwj-page { background:#fffaf3; color:#102e3b; }
-.wwj-main  { padding-bottom:72px; }
+.wwj-main  { padding-bottom:0; }
 
 /* ---------- Hero (editorial profile, not SaaS hero) ---------- */
 .wwj-hero { background:linear-gradient(165deg,#fffaf3 0%,#f5efe3 55%,#efe6d1 100%); padding:48px 0 36px; border-bottom:1px solid #e6ddc9; }
@@ -174,11 +174,11 @@
 @media (max-width:600px) { .wwj-how-grid { grid-template-columns:1fr; } }
 
 /* ---------- Final CTA ---------- */
-.wwj-final { background:#102e3b; color:#fff; padding:36px 0; }
+.wwj-final { background:#16746e; color:#fff; padding:36px 0; border-bottom:4px solid #e56f4a; }
 .wwj-final-inner { display:grid; grid-template-columns:1.5fr 1fr; gap:32px; align-items:center; }
 .wwj-final-inner .eyebrow { color:#f1c874; }
 .wwj-final-inner h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; color:#fff; font-size:clamp(24px,2.6vw,34px); margin:8px 0 12px; letter-spacing:-.01em; }
-.wwj-final-inner p { color:#cfdde3; margin:0; max-width:55ch; }
+.wwj-final-inner p { color:#eef7f5; margin:0; max-width:55ch; }
 .wwj-final-actions { display:flex; flex-direction:column; gap:12px; }
 .wwj-final-actions .button { background:#e56f4a; color:#fff; border:0; padding:14px 22px; font-weight:800; }
 .wwj-final-actions .button:hover { background:#c7442b; }
