@@ -189,7 +189,7 @@
 @media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
 
 /* =============== HERO =============== */
-.hm-hero{position:relative;background:linear-gradient(160deg,var(--deep) 0%,#0d2a33 100%);color:#fff;padding:120px 0 110px;overflow:hidden;text-align:center}
+.hm-hero{position:relative;background:linear-gradient(160deg,var(--deep) 0%,#0d2a33 100%);color:#fff;padding:60px 0 70px;overflow:hidden;text-align:center}
 .hm-hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;max-width:860px;margin:0 auto}
 .hm-hero .hm-eyebrow{color:var(--sun);font-size:12px;font-weight:900;letter-spacing:.22em;margin-bottom:22px}
 .hm-hero h1{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(44px,6vw,76px);line-height:1.02;letter-spacing:-.02em;margin:0 0 24px}
