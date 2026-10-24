@@ -23,12 +23,16 @@ body {
 }
 
 /* ---------- Sign-in ---------- */
+/* Must come first so [hidden] below wins */
 .ad-signin {
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 24px;
 }
+/* The `hidden` HTML attribute is just `display:none` from the user-agent
+   stylesheet, which loses to any author-set display. Re-assert it. */
+[hidden] { display: none !important; }
 .ad-signin-card {
   background: var(--surface);
   border: 1px solid var(--border);
