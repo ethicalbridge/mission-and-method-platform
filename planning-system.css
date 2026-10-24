@@ -236,14 +236,14 @@
 .hm-trust-row li:not(:last-child):after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:5px;height:5px;background:var(--coral);border-radius:50%;opacity:.6}
 
 /* =============== GENERIC SECTION =============== */
-.hm-section{padding:64px 0;background:#fff}
+.hm-section{padding:44px 0;background:#fff}
 .hm-section-alt{background:var(--cream)}
 .hm-contrast{background:linear-gradient(180deg,#fff 0%,var(--mint) 100%)}
 .hm-head{max-width:760px;margin:0 auto 36px;text-align:center}
 /* When two sections of the same background colour sit next to each other,
    collapse the double padding so they read as one flow. */
-.hm-section + .hm-section{padding-top:32px}
-.hm-section-alt + .hm-section-alt{padding-top:32px}
+.hm-section + .hm-section{padding-top:20px}
+.hm-section-alt + .hm-section-alt{padding-top:20px}
 .hm-section-eyebrow{color:var(--teal);font-size:12px;font-weight:900;letter-spacing:.2em;margin-bottom:12px}
 .hm-section-eyebrow-light{color:var(--sun)}
 .hm-head h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spacing:-.02em;color:var(--ink);margin:0 0 16px}
