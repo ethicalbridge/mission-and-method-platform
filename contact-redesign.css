@@ -122,3 +122,15 @@
 @media (max-width: 780px) {
   .ct-email-grid { grid-template-columns: 1fr; }
 }
+
+/* ---- Fix .hm-lead washing out on light section backgrounds ---- */
+/* The base .hm-lead (planning-system.css line 197) is coloured for the dark
+   hero (#d4e2e3). Inside a section head on cream bg it's unreadable.
+   Scope this override only when .hm-lead sits inside .hm-head. */
+.hm-head .hm-lead {
+  color: #4b6270 !important;
+  font-size: 15.5px !important;
+  line-height: 1.6 !important;
+  max-width: 700px !important;
+  margin: 0 auto !important;
+}
