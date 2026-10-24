@@ -57,6 +57,14 @@
 
 @media (max-width:800px) { .wwj-consult-grid { grid-template-columns:1fr; } }
 
+/* ---------- Free discovery intake (3 steps) ---------- */
+.wwj-intake-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:1000px; margin:0 auto; }
+.wwj-intake-step { background:#fff; border:1px solid #e0dbcd; border-radius:14px; padding:24px 24px 22px; display:flex; flex-direction:column; }
+.wwj-intake-num { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; font-size:34px; color:#16746e; line-height:1; margin-bottom:12px; letter-spacing:-.02em; }
+.wwj-intake-step h3 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:700; color:#06161c; font-size:19px; margin:0 0 10px; letter-spacing:-.005em; line-height:1.2; }
+.wwj-intake-step p { font-size:14.5px; color:#1e3942; line-height:1.55; margin:0; }
+@media (max-width:800px) { .wwj-intake-grid { grid-template-columns:1fr; } }
+
 /* ---------- Packages ---------- */
 .wwj-pkg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:stretch; }
 .wwj-pkg { background:#fff; border:1px solid #e0dbcd; border-radius:14px; padding:22px 22px 24px; display:flex; flex-direction:column; }
