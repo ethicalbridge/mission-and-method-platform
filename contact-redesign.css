@@ -134,3 +134,56 @@
   max-width: 700px !important;
   margin: 0 auto !important;
 }
+
+/* ---- Discovery-call highlight (replaces the "Other ways to reach" grid) ---- */
+.ct-highlight {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #e0dbcd;
+  border-left: 4px solid #16746e;
+  border-radius: 14px;
+  padding: 26px 30px;
+  max-width: 920px;
+  margin: 0 auto;
+  box-shadow: 0 10px 28px rgba(10,22,28,.06);
+}
+.ct-highlight-copy {
+  flex: 1 1 420px;
+  min-width: 0;
+}
+.ct-highlight-tag {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #e56f4a;
+  margin-bottom: 6px;
+}
+.ct-highlight h3 {
+  font-family: 'Playfair Display','DM Serif Display',Georgia,serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #0a1419;
+  margin: 0 0 8px;
+  letter-spacing: -.005em;
+  line-height: 1.2;
+}
+.ct-highlight p {
+  font-size: 14.5px;
+  color: #4b6270;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 60ch;
+}
+.ct-highlight-cta {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+@media (max-width: 720px) {
+  .ct-highlight { padding: 22px; }
+  .ct-highlight-cta { width: 100%; justify-content: center; }
+}

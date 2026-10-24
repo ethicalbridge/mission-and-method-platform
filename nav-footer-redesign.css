@@ -263,26 +263,28 @@ nav.nav .nav-links a.nav-coming-soon em {
   vertical-align: 1px;
 }
 
-/* ---- Slim footer (mirrors top nav) ---- */
+/* ---- Slim footer (mirrors top nav): brand on top, horizontal nav below ---- */
 .site-footer .footer-map {
-  grid-template-columns: 1.4fr 1fr !important;
-  gap: 48px !important;
-  padding: 44px 0 36px !important;
+  grid-template-columns: 1fr !important;
+  gap: 24px !important;
+  padding: 40px 0 20px !important;
 }
 .site-footer .footer-nav {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-  justify-self: end;
-  text-align: right;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  align-items: center;
+  justify-self: start;
+  text-align: left;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
 }
 .site-footer .footer-nav a {
   color: #cfd8d9;
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
-  padding: 2px 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -302,7 +304,6 @@ nav.nav .nav-links a.nav-coming-soon em {
   border-radius: 999px;
   line-height: 1;
 }
-@media (max-width: 760px) {
-  .site-footer .footer-map { grid-template-columns: 1fr !important; gap: 28px !important; }
-  .site-footer .footer-nav { justify-self: start; text-align: left; }
+@media (max-width: 560px) {
+  .site-footer .footer-nav { gap: 10px 18px; font-size: 13px; }
 }
