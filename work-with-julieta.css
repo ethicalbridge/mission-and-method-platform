@@ -1,0 +1,150 @@
+/* Work With Julieta — single-practitioner consultation page. */
+
+.wwj-page { background:#fffaf3; color:#102e3b; }
+.wwj-main  { padding-bottom:72px; }
+
+/* ---------- Hero ---------- */
+.wwj-hero { background:linear-gradient(180deg,#f5efe3 0%, #fffaf3 100%); padding:64px 0 56px; border-bottom:1px solid #e6ddc9; }
+.wwj-hero-inner { display:grid; grid-template-columns:1.3fr 1fr; gap:56px; align-items:center; }
+.wwj-hero-lead .eyebrow { color:#16746e; }
+.wwj-hero-lead h1 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; color:#06161c; font-size:clamp(34px,4.5vw,52px); line-height:1.08; margin:12px 0 16px; letter-spacing:-.01em; text-wrap:balance; }
+.wwj-hero-lead .subtitle { font-size:17px; line-height:1.55; color:#1e3942; margin:0 0 26px; max-width:62ch; }
+.wwj-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
+.wwj-hero-actions .button { padding:12px 18px; }
+.wwj-hero-actions .button.ghost { background:transparent; color:#16746e; border:1.5px solid #16746e; }
+.wwj-hero-actions .button.ghost:hover { background:#16746e; color:#fff; }
+.wwj-hero-note { font-size:13px; color:#546974; margin:0; }
+
+.wwj-hero-card { background:#fff; border:1px solid #e0dbcd; border-radius:16px; padding:0; overflow:hidden; box-shadow:0 12px 36px rgba(10,22,28,.08); }
+.wwj-hero-card img { display:block; width:100%; aspect-ratio:4/3; object-fit:cover; object-position:center 20%; }
+.wwj-card-body { padding:20px 22px 22px; }
+.wwj-card-body .eyebrow { color:#16746e; font-size:11px; }
+.wwj-card-body h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; color:#06161c; font-size:22px; margin:6px 0 8px; }
+.wwj-card-role { color:#546974; font-size:13.5px; margin:0 0 14px; line-height:1.5; }
+.wwj-chips { list-style:none; padding:0; margin:0 0 14px; display:flex; flex-wrap:wrap; gap:6px; }
+.wwj-chips li { background:#eef4f0; color:#0e4a46; font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:999px; border:1px solid #cfe0d8; }
+.wwj-link { color:#16746e; font-weight:700; font-size:13.5px; text-decoration:none; }
+.wwj-link:hover { color:#06161c; text-decoration:underline; }
+
+@media (max-width:860px) { .wwj-hero-inner { grid-template-columns:1fr; gap:36px; } }
+
+/* ---------- Sections ---------- */
+.wwj-section { padding:64px 0; }
+.wwj-section:nth-of-type(even) { background:#fff; }
+.wwj-sect-head { max-width:760px; margin:0 auto 36px; text-align:center; }
+.wwj-sect-head .eyebrow { color:#e56f4a; }
+.wwj-sect-head h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; font-size:clamp(28px,3.5vw,40px); color:#06161c; margin:8px 0 14px; letter-spacing:-.01em; text-wrap:balance; }
+.wwj-sect-head .wwj-sect-intro { font-size:16px; color:#1e3942; line-height:1.55; margin:0; }
+
+/* ---------- One-hour consultation ---------- */
+.wwj-consult-grid { display:grid; grid-template-columns:1.2fr 1fr; gap:28px; align-items:start; }
+.wwj-consult-card { background:#fff; border:1px solid #e0dbcd; border-radius:14px; padding:24px 26px; box-shadow:0 6px 20px rgba(10,22,28,.05); }
+.wwj-consult-card h3 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; color:#06161c; font-size:20px; margin:0 0 14px; }
+.wwj-check-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; }
+.wwj-check-list li { padding-left:26px; position:relative; font-size:14.5px; color:#1e3942; line-height:1.5; }
+.wwj-check-list li::before { content:""; position:absolute; left:0; top:6px; width:14px; height:14px; border-radius:50%; background:#eaf6ef; border:2px solid #16746e; }
+.wwj-check-list li::after { content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:#16746e; }
+
+.wwj-consult-booking { background:#102e3b; color:#fff; border-color:#102e3b; }
+.wwj-consult-booking h3 { color:#fff; }
+.wwj-booking-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+.wwj-booking-head strong { color:#f1c874; font-size:16px; font-weight:800; letter-spacing:.02em; }
+.wwj-booking-sched { color:#cfdde3; font-size:14px; line-height:1.5; margin:0 0 18px; }
+.wwj-booking-sched b { color:#fff; }
+.wwj-consult-booking .button { background:#e56f4a; color:#fff; border:0; width:100%; padding:14px; font-weight:800; }
+.wwj-consult-booking .button:hover { background:#c7442b; }
+.wwj-booking-note { color:#9fb4bb; font-size:12px; line-height:1.55; margin:14px 0 0; }
+
+@media (max-width:800px) { .wwj-consult-grid { grid-template-columns:1fr; } }
+
+/* ---------- Packages ---------- */
+.wwj-pkg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:stretch; }
+.wwj-pkg { background:#fff; border:1px solid #e0dbcd; border-radius:14px; padding:24px 24px 26px; display:flex; flex-direction:column; }
+.wwj-pkg-feature { background:#102e3b; color:#fff; border-color:#102e3b; transform:translateY(-6px); box-shadow:0 16px 40px rgba(10,22,28,.12); }
+.wwj-pkg-tag { display:inline-block; font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; color:#16746e; background:#eaf6ef; padding:4px 10px; border-radius:999px; align-self:flex-start; }
+.wwj-pkg-feature .wwj-pkg-tag { background:#e56f4a; color:#fff; }
+.wwj-pkg h3 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; font-size:22px; color:#06161c; margin:14px 0 4px; letter-spacing:-.005em; }
+.wwj-pkg-feature h3 { color:#fff; }
+.wwj-pkg-time { font-size:12px; font-weight:800; color:#546974; letter-spacing:.02em; text-transform:uppercase; margin:0 0 12px; }
+.wwj-pkg-feature .wwj-pkg-time { color:#f1c874; }
+.wwj-pkg-pitch { font-size:14.5px; color:#1e3942; line-height:1.55; margin:0 0 14px; }
+.wwj-pkg-feature .wwj-pkg-pitch { color:#cfdde3; }
+.wwj-pkg-list { list-style:none; padding:0; margin:0 0 16px; display:flex; flex-direction:column; gap:6px; flex:1; }
+.wwj-pkg-list li { padding-left:20px; position:relative; font-size:13.5px; color:#1e3942; line-height:1.5; }
+.wwj-pkg-feature .wwj-pkg-list li { color:#cfdde3; }
+.wwj-pkg-list li::before { content:""; position:absolute; left:0; top:9px; width:7px; height:7px; border-radius:50%; background:#16746e; }
+.wwj-pkg-feature .wwj-pkg-list li::before { background:#f1c874; }
+.wwj-pkg-good { font-size:12.5px; font-style:italic; color:#546974; margin:0; padding-top:12px; border-top:1px dashed #e0dbcd; }
+.wwj-pkg-feature .wwj-pkg-good { color:#9fb4bb; border-top-color:#2a4a56; }
+
+.wwj-pkg-cta { text-align:center; margin-top:34px; }
+.wwj-pkg-cta .button { padding:14px 24px; font-size:15px; font-weight:800; }
+.wwj-pkg-cta-note { font-size:13px; color:#546974; margin:12px 0 0; }
+
+@media (max-width:900px) { .wwj-pkg-grid { grid-template-columns:1fr; } .wwj-pkg-feature { transform:none; } }
+
+/* ---------- Areas ---------- */
+.wwj-areas-cols { display:grid; grid-template-columns:1fr 1fr; gap:24px 36px; max-width:980px; margin:0 auto; }
+.wwj-areas-cols h3 { font-family:'Inter','Nunito Sans',Arial,sans-serif; font-weight:800; font-size:15px; color:#16746e; margin:0 0 10px; letter-spacing:-.005em; text-transform:none; }
+.wwj-area-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:7px; }
+.wwj-area-list li { font-size:14.5px; color:#1e3942; line-height:1.55; padding-left:16px; position:relative; }
+.wwj-area-list li::before { content:"·"; position:absolute; left:0; color:#e56f4a; font-weight:900; font-size:18px; line-height:1; top:3px; }
+@media (max-width:720px) { .wwj-areas-cols { grid-template-columns:1fr; } }
+
+/* ---------- Limits ---------- */
+.wwj-limits { background:#fef0ec; }
+.wwj-limits-grid { display:grid; grid-template-columns:1fr 1.5fr; gap:40px; align-items:start; max-width:1080px; margin:0 auto; }
+.wwj-limits-grid .eyebrow { color:#c7442b; }
+.wwj-limits-grid h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; color:#8a3f27; font-size:clamp(26px,3.2vw,36px); margin:8px 0 14px; letter-spacing:-.01em; }
+.wwj-limits-grid p { color:#8a3f27; margin:0; }
+.wwj-limits-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:14px; }
+.wwj-limits-list li { background:#fff; border:1px solid #f3b7a2; border-left:4px solid #c7442b; border-radius:10px; padding:14px 18px; font-size:14.5px; line-height:1.55; color:#1e3942; }
+.wwj-limits-list li b { color:#06161c; }
+@media (max-width:800px) { .wwj-limits-grid { grid-template-columns:1fr; } }
+
+/* ---------- How we work ---------- */
+.wwj-how-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.wwj-how-card { background:#fff; border:1px solid #e0dbcd; border-radius:12px; padding:20px 22px; }
+.wwj-how-card b { display:block; color:#16746e; font-size:11.5px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
+.wwj-how-card p { font-size:14px; color:#1e3942; line-height:1.55; margin:0; }
+@media (max-width:900px) { .wwj-how-grid { grid-template-columns:1fr 1fr; } }
+@media (max-width:600px) { .wwj-how-grid { grid-template-columns:1fr; } }
+
+/* ---------- Final CTA ---------- */
+.wwj-final { background:#102e3b; color:#fff; padding:64px 0; }
+.wwj-final-inner { display:grid; grid-template-columns:1.5fr 1fr; gap:32px; align-items:center; }
+.wwj-final-inner .eyebrow { color:#f1c874; }
+.wwj-final-inner h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; color:#fff; font-size:clamp(28px,3.2vw,40px); margin:8px 0 12px; letter-spacing:-.01em; }
+.wwj-final-inner p { color:#cfdde3; margin:0; max-width:55ch; }
+.wwj-final-actions { display:flex; flex-direction:column; gap:12px; }
+.wwj-final-actions .button { background:#e56f4a; color:#fff; border:0; padding:14px 22px; font-weight:800; }
+.wwj-final-actions .button:hover { background:#c7442b; }
+.wwj-final-actions .button.ghost { background:transparent; border:1.5px solid rgba(255,255,255,.4); color:#fff; }
+.wwj-final-actions .button.ghost:hover { background:rgba(255,255,255,.08); border-color:#fff; }
+@media (max-width:720px) { .wwj-final-inner { grid-template-columns:1fr; } }
+
+/* ---------- Dialogs ---------- */
+.wwj-modal { border:0; border-radius:16px; padding:0; max-width:560px; width:92%; background:#fff; box-shadow:0 24px 60px rgba(10,22,28,.3); }
+.wwj-modal::backdrop { background:rgba(10,22,28,.55); }
+.wwj-modal-inner { padding:22px 24px 24px; }
+.wwj-modal-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; gap:12px; }
+.wwj-modal-top .eyebrow { color:#16746e; }
+.wwj-modal-top h2 { font-family:'Playfair Display','DM Serif Display',Georgia,serif; font-weight:900; color:#06161c; font-size:22px; margin:4px 0 0; }
+.wwj-modal-close { background:transparent; border:0; font-size:28px; color:#546974; cursor:pointer; line-height:1; padding:0 4px; }
+.wwj-modal-close:hover { color:#06161c; }
+
+.wwj-form { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.wwj-form .full { grid-column:1/-1; }
+.wwj-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; font-weight:800; color:#16746e; letter-spacing:.02em; text-transform:uppercase; }
+.wwj-form input, .wwj-form select, .wwj-form textarea { font:inherit; font-size:14px; padding:9px 11px; border:1px solid #c9d6ce; border-radius:8px; background:#fff; color:#102e3b; text-transform:none; font-weight:400; letter-spacing:normal; }
+.wwj-form input:focus, .wwj-form select:focus, .wwj-form textarea:focus { outline:0; border-color:#16746e; box-shadow:0 0 0 2px rgba(22,116,110,.15); }
+.wwj-form textarea { min-height:90px; resize:vertical; }
+.wwj-form .button.full { grid-column:1/-1; background:#e56f4a; color:#fff; border:0; padding:12px; font-weight:800; font-size:15px; }
+.wwj-form .button.full:hover { background:#c7442b; }
+.wwj-booking-price { text-align:right; color:#546974; font-size:13px; margin:4px 0 8px; }
+.form-help { font-size:12px; color:#546974; margin:-2px 0 0; }
+.wwj-prototype-note { background:#fff5e7; border:1px solid #f1c874; border-radius:8px; padding:10px 12px; font-size:12.5px; color:#8a5e14; margin:0 0 16px; }
+.wwj-form-success { background:#eaf6ef; border:1px solid #a5d7bc; border-radius:10px; padding:16px 18px; color:#0e5a4e; }
+.wwj-form-success strong { display:block; font-size:16px; margin-bottom:6px; color:#06161c; }
+.wwj-form-success p { margin:0 0 8px; color:#1e3942; font-size:14px; }
+.wwj-form-success small { color:#546974; font-size:12px; }

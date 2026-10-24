@@ -17,8 +17,7 @@ export const translations = {
     "nav.resources.tools_sub": "The integrated tool-set",
     "nav.resources.legal": "Legal Templates",
     "nav.resources.legal_sub": "Starter outlines, not legal advice",
-    "nav.resources.experts": "Work with our experts",
-    "nav.resources.experts_sub": "Focused consultations and packages",
+    "nav.consult": "Consult",
 
     // ===== Footer =====
     "footer.tagline": "Better foundations. Stronger organisations.",
@@ -150,8 +149,8 @@ export const translations = {
     "pricing.courses.title": "Learn the method.",
     "pricing.tools.eyebrow": "02 · IMPACT TOOLS",
     "pricing.tools.title": "Run it in the integrated workspace.",
-    "pricing.experts.eyebrow": "03 · EXPERT SUPPORT",
-    "pricing.experts.title": "Get help from someone who's done it.",
+    "pricing.experts.eyebrow": "03 · WORK WITH JULIETA",
+    "pricing.experts.title": "Help from someone who has built it before.",
 
     // ===== Contact =====
     "contact.hero.eyebrow": "CONTACT · WE REPLY WITHIN 2 WORKING DAYS",
@@ -198,8 +197,7 @@ export const translations = {
     "nav.resources.tools_sub": "El conjunto integrado de herramientas",
     "nav.resources.legal": "Plantillas Legales",
     "nav.resources.legal_sub": "Esquemas de partida, no asesoría legal",
-    "nav.resources.experts": "Trabaja con nuestros expertos",
-    "nav.resources.experts_sub": "Consultas enfocadas y paquetes",
+    "nav.consult": "Consultoría",
 
     // ===== Pie de página =====
     "footer.tagline": "Mejores bases. Organizaciones más fuertes.",
@@ -331,8 +329,8 @@ export const translations = {
     "pricing.courses.title": "Aprende el método.",
     "pricing.tools.eyebrow": "02 · IMPACT TOOLS",
     "pricing.tools.title": "Ejecuta todo en el espacio de trabajo integrado.",
-    "pricing.experts.eyebrow": "03 · SOPORTE EXPERTO",
-    "pricing.experts.title": "Obtén ayuda de alguien que lo ha hecho.",
+    "pricing.experts.eyebrow": "03 · TRABAJA CON JULIETA",
+    "pricing.experts.title": "Apoyo directo de quien ya lo ha construido.",
 
     // ===== Contacto =====
     "contact.hero.eyebrow": "CONTACTO · RESPONDEMOS EN 2 DÍAS HÁBILES",
