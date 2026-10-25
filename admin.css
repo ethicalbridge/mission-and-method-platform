@@ -445,8 +445,13 @@ body {
 .dash-section-docs-list { display: flex; flex-direction: column; gap: 4px; }
 .dash-section-doc {
   display: flex; justify-content: space-between; align-items: center; gap: 8px;
-  padding: 6px 10px; background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 12px;
+  background: #fff5ef;
+  border: 1px solid #f3c7b4;
+  border-left: 4px solid var(--coral);
+  border-radius: 6px;
 }
+.dash-section-doc:hover { background: #fdeadf; }
 .dash-section-doc-info b { font-size: 13px; color: var(--ink); font-weight: 700; }
 .dash-section-doc-info small { color: var(--ink-dim); font-size: 11.5px; margin-left: 4px; }
 .dash-section-doc-when { color: #9fa9b0 !important; }
