@@ -414,13 +414,11 @@ function renderDetail(c, brief, bookings, events, attachments) {
   const answers = (brief && brief.answers) || {};
   const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
-  // Current bucket shows its sub-stages prominently.
-  // Other buckets are shown underneath as "Move to" — same grouped layout, just dimmer.
+  // Always render the three buckets in the fixed order Open → Completed → Closed.
+  // The current stage button is highlighted; any other button moves the contact to that stage.
   const currentBucket = BUCKET_OF_STAGE[c.stage] || 'open';
-  const otherBuckets  = ['open','completed','closed'].filter(b => b !== currentBucket);
-
-  const renderGroup = (bk, variant) => `
-    <div class="dash-stage-group dash-stage-group-${variant}" data-bucket="${bk}">
+  const renderGroup = (bk) => `
+    <div class="dash-stage-group dash-stage-group-${bk === currentBucket ? 'current' : 'move'}" data-bucket="${bk}">
       <span class="dash-stage-group-label">${BUCKET_LABEL[bk]}</span>
       <div class="dash-stage-group-btns">
         ${STAGE_BUCKETS[bk].map(s => `
@@ -429,12 +427,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
       </div>
     </div>
   `;
-
-  const stageButtons = `
-    ${renderGroup(currentBucket, 'current')}
-    <div class="dash-stage-move-header"><span>Move to</span></div>
-    ${otherBuckets.map(bk => renderGroup(bk, 'move')).join('')}
-  `;
+  const stageButtons = ['open', 'completed', 'closed'].map(renderGroup).join('');
 
   const bookingsHtml = bookings.length ? bookings.map(b => `
     <div class="dash-booking-card">
@@ -544,8 +537,9 @@ function renderDetail(c, brief, bookings, events, attachments) {
     ` : ''}
 
     ${sectionVisible('survey', c.stage) ? `
-      <h3>Survey results</h3>
+      <h3>Survey</h3>
       <div class="dash-pipeline-section" data-section="survey">
+        <p class="dash-detail-no-brief">Space reserved for the post-engagement survey. Once a survey tool is wired in, we'll surface the live responses here. For now you can log them by hand.</p>
         <div class="dash-pipeline-row dash-pipeline-row-3">
           <label><span>Sent on</span><input type="date" name="survey_sent_at" value="${toDate(c.survey_sent_at)}"></label>
           <label><span>Responded on</span><input type="date" name="survey_responded_at" value="${toDate(c.survey_responded_at)}"></label>
