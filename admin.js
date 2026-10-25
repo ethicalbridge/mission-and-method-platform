@@ -22,22 +22,28 @@ const BUCKET_OF_STAGE = Object.fromEntries(
 );
 const BUCKET_LABEL = { open: 'Open', completed: 'Completed', closed: 'Closed' };
 
-// Progressive disclosure: a section unlocks when the Open-stage pipeline reaches
-// a certain point. Terminal buckets (Completed, Closed) show everything.
+// Each bucket shows its own set of sections. Universal sections (brief, bookings,
+// documents, notes) are always visible. Within Open, meeting/proposal/next_steps
+// unlock progressively.
 const OPEN_STAGE_ORDER = ['new', 'booked', 'met', 'proposal_sent'];
-const SECTION_UNLOCKS_AT = {
-  // name → the Open stage at (or after) which this section appears
-  bookings:   'booked',
+const OPEN_SECTION_UNLOCKS_AT = {
   meeting:    'met',
   proposal:   'proposal_sent',
   next_steps: 'proposal_sent',
 };
 function sectionVisible(name, stage) {
-  const unlockAt = SECTION_UNLOCKS_AT[name];
-  if (!unlockAt) return true; // brief, documents, notes — always on
-  // Completed and Closed are terminal views: show the whole history
-  if (BUCKET_OF_STAGE[stage] !== 'open') return true;
-  return OPEN_STAGE_ORDER.indexOf(stage) >= OPEN_STAGE_ORDER.indexOf(unlockAt);
+  const bucket = BUCKET_OF_STAGE[stage];
+  // Universal
+  if (['brief', 'bookings', 'documents', 'notes'].includes(name)) return true;
+  // Open-only sections
+  if (['meeting', 'proposal', 'next_steps'].includes(name)) {
+    if (bucket !== 'open') return false;
+    const unlock = OPEN_SECTION_UNLOCKS_AT[name];
+    return OPEN_STAGE_ORDER.indexOf(stage) >= OPEN_STAGE_ORDER.indexOf(unlock);
+  }
+  if (name === 'survey')  return bucket === 'completed';
+  if (name === 'closure') return bucket === 'closed';
+  return true;
 }
 
 // Pretty labels for brief fields — grouped per path.
