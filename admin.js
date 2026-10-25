@@ -107,6 +107,7 @@ const signoutBtn   = $('#signout');
 const searchInput  = $('#search');
 const exportBtn    = $('#export-csv');
 const navBtns      = document.querySelectorAll('[data-stage-filter]');
+const pathBtns     = document.querySelectorAll('[data-path-filter]');
 const statTiles    = document.querySelectorAll('.dash-stat[data-stage]');
 const listEl       = $('#contacts-list');
 const listCountEl  = $('#list-count');
@@ -116,6 +117,7 @@ const detailBody   = $('#detail-body');
 let allContacts = [];
 let selectedId  = null;
 let currentFilter = 'all';
+let currentPath   = 'all'; // 'all' | 'founder' | 'org'
 let currentSearch = '';
 
 // ============== Auth ==============
@@ -309,6 +311,7 @@ function filteredContacts() {
         if (c.stage !== currentFilter) return false;
       }
     }
+    if (currentPath !== 'all' && c.path !== currentPath) return false;
     if (q) {
       const hay = `${c.name} ${c.email} ${c.organisation || ''} ${c.role || ''}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -823,7 +826,15 @@ function syncDetailWithFilter() {
 }
 navBtns.forEach(btn => btn.addEventListener('click', () => applyFilter(btn.dataset.stageFilter)));
 statTiles.forEach(t => t.addEventListener('click', () => applyFilter(t.dataset.stage)));
+pathBtns.forEach(btn => btn.addEventListener('click', () => applyPathFilter(btn.dataset.pathFilter)));
 searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); syncDetailWithFilter(); });
+
+function applyPathFilter(path) {
+  currentPath = path;
+  pathBtns.forEach(b => b.classList.toggle('active', b.dataset.pathFilter === path));
+  renderList();
+  syncDetailWithFilter();
+}
 
 // ============== CSV export ==============
 exportBtn.addEventListener('click', () => {

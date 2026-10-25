@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=dash-20">
+<link rel="stylesheet" href="admin.css?v=dash-21">
 </head>
 <body>
 
@@ -125,6 +125,10 @@
       <button type="button" data-stage-filter="open">Open</button>
       <button type="button" data-stage-filter="completed">Completed</button>
       <button type="button" data-stage-filter="closed">Closed</button>
+      <span class="dash-nav-sep" aria-hidden="true">·</span>
+      <button type="button" data-path-filter="all" class="active">Everyone</button>
+      <button type="button" data-path-filter="founder">People</button>
+      <button type="button" data-path-filter="org">Organisations</button>
     </nav>
     <div class="dash-user">
       <input id="search" type="search" placeholder="Search…" aria-label="Search">
@@ -169,6 +173,6 @@
 
 </div>
 
-<script type="module" src="admin.js?v=dash-20"></script>
+<script type="module" src="admin.js?v=dash-21"></script>
 </body>
 </html>

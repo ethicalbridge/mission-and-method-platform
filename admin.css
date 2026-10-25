@@ -139,6 +139,7 @@ body {
 }
 .dash-nav button:hover { background: var(--cream-2); color: var(--ink); }
 .dash-nav button.active { background: var(--teal); color: #fff; }
+.dash-nav-sep { color: var(--border); font-weight: 400; padding: 0 4px; user-select: none; }
 
 .dash-user { display: flex; align-items: center; gap: 8px; }
 .dash-user input[type="search"] {
