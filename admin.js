@@ -294,13 +294,55 @@ async function openDetail(id) {
     supabase.from('crm_briefs').select('*').eq('contact_id', id).order('submitted_at', { ascending: false }).limit(1).maybeSingle(),
     supabase.from('crm_bookings').select('*').eq('contact_id', id).order('scheduled_at', { ascending: false }),
     supabase.from('crm_events').select('*').eq('contact_id', id).order('created_at', { ascending: false }).limit(100),
-    supabase.from('crm_attachments').select('*').eq('contact_id', id).order('uploaded_at', { ascending: false }),
+    supabase.from('crm_attachments').select('id, contact_id, filename, mime, size_bytes, storage_path, label, section, uploaded_at, uploaded_by').eq('contact_id', id).order('uploaded_at', { ascending: false }),
   ]);
 
   const contact = allContacts.find(c => c.id === id);
   if (!contact) { detailBody.innerHTML = '<p>Not found.</p>'; return; }
 
   renderDetail(contact, briefRes.data, bookingsRes.data || [], eventsRes.data || [], attachmentsRes.data || []);
+}
+
+// Per-section label hints shown in the mini upload UI inside each pipeline section.
+const SECTION_DOC_HINTS = {
+  brief:    "e.g. Deck shared by founder, Pitch v1",
+  meeting:  "e.g. Agenda, Meeting notes, Recording",
+  proposal: "e.g. ToR v2, Proposal v1, Signed agreement",
+  survey:   "e.g. Survey responses, Scorecard",
+  closure:  "e.g. Final feedback, Reference reply",
+  general:  "e.g. Note, Reference",
+};
+
+function sectionDocsHtml(section, attachments) {
+  const files = attachments.filter(a => (a.section || 'general') === section);
+  const list = files.length
+    ? files.map(a => `
+      <div class="dash-section-doc">
+        <div class="dash-section-doc-info">
+          <b>${esc(a.filename)}</b>
+          ${a.label ? `<small>(${esc(a.label)})</small>` : ''}
+          <small class="dash-section-doc-when">· ${fmtDateTime(a.uploaded_at)}${a.size_bytes ? ' · ' + fmtSize(a.size_bytes) : ''}</small>
+        </div>
+        <div class="dash-section-doc-actions">
+          <button type="button" class="dash-mini-btn" data-download="${a.id}" data-path="${esc(a.storage_path)}">Open</button>
+          <button type="button" class="dash-mini-btn dash-mini-btn-del" data-delete="${a.id}" data-path="${esc(a.storage_path)}" title="Delete">×</button>
+        </div>
+      </div>`).join('')
+    : '<p class="dash-section-doc-empty">No files yet.</p>';
+  return `
+    <div class="dash-section-docs">
+      <div class="dash-section-docs-head">📎 Documents</div>
+      <div class="dash-section-docs-list">${list}</div>
+      <div class="dash-section-upload">
+        <label class="dash-upload-label">
+          <input type="file" multiple data-section-upload="${section}">
+          <span>+ Add file</span>
+        </label>
+        <input type="text" class="dash-section-label-input" data-section-label="${section}"
+               placeholder="Label (${SECTION_DOC_HINTS[section] || ''})" maxlength="140">
+      </div>
+    </div>
+  `;
 }
 
 function renderDetail(c, brief, bookings, events, attachments) {
@@ -341,17 +383,8 @@ function renderDetail(c, brief, bookings, events, attachments) {
   if (c.country)          subMetaBits.push(esc(c.country));
   if (c.lang && c.lang !== 'en') subMetaBits.push(c.lang.toUpperCase());
 
-  const attachmentsHtml = attachments.length ? attachments.map(a => `
-    <div class="dash-attachment">
-      <div class="dash-attachment-info">
-        <b>${esc(a.filename)}</b>
-        <small>${a.label ? esc(a.label) + ' · ' : ''}${fmtDateTime(a.uploaded_at)}${a.size_bytes ? ' · ' + fmtSize(a.size_bytes) : ''}</small>
-      </div>
-      <div class="dash-attachment-actions">
-        <button type="button" class="dash-mini-btn" data-download="${a.id}" data-path="${esc(a.storage_path)}">Open</button>
-        <button type="button" class="dash-mini-btn dash-mini-btn-del" data-delete="${a.id}" data-path="${esc(a.storage_path)}" title="Delete">×</button>
-      </div>
-    </div>`).join('') : '<p style="color:#6a7a85;font-size:13px;margin:0 0 8px">No files uploaded yet.</p>';
+  // Attachments are rendered inline per-section; this just builds the general bucket preview for the bottom block.
+  const generalDocsHtml = sectionDocsHtml('general', attachments);
 
   detailBody.innerHTML = `
     <div class="dash-detail-head">
@@ -376,6 +409,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
     ${brief
       ? `<div class="dash-detail-grid">${fields.map(f => fieldHtml(f, answers)).join('')}</div>`
       : `<p class="dash-detail-no-brief">No brief submitted. This contact booked directly on Cal.com without filling the form.</p>`}
+    ${sectionDocsHtml('brief', attachments)}
 
     ${sectionVisible('bookings', c.stage) ? `
       <h3>Bookings</h3>
@@ -390,6 +424,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
         </div>
         <label><span>Meeting notes</span><textarea name="meeting_notes" rows="4" placeholder="What came up on the call. Decisions, concerns, their language.">${esc(c.meeting_notes || '')}</textarea></label>
         <button class="dash-save-btn" data-save-section="meeting">Save meeting</button>
+        ${sectionDocsHtml('meeting', attachments)}
       </div>
     ` : ''}
 
@@ -412,6 +447,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
           </select>
         </label>
         <button class="dash-save-btn" data-save-section="proposal">Save proposal</button>
+        ${sectionDocsHtml('proposal', attachments)}
       </div>
     ` : ''}
 
@@ -436,6 +472,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
         </div>
         <label><span>Responses / notes</span><textarea name="survey_notes" rows="4" placeholder="What they said. Scores, open answers, direct quotes.">${esc(c.survey_notes || '')}</textarea></label>
         <button class="dash-save-btn" data-save-section="survey">Save survey</button>
+        ${sectionDocsHtml('survey', attachments)}
       </div>
     ` : ''}
 
@@ -445,21 +482,14 @@ function renderDetail(c, brief, bookings, events, attachments) {
         <p class="dash-detail-no-brief">Reason is captured by the stage above (<b>${stageLabel(c.stage)}</b>). Add context below if there's anything worth remembering.</p>
         <label><span>Notes</span><textarea name="closure_notes" rows="3" placeholder="What happened, in your words. Useful for the next time something similar comes up.">${esc(c.closure_notes || '')}</textarea></label>
         <button class="dash-save-btn" data-save-section="closure">Save closure notes</button>
+        ${sectionDocsHtml('closure', attachments)}
       </div>
     ` : ''}
 
-    <h3>Documents</h3>
-    <div class="dash-attachments-wrap">
-      <div id="attachments-list" class="dash-attachments-list">${attachmentsHtml}</div>
-      <div class="dash-upload">
-        <label class="dash-upload-label">
-          <input type="file" id="file-input" multiple>
-          <span>+ Upload file(s)</span>
-        </label>
-        <input type="text" id="file-label" placeholder="Optional label (e.g. 'ToR v2', 'Signed agreement')" maxlength="140">
-        <p id="upload-status" class="dash-upload-status"></p>
-      </div>
-    </div>
+    <h3>Other documents</h3>
+    <p class="dash-detail-no-brief" style="margin-bottom:8px">Anything that doesn't belong to a specific stage above.</p>
+    ${generalDocsHtml}
+    <p id="upload-status" class="dash-upload-status"></p>
 
     <h3>Private notes</h3>
     <div class="dash-notes-field">
@@ -482,8 +512,15 @@ function renderDetail(c, brief, bookings, events, attachments) {
     btn.addEventListener('click', () => deleteAttachment(btn.dataset.delete, btn.dataset.path));
   });
   detailBody.querySelector('[data-delete-contact]')?.addEventListener('click', () => deleteContact(c.id, c.name));
-  // File input + delete may be present (always-on sections)
-  detailBody.querySelector('#file-input')?.addEventListener('change', (ev) => uploadFiles(c.id, ev.target));
+  // Per-section upload inputs
+  detailBody.querySelectorAll('[data-section-upload]').forEach(input => {
+    input.addEventListener('change', (ev) => {
+      const section = input.dataset.sectionUpload;
+      const labelInput = detailBody.querySelector(`[data-section-label="${section}"]`);
+      const label = labelInput ? labelInput.value.trim() : null;
+      uploadFiles(c.id, ev.target, section, label);
+    });
+  });
 }
 
 async function deleteContact(id, name) {
@@ -566,12 +603,12 @@ async function savePipelineSection(contactId, section) {
 }
 
 // ---------- Attachments ----------
-async function uploadFiles(contactId, input) {
+async function uploadFiles(contactId, input, section = null, labelOverride = null) {
   const status = detailBody.querySelector('#upload-status');
-  const label  = detailBody.querySelector('#file-label').value.trim() || null;
+  const label  = labelOverride || null;
   const files = Array.from(input.files || []);
   if (!files.length) return;
-  status.textContent = `Uploading ${files.length} file(s)…`;
+  if (status) status.textContent = `Uploading ${files.length} file(s)…`;
   let okCount = 0, failCount = 0;
   for (const file of files) {
     const safeName = file.name.replace(/[^\w.\-]+/g, '_');
@@ -585,18 +622,19 @@ async function uploadFiles(contactId, input) {
       size_bytes: file.size,
       storage_path: path,
       label,
+      section: section || null,
       uploaded_by: (await supabase.auth.getUser()).data?.user?.email || null,
     });
     if (insErr) { console.error('attachment row insert failed', insErr); failCount++; continue; }
     await supabase.from('crm_events').insert({
       contact_id: contactId, type: 'file_uploaded',
-      message: `Uploaded ${file.name}${label ? ' (' + label + ')' : ''}`,
+      message: `Uploaded ${file.name}${label ? ' (' + label + ')' : ''}${section ? ' [' + section + ']' : ''}`,
     });
     okCount++;
   }
-  status.textContent = `Uploaded ${okCount}${failCount ? ' · ' + failCount + ' failed' : ''}`;
-  input.value = ''; // reset
-  openDetail(contactId); // refresh list + timeline
+  if (status) status.textContent = `Uploaded ${okCount}${failCount ? ' · ' + failCount + ' failed' : ''}`;
+  input.value = '';
+  openDetail(contactId);
 }
 
 async function downloadAttachment(path) {
