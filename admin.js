@@ -294,6 +294,7 @@ async function loadContacts({ selectFirst = false } = {}) {
 function renderStats() {
   const counts = { open: 0, completed: 0, closed: 0 };
   allContacts.forEach(c => {
+    if (currentPath !== 'all' && c.path !== currentPath) return;
     const bk = BUCKET_OF_STAGE[c.stage];
     if (bk) counts[bk]++;
   });
@@ -837,6 +838,7 @@ searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value;
 function applyPathFilter(path) {
   currentPath = path;
   pathBtns.forEach(b => b.classList.toggle('active', b.dataset.pathFilter === path));
+  renderStats();
   renderList();
   syncDetailWithFilter();
 }
