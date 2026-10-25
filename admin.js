@@ -15,7 +15,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
 const STAGE_BUCKETS = {
   open:      ['new', 'booked', 'met', 'proposal_sent'],
   completed: ['won'],
-  closed:    ['cancelled', 'ghosted', 'lost', 'archived'],
+  closed:    ['declined', 'ghosted', 'lost', 'archived'],
 };
 const BUCKET_OF_STAGE = Object.fromEntries(
   Object.entries(STAGE_BUCKETS).flatMap(([bk, stages]) => stages.map(s => [s, bk]))
@@ -446,7 +446,6 @@ function renderDetail(c, brief, bookings, events, attachments) {
             <option value="wrong_fit"  ${c.closure_reason === 'wrong_fit' ? 'selected' : ''}>Not a fit</option>
             <option value="budget"     ${c.closure_reason === 'budget' ? 'selected' : ''}>Budget</option>
             <option value="timing"     ${c.closure_reason === 'timing' ? 'selected' : ''}>Timing</option>
-            <option value="cancelled"  ${c.closure_reason === 'cancelled' ? 'selected' : ''}>Cancelled the meeting</option>
             <option value="other"      ${c.closure_reason === 'other' ? 'selected' : ''}>Other</option>
           </select>
         </label>
@@ -514,7 +513,7 @@ async function deleteContact(id, name) {
 // Outcome → terminal stage auto-advance (Proposal section).
 const PROPOSAL_OUTCOME_TO_STAGE = {
   accepted: 'won',
-  declined: 'lost',
+  declined: 'declined',
   ghosted:  'ghosted',
   // 'waiting' and 'changes_requested' do not change the stage.
 };
