@@ -164,7 +164,7 @@ async function loadContacts({ selectFirst = false } = {}) {
   console.log('[admin] loadContacts: querying crm_contacts…');
   const { data, error } = await supabase
     .from('crm_contacts')
-    .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang, meeting_at, meeting_notes, proposal_sent_at, proposal_due_at, proposal_reply_at, proposal_outcome, next_steps, next_steps_due_at')
+    .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang, meeting_at, meeting_notes, proposal_sent_at, proposal_due_at, proposal_reply_at, proposal_outcome, next_steps, next_steps_due_at, survey_sent_at, survey_responded_at, survey_url, survey_notes, closure_reason, closure_notes')
     .order('created_at', { ascending: false })
     .limit(500);
 
@@ -400,6 +400,39 @@ function renderDetail(c, brief, bookings, events, attachments) {
         </div>
         <label><span>What's next</span><textarea name="next_steps" rows="3" placeholder="Kick-off date, deliverable, next check-in — whatever we agreed.">${esc(c.next_steps || '')}</textarea></label>
         <button class="dash-save-btn" data-save-section="next_steps">Save next steps</button>
+      </div>
+    ` : ''}
+
+    ${sectionVisible('survey', c.stage) ? `
+      <h3>Survey results</h3>
+      <div class="dash-pipeline-section" data-section="survey">
+        <div class="dash-pipeline-row dash-pipeline-row-3">
+          <label><span>Sent on</span><input type="date" name="survey_sent_at" value="${toDate(c.survey_sent_at)}"></label>
+          <label><span>Responded on</span><input type="date" name="survey_responded_at" value="${toDate(c.survey_responded_at)}"></label>
+          <label><span>Survey link</span><input type="url" name="survey_url" placeholder="https://" value="${esc(c.survey_url || '')}"></label>
+        </div>
+        <label><span>Responses / notes</span><textarea name="survey_notes" rows="4" placeholder="What they said. Scores, open answers, direct quotes.">${esc(c.survey_notes || '')}</textarea></label>
+        <button class="dash-save-btn" data-save-section="survey">Save survey</button>
+      </div>
+    ` : ''}
+
+    ${sectionVisible('closure', c.stage) ? `
+      <h3>Why it closed</h3>
+      <div class="dash-pipeline-section" data-section="closure">
+        <label><span>Reason</span>
+          <select name="closure_reason">
+            <option value="">—</option>
+            <option value="declined"   ${c.closure_reason === 'declined' ? 'selected' : ''}>Declined the proposal</option>
+            <option value="ghosted"    ${c.closure_reason === 'ghosted' ? 'selected' : ''}>No reply (ghosted)</option>
+            <option value="wrong_fit"  ${c.closure_reason === 'wrong_fit' ? 'selected' : ''}>Not a fit</option>
+            <option value="budget"     ${c.closure_reason === 'budget' ? 'selected' : ''}>Budget</option>
+            <option value="timing"     ${c.closure_reason === 'timing' ? 'selected' : ''}>Timing</option>
+            <option value="cancelled"  ${c.closure_reason === 'cancelled' ? 'selected' : ''}>Cancelled the meeting</option>
+            <option value="other"      ${c.closure_reason === 'other' ? 'selected' : ''}>Other</option>
+          </select>
+        </label>
+        <label><span>Notes</span><textarea name="closure_notes" rows="3" placeholder="What happened, in your words. Useful for the next time something similar comes up.">${esc(c.closure_notes || '')}</textarea></label>
+        <button class="dash-save-btn" data-save-section="closure">Save closure</button>
       </div>
     ` : ''}
 
