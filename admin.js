@@ -261,13 +261,6 @@ function renderDetail(c, brief, bookings, events, attachments) {
     <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
   `).join('');
 
-  const timeline = events.map(e => `
-    <li>
-      <b>${esc(e.message || e.type)}</b>
-      <small>${fmtDateTime(e.created_at)}</small>
-    </li>
-  `).join('');
-
   const bookingsHtml = bookings.length ? bookings.map(b => `
     <div class="dash-booking-card">
       <b>${fmtDateTime(b.scheduled_at)}</b>
@@ -375,9 +368,6 @@ function renderDetail(c, brief, bookings, events, attachments) {
       <textarea id="notes-field" placeholder="Running notes about this contact.">${esc(c.notes || '')}</textarea>
       <button class="dash-save-btn" id="save-notes">Save notes</button>
     </div>
-
-    <h3>Timeline</h3>
-    <ul class="dash-timeline">${timeline || '<li><b>No events yet.</b></li>'}</ul>
   `;
 
   detailBody.querySelectorAll('[data-set-stage]').forEach(btn => {
