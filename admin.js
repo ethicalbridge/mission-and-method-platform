@@ -15,8 +15,15 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
 const STAGE_BUCKETS = {
   open:      ['new', 'booked', 'met', 'proposal_sent'],
   completed: ['won'],
-  closed:    ['declined', 'ghosted', 'lost', 'archived'],
+  closed:    ['declined', 'ghosted', 'not_fit', 'budget', 'timing', 'cancelled', 'other', 'archived'],
 };
+// Nicer labels where the raw stage name reads badly.
+const STAGE_LABEL = {
+  proposal_sent: 'proposal sent',
+  not_fit:       'not a fit',
+  cancelled:     'cancelled meeting',
+};
+const stageLabel = (s) => STAGE_LABEL[s] || s.replace('_', ' ');
 const BUCKET_OF_STAGE = Object.fromEntries(
   Object.entries(STAGE_BUCKETS).flatMap(([bk, stages]) => stages.map(s => [s, bk]))
 );
@@ -310,7 +317,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
       <span class="dash-stage-group-label">${BUCKET_LABEL[bk]}</span>
       <div class="dash-stage-group-btns">
         ${STAGE_BUCKETS[bk].map(s => `
-          <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
+          <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${stageLabel(s)}</button>
         `).join('')}
       </div>
     </div>
@@ -433,21 +440,11 @@ function renderDetail(c, brief, bookings, events, attachments) {
     ` : ''}
 
     ${sectionVisible('closure', c.stage) ? `
-      <h3>Why it closed</h3>
+      <h3>Why it closed — notes</h3>
       <div class="dash-pipeline-section" data-section="closure">
-        <label><span>Reason</span>
-          <select name="closure_reason">
-            <option value="">—</option>
-            <option value="declined"   ${c.closure_reason === 'declined' ? 'selected' : ''}>Declined the proposal</option>
-            <option value="ghosted"    ${c.closure_reason === 'ghosted' ? 'selected' : ''}>No reply (ghosted)</option>
-            <option value="wrong_fit"  ${c.closure_reason === 'wrong_fit' ? 'selected' : ''}>Not a fit</option>
-            <option value="budget"     ${c.closure_reason === 'budget' ? 'selected' : ''}>Budget</option>
-            <option value="timing"     ${c.closure_reason === 'timing' ? 'selected' : ''}>Timing</option>
-            <option value="other"      ${c.closure_reason === 'other' ? 'selected' : ''}>Other</option>
-          </select>
-        </label>
+        <p class="dash-detail-no-brief">Reason is captured by the stage above (<b>${stageLabel(c.stage)}</b>). Add context below if there's anything worth remembering.</p>
         <label><span>Notes</span><textarea name="closure_notes" rows="3" placeholder="What happened, in your words. Useful for the next time something similar comes up.">${esc(c.closure_notes || '')}</textarea></label>
-        <button class="dash-save-btn" data-save-section="closure">Save closure</button>
+        <button class="dash-save-btn" data-save-section="closure">Save closure notes</button>
       </div>
     ` : ''}
 
