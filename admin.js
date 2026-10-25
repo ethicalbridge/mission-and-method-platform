@@ -26,17 +26,22 @@ const STAGE_LABEL = {
 const stageLabel = (s) => STAGE_LABEL[s] || s.replace('_', ' ');
 
 // Proposal package menu — matches the Consult page's A/B package cards.
-const PROPOSAL_PACKAGES = [
+// A packages are for Founders (people), B packages are for Organisations.
+const FOUNDER_PACKAGES = [
   { value: 'A1', label: 'A1 · Built for you (I build the documents, you review)' },
   { value: 'A2', label: 'A2 · Most chosen (I build + train + 3-month runway)' },
+];
+const ORG_PACKAGES = [
   { value: 'B1', label: 'B1 · Built for you (I build the systems for your organisation)' },
   { value: 'B2', label: 'B2 · Most chosen (I build + train each role)' },
   { value: 'B3', label: 'B3 · Deep (Organisational therapy)' },
-  { value: 'custom', label: 'Custom / Other' },
 ];
-function packageOptions(selected) {
+const CUSTOM_PACKAGE = { value: 'custom', label: 'Custom / Other' };
+
+function packageOptions(selected, path) {
+  const packages = (path === 'org' ? ORG_PACKAGES : FOUNDER_PACKAGES).concat(CUSTOM_PACKAGE);
   return ['<option value="">—</option>']
-    .concat(PROPOSAL_PACKAGES.map(p =>
+    .concat(packages.map(p =>
       `<option value="${p.value}" ${selected === p.value ? 'selected' : ''}>${p.label}</option>`
     )).join('');
 }
@@ -499,7 +504,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
         </div>
         <div class="dash-pipeline-row dash-pipeline-row-2">
           <label><span>Package proposed</span>
-            <select name="proposal_type_sent">${packageOptions(c.proposal_type_sent)}</select>
+            <select name="proposal_type_sent">${packageOptions(c.proposal_type_sent, c.path)}</select>
           </label>
           <label><span>Value proposed (USD)</span>
             <input type="text" name="proposal_value_sent" placeholder="e.g. 4500 or 3-7k" maxlength="60" value="${esc(c.proposal_value_sent || '')}">
@@ -507,7 +512,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
         </div>
         <div class="dash-pipeline-row dash-pipeline-row-2">
           <label><span>Package agreed</span>
-            <select name="proposal_type_agreed">${packageOptions(c.proposal_type_agreed)}</select>
+            <select name="proposal_type_agreed">${packageOptions(c.proposal_type_agreed, c.path)}</select>
           </label>
           <label><span>Value agreed (USD)</span>
             <input type="text" name="proposal_value_agreed" placeholder="e.g. 5500" maxlength="60" value="${esc(c.proposal_value_agreed || '')}">
