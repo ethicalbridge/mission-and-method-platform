@@ -137,7 +137,7 @@
   })(window, 'init');
  }
 
- function showConfirmation (name) {
+ function showConfirmation (name, briefSaved = true) {
   const CAL_LINK = 'methodintoimpact/30min'; // Cal.com username/event-slug
 
   const calBlock = CAL_LINK
@@ -147,10 +147,16 @@
        <p data-i18n="wwj.success.cal_placeholder_body">Julieta's Cal.com picker will embed here so you can pick a slot directly. Until then, she'll reply within a week with a time and the meeting link.</p>
       </div>`;
 
+  const warnBlock = briefSaved ? '' : `
+    <p style="background:#fff5e7;border:1px solid #f1c874;border-radius:8px;padding:10px 12px;color:#8a5e14;font-size:13px;margin:0 0 12px">
+      Heads up — the brief didn't reach my inbox automatically. Please book the call below and I'll email you to catch any details that got lost.
+    </p>`;
+
   contentHost.innerHTML = `
    <div class="wwj-form-success" role="status">
     <strong><span data-i18n="wwj.success.greet_pre">Thanks</span> ${name} — <span data-i18n="wwj.success.greet_post">your brief is in.</span></strong>
     <p data-i18n="wwj.success.body">Pick a time for the free 30-minute discovery call. After the call, I come back with a tailored proposal (or, if it isn't a fit, I say so and point you somewhere useful).</p>
+    ${warnBlock}
     ${calBlock}
     <small data-i18n="wwj.success.footnote">You'll get a confirmation email with the meeting link. If anything changes, you can reschedule from that email.</small>
    </div>`;
@@ -205,13 +211,16 @@
    const payload = collectAnswers(form);
    // Fire-and-await: we still show the confirmation even if the backend fails,
    // because Cal.com booking is independent — never block the person from booking.
+   // But capture the failure state so we can warn the user visibly.
+   let briefSaved = true;
    try {
     await postBrief(payload);
    } catch (err) {
     console.error('submit-brief failed:', err);
+    briefSaved = false;
    }
    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalBtnText; }
-   showConfirmation(name);
+   showConfirmation(name, briefSaved);
   };
 
   // Clear min-check error styling the moment the person starts ticking.
