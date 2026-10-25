@@ -22,6 +22,24 @@ const BUCKET_OF_STAGE = Object.fromEntries(
 );
 const BUCKET_LABEL = { open: 'Open', completed: 'Completed', closed: 'Closed' };
 
+// Progressive disclosure: a section unlocks when the Open-stage pipeline reaches
+// a certain point. Terminal buckets (Completed, Closed) show everything.
+const OPEN_STAGE_ORDER = ['new', 'booked', 'met', 'proposal_sent'];
+const SECTION_UNLOCKS_AT = {
+  // name → the Open stage at (or after) which this section appears
+  bookings:   'booked',
+  meeting:    'met',
+  proposal:   'proposal_sent',
+  next_steps: 'proposal_sent',
+};
+function sectionVisible(name, stage) {
+  const unlockAt = SECTION_UNLOCKS_AT[name];
+  if (!unlockAt) return true; // brief, documents, notes — always on
+  // Completed and Closed are terminal views: show the whole history
+  if (BUCKET_OF_STAGE[stage] !== 'open') return true;
+  return OPEN_STAGE_ORDER.indexOf(stage) >= OPEN_STAGE_ORDER.indexOf(unlockAt);
+}
+
 // Pretty labels for brief fields — grouped per path.
 const FOUNDER_FIELDS = [
   { k: 'f_country',      label: 'Where it will operate' },
@@ -336,46 +354,54 @@ function renderDetail(c, brief, bookings, events, attachments) {
       ? `<div class="dash-detail-grid">${fields.map(f => fieldHtml(f, answers)).join('')}</div>`
       : `<p class="dash-detail-no-brief">No brief submitted. This contact booked directly on Cal.com without filling the form.</p>`}
 
-    <h3>Bookings</h3>
-    ${bookingsHtml}
+    ${sectionVisible('bookings', c.stage) ? `
+      <h3>Bookings</h3>
+      ${bookingsHtml}
+    ` : ''}
 
-    <h3>Meeting</h3>
-    <div class="dash-pipeline-section" data-section="meeting">
-      <div class="dash-pipeline-row">
-        <label><span>When did it happen?</span><input type="datetime-local" name="meeting_at" value="${toDtLocal(c.meeting_at)}"></label>
+    ${sectionVisible('meeting', c.stage) ? `
+      <h3>Meeting</h3>
+      <div class="dash-pipeline-section" data-section="meeting">
+        <div class="dash-pipeline-row">
+          <label><span>When did it happen?</span><input type="datetime-local" name="meeting_at" value="${toDtLocal(c.meeting_at)}"></label>
+        </div>
+        <label><span>Meeting notes</span><textarea name="meeting_notes" rows="4" placeholder="What came up on the call. Decisions, concerns, their language.">${esc(c.meeting_notes || '')}</textarea></label>
+        <button class="dash-save-btn" data-save-section="meeting">Save meeting</button>
       </div>
-      <label><span>Meeting notes</span><textarea name="meeting_notes" rows="4" placeholder="What came up on the call. Decisions, concerns, their language.">${esc(c.meeting_notes || '')}</textarea></label>
-      <button class="dash-save-btn" data-save-section="meeting">Save meeting</button>
-    </div>
+    ` : ''}
 
-    <h3>Proposal</h3>
-    <div class="dash-pipeline-section" data-section="proposal">
-      <div class="dash-pipeline-row dash-pipeline-row-3">
-        <label><span>Sent on</span><input type="date" name="proposal_sent_at" value="${toDate(c.proposal_sent_at)}"></label>
-        <label><span>Reply due by</span><input type="date" name="proposal_due_at" value="${toDate(c.proposal_due_at)}"></label>
-        <label><span>Reply received</span><input type="date" name="proposal_reply_at" value="${toDate(c.proposal_reply_at)}"></label>
+    ${sectionVisible('proposal', c.stage) ? `
+      <h3>Proposal</h3>
+      <div class="dash-pipeline-section" data-section="proposal">
+        <div class="dash-pipeline-row dash-pipeline-row-3">
+          <label><span>Sent on</span><input type="date" name="proposal_sent_at" value="${toDate(c.proposal_sent_at)}"></label>
+          <label><span>Reply due by</span><input type="date" name="proposal_due_at" value="${toDate(c.proposal_due_at)}"></label>
+          <label><span>Reply received</span><input type="date" name="proposal_reply_at" value="${toDate(c.proposal_reply_at)}"></label>
+        </div>
+        <label><span>Outcome</span>
+          <select name="proposal_outcome">
+            <option value="">—</option>
+            <option value="waiting"           ${c.proposal_outcome === 'waiting' ? 'selected' : ''}>Waiting for reply</option>
+            <option value="accepted"          ${c.proposal_outcome === 'accepted' ? 'selected' : ''}>Accepted</option>
+            <option value="changes_requested" ${c.proposal_outcome === 'changes_requested' ? 'selected' : ''}>Changes requested</option>
+            <option value="declined"          ${c.proposal_outcome === 'declined' ? 'selected' : ''}>Declined</option>
+            <option value="ghosted"           ${c.proposal_outcome === 'ghosted' ? 'selected' : ''}>No reply (ghosted)</option>
+          </select>
+        </label>
+        <button class="dash-save-btn" data-save-section="proposal">Save proposal</button>
       </div>
-      <label><span>Outcome</span>
-        <select name="proposal_outcome">
-          <option value="">—</option>
-          <option value="waiting"           ${c.proposal_outcome === 'waiting' ? 'selected' : ''}>Waiting for reply</option>
-          <option value="accepted"          ${c.proposal_outcome === 'accepted' ? 'selected' : ''}>Accepted</option>
-          <option value="changes_requested" ${c.proposal_outcome === 'changes_requested' ? 'selected' : ''}>Changes requested</option>
-          <option value="declined"          ${c.proposal_outcome === 'declined' ? 'selected' : ''}>Declined</option>
-          <option value="ghosted"           ${c.proposal_outcome === 'ghosted' ? 'selected' : ''}>No reply (ghosted)</option>
-        </select>
-      </label>
-      <button class="dash-save-btn" data-save-section="proposal">Save proposal</button>
-    </div>
+    ` : ''}
 
-    <h3>Next steps</h3>
-    <div class="dash-pipeline-section" data-section="next_steps">
-      <div class="dash-pipeline-row">
-        <label><span>Due by</span><input type="date" name="next_steps_due_at" value="${toDate(c.next_steps_due_at)}"></label>
+    ${sectionVisible('next_steps', c.stage) ? `
+      <h3>Next steps</h3>
+      <div class="dash-pipeline-section" data-section="next_steps">
+        <div class="dash-pipeline-row">
+          <label><span>Due by</span><input type="date" name="next_steps_due_at" value="${toDate(c.next_steps_due_at)}"></label>
+        </div>
+        <label><span>What's next</span><textarea name="next_steps" rows="3" placeholder="Kick-off date, deliverable, next check-in — whatever we agreed.">${esc(c.next_steps || '')}</textarea></label>
+        <button class="dash-save-btn" data-save-section="next_steps">Save next steps</button>
       </div>
-      <label><span>What's next</span><textarea name="next_steps" rows="3" placeholder="Kick-off date, deliverable, next check-in — whatever we agreed.">${esc(c.next_steps || '')}</textarea></label>
-      <button class="dash-save-btn" data-save-section="next_steps">Save next steps</button>
-    </div>
+    ` : ''}
 
     <h3>Documents</h3>
     <div class="dash-attachments-wrap">
@@ -404,14 +430,15 @@ function renderDetail(c, brief, bookings, events, attachments) {
   detailBody.querySelectorAll('[data-save-section]').forEach(btn => {
     btn.addEventListener('click', () => savePipelineSection(c.id, btn.dataset.saveSection));
   });
-  detailBody.querySelector('#file-input').addEventListener('change', (ev) => uploadFiles(c.id, ev.target));
   detailBody.querySelectorAll('[data-download]').forEach(btn => {
     btn.addEventListener('click', () => downloadAttachment(btn.dataset.path));
   });
   detailBody.querySelectorAll('[data-delete]').forEach(btn => {
     btn.addEventListener('click', () => deleteAttachment(btn.dataset.delete, btn.dataset.path));
   });
-  detailBody.querySelector('[data-delete-contact]').addEventListener('click', () => deleteContact(c.id, c.name));
+  detailBody.querySelector('[data-delete-contact]')?.addEventListener('click', () => deleteContact(c.id, c.name));
+  // File input + delete may be present (always-on sections)
+  detailBody.querySelector('#file-input')?.addEventListener('change', (ev) => uploadFiles(c.id, ev.target));
 }
 
 async function deleteContact(id, name) {
