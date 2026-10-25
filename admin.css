@@ -341,11 +341,17 @@ body {
   color: var(--ink-dim); text-transform: uppercase; margin-bottom: 3px; display: block;
 }
 .dash-detail-field .v { color: var(--ink); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-.dash-detail-field-long { grid-column: 1 / -1; }
+.dash-detail-field-long,
+.dash-detail-field-wide { grid-column: 1 / -1; }
 .dash-detail-field-long .v {
   display: block;
   background: var(--cream); padding: 12px 14px; border-radius: 8px;
   border-left: 3px solid var(--teal); margin-top: 4px;
+}
+.dash-detail-field-wide .v,
+.dash-detail-field-wide a {
+  display: block;
+  margin-top: 2px;
 }
 .dash-detail-no-brief {
   background: var(--cream); border: 1px dashed var(--border);

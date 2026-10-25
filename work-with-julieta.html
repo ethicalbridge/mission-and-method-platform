@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Work With Julieta | Method into Impact</title><meta name="description" content="Tailored consultancy for founders and small organisations. Start with a free discovery call with Julieta Castiñeira de Dios. Legal background, compliance and fundraising practitioner, founder of Method into Impact."><link rel="stylesheet" href="styles.css?v=brand6"><link rel="stylesheet" href="mission.css?v=crm-backend-1"><link rel="stylesheet" href="learning.css?v=course9"><link rel="stylesheet" href="work-with-julieta.css?v=crm-backend-2"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Work With Julieta | Method into Impact</title><meta name="description" content="Tailored consultancy for founders and small organisations. Start with a free discovery call with Julieta Castiñeira de Dios. Legal background, compliance and fundraising practitioner, founder of Method into Impact."><link rel="stylesheet" href="styles.css?v=brand6"><link rel="stylesheet" href="mission.css?v=crm-backend-1"><link rel="stylesheet" href="learning.css?v=course9"><link rel="stylesheet" href="work-with-julieta.css?v=brief-docs-1"></head>
 <body class="wwj-page"><a class="skip-link" href="#main">Skip to content</a><nav class="nav" aria-label="Main navigation"></nav>
 
 <main id="main" class="wwj-main">
@@ -377,6 +377,8 @@
        <input name="f_name_project" maxlength="120" required></label>
       <label><span data-i18n="wwj.dialog.f.q5_label">In one sentence — what is it and who is it for?</span>
        <input name="f_pitch" maxlength="220" required placeholder="e.g. A peer-support programme for first-generation university students in Lima." data-i18n-attr="placeholder:wwj.dialog.f.q5_placeholder"></label>
+      <label><span data-i18n="wwj.dialog.f.q5b_label">Website or landing page <em data-i18n="wwj.dialog.f.q5b_hint">(optional — if you have one)</em></span>
+       <input name="f_website" type="url" placeholder="https://" autocomplete="url" data-i18n-attr="placeholder:wwj.dialog.f.q5b_placeholder"></label>
      </fieldset>
 
      <fieldset class="wwj-fieldset">
@@ -471,6 +473,16 @@
        </select></label>
      </fieldset>
 
+     <fieldset class="wwj-fieldset wwj-fileset">
+      <legend data-i18n="wwj.dialog.f.sec_docs">Documents <small data-i18n="wwj.dialog.f.sec_docs_sub">(optional — anything you already have about your idea, strategy, pitch, up to 3 files)</small></legend>
+      <label class="wwj-filepicker">
+       <input type="file" name="f_docs" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.md,.txt,.jpg,.jpeg,.png" multiple data-max-files="3" data-max-size-mb="5">
+       <span class="wwj-filepicker-btn" data-i18n="wwj.dialog.f.docs_cta">Choose files</span>
+       <span class="wwj-filepicker-hint" data-i18n="wwj.dialog.f.docs_hint">Up to 3 files · 5MB each · PDF, Word, PowerPoint, Excel, images or text</span>
+      </label>
+      <div class="wwj-file-list" aria-live="polite"></div>
+     </fieldset>
+
      <fieldset class="wwj-fieldset">
       <legend data-i18n="wwj.dialog.f.sec_story">The honest story</legend>
       <label><span data-i18n="wwj.dialog.f.q11_label">Tell me the honest story — what are you trying to build, why you, and what's in the way?</span>
@@ -497,7 +509,7 @@
        <label><span data-i18n="wwj.dialog.o.q4_label">Organisation name</span>
         <input name="o_org" maxlength="140" required></label>
       </div>
-      <label><span data-i18n="wwj.dialog.o.q5_label">A link where I can see your work <em data-i18n="wwj.dialog.o.q5_hint">(optional — website, Instagram, deck, annual report)</em></span>
+      <label><span data-i18n="wwj.dialog.o.q5_label">Website or a link where I can see your work <em data-i18n="wwj.dialog.o.q5_hint">(optional — Instagram, deck, annual report also work)</em></span>
        <input name="o_link" type="url" placeholder="https://" autocomplete="url" data-i18n-attr="placeholder:wwj.dialog.o.q5_placeholder"></label>
       <label><span data-i18n="wwj.dialog.o.q6_label">Where you're based and who you serve, in one line</span>
        <input name="o_who" minlength="20" maxlength="220" required placeholder="e.g. Barcelona-based, supporting migrant women entering the workforce." data-i18n-attr="placeholder:wwj.dialog.o.q6_placeholder"></label>
@@ -582,6 +594,16 @@
        </select></label>
      </fieldset>
 
+     <fieldset class="wwj-fieldset wwj-fileset">
+      <legend data-i18n="wwj.dialog.o.sec_docs">Documents <small data-i18n="wwj.dialog.o.sec_docs_sub">(optional — anything the organisation already has: strategy, TOR, annual report, deck, up to 3 files)</small></legend>
+      <label class="wwj-filepicker">
+       <input type="file" name="o_docs" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.md,.txt,.jpg,.jpeg,.png" multiple data-max-files="3" data-max-size-mb="5">
+       <span class="wwj-filepicker-btn" data-i18n="wwj.dialog.o.docs_cta">Choose files</span>
+       <span class="wwj-filepicker-hint" data-i18n="wwj.dialog.o.docs_hint">Up to 3 files · 5MB each · PDF, Word, PowerPoint, Excel, images or text</span>
+      </label>
+      <div class="wwj-file-list" aria-live="polite"></div>
+     </fieldset>
+
      <fieldset class="wwj-fieldset">
       <legend data-i18n="wwj.dialog.o.sec_story">The honest version</legend>
       <label><span data-i18n="wwj.dialog.o.q13_label">In your own words — what are you trying to change, what's getting in the way, and what would "this worked" look like six months from now?</span>
@@ -603,5 +625,5 @@
 
 <script type="module" src="i18n.js?v=crm-backend-1"></script>
 <script src="app.js?v=brand15"></script>
-<script src="work-with-julieta.js?v=crm-backend-4" defer></script>
+<script src="work-with-julieta.js?v=brief-docs-1" defer></script>
 </body></html>

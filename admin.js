@@ -75,12 +75,18 @@ function sectionVisible(name, stage) {
 }
 
 // Pretty labels for brief fields — grouped per path.
+// Order matters: the 2-col grid pairs each adjacent (L, R) item on a row,
+// so pairs that should sit side by side must be adjacent and the L must land
+// at an even index (0, 2, 4…). 'wide: true' spans the full row without the
+// cream quote styling. 'long: true' spans the full row AND renders as a
+// cream-highlighted quote block (reserved for free-text story answers).
 const FOUNDER_FIELDS = [
   { k: 'f_country',      label: 'Where it will operate' },
   { k: 'f_name_project', label: 'Working name' },
   { k: 'f_pitch',        label: 'One-sentence pitch' },
   { k: 'f_stage',        label: 'Where they are' },
-  { k: 'f_people',       label: 'Who\'s with them' },
+  { k: 'f_people',       label: 'Who\'s with them', wide: true },
+  { k: 'f_website',      label: 'Website (if any)', isLink: true, wide: true },
   { k: 'f_got',          label: 'What they already have', other: 'f_got_other' },
   { k: 'f_help',         label: 'Where they need help',   other: 'f_help_other' },
   { k: 'f_start',        label: 'Ideal start' },
@@ -90,12 +96,12 @@ const FOUNDER_FIELDS = [
 const ORG_FIELDS = [
   { k: 'o_org',     label: 'Organisation' },
   { k: 'o_role',    label: 'Their role' },
-  { k: 'o_link',    label: 'Link',  isLink: true },
+  { k: 'o_link',    label: 'Website / link',  isLink: true, wide: true },
   { k: 'o_who',     label: 'Where they are / who they serve' },
   { k: 'o_team',    label: 'Team size' },
   { k: 'o_moment',  label: 'Where the org is right now' },
   { k: 'o_trigger', label: 'What tipped them in', long: true },
-  { k: 'o_help',    label: 'Where they want help', other: 'o_help_other' },
+  { k: 'o_help',    label: 'Where they want help', other: 'o_help_other', wide: true },
   { k: 'o_start',   label: 'Ideal start' },
   { k: 'o_budget',  label: 'Budget (USD)' },
   { k: 'o_story',   label: 'The honest version', long: true },
@@ -745,6 +751,7 @@ async function deleteAttachment(id, path) {
 function fieldHtml(f, answers) {
   let v = answers[f.k];
   const other = f.other ? answers[f.other] : null;
+  const widthClass = f.long ? 'dash-detail-field-long' : (f.wide ? 'dash-detail-field-wide' : '');
 
   if (Array.isArray(v) || other) {
     const parts = [];
@@ -752,7 +759,7 @@ function fieldHtml(f, answers) {
     else if (v) parts.push(String(v));
     if (other && String(other).trim()) parts.push(`Other: ${other}`);
     if (!parts.length) return '';
-    return `<div class="dash-detail-field ${f.long ? 'dash-detail-field-long' : ''}">
+    return `<div class="dash-detail-field ${widthClass}">
       <span class="k">${esc(f.label)}</span>
       <span class="dash-chip-row">${parts.map(x => `<span class="dash-chip">${esc(String(x))}</span>`).join('')}</span>
     </div>`;
@@ -761,13 +768,13 @@ function fieldHtml(f, answers) {
   if (v == null || v === '') return '';
 
   if (f.isLink) {
-    return `<div class="dash-detail-field">
+    return `<div class="dash-detail-field ${widthClass}">
       <span class="k">${esc(f.label)}</span>
       <span class="v"><a href="${esc(String(v))}" target="_blank" rel="noopener">${esc(String(v))}</a></span>
     </div>`;
   }
 
-  return `<div class="dash-detail-field ${f.long ? 'dash-detail-field-long' : ''}">
+  return `<div class="dash-detail-field ${widthClass}">
     <span class="k">${esc(f.label)}</span>
     <span class="v">${esc(String(v))}</span>
   </div>`;

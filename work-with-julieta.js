@@ -75,6 +75,99 @@
   return res.json();
  }
 
+ async function uploadBriefDoc (contactId, file) {
+  const fd = new FormData();
+  fd.append('contact_id', contactId);
+  fd.append('file', file, file.name);
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/upload-brief-doc`, {
+   method: 'POST',
+   headers: {
+    // DO NOT set Content-Type; the browser sets it with the correct boundary for multipart.
+    'Authorization': `Bearer ${SUPABASE_ANON}`,
+   },
+   body: fd,
+  });
+  if (!res.ok) throw new Error(`upload-brief-doc ${res.status}`);
+  return res.json();
+ }
+
+ /* -------- File picker helpers -------- */
+
+ const MAX_FILES   = 3;
+ const MAX_SIZE_MB = 5;
+ const MAX_BYTES   = MAX_SIZE_MB * 1024 * 1024;
+
+ function humanSize (bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+ }
+
+ // Per-input store of the files the user has picked so we can show a list and
+ // remove individual items. The native <input type="file"> doesn't let you
+ // remove just one file, so we track them ourselves.
+ const fileStores = new WeakMap();
+
+ function renderFileList (input) {
+  const list = input.closest('fieldset')?.querySelector('.wwj-file-list');
+  if (!list) return;
+  const files = fileStores.get(input) || [];
+  list.innerHTML = files.map((f, i) => {
+   const oversized = f.size > MAX_BYTES;
+   const cls = oversized ? 'wwj-file-item wwj-file-item-error' : 'wwj-file-item';
+   const sizeLbl = oversized ? `${humanSize(f.size)} — too large, max ${MAX_SIZE_MB}MB` : humanSize(f.size);
+   return `<div class="${cls}">
+    <span class="wwj-file-name">${esc(f.name)}</span>
+    <span class="wwj-file-size">${esc(sizeLbl)}</span>
+    <button type="button" class="wwj-file-remove" data-file-remove="${i}" aria-label="Remove ${esc(f.name)}">×</button>
+   </div>`;
+  }).join('');
+ }
+
+ function wireFileInput (input) {
+  if (!input || input.dataset.filesWired) return;
+  input.dataset.filesWired = '1';
+  fileStores.set(input, []);
+
+  input.addEventListener('change', () => {
+   const current = fileStores.get(input) || [];
+   const incoming = Array.from(input.files || []);
+   // Deduplicate by name+size, cap at MAX_FILES total.
+   const seen = new Set(current.map(f => `${f.name}|${f.size}`));
+   for (const f of incoming) {
+    const key = `${f.name}|${f.size}`;
+    if (seen.has(key)) continue;
+    if (current.length >= MAX_FILES) break;
+    current.push(f);
+    seen.add(key);
+   }
+   fileStores.set(input, current);
+   // Clear the native input so re-selecting the same file still fires change.
+   input.value = '';
+   renderFileList(input);
+  });
+
+  // Remove button clicks (event delegation on the file-list)
+  input.closest('fieldset')?.querySelector('.wwj-file-list')?.addEventListener('click', (ev) => {
+   const btn = ev.target.closest('[data-file-remove]');
+   if (!btn) return;
+   const idx = parseInt(btn.dataset.fileRemove, 10);
+   const current = fileStores.get(input) || [];
+   current.splice(idx, 1);
+   fileStores.set(input, current);
+   renderFileList(input);
+  });
+ }
+
+ function getPickedFiles (form) {
+  // Return the files from whichever path is active.
+  const picked = form.querySelector('input[name="path"]:checked')?.value;
+  const name = picked === 'founder' ? 'f_docs' : 'o_docs';
+  const input = form.querySelector(`input[type="file"][name="${name}"]`);
+  if (!input) return [];
+  return (fileStores.get(input) || []).filter(f => f.size <= MAX_BYTES).slice(0, MAX_FILES);
+ }
+
  function validateMinChecks (form) {
   const groups = form.querySelectorAll('[data-require-min]');
   for (const group of groups) {
@@ -137,8 +230,9 @@
   })(window, 'init');
  }
 
- function showConfirmation (name, briefSaved = true) {
+ function showConfirmation (name, briefSaved = true, filesInfo = {}) {
   const CAL_LINK = 'methodintoimpact/30min'; // Cal.com username/event-slug
+  const { filesTried = 0, filesFailed = 0 } = filesInfo;
 
   const calBlock = CAL_LINK
    ? `<div class="wwj-cal-embed"><div id="cal-inline"></div></div>`
@@ -152,11 +246,22 @@
       Heads up — the brief didn't reach my inbox automatically. Please book the call below and I'll email you to catch any details that got lost.
     </p>`;
 
+  const filesBlock = filesTried
+   ? (filesFailed === 0
+      ? `<p style="background:#eef7f0;border:1px solid #c8e4cf;border-radius:8px;padding:10px 12px;color:#1e5e32;font-size:13px;margin:0 0 12px">
+          ${filesTried} ${filesTried === 1 ? 'file' : 'files'} attached to your brief.
+         </p>`
+      : `<p style="background:#fff5e7;border:1px solid #f1c874;border-radius:8px;padding:10px 12px;color:#8a5e14;font-size:13px;margin:0 0 12px">
+          ${filesTried - filesFailed} of ${filesTried} ${filesTried === 1 ? 'file' : 'files'} attached. The others didn't upload — you can bring them to the call instead.
+         </p>`)
+   : '';
+
   contentHost.innerHTML = `
    <div class="wwj-form-success" role="status">
     <strong><span data-i18n="wwj.success.greet_pre">Thanks</span> ${name} — <span data-i18n="wwj.success.greet_post">your brief is in.</span></strong>
     <p data-i18n="wwj.success.body">Pick a time for the free 30-minute discovery call. After the call, I come back with a tailored proposal (or, if it isn't a fit, I say so and point you somewhere useful).</p>
     ${warnBlock}
+    ${filesBlock}
     ${calBlock}
     <small data-i18n="wwj.success.footnote">You'll get a confirmation email with the meeting link. If anything changes, you can reschedule from that email.</small>
    </div>`;
@@ -196,6 +301,9 @@
    r.addEventListener('change', () => activePathBlocks(form))
   );
 
+  // Wire the file pickers (one per path).
+  form.querySelectorAll('input[type="file"]').forEach(wireFileInput);
+
   form.onsubmit = async ev => {
    ev.preventDefault();
    // Native validation first (required text/select/radio).
@@ -204,23 +312,44 @@
    if (!validateMinChecks(form)) return;
 
    const name = firstNameOf(form);
+   const files = getPickedFiles(form);
    const submitBtn = form.querySelector('button[type="submit"]');
    const originalBtnText = submitBtn?.textContent;
-   if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+   if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = files.length ? 'Sending brief + files…' : 'Sending…';
+   }
 
    const payload = collectAnswers(form);
    // Fire-and-await: we still show the confirmation even if the backend fails,
    // because Cal.com booking is independent — never block the person from booking.
    // But capture the failure state so we can warn the user visibly.
    let briefSaved = true;
+   let contactId = null;
+   let filesFailed = 0;
    try {
-    await postBrief(payload);
+    const result = await postBrief(payload);
+    contactId = result?.contact_id || null;
    } catch (err) {
     console.error('submit-brief failed:', err);
     briefSaved = false;
    }
+
+   // Upload any picked files sequentially (keeps edge-function load light + lets
+   // one failure fail only that file). Needs the contact_id to attach them.
+   if (contactId && files.length) {
+    for (const f of files) {
+     try {
+      await uploadBriefDoc(contactId, f);
+     } catch (err) {
+      console.error('upload-brief-doc failed for', f.name, err);
+      filesFailed++;
+     }
+    }
+   }
+
    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalBtnText; }
-   showConfirmation(name, briefSaved);
+   showConfirmation(name, briefSaved, { filesTried: files.length, filesFailed });
   };
 
   // Clear min-check error styling the moment the person starts ticking.

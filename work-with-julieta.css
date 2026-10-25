@@ -300,6 +300,24 @@
 /* Field hint under a textarea */
 .wwj-field-hint { color:#6a7a85; font-size:12px; font-weight:400; text-transform:none; letter-spacing:normal; margin-top:-2px; }
 
+/* File upload section */
+.wwj-fileset legend small { color:#6a7a85; font-weight:500; text-transform:none; letter-spacing:0; font-size:12px; display:block; margin-top:2px; }
+.wwj-filepicker { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; padding:14px 16px; border:1.5px dashed #c9d4ce; border-radius:10px; background:#f5f6f3; cursor:pointer; transition:background .15s, border-color .15s; }
+.wwj-filepicker:hover { background:#eef2ec; border-color:#16746e; }
+.wwj-filepicker input[type="file"] { position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
+.wwj-filepicker-btn { display:inline-block; background:#16746e; color:#fff; padding:7px 14px; border-radius:999px; font-weight:800; font-size:13px; }
+.wwj-filepicker-hint { color:#536a78; font-size:12.5px; }
+
+.wwj-file-list { display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+.wwj-file-list:empty { display:none; }
+.wwj-file-item { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 12px; background:#fff; border:1px solid #d4dfe2; border-radius:8px; font-size:13px; }
+.wwj-file-item .wwj-file-name { color:#0d3836; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1; }
+.wwj-file-item .wwj-file-size { color:#6a7a85; font-size:12px; white-space:nowrap; }
+.wwj-file-item .wwj-file-remove { background:transparent; border:0; color:#e56f4a; cursor:pointer; font-size:18px; line-height:1; padding:0 4px; font-weight:700; }
+.wwj-file-item.wwj-file-item-error { border-color:#e56f4a; background:#fff5ef; }
+.wwj-file-item.wwj-file-item-error .wwj-file-name { color:#c54c22; font-weight:700; }
+.wwj-file-item.wwj-file-item-error .wwj-file-size { color:#c54c22; }
+
 /* Required-field marker: coral asterisk after the label text */
 .wwj-form label:has(> input[required]) > span:first-child::after,
 .wwj-form label:has(> textarea[required]) > span:first-child::after,
