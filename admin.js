@@ -300,29 +300,26 @@ function renderDetail(c, brief, bookings, events, attachments) {
   const answers = (brief && brief.answers) || {};
   const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
-  // Show only the current bucket's sub-stages prominently.
-  // All other buckets' stages are available as compact "Move to" buttons underneath.
+  // Current bucket shows its sub-stages prominently.
+  // Other buckets are shown underneath as "Move to" — same grouped layout, just dimmer.
   const currentBucket = BUCKET_OF_STAGE[c.stage] || 'open';
-  const otherStages = ['open','completed','closed']
-    .filter(b => b !== currentBucket)
-    .flatMap(b => STAGE_BUCKETS[b]);
-  const stageButtons = `
-    <div class="dash-stage-group" data-bucket="${currentBucket}">
-      <span class="dash-stage-group-label">${BUCKET_LABEL[currentBucket]}</span>
+  const otherBuckets  = ['open','completed','closed'].filter(b => b !== currentBucket);
+
+  const renderGroup = (bk, variant) => `
+    <div class="dash-stage-group dash-stage-group-${variant}" data-bucket="${bk}">
+      <span class="dash-stage-group-label">${BUCKET_LABEL[bk]}</span>
       <div class="dash-stage-group-btns">
-        ${STAGE_BUCKETS[currentBucket].map(s => `
+        ${STAGE_BUCKETS[bk].map(s => `
           <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
         `).join('')}
       </div>
     </div>
-    <div class="dash-stage-move-row">
-      <span class="dash-stage-move-label">Move to:</span>
-      <div class="dash-stage-move-btns">
-        ${otherStages.map(s => `
-          <button class="dash-stage-move-btn" data-set-stage="${s}" data-bucket="${BUCKET_OF_STAGE[s]}">${s.replace('_',' ')}</button>
-        `).join('')}
-      </div>
-    </div>
+  `;
+
+  const stageButtons = `
+    ${renderGroup(currentBucket, 'current')}
+    <div class="dash-stage-move-header"><span>Move to</span></div>
+    ${otherBuckets.map(bk => renderGroup(bk, 'move')).join('')}
   `;
 
   const bookingsHtml = bookings.length ? bookings.map(b => `
