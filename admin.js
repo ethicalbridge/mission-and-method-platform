@@ -511,6 +511,14 @@ async function deleteContact(id, name) {
 }
 
 // ---------- Pipeline section save ----------
+// Outcome → terminal stage auto-advance (Proposal section).
+const PROPOSAL_OUTCOME_TO_STAGE = {
+  accepted: 'won',
+  declined: 'lost',
+  ghosted:  'ghosted',
+  // 'waiting' and 'changes_requested' do not change the stage.
+};
+
 async function savePipelineSection(contactId, section) {
   const root = detailBody.querySelector(`[data-section="${section}"]`);
   if (!root) return;
@@ -524,6 +532,14 @@ async function savePipelineSection(contactId, section) {
       updates[name] = el.value;
     }
   });
+
+  // Auto-advance stage when a proposal outcome resolves the deal.
+  let autoStage = null;
+  if (section === 'proposal' && updates.proposal_outcome) {
+    autoStage = PROPOSAL_OUTCOME_TO_STAGE[updates.proposal_outcome] || null;
+  }
+  if (autoStage) updates.stage = autoStage;
+
   const btn = root.querySelector('.dash-save-btn');
   const originalText = btn.textContent;
   btn.disabled = true; btn.textContent = 'Saving…';
@@ -536,12 +552,24 @@ async function savePipelineSection(contactId, section) {
   await supabase.from('crm_events').insert({
     contact_id: contactId,
     type: `${section}_updated`,
-    message: `${section.replace('_',' ')} updated`,
+    message: autoStage
+      ? `${section.replace('_',' ')} updated · stage → ${autoStage.replace('_',' ')}`
+      : `${section.replace('_',' ')} updated`,
   });
-  // Refresh in-memory contact for subsequent renders
+
+  // Refresh in-memory contact + UI
   const c = allContacts.find(c => c.id === contactId);
   if (c) Object.assign(c, updates);
-  btn.textContent = '✓ Saved'; setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+  btn.textContent = autoStage ? `✓ Saved · moved to ${autoStage}` : '✓ Saved';
+
+  if (autoStage) {
+    // Re-render the detail panel so the stage picker and bucket-scoped sections update.
+    renderStats();
+    renderList();
+    setTimeout(() => openDetail(contactId), 500);
+  } else {
+    setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+  }
 }
 
 // ---------- Attachments ----------
