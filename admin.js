@@ -307,6 +307,9 @@ function renderDetail(c, brief, bookings, events, attachments) {
 
     <h3>Stage</h3>
     <div class="dash-detail-stage-row">${stageButtons}</div>
+    <div class="dash-detail-danger">
+      <button type="button" class="dash-delete-btn" data-delete-contact="${c.id}">Delete this contact</button>
+    </div>
 
     <h3>Brief</h3>
     ${brief
@@ -391,6 +394,24 @@ function renderDetail(c, brief, bookings, events, attachments) {
   detailBody.querySelectorAll('[data-delete]').forEach(btn => {
     btn.addEventListener('click', () => deleteAttachment(btn.dataset.delete, btn.dataset.path));
   });
+  detailBody.querySelector('[data-delete-contact]').addEventListener('click', () => deleteContact(c.id, c.name));
+}
+
+async function deleteContact(id, name) {
+  if (!confirm(`Delete "${name}" and all their briefs, bookings, notes and attachments? This cannot be undone.`)) return;
+  // Clean up any uploaded files first (RLS lets us list by prefix).
+  const { data: list } = await supabase.storage.from('crm-docs').list(id, { limit: 100 });
+  if (list && list.length) {
+    await supabase.storage.from('crm-docs').remove(list.map(f => `${id}/${f.name}`));
+  }
+  const { error } = await supabase.from('crm_contacts').delete().eq('id', id);
+  if (error) { alert('Delete failed: ' + error.message); return; }
+  // Clear state and reload
+  selectedId = null;
+  allContacts = allContacts.filter(c => c.id !== id);
+  renderStats();
+  renderList();
+  detailBody.innerHTML = `<div class="dash-detail-blank"><p>Contact deleted.</p></div>`;
 }
 
 // ---------- Pipeline section save ----------

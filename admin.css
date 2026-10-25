@@ -392,6 +392,14 @@ body {
 .dash-upload input[type="text"]:focus { outline: 0; border-color: var(--teal); }
 .dash-upload-status { margin: 0; font-size: 12px; color: var(--ink-dim); min-height: 16px; }
 
+.dash-detail-danger { margin-top: 8px; }
+.dash-delete-btn {
+  background: transparent; border: 1px solid #f1dcdc; color: #8e2e2e;
+  border-radius: 6px; padding: 6px 12px;
+  font: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer;
+}
+.dash-delete-btn:hover { background: #f1dcdc; border-color: #c7442b; }
+
 .dash-chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
 .dash-chip { background: var(--cream-2); color: var(--ink); border-radius: 999px; padding: 3px 10px; font-size: 11.5px; }
 
