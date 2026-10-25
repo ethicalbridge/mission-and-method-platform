@@ -583,10 +583,34 @@ function applyFilter(stage) {
   navBtns.forEach(b => b.classList.toggle('active', b.dataset.stageFilter === stage));
   statTiles.forEach(t => t.classList.toggle('active', t.dataset.stage === stage));
   renderList();
+  syncDetailWithFilter();
+}
+
+// Keep the detail panel in sync with the active filter:
+// - if the selected contact is still in the filtered list, keep it
+// - otherwise auto-select the first in the list, or show the blank state
+function syncDetailWithFilter() {
+  const rows = filteredContacts();
+  if (selectedId && rows.some(c => c.id === selectedId)) return;
+  if (rows.length) {
+    openDetail(rows[0].id);
+  } else {
+    selectedId = null;
+    detailBody.innerHTML = `
+      <div class="dash-detail-blank">
+        <svg viewBox="5 5 178 189" width="56" height="60" aria-hidden="true" style="opacity:.4">
+          <path d="M7 79 Q7 75 10.5 77.5 L77 131 Q80 134 77 136.5 L10.5 189.5 Q7 192 7 188 Z" fill="#0d3836"></path>
+          <path d="M151 82 C116 99 70 139 43 188 L82 188 C91 151 117 111 151 82 Z" fill="#16746E"></path>
+          <path d="M181 74 Q181 70 177.5 72 Q155 85 139 105 Q137 107.5 137 111 L137 189 Q137 192 140 192 L178 192 Q181 192 181 189 Z" fill="#0d3836"></path>
+          <circle cx="159" cy="29.5" r="23" fill="#E56F4A"></circle>
+        </svg>
+        <p>No contacts in this view.</p>
+      </div>`;
+  }
 }
 navBtns.forEach(btn => btn.addEventListener('click', () => applyFilter(btn.dataset.stageFilter)));
 statTiles.forEach(t => t.addEventListener('click', () => applyFilter(t.dataset.stage)));
-searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); });
+searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); syncDetailWithFilter(); });
 
 // ============== CSV export ==============
 exportBtn.addEventListener('click', () => {
