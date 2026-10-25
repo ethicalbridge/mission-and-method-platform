@@ -216,6 +216,14 @@ newContactForm.addEventListener('submit', async (ev) => {
   newContactMsg.textContent = 'Created.';
   setTimeout(async () => {
     newContactDialog.close();
+    // Reset filters so the new contact is always visible in the list — switch
+    // the path to match it (so she sees it in the right bucket), and clear the
+    // stage filter so no bucket exclusion hides it.
+    currentFilter = 'all';
+    currentPath   = payload.path;
+    navBtns.forEach(b => b.classList.toggle('active', b.dataset.stageFilter === 'all'));
+    pathBtns.forEach(b => b.classList.toggle('active', b.dataset.pathFilter === payload.path));
+    statTiles.forEach(t => t.classList.remove('active'));
     await loadContacts();
     openDetail(data.id);
   }, 500);
