@@ -343,6 +343,7 @@ body {
 .dash-detail-field .v { color: var(--ink); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
 .dash-detail-field-long { grid-column: 1 / -1; }
 .dash-detail-field-long .v {
+  display: block;
   background: var(--cream); padding: 12px 14px; border-radius: 8px;
   border-left: 3px solid var(--teal); margin-top: 4px;
 }
