@@ -289,9 +289,16 @@ body {
 .dash-detail-close:hover { color: var(--ink); }
 
 .dash-detail h3 {
-  font-size: 11px; font-weight: 800; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--teal); margin: 24px 0 10px;
-  border-bottom: 1px solid var(--border); padding-bottom: 6px;
+  display: block;
+  font-size: 13px; font-weight: 900; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal-deep);
+  background: #eaf6f3;
+  padding: 10px 14px;
+  border-left: 4px solid var(--teal);
+  border-bottom: 0;
+  border-radius: 0 6px 6px 0;
+  margin: 28px 0 12px;
 }
 
 .dash-detail-stage-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
