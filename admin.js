@@ -11,6 +11,17 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
 });
 
+// Stage buckets: Open (active) / Completed (won) / Closed (cancelled, lost, archived).
+const STAGE_BUCKETS = {
+  open:      ['new', 'booked', 'met', 'proposal_sent'],
+  completed: ['won'],
+  closed:    ['cancelled', 'lost', 'archived'],
+};
+const BUCKET_OF_STAGE = Object.fromEntries(
+  Object.entries(STAGE_BUCKETS).flatMap(([bk, stages]) => stages.map(s => [s, bk]))
+);
+const BUCKET_LABEL = { open: 'Open', completed: 'Completed', closed: 'Closed' };
+
 // Pretty labels for brief fields — grouped per path.
 const FOUNDER_FIELDS = [
   { k: 'f_country',      label: 'Where it will operate' },
@@ -178,14 +189,14 @@ async function loadContacts({ selectFirst = false } = {}) {
 }
 
 function renderStats() {
-  const counts = { new: 0, booked: 0, met: 0, proposal_sent: 0, won: 0, lost: 0 };
-  allContacts.forEach(c => { if (c.stage in counts) counts[c.stage]++; });
-  $('#stat-new').textContent      = counts.new;
-  $('#stat-booked').textContent   = counts.booked;
-  $('#stat-met').textContent      = counts.met;
-  $('#stat-proposal').textContent = counts.proposal_sent;
-  $('#stat-won').textContent      = counts.won;
-  $('#stat-lost').textContent     = counts.lost;
+  const counts = { open: 0, completed: 0, closed: 0 };
+  allContacts.forEach(c => {
+    const bk = BUCKET_OF_STAGE[c.stage];
+    if (bk) counts[bk]++;
+  });
+  $('#stat-open').textContent      = counts.open;
+  $('#stat-completed').textContent = counts.completed;
+  $('#stat-closed').textContent    = counts.closed;
 
   statTiles.forEach(t => t.classList.toggle('active', t.dataset.stage === currentFilter));
 }
@@ -193,7 +204,15 @@ function renderStats() {
 function filteredContacts() {
   const q = currentSearch.trim().toLowerCase();
   return allContacts.filter(c => {
-    if (currentFilter !== 'all' && c.stage !== currentFilter) return false;
+    if (currentFilter !== 'all') {
+      // currentFilter can be a bucket ('open'/'completed'/'closed') or a specific stage
+      const bucket = STAGE_BUCKETS[currentFilter];
+      if (bucket) {
+        if (!bucket.includes(c.stage)) return false;
+      } else {
+        if (c.stage !== currentFilter) return false;
+      }
+    }
     if (q) {
       const hay = `${c.name} ${c.email} ${c.organisation || ''} ${c.role || ''}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -257,9 +276,17 @@ function renderDetail(c, brief, bookings, events, attachments) {
   const answers = (brief && brief.answers) || {};
   const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
-  const stageButtons = ['new','booked','met','proposal_sent','won','lost','archived'].map(s => `
-    <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
+  const stageGroups = ['open','completed','closed'].map(bk => `
+    <div class="dash-stage-group" data-bucket="${bk}">
+      <span class="dash-stage-group-label">${BUCKET_LABEL[bk]}</span>
+      <div class="dash-stage-group-btns">
+        ${STAGE_BUCKETS[bk].map(s => `
+          <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
+        `).join('')}
+      </div>
+    </div>
   `).join('');
+  const stageButtons = stageGroups; // keep the template below using the same name
 
   const bookingsHtml = bookings.length ? bookings.map(b => `
     <div class="dash-booking-card">

@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=dash-5">
+<link rel="stylesheet" href="admin.css?v=dash-6">
 </head>
 <body>
 
@@ -81,12 +81,9 @@
     </a>
     <nav class="dash-nav">
       <button type="button" data-stage-filter="all" class="active">All</button>
-      <button type="button" data-stage-filter="new">New</button>
-      <button type="button" data-stage-filter="booked">Booked</button>
-      <button type="button" data-stage-filter="met">Met</button>
-      <button type="button" data-stage-filter="proposal_sent">Proposal</button>
-      <button type="button" data-stage-filter="won">Won</button>
-      <button type="button" data-stage-filter="lost">Lost</button>
+      <button type="button" data-stage-filter="open">Open</button>
+      <button type="button" data-stage-filter="completed">Completed</button>
+      <button type="button" data-stage-filter="closed">Closed</button>
     </nav>
     <div class="dash-user">
       <input id="search" type="search" placeholder="Search…" aria-label="Search">
@@ -98,12 +95,9 @@
   </header>
 
   <section class="dash-stats" aria-label="Pipeline stats">
-    <div class="dash-stat" data-stage="new"><b id="stat-new">0</b><span>New</span></div>
-    <div class="dash-stat" data-stage="booked"><b id="stat-booked">0</b><span>Booked</span></div>
-    <div class="dash-stat" data-stage="met"><b id="stat-met">0</b><span>Met</span></div>
-    <div class="dash-stat" data-stage="proposal_sent"><b id="stat-proposal">0</b><span>Proposal</span></div>
-    <div class="dash-stat" data-stage="won"><b id="stat-won">0</b><span>Won</span></div>
-    <div class="dash-stat dash-stat-dim" data-stage="lost"><b id="stat-lost">0</b><span>Lost</span></div>
+    <div class="dash-stat dash-stat-open"      data-stage="open"><b id="stat-open">0</b><span>Open</span><small>new · booked · met · proposal</small></div>
+    <div class="dash-stat dash-stat-completed" data-stage="completed"><b id="stat-completed">0</b><span>Completed</span><small>won</small></div>
+    <div class="dash-stat dash-stat-closed"    data-stage="closed"><b id="stat-closed">0</b><span>Closed</span><small>cancelled · lost · archived</small></div>
   </section>
 
   <main class="dash-main">
@@ -133,6 +127,6 @@
 
 </div>
 
-<script type="module" src="admin.js?v=dash-5"></script>
+<script type="module" src="admin.js?v=dash-6"></script>
 </body>
 </html>

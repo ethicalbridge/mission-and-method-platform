@@ -156,22 +156,26 @@ body {
 .dash-user-email { color: var(--ink-dim); font-size: 12px; }
 
 /* =========================================================
-   Stats strip
+   Stats strip (3 buckets)
    ========================================================= */
 .dash-stats {
-  display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
   padding: 16px 24px;
 }
 .dash-stat {
   background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-  padding: 12px 16px; display: flex; flex-direction: column; gap: 2px;
+  padding: 14px 18px; display: flex; flex-direction: column; gap: 4px;
   cursor: pointer; transition: border-color .15s;
+  border-left-width: 4px;
 }
 .dash-stat:hover { border-color: var(--teal); }
 .dash-stat.active { border-color: var(--teal); background: #eaf6f3; }
-.dash-stat b { font-size: 24px; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; color: var(--ink); line-height: 1; }
-.dash-stat span { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
-.dash-stat-dim b { color: var(--ink-dim); }
+.dash-stat b { font-size: 28px; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; color: var(--ink); line-height: 1; }
+.dash-stat span { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+.dash-stat small { font-size: 11px; color: var(--ink-dim); margin-top: 2px; }
+.dash-stat-open      { border-left-color: #f1c874; }
+.dash-stat-completed { border-left-color: #0e5a2e; }
+.dash-stat-closed    { border-left-color: #8e2e2e; }
 
 /* =========================================================
    Main split layout (list + detail)
@@ -283,14 +287,30 @@ body {
   border-bottom: 1px solid var(--border); padding-bottom: 6px;
 }
 
-.dash-detail-stage-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.dash-detail-stage-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.dash-stage-group {
+  display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 12px;
+  padding: 6px 10px; border-radius: 8px; background: var(--cream);
+  border-left: 3px solid var(--border);
+}
+.dash-stage-group[data-bucket="open"]      { border-left-color: #f1c874; }
+.dash-stage-group[data-bucket="completed"] { border-left-color: #0e5a2e; }
+.dash-stage-group[data-bucket="closed"]    { border-left-color: #8e2e2e; }
+.dash-stage-group-label {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.dash-stage-group-btns { display: flex; flex-wrap: wrap; gap: 6px; }
 .dash-stage-btn {
-  background: var(--cream-2); border: 1px solid var(--border); border-radius: 8px;
-  padding: 7px 11px; font: inherit; font-size: 12px; font-weight: 700;
+  background: #fff; border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 11px; font: inherit; font-size: 12px; font-weight: 700;
   color: var(--ink-dim); cursor: pointer;
 }
-.dash-stage-btn:hover { background: var(--border); color: var(--ink); }
+.dash-stage-btn:hover { background: var(--cream-2); color: var(--ink); }
 .dash-stage-btn.current { background: var(--teal); color: #fff; border-color: var(--teal); }
+@media (max-width: 560px) {
+  .dash-stage-group { grid-template-columns: 1fr; gap: 6px; }
+}
 
 .dash-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
 @media (max-width: 1100px) { .dash-detail-grid { grid-template-columns: 1fr; } }
