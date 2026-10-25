@@ -359,11 +359,11 @@ body {
 .dash-pipeline-row {
   display: grid; grid-template-columns: 1fr; gap: 10px;
 }
-.dash-pipeline-row-3 {
-  grid-template-columns: 1fr 1fr 1fr;
-}
+.dash-pipeline-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+.dash-pipeline-row-2 { grid-template-columns: 1fr 1fr; }
 @media (max-width: 760px) {
-  .dash-pipeline-row-3 { grid-template-columns: 1fr; }
+  .dash-pipeline-row-3,
+  .dash-pipeline-row-2 { grid-template-columns: 1fr; }
 }
 .dash-pipeline-section label {
   display: flex; flex-direction: column; gap: 4px;

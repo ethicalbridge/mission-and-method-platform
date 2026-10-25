@@ -24,6 +24,22 @@ const STAGE_LABEL = {
   cancelled:     'cancelled meeting',
 };
 const stageLabel = (s) => STAGE_LABEL[s] || s.replace('_', ' ');
+
+// Proposal package menu — matches the Consult page's A/B package cards.
+const PROPOSAL_PACKAGES = [
+  { value: 'A1', label: 'A1 · Built for you (I build the documents, you review)' },
+  { value: 'A2', label: 'A2 · Most chosen (I build + train + 3-month runway)' },
+  { value: 'B1', label: 'B1 · Built for you (I build the systems for your organisation)' },
+  { value: 'B2', label: 'B2 · Most chosen (I build + train each role)' },
+  { value: 'B3', label: 'B3 · Deep (Organisational therapy)' },
+  { value: 'custom', label: 'Custom / Other' },
+];
+function packageOptions(selected) {
+  return ['<option value="">—</option>']
+    .concat(PROPOSAL_PACKAGES.map(p =>
+      `<option value="${p.value}" ${selected === p.value ? 'selected' : ''}>${p.label}</option>`
+    )).join('');
+}
 const BUCKET_OF_STAGE = Object.fromEntries(
   Object.entries(STAGE_BUCKETS).flatMap(([bk, stages]) => stages.map(s => [s, bk]))
 );
@@ -226,7 +242,7 @@ async function loadContacts({ selectFirst = false } = {}) {
   console.log('[admin] loadContacts: querying crm_contacts…');
   const { data, error } = await supabase
     .from('crm_contacts')
-    .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang, meeting_at, meeting_notes, proposal_sent_at, proposal_due_at, proposal_reply_at, proposal_outcome, next_steps, next_steps_due_at, survey_sent_at, survey_responded_at, survey_url, survey_notes, closure_reason, closure_notes')
+    .select('id, created_at, path, name, email, organisation, role, country, stage, notes, lang, meeting_at, meeting_notes, proposal_sent_at, proposal_due_at, proposal_reply_at, proposal_outcome, proposal_type_sent, proposal_value_sent, proposal_type_agreed, proposal_value_agreed, next_steps, next_steps_due_at, survey_sent_at, survey_responded_at, survey_url, survey_notes, closure_reason, closure_notes')
     .order('created_at', { ascending: false })
     .limit(500);
 
@@ -484,6 +500,22 @@ function renderDetail(c, brief, bookings, events, attachments) {
           <label><span>Sent on</span><input type="date" name="proposal_sent_at" value="${toDate(c.proposal_sent_at)}"></label>
           <label><span>Reply due by</span><input type="date" name="proposal_due_at" value="${toDate(c.proposal_due_at)}"></label>
           <label><span>Reply received</span><input type="date" name="proposal_reply_at" value="${toDate(c.proposal_reply_at)}"></label>
+        </div>
+        <div class="dash-pipeline-row dash-pipeline-row-2">
+          <label><span>Package proposed</span>
+            <select name="proposal_type_sent">${packageOptions(c.proposal_type_sent)}</select>
+          </label>
+          <label><span>Value proposed (USD)</span>
+            <input type="text" name="proposal_value_sent" placeholder="e.g. 4500 or 3-7k" maxlength="60" value="${esc(c.proposal_value_sent || '')}">
+          </label>
+        </div>
+        <div class="dash-pipeline-row dash-pipeline-row-2">
+          <label><span>Package agreed</span>
+            <select name="proposal_type_agreed">${packageOptions(c.proposal_type_agreed)}</select>
+          </label>
+          <label><span>Value agreed (USD)</span>
+            <input type="text" name="proposal_value_agreed" placeholder="e.g. 5500" maxlength="60" value="${esc(c.proposal_value_agreed || '')}">
+          </label>
         </div>
         <label><span>Outcome</span>
           <select name="proposal_outcome">
