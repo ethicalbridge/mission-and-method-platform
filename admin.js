@@ -300,17 +300,30 @@ function renderDetail(c, brief, bookings, events, attachments) {
   const answers = (brief && brief.answers) || {};
   const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
-  const stageGroups = ['open','completed','closed'].map(bk => `
-    <div class="dash-stage-group" data-bucket="${bk}">
-      <span class="dash-stage-group-label">${BUCKET_LABEL[bk]}</span>
+  // Show only the current bucket's sub-stages prominently.
+  // All other buckets' stages are available as compact "Move to" buttons underneath.
+  const currentBucket = BUCKET_OF_STAGE[c.stage] || 'open';
+  const otherStages = ['open','completed','closed']
+    .filter(b => b !== currentBucket)
+    .flatMap(b => STAGE_BUCKETS[b]);
+  const stageButtons = `
+    <div class="dash-stage-group" data-bucket="${currentBucket}">
+      <span class="dash-stage-group-label">${BUCKET_LABEL[currentBucket]}</span>
       <div class="dash-stage-group-btns">
-        ${STAGE_BUCKETS[bk].map(s => `
+        ${STAGE_BUCKETS[currentBucket].map(s => `
           <button class="dash-stage-btn ${c.stage === s ? 'current' : ''}" data-set-stage="${s}">${s.replace('_',' ')}</button>
         `).join('')}
       </div>
     </div>
-  `).join('');
-  const stageButtons = stageGroups; // keep the template below using the same name
+    <div class="dash-stage-move-row">
+      <span class="dash-stage-move-label">Move to:</span>
+      <div class="dash-stage-move-btns">
+        ${otherStages.map(s => `
+          <button class="dash-stage-move-btn" data-set-stage="${s}" data-bucket="${BUCKET_OF_STAGE[s]}">${s.replace('_',' ')}</button>
+        `).join('')}
+      </div>
+    </div>
+  `;
 
   const bookingsHtml = bookings.length ? bookings.map(b => `
     <div class="dash-booking-card">
