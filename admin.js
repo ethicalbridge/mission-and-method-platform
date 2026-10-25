@@ -15,7 +15,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
 const STAGE_BUCKETS = {
   open:      ['new', 'booked', 'met', 'proposal_sent'],
   completed: ['won'],
-  closed:    ['cancelled', 'lost', 'archived'],
+  closed:    ['cancelled', 'ghosted', 'lost', 'archived'],
 };
 const BUCKET_OF_STAGE = Object.fromEntries(
   Object.entries(STAGE_BUCKETS).flatMap(([bk, stages]) => stages.map(s => [s, bk]))
