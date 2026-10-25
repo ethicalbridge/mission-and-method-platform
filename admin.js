@@ -149,6 +149,55 @@ signoutBtn.addEventListener('click', async () => {
   showSignin();
 });
 
+// ============== New contact ==============
+const newContactDialog = $('#new-contact-dialog');
+const newContactForm   = $('#new-contact-form');
+const newContactMsg    = $('#new-contact-msg');
+$('#new-contact-btn').addEventListener('click', () => {
+  newContactMsg.textContent = '';
+  newContactForm.reset();
+  newContactDialog.showModal();
+});
+$('#new-contact-cancel').addEventListener('click', (ev) => { ev.preventDefault(); newContactDialog.close(); });
+newContactForm.addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const fd = new FormData(newContactForm);
+  const payload = {
+    name:  String(fd.get('name') || '').trim(),
+    email: String(fd.get('email') || '').trim().toLowerCase(),
+    path:  fd.get('path'),
+    stage: fd.get('stage'),
+    organisation: String(fd.get('organisation') || '').trim() || null,
+    lang:  'en',
+  };
+  if (!payload.name || !payload.email) {
+    newContactMsg.className = 'dash-signin-msg err';
+    newContactMsg.textContent = 'Name and email are required.';
+    return;
+  }
+  newContactMsg.className = 'dash-signin-msg'; newContactMsg.textContent = 'Creating…';
+  const { data, error } = await supabase.from('crm_contacts').insert(payload).select('id').single();
+  if (error) {
+    newContactMsg.className = 'dash-signin-msg err';
+    newContactMsg.textContent = error.code === '23505'
+      ? 'A contact with that email already exists.'
+      : (error.message || 'Could not create contact.');
+    return;
+  }
+  await supabase.from('crm_events').insert({
+    contact_id: data.id,
+    type: 'contact_created_manual',
+    message: `Contact created manually (${payload.path}, stage ${payload.stage})`,
+  });
+  newContactMsg.className = 'dash-signin-msg ok';
+  newContactMsg.textContent = 'Created.';
+  setTimeout(async () => {
+    newContactDialog.close();
+    await loadContacts();
+    openDetail(data.id);
+  }, 500);
+});
+
 // ============== Change password ==============
 const pwdDialog = $('#pwd-dialog');
 const pwdForm   = $('#pwd-form');

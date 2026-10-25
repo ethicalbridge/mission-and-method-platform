@@ -213,6 +213,12 @@ body {
   display: flex; justify-content: space-between; align-items: center;
   background: var(--cream);
 }
+.dash-new-btn {
+  background: var(--coral); color: #fff; border: 0; border-radius: 6px;
+  padding: 5px 10px; font: inherit; font-size: 12px; font-weight: 800;
+  cursor: pointer; font-family: 'Nunito Sans', sans-serif;
+}
+.dash-new-btn:hover { background: var(--coral-deep); }
 .dash-list-count {
   background: var(--teal); color: #fff; font-size: 11px;
   padding: 2px 8px; border-radius: 999px; font-family: 'Nunito Sans', sans-serif;

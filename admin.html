@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=dash-17">
+<link rel="stylesheet" href="admin.css?v=dash-18">
 </head>
 <body>
 
@@ -42,6 +42,47 @@
     <p id="signin-msg" class="dash-signin-msg" aria-live="polite"></p>
   </div>
 </main>
+
+<!-- ============== New contact dialog ============== -->
+<dialog id="new-contact-dialog" class="dash-pwd-dialog">
+  <form id="new-contact-form" method="dialog">
+    <h2>Add a contact</h2>
+    <label>
+      <span>Name</span>
+      <input type="text" name="name" required maxlength="200" placeholder="Full name">
+    </label>
+    <label>
+      <span>Email</span>
+      <input type="email" name="email" required maxlength="320" placeholder="name@example.com">
+    </label>
+    <label>
+      <span>Path</span>
+      <select name="path" required>
+        <option value="founder">Founder (person with an idea)</option>
+        <option value="org">Organisation</option>
+      </select>
+    </label>
+    <label>
+      <span>Organisation / idea (optional)</span>
+      <input type="text" name="organisation" maxlength="200" placeholder="What they're building or where they work">
+    </label>
+    <label>
+      <span>Starting stage</span>
+      <select name="stage" required>
+        <option value="new" selected>new</option>
+        <option value="booked">booked</option>
+        <option value="met">met</option>
+        <option value="proposal_sent">proposal sent</option>
+        <option value="won">won</option>
+      </select>
+    </label>
+    <p id="new-contact-msg" class="dash-signin-msg" aria-live="polite"></p>
+    <div class="dash-pwd-actions">
+      <button type="button" id="new-contact-cancel">Cancel</button>
+      <button type="submit" id="new-contact-save">Create contact</button>
+    </div>
+  </form>
+</dialog>
 
 <!-- ============== Change-password dialog ============== -->
 <dialog id="pwd-dialog" class="dash-pwd-dialog">
@@ -97,13 +138,14 @@
   <section class="dash-stats" aria-label="Pipeline stats">
     <div class="dash-stat dash-stat-open"      data-stage="open"><b id="stat-open">0</b><span>Open</span><small>new · booked · met · proposal</small></div>
     <div class="dash-stat dash-stat-completed" data-stage="completed"><b id="stat-completed">0</b><span>Completed</span><small>won</small></div>
-    <div class="dash-stat dash-stat-closed"    data-stage="closed"><b id="stat-closed">0</b><span>Closed</span><small>cancelled · lost · archived</small></div>
+    <div class="dash-stat dash-stat-closed"    data-stage="closed"><b id="stat-closed">0</b><span>Closed</span><small>declined · ghosted · lost · …</small></div>
   </section>
 
   <main class="dash-main">
     <aside class="dash-list" aria-label="Contacts">
       <h2 class="dash-list-head">
-        Contacts <span id="list-count" class="dash-list-count">0</span>
+        <span>Contacts <span id="list-count" class="dash-list-count">0</span></span>
+        <button id="new-contact-btn" class="dash-new-btn" type="button" title="Add a contact manually">+ New</button>
       </h2>
       <ul id="contacts-list" class="dash-cards">
         <li class="dash-empty">Loading…</li>
@@ -127,6 +169,6 @@
 
 </div>
 
-<script type="module" src="admin.js?v=dash-17"></script>
+<script type="module" src="admin.js?v=dash-18"></script>
 </body>
 </html>
