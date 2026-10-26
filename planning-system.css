@@ -307,8 +307,8 @@
 .hm-instructor-photo img{width:100%;max-width:420px;border-radius:24px;display:block;box-shadow:0 30px 60px rgba(16,46,59,.18)}
 .hm-instructor-badge{position:absolute;right:-20px;bottom:-20px;background:var(--sun);color:var(--ink);border-radius:20px;padding:18px 22px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(16,46,59,.15)}
 .hm-instructor-badge b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:40px;line-height:1}
-.hm-instructor-badge span{font-size:11px;line-height:1.3;font-weight:700;letter-spacing:.03em}
-.hm-instructor-body h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(28px,3.4vw,42px);line-height:1.1;color:var(--ink);margin:12px 0 10px}
+.hm-instructor-badge span{font-size:11px;line-height:1.3;font-weight:700;letter-spacing:.03em;white-space:pre-line}
+.hm-instructor-body h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:clamp(26px,2.6vw,34px);line-height:1.15;color:var(--ink);margin:12px 0 10px;text-wrap:balance}
 .hm-instructor-role{font-size:14px;color:var(--teal);font-weight:800;letter-spacing:.03em;margin:0 0 18px}
 .hm-instructor-body p{font-size:16px;line-height:1.6;color:var(--ink);margin:0 0 18px}
 .hm-quote{position:relative;background:var(--mint);border-left:4px solid var(--teal);padding:20px 24px;border-radius:0 14px 14px 0;font-family:'DM Serif Display',Georgia,serif;font-size:19px;line-height:1.5;font-style:italic;color:var(--deep);margin:0 0 22px}
