@@ -43,20 +43,17 @@ const contact=document.querySelector('#contact-form');if(contact){contact.addEve
 
 import('./pricing-config.js').then(({pricing})=>{const label=document.querySelector('#pricing-currency');if(label)label.textContent='Development preview · '+pricing.currency+' pricing';});
 
-// --- Google Analytics 4 + Search Console verification ---
-// Both IDs live here so there's one place to update. Set either to '' to disable.
-// GA4: measurement ID from Analytics admin (looks like G-XXXXXXXXXX).
-// SC : google-site-verification token from Search Console → HTML tag method.
-(function initAnalytics(){
+// --- Cookie consent + Google Analytics 4 (consent-gated) ---
+// GA4 does NOT load until the visitor clicks Accept. If they Decline, no
+// analytics tag is injected and no cookies are set. The choice is stored in
+// localStorage under 'mim-consent-v1' and the banner never reappears unless
+// the visitor manually clears it (via the legal page link below).
+(function initConsentedAnalytics(){
   const GA4_ID = 'G-2VLHVZSVTD';           // Method into Impact GA4 property
-  const SC_TOKEN = '';                     // not needed — Search Console verifies via GA4
+  const SC_TOKEN = '';                     // Search Console verifies via GA4; no SC meta needed
+  const CONSENT_KEY = 'mim-consent-v1';    // 'accepted' | 'declined'
 
-  // Don't track admin pages or local dev.
-  const host = location.hostname;
-  const isAdmin = location.pathname.endsWith('/admin.html') || location.pathname === '/admin.html';
-  const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local');
-
-  // Search Console meta tag (static — safe to add regardless of host).
+  // Static-safe Search Console meta tag (if a token is ever set).
   if (SC_TOKEN) {
     const sc = document.createElement('meta');
     sc.name = 'google-site-verification';
@@ -64,8 +61,22 @@ import('./pricing-config.js').then(({pricing})=>{const label=document.querySelec
     document.head.appendChild(sc);
   }
 
-  // GA4 — skip on admin and local dev so test clicks don't pollute real data.
-  if (GA4_ID && !GA4_ID.includes('XXXXXXXXXX') && !isAdmin && !isLocal) {
+  // Never track admin or local dev under any circumstance.
+  const host = location.hostname;
+  const isAdmin = location.pathname.endsWith('/admin.html') || location.pathname === '/admin.html';
+  const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local') || host === '';
+  if (isAdmin || isLocal) return;
+
+  function readConsent() {
+    try { return localStorage.getItem(CONSENT_KEY); } catch { return null; }
+  }
+  function writeConsent(v) {
+    try { localStorage.setItem(CONSENT_KEY, v); } catch {}
+  }
+
+  function loadGA4() {
+    if (window._mimGA4Loaded || !GA4_ID) return;
+    window._mimGA4Loaded = true;
     const s = document.createElement('script');
     s.async = true;
     s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA4_ID);
@@ -74,5 +85,63 @@ import('./pricing-config.js').then(({pricing})=>{const label=document.querySelec
     window.gtag = function(){ window.dataLayer.push(arguments); };
     window.gtag('js', new Date());
     window.gtag('config', GA4_ID, { anonymize_ip: true });
+  }
+
+  // Expose a tiny API so the privacy page can offer a "Change my choice" link.
+  window.MIM_consent = {
+    get: readConsent,
+    reset: function(){ try { localStorage.removeItem(CONSENT_KEY); location.reload(); } catch {} },
+    accept: function(){ writeConsent('accepted'); loadGA4(); const el = document.querySelector('.mim-consent'); if (el) el.remove(); },
+    decline: function(){ writeConsent('declined'); const el = document.querySelector('.mim-consent'); if (el) el.remove(); },
+  };
+
+  const current = readConsent();
+  if (current === 'accepted') { loadGA4(); return; }
+  if (current === 'declined') { return; }
+
+  // No decision yet — render the banner.
+  function renderBanner() {
+    if (document.querySelector('.mim-consent')) return;
+    const docLang = document.documentElement.getAttribute('lang');
+    const i18nLang = (window.MIM_i18n && typeof window.MIM_i18n.lang === 'string') ? window.MIM_i18n.lang : null;
+    const lang = (i18nLang === 'es' || docLang === 'es') ? 'es' : 'en';
+    const t = (lang === 'es') ? {
+      title: 'Cookies y analítica',
+      body:  'Esta web usa Google Analytics para entender qué contenido ayuda a quién — datos pseudónimos, IP anonimizada, nada compartido con publicidad. Podés cambiarlo cuando quieras desde la ',
+      link:  'página de privacidad',
+      accept:'Aceptar',
+      decline:'Rechazar',
+    } : {
+      title: 'Cookies & analytics',
+      body:  'This site uses Google Analytics to see which content helps whom — pseudonymous data, anonymized IP, nothing shared with advertisers. You can change this any time on the ',
+      link:  'privacy page',
+      accept:'Accept',
+      decline:'Decline',
+    };
+
+    const el = document.createElement('div');
+    el.className = 'mim-consent';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-labelledby', 'mim-consent-title');
+    el.setAttribute('aria-describedby', 'mim-consent-body');
+    el.innerHTML = `
+      <div class="mim-consent-inner">
+        <div class="mim-consent-copy">
+          <strong id="mim-consent-title">${t.title}</strong>
+          <p id="mim-consent-body">${t.body}<a href="legal.html#privacy">${t.link}</a>.</p>
+        </div>
+        <div class="mim-consent-actions">
+          <button type="button" class="mim-consent-btn mim-consent-decline">${t.decline}</button>
+          <button type="button" class="mim-consent-btn mim-consent-accept">${t.accept}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    el.querySelector('.mim-consent-accept').addEventListener('click', window.MIM_consent.accept);
+    el.querySelector('.mim-consent-decline').addEventListener('click', window.MIM_consent.decline);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderBanner);
+  } else {
+    renderBanner();
   }
 })();

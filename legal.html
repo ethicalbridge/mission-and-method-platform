@@ -7,7 +7,7 @@
 <meta name="description" content="Who runs Method into Impact, how it handles your data, what the terms are, and the limits of the professional advice it provides.">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="styles.css?v=brand6">
+<link rel="stylesheet" href="styles.css?v=consent-1">
 <link rel="stylesheet" href="mission.css?v=crm-backend-1">
 <link rel="stylesheet" href="learning.css?v=course9">
 <style>
@@ -76,41 +76,66 @@
   <section id="privacy">
     <h2>Privacy</h2>
 
-    <h3>What personal data this site holds</h3>
-    <p>The only personal data this site handles is what you choose to send through it:</p>
+    <h3>What personal data this site handles</h3>
+    <p>Two kinds of personal data pass through this site:</p>
     <ul>
-      <li>The discovery-brief form on the Consult page (name, email, organisation, country, website, stage, timeline, which option interests you, main challenge, indicative budget, best times for a call).</li>
-      <li>Any email you send to <a href="mailto:hello@methodintoimpact.com">hello@methodintoimpact.com</a> or <a href="mailto:julieta@methodintoimpact.com">julieta@methodintoimpact.com</a>.</li>
+      <li><strong>What you choose to send</strong> — the discovery-brief form on the Consult page (name, email, organisation, country, website, stage, timeline, which option interests you, main challenge, indicative budget, any documents you attach, best times for a call), and any email you send to <a href="mailto:hello@methodintoimpact.com">hello@methodintoimpact.com</a> or <a href="mailto:julieta@methodintoimpact.com">julieta@methodintoimpact.com</a>.</li>
+      <li><strong>What Google Analytics collects, only if you accept the cookie banner</strong> — a pseudonymous visitor ID, which pages you viewed and in what order, how long you stayed, your approximate country and city (derived from a truncated IP; the full IP is never stored), device type, browser, operating system, screen size, language, and the referring link that brought you here. If you click Decline on the banner, none of this is collected and no analytics cookies are set.</li>
     </ul>
-    <p>No analytics, no advertising, no tracking cookies. No visitor profile is built.</p>
+    <p>No advertising cookies, no cross-site tracking, no visitor profile is sold or shared with advertisers.</p>
 
     <h3>Lawful basis (GDPR, for EU/EEA/UK visitors)</h3>
-    <p>The discovery brief is handled under Article 6(1)(b) of the GDPR: processing necessary for steps you have requested before entering into a contract. If you later agree to be added to a mailing list for a specific launch (for example the courses opening), that is handled separately under Article 6(1)(a), consent, which you can withdraw at any time by replying to any email I send.</p>
+    <ul>
+      <li><strong>Discovery brief and email</strong> — Article 6(1)(b) GDPR: processing necessary for steps you have requested before entering into a contract.</li>
+      <li><strong>Analytics</strong> — Article 6(1)(a) GDPR + ePrivacy Directive Art. 5(3): your explicit consent, given by clicking Accept on the banner. You can withdraw it any time (see "Change your mind" below).</li>
+      <li><strong>Mailing list for a specific launch</strong> (for example the courses opening) — Article 6(1)(a), consent, which you can withdraw by replying to any email.</li>
+    </ul>
 
     <h3>Retention</h3>
     <p>If a discovery brief leads to a paid engagement, your data is kept for the duration of the engagement and up to six years after it ends, for tax and legal records. If no engagement starts, your brief is deleted twelve months after our last correspondence. Launch waitlist emails are kept until the launch they relate to is complete, then deleted unless you ask to stay on a list for the next one.</p>
+    <p>Google Analytics data is kept for the minimum period I can set in the Analytics admin (currently 2 months for event-level data). Aggregate reports (totals, trends) stay available in the dashboard beyond that.</p>
 
     <h3>Your rights</h3>
     <p>Under GDPR, UK GDPR and comparable laws elsewhere, you can ask me to: give you a copy of what I hold on you (access), correct it (rectification), delete it (erasure), restrict how it is used, port it to another service, or object to processing. Write to <a href="mailto:julieta@methodintoimpact.com">julieta@methodintoimpact.com</a>. I respond within 30 days. If you believe your rights have been breached, you can complain to your national data protection authority.</p>
 
+    <h3>Change your mind about analytics</h3>
+    <p>To withdraw or reconsider your consent to analytics, click here:
+      <button type="button" onclick="if(window.MIM_consent){window.MIM_consent.reset();}else{alert('Please reload the page and try again.');}" style="margin-left:4px;appearance:none;border:1px solid #16746e;background:#fff;color:#16746e;font:600 13px/1 Inter,system-ui,sans-serif;padding:7px 13px;border-radius:999px;cursor:pointer">Reset cookie choice</button>
+    </p>
+    <p>You can also delete the <code>_ga</code> and <code>_ga_2VLHVZSVTD</code> cookies in your browser at any time.</p>
+
     <h3>Sub-processors</h3>
-    <p>The site is hosted on GitHub Pages, operated by GitHub, Inc. (United States). Email reaches me through standard commercial email infrastructure, which may transit through GitHub, Google, Microsoft or Cloudflare servers depending on the sender. The discovery-brief form is currently in prototype mode and does not yet transmit submissions; once wired for live use, it will send through a dedicated form service (candidates: Formspree, Netlify Forms, Basin) and this page will be updated to name the provider.</p>
+    <ul>
+      <li><strong>GitHub, Inc.</strong> (United States) — hosts the static site via GitHub Pages.</li>
+      <li><strong>Google LLC</strong> (United States) — Google Analytics 4, when you accept the cookie banner. Google acts as a processor under its <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">Data Processing Terms</a>.</li>
+      <li><strong>Supabase, Inc.</strong> (United States, EU regions available) — stores discovery-brief submissions and any files you attach, routed through a dedicated backend function.</li>
+      <li><strong>Cal.com, Inc.</strong> (United States) — handles the discovery-call booking embed on the Consult page.</li>
+      <li><strong>Google Fonts</strong> (served from <code>fonts.gstatic.com</code>) — delivers the typefaces used throughout the site. Font requests reveal your IP to Google for the duration of the request but set no cookie.</li>
+      <li><strong>Email infrastructure</strong> — standard commercial email providers, which may transit through GitHub, Google, Microsoft or Cloudflare servers depending on the sender.</li>
+    </ul>
 
     <h3>Cross-border transfers</h3>
-    <p>Because the site is hosted in the United States (GitHub Pages) and I operate from Indonesia, your personal data crosses borders when you send me a brief or an email. For EU/EEA/UK visitors, these transfers rely on either (a) the submission being necessary to perform the service you have asked for, or (b) your explicit act of sending the data knowing it will be processed internationally. No onward transfer is made beyond what is required to deliver and read the message.</p>
+    <p>Because the site is hosted in the United States (GitHub Pages, Google, Supabase, Cal.com) and I operate from Indonesia, your personal data crosses borders when you use this site. For EU/EEA/UK visitors, these transfers rely on: (a) the submission being necessary to perform the service you have asked for; (b) your explicit consent (for analytics); or (c) the Standard Contractual Clauses incorporated by each sub-processor's data-processing terms.</p>
 
     <div class="legal-note">Please do not send bank details, government ID numbers, passwords, health records or other sensitive information through the discovery form or by email. For sensitive materials once an engagement begins, we will agree a secure channel in the Terms of Reference.</div>
   </section>
 
   <section id="storage">
     <h2>Storage &amp; cookies</h2>
-    <p>This site stores a few small things in your browser so it works as expected. All functional, none for tracking:</p>
+    <p>This site stores a few small things in your browser. The strictly-functional ones are always set; the analytics ones are only set if you clicked Accept on the cookie banner.</p>
+    <h3>Strictly functional (always set — no consent needed under ePrivacy)</h3>
     <ul>
       <li><code>mim-lang</code> (localStorage): remembers your language choice (English or Spanish).</li>
+      <li><code>mim-consent-v1</code> (localStorage): records your choice on the analytics banner so it does not reappear.</li>
       <li><code>mip_gate_v2</code> (sessionStorage): remembers that you have entered the preview passcode, so you do not re-enter it on every page in the same browser session. Cleared when you close the browser.</li>
       <li>The mobile menu's open/closed state (localStorage): so the menu does not flicker as you move between pages.</li>
     </ul>
-    <p>No analytics cookies, no advertising cookies, no third-party trackers. Because all stored items are strictly functional, no cookie-consent banner is required under ePrivacy or GDPR. You can clear any of this at any time in your browser settings.</p>
+    <h3>Analytics (only set after you click Accept)</h3>
+    <ul>
+      <li><code>_ga</code> (cookie, 2-year expiry): a pseudonymous ID that lets Google Analytics distinguish one browser from another so visit counts are not inflated.</li>
+      <li><code>_ga_2VLHVZSVTD</code> (cookie, 2-year expiry): persists session state for the Method into Impact Analytics property.</li>
+    </ul>
+    <p>No advertising cookies, no third-party trackers beyond the Google Analytics ones listed above. You can clear any of this at any time in your browser settings, or use the "Reset cookie choice" button above to make the banner appear again.</p>
   </section>
 
   <section id="terms">
@@ -153,6 +178,6 @@
 
 <footer></footer>
 <script type="module" src="i18n.js?v=crm-backend-1"></script>
-<script src="app.js?v=analytics-2"></script>
+<script src="app.js?v=consent-1"></script>
 </body>
 </html>
