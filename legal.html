@@ -50,7 +50,7 @@
     <span class="eyebrow">Legal &amp; trust</span>
     <h1>How this site is run.</h1>
     <p class="intro">Method into Impact is a one-practitioner consultancy. These are the terms, privacy notes and limits that apply to anyone using this site.</p>
-    <p class="updated">Last updated: 24 October 2026.</p>
+    <p class="updated">Last updated: 26 October 2026.</p>
   </header>
 
   <nav class="legal-toc" aria-label="On this page">
@@ -58,7 +58,7 @@
     <ol>
       <li><a href="#who">Who runs this site</a></li>
       <li><a href="#privacy">Privacy</a></li>
-      <li><a href="#storage">Storage &amp; cookies</a></li>
+      <li><a href="#cookies">Cookies &amp; browser storage</a></li>
       <li><a href="#terms">Terms of use</a></li>
       <li><a href="#advice">About legal and professional advice</a></li>
       <li><a href="#accessibility">Accessibility</a></li>
@@ -121,22 +121,58 @@
     <div class="legal-note">Please do not send bank details, government ID numbers, passwords, health records or other sensitive information through the discovery form or by email. For sensitive materials once an engagement begins, we will agree a secure channel in the Terms of Reference.</div>
   </section>
 
-  <section id="storage">
-    <h2>Storage &amp; cookies</h2>
-    <p>This site stores a few small things in your browser. The strictly-functional ones are always set; the analytics ones are only set if you clicked Accept on the cookie banner.</p>
-    <h3>Strictly functional (always set — no consent needed under ePrivacy)</h3>
+  <section id="cookies">
+    <a id="storage" aria-hidden="true"></a>
+    <h2>Cookies &amp; browser storage</h2>
+
+    <h3>What are cookies, and why we use them</h3>
+    <p>Cookies are small text files a website asks your browser to store, so it can remember things between pages or visits — your language choice, whether you have already dismissed a message, or (for analytics) that your two visits came from the same browser. "Browser storage" (localStorage, sessionStorage) is a similar mechanism without the automatic server round-trip; this site uses both.</p>
+    <p>On this site, cookies and browser storage are used for two purposes only, and nothing else:</p>
+    <ol>
+      <li><strong>To make the site work</strong> — remember your language, remember that you have answered the analytics banner, keep the mobile menu stable between pages, and (on the preview pages) remember that you have entered the preview passcode so you do not have to re-enter it every time.</li>
+      <li><strong>To understand what helps whom</strong> — if you accept the banner, Google Analytics writes two cookies in your browser so repeat visits can be counted as one visitor rather than two, and so pages can be grouped into sessions. Nothing is shared with advertisers. Nothing identifies you by name.</li>
+    </ol>
+
+    <h3>The full list of what this site stores on your device</h3>
+    <h4 style="font-size:14px;margin:14px 0 6px;color:#16746e;letter-spacing:.05em;text-transform:uppercase;font-weight:900">Strictly functional — always set</h4>
+    <p style="margin-top:0">These are needed for the site to work. Under ePrivacy they do not require consent.</p>
     <ul>
-      <li><code>mim-lang</code> (localStorage): remembers your language choice (English or Spanish).</li>
-      <li><code>mim-consent-v1</code> (localStorage): records your choice on the analytics banner so it does not reappear.</li>
-      <li><code>mip_gate_v2</code> (sessionStorage): remembers that you have entered the preview passcode, so you do not re-enter it on every page in the same browser session. Cleared when you close the browser.</li>
-      <li>The mobile menu's open/closed state (localStorage): so the menu does not flicker as you move between pages.</li>
+      <li><code>mim-lang</code> (localStorage, no expiry): your language choice (English or Spanish). Written by the EN/ES toggle.</li>
+      <li><code>mim-consent-v1</code> (localStorage, no expiry): your choice on the analytics banner (<code>accepted</code> or <code>declined</code>). Without this, the banner would reappear on every page.</li>
+      <li><code>mip_gate_v2</code> (sessionStorage, cleared when you close the browser): remembers you have entered the preview passcode so you do not re-enter it on every page in the same session.</li>
+      <li>Mobile-menu open/closed state (localStorage, no expiry): so the menu does not flicker as you move between pages.</li>
     </ul>
-    <h3>Analytics (only set after you click Accept)</h3>
+
+    <h4 style="font-size:14px;margin:18px 0 6px;color:#16746e;letter-spacing:.05em;text-transform:uppercase;font-weight:900">Analytics — only set if you clicked Accept</h4>
+    <p style="margin-top:0">These are the only non-functional cookies. If you clicked Decline (or have not yet answered the banner), neither is written.</p>
     <ul>
-      <li><code>_ga</code> (cookie, 2-year expiry): a pseudonymous ID that lets Google Analytics distinguish one browser from another so visit counts are not inflated.</li>
-      <li><code>_ga_2VLHVZSVTD</code> (cookie, 2-year expiry): persists session state for the Method into Impact Analytics property.</li>
+      <li><code>_ga</code> (first-party cookie set by Google Analytics, 2-year expiry): a random pseudonymous ID that lets Analytics tell one browser from another, so your 5 pageviews are counted as one visitor rather than five.</li>
+      <li><code>_ga_2VLHVZSVTD</code> (first-party cookie set by Google Analytics, 2-year expiry): persists session state (when a visit started, what pages it covered) for the Method into Impact Analytics property.</li>
     </ul>
-    <p>No advertising cookies, no third-party trackers beyond the Google Analytics ones listed above. You can clear any of this at any time in your browser settings, or use the "Reset cookie choice" button above to make the banner appear again.</p>
+
+    <p>No advertising cookies. No cross-site trackers. No social-media pixels. No fingerprinting. Nothing is set by any third party except the two Google Analytics cookies above, and only if you opted in.</p>
+
+    <h3>Change your mind at any time</h3>
+    <p>Two ways to withdraw or reconsider your consent to analytics:</p>
+    <ul>
+      <li>Click here to reopen the banner:
+        <button type="button" onclick="if(window.MIM_consent){window.MIM_consent.reset();}else{alert('Please reload the page and try again.');}" style="margin-left:4px;appearance:none;border:1px solid #16746e;background:#fff;color:#16746e;font:600 13px/1 Inter,system-ui,sans-serif;padding:7px 13px;border-radius:999px;cursor:pointer">Reset cookie choice</button>
+      </li>
+      <li>Delete the <code>_ga</code> and <code>_ga_2VLHVZSVTD</code> cookies directly in your browser (see below).</li>
+    </ul>
+
+    <h3>How to see and delete cookies in your browser</h3>
+    <p>You can inspect and remove any cookie, including the ones this site uses, from your browser's own settings. Short guides:</p>
+    <ul>
+      <li><strong>Chrome</strong>: Settings → Privacy and security → Cookies and other site data → See all site data and permissions → search "methodintoimpact.com" → delete.</li>
+      <li><strong>Safari</strong>: Safari → Settings → Privacy → Manage Website Data → search "methodintoimpact.com" → Remove.</li>
+      <li><strong>Firefox</strong>: Settings → Privacy &amp; Security → Cookies and Site Data → Manage Data → search "methodintoimpact.com" → Remove Selected.</li>
+      <li><strong>Edge</strong>: Settings → Cookies and site permissions → Manage and delete cookies and site data → See all cookies and site data → search "methodintoimpact.com" → delete.</li>
+    </ul>
+    <p>You can also tell your browser to block all cookies, or just third-party cookies, in the same settings. This site functions with cookies blocked, but your language choice and consent decision will not be remembered between visits.</p>
+
+    <h3>Changes to the cookies we use</h3>
+    <p>If I ever add a new category of cookie (for example, if the courses platform launches with its own session cookie), this list will be updated and the consent banner will reappear so you can review and re-decide. The last-updated date at the top of this page always reflects the most recent change.</p>
   </section>
 
   <section id="terms">
@@ -179,6 +215,6 @@
 
 <footer></footer>
 <script type="module" src="i18n.js?v=crm-backend-1"></script>
-<script src="app.js?v=consent-1"></script>
+<script src="app.js?v=cookies-page-1"></script>
 </body>
 </html>
