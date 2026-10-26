@@ -42,3 +42,37 @@ const footer=document.querySelector('footer');if(footer){const style=document.cr
 const contact=document.querySelector('#contact-form');if(contact){contact.addEventListener('submit',event=>{event.preventDefault();const data=new FormData(contact);const topic=data.get('topic')||'General question';const text=`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nTopic: ${topic}\n\n${data.get('message')}\n\n--\nSent via method-into-impact.com contact form (preview)`;const url=URL.createObjectURL(new Blob([text],{type:'text/plain'}));const a=document.createElement('a');a.href=url;a.download='method-into-impact-message.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);const msg=contact.querySelector('.form-message');if(msg)msg.textContent='Draft downloaded. Email it to hello@method-into-impact.com — delivery is not connected yet.';});}
 
 import('./pricing-config.js').then(({pricing})=>{const label=document.querySelector('#pricing-currency');if(label)label.textContent='Development preview · '+pricing.currency+' pricing';});
+
+// --- Google Analytics 4 + Search Console verification ---
+// Both IDs live here so there's one place to update. Set either to '' to disable.
+// GA4: measurement ID from Analytics admin (looks like G-XXXXXXXXXX).
+// SC : google-site-verification token from Search Console → HTML tag method.
+(function initAnalytics(){
+  const GA4_ID = 'G-XXXXXXXXXX';          // paste the real one here
+  const SC_TOKEN = '';                     // paste the real one here (optional if verifying via GA)
+
+  // Don't track admin pages or local dev.
+  const host = location.hostname;
+  const isAdmin = location.pathname.endsWith('/admin.html') || location.pathname === '/admin.html';
+  const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local');
+
+  // Search Console meta tag (static — safe to add regardless of host).
+  if (SC_TOKEN) {
+    const sc = document.createElement('meta');
+    sc.name = 'google-site-verification';
+    sc.content = SC_TOKEN;
+    document.head.appendChild(sc);
+  }
+
+  // GA4 — skip on admin and local dev so test clicks don't pollute real data.
+  if (GA4_ID && !GA4_ID.includes('XXXXXXXXXX') && !isAdmin && !isLocal) {
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA4_ID);
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA4_ID, { anonymize_ip: true });
+  }
+})();
