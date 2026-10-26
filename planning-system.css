@@ -304,7 +304,8 @@
 /* =============== INSTRUCTOR =============== */
 .hm-instructor{display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center}
 .hm-instructor-photo{position:relative}
-.hm-instructor-photo img{width:100%;max-width:420px;border-radius:24px;display:block;box-shadow:0 30px 60px rgba(16,46,59,.18)}
+.hm-instructor-photo picture{display:block;max-width:420px}
+.hm-instructor-photo img{width:100%;max-width:420px;height:auto;border-radius:24px;display:block;box-shadow:0 30px 60px rgba(16,46,59,.18)}
 .hm-instructor-badge{position:absolute;right:-20px;bottom:-20px;background:var(--sun);color:var(--ink);border-radius:20px;padding:18px 22px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(16,46,59,.15)}
 .hm-instructor-badge b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:40px;line-height:1}
 .hm-instructor-badge span{font-size:11px;line-height:1.3;font-weight:700;letter-spacing:.03em;white-space:pre-line}
