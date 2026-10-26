@@ -48,8 +48,8 @@ import('./pricing-config.js').then(({pricing})=>{const label=document.querySelec
 // GA4: measurement ID from Analytics admin (looks like G-XXXXXXXXXX).
 // SC : google-site-verification token from Search Console → HTML tag method.
 (function initAnalytics(){
-  const GA4_ID = 'G-XXXXXXXXXX';          // paste the real one here
-  const SC_TOKEN = '';                     // paste the real one here (optional if verifying via GA)
+  const GA4_ID = 'G-2VLHVZSVTD';           // Method into Impact GA4 property
+  const SC_TOKEN = '';                     // not needed — Search Console verifies via GA4
 
   // Don't track admin pages or local dev.
   const host = location.hostname;
