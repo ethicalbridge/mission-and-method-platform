@@ -2384,7 +2384,7 @@ window.LESSON_VIDEOS = {
     "org": "ngo",
     "text": "Imara: US$140,000, con US$10,000 para reservas; la Fundación A aporta el 50% y termina el próximo año; lo primero que se pausa es la reserva."
    },
-   "create": "Escribes tus rubros, el estado de tus ingresos y tu plan ante faltantes."
+   "create": "Escribes tus rubros, ingresos y plan ante faltantes."
   }
  },
  "9.programme-budget": {
@@ -2443,6 +2443,180 @@ window.LESSON_VIDEOS = {
     "text": "Riverside: de £47,000 en el banco, £36,200 están restringidas y £8,000 reservadas para la mudanza. Muy poco está libre."
    },
    "create": "Creas un registro de fondos con saldos y fechas de informe."
+  }
+ },
+ "9.cashflow": {
+  "en": {
+   "idea": "Cash pays the bills: forecast it monthly, know your runway and set a trigger.",
+   "points": [
+    "Forecast receipts and payments for twelve months.",
+    "Update with actual figures every month.",
+    "Decide in advance what you do below the trigger."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Vanita: cash falls below zero June to November; a US$15,000 seasonal loan, repaid in December, keeps the balance at US$3,700 or more."
+   },
+   "create": "You create a twelve-month cash forecast and a runway trigger."
+  },
+  "es": {
+   "title": "Flujo de caja y meses de operación",
+   "idea": "El efectivo paga las cuentas: proyéctalo cada mes, conoce tu margen y fija una alerta.",
+   "points": [
+    "Proyecta ingresos y pagos para doce meses.",
+    "Actualízalo cada mes con las cifras reales.",
+    "Decide antes qué harás bajo el nivel de alerta."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Vanita: la caja queda en negativo de junio a noviembre; un préstamo de temporada de US$15,000, pagado en diciembre, la mantiene en US$3,700 o más."
+   },
+   "create": "Creas una proyección de caja a doce meses y tu alerta."
+  }
+ },
+ "9.controls": {
+  "en": {
+   "idea": "No money should move without a check by someone other than the person moving it.",
+   "points": [
+    "Separate requesting, approving, paying and checking.",
+    "Reconcile the bank monthly; someone else reviews it.",
+    "Set quote thresholds and declare conflicts."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: supervisor approves up to US$300; directors above; daily cash count; monthly surprise till check."
+   },
+   "create": "You write a control map and procurement thresholds."
+  },
+  "es": {
+   "title": "Controles, aprobaciones y compras",
+   "idea": "Ningún dinero debe moverse sin la revisión de alguien distinto a quien lo mueve.",
+   "points": [
+    "Separa quién pide, aprueba, paga y revisa.",
+    "Concilia el banco cada mes; otra persona lo revisa.",
+    "Fija umbrales de cotización y declara conflictos de interés."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: quien supervisa el café aprueba hasta US$300; los directores, montos mayores; arqueo diario; revisión sorpresa de caja cada mes."
+   },
+   "create": "Escribes un mapa de controles y tus umbrales de compra."
+  }
+ },
+ "9.management-accounts": {
+  "en": {
+   "idea": "Compare actual with budget regularly, explain the gaps and decide what to do.",
+   "points": [
+    "Show budget, actual and variance for each line.",
+    "Explain big variances: timing, price or volume.",
+    "Forecast where you will end the year."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: shop sales £9,000 under budget; profit forecast £19,000, not £25,000; trustees plan charity savings."
+   },
+   "create": "You design your monthly report and review routine."
+  },
+  "es": {
+   "title": "Informes de gestión: presupuesto frente a real",
+   "idea": "Compara lo real con el presupuesto con regularidad, explica las diferencias y decide.",
+   "points": [
+    "Muestra presupuesto, real y diferencia en cada línea.",
+    "Explica las diferencias grandes: momento, precio o volumen.",
+    "Proyecta cómo terminarás el año."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: ventas de la tienda £9,000 bajo el presupuesto; ganancia proyectada de £19,000, no £25,000; los fideicomisarios planean ahorros."
+   },
+   "create": "Diseñas tu informe mensual y tu rutina de revisión."
+  }
+ },
+ "9.reporting": {
+  "en": {
+   "idea": "Know every financial report you owe, and make every figure come from the same accounts.",
+   "points": [
+    "List each report, audience, deadline and owner.",
+    "Match funder reports to your accounts.",
+    "Confirm your legal deadlines with your accountant."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "Imara: board pack quarterly; Foundation A in January and July; Foundation B in June and December; audit in February–March."
+   },
+   "create": "You create your financial reporting calendar."
+  },
+  "es": {
+   "title": "Informes financieros: junta, financiadores y ley",
+   "idea": "Conoce cada informe financiero que debes y saca todas las cifras de las mismas cuentas.",
+   "points": [
+    "Lista cada informe, destinatario, fecha y responsable.",
+    "Haz coincidir los informes con tu contabilidad.",
+    "Confirma tus plazos legales con tu contador."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "Imara: informe a la junta cada trimestre; Fundación A en enero y julio; Fundación B en junio y diciembre; auditoría en febrero y marzo."
+   },
+   "create": "Creas tu calendario de informes financieros."
+  }
+ },
+ "9.audit": {
+  "en": {
+   "idea": "Your board oversees the money: it knows the external checks and sets a reserves target.",
+   "points": [
+    "Confirm which audit or examination applies to you.",
+    "Set what the board reviews and approves, and when.",
+    "Write a reserves target, the reason and actions."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Vanita: audited yearly by the state department; members approve the accounts in September; reserve target US$13,000, now US$1,500."
+   },
+   "create": "You write your scrutiny, board oversight and reserves policy."
+  },
+  "es": {
+   "title": "Auditoría y gobierno financiero",
+   "idea": "Tu junta supervisa el dinero: conoce las revisiones externas y fija una meta de reservas.",
+   "points": [
+    "Confirma qué auditoría o revisión te corresponde.",
+    "Define qué revisa y aprueba la junta, y cuándo.",
+    "Escribe una meta de reservas, su razón y acciones."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Vanita: auditada cada año por el departamento estatal; las socias aprueban las cuentas en septiembre; meta de reserva US$13,000, hoy US$1,500."
+   },
+   "create": "Escribes tu revisión externa, supervisión de la junta y reservas."
+  }
+ },
+ "9.sustainability": {
+  "en": {
+   "idea": "Judge financial health by resilience and dependency, not by the size of your income.",
+   "points": [
+    "Track reserves, runway and your largest income source.",
+    "Check which projects recover their full costs.",
+    "Compare the measures year on year."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Tide Line: largest source 50% of income; reserve US$0, target US$1,500; cost per surviving seedling about US$2.85."
+   },
+   "create": "You choose your health measures, current values and targets."
+  },
+  "es": {
+   "title": "Salud financiera y sostenibilidad",
+   "idea": "Mide tu salud financiera por resiliencia y dependencia, no por el tamaño de tus ingresos.",
+   "points": [
+    "Sigue tus reservas, tu margen y tu mayor fuente.",
+    "Revisa qué proyectos cubren su costo completo.",
+    "Compara los indicadores año tras año."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Tide Line: su mayor fuente es el 50% de los ingresos; reserva US$0, meta US$1,500; costo por plántula viva unos US$2.85."
+   },
+   "create": "Eliges tus indicadores de salud, sus valores actuales y metas."
   }
  },
  "10.legal-map": {
@@ -4102,6 +4276,16 @@ Object.assign(window.MODULE_VIDEOS, {
    "create": "Tu plan de comunicación: audiencias, mensajes, canales, calendario, protecciones y medidas."
   }
  },
+ "9": {
+  "en": {
+   "idea": "Set up the roles, budgets, controls and reports that keep your money safe, visible and working for your mission.",
+   "create": "Your Financial Management Pack: budgets, funds register, cash forecast, controls and reporting calendar."
+  },
+  "es": {
+   "idea": "Organiza los roles, presupuestos, controles e informes que mantienen tu dinero seguro, visible y al servicio de tu misión.",
+   "create": "Tu Paquete de Gestión Financiera: presupuestos, registro de fondos, flujo de caja, controles e informes."
+  }
+ },
  "10": {
   "en": {
    "idea": "This module helps you know your legal duties, write the policies you need and manage your main risks.",
@@ -4363,6 +4547,28 @@ Object.assign(window.REVIEW_VIDEOS, {
    ],
    "create": "Revisas y descargas tu plan de comunicación."
   }
+ },
+ "9.finance-pack": {
+  "en": {
+   "title": "Your Financial Management Pack",
+   "idea": "Check that your budgets, cash forecast, controls and reports tell one consistent story.",
+   "points": [
+    "Make project budgets add up to the organisational budget.",
+    "Match the cash forecast to income timing and restrictions.",
+    "Confirm board oversight, reserves and thresholds with advisers."
+   ],
+   "create": "You review and download your Financial Management Pack."
+  },
+  "es": {
+   "title": "Tu Paquete de Gestión Financiera",
+   "idea": "Verifica que tus presupuestos, flujo de caja, controles e informes cuenten una misma historia.",
+   "points": [
+    "Haz que los proyectos sumen el presupuesto general.",
+    "Ajusta el flujo de caja a fechas y restricciones.",
+    "Confirma supervisión, reservas y umbrales con tus asesores."
+   ],
+   "create": "Revisas y descargas tu Paquete de Gestión Financiera."
+  }
  }
 });
 Object.assign(window.TITLES_ES, {
@@ -4436,6 +4642,13 @@ Object.assign(window.TITLES_ES, {
  "9.core-budget": "El presupuesto de la organización",
  "9.programme-budget": "Presupuestos de proyecto y costo completo",
  "9.restricted": "Fondos restringidos y no restringidos",
+ "9.cashflow": "Flujo de caja y meses de operación",
+ "9.controls": "Controles, aprobaciones y compras",
+ "9.management-accounts": "Informes de gestión: presupuesto frente a real",
+ "9.reporting": "Informes financieros: junta, financiadores y ley",
+ "9.audit": "Auditoría y gobierno financiero",
+ "9.sustainability": "Salud financiera y sostenibilidad",
+ "9.finance-pack": "Tu Paquete de Gestión Financiera",
  "10.legal-map": "Tu mapa legal y regulatorio",
  "10.policy-needs": "Qué políticas necesitas de verdad",
  "10.contracts": "Contratos y acuerdos",
