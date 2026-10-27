@@ -97,7 +97,7 @@ export default module({
     {
      "org": "social",
      "profile": {
-      "plan": "Lucía (master baker) and Diego (training and mentoring) | employees and shareholders | full-time | now | salaries\nCafé supervisor | employee | full-time | now | salary; learning to be back-up mentor\nWholesale salesperson | employee | full-time | now | salary\n6 trainees per cohort | employees on 6-month apprenticeship contracts | full-time shifts | January and July cohorts | minimum wage, health insurance, certificate fee\nAccountant | contractor | monthly books and taxes | now | monthly fee\nJunior baker (a graduate) | employee | full-time | year two, if sales grow | salary; shares Lucía's production load",
+      "plan": "Lucía (master baker) and Diego (training and mentoring) | employees and shareholders | full-time | now | salaries\nCafé supervisor | employee | full-time | now | salary; learning to be back-up mentor\nWholesale salesperson | employee | full-time | now | salary\n6 trainees per cohort | employees on 6-month apprenticeship contracts | full-time shifts | March and September cohorts | minimum wage, health insurance, certificate fee\nAccountant | contractor | monthly books and taxes | now | monthly fee\nJunior baker (a graduate) | employee | full-time | year two, if sales grow | salary; shares Lucía's production load",
       "continuity": "Lucía is the only person who can run production and prepare trainees for the certificate; a junior baker in year two would share that. Diego is the only mentor, so the café supervisor is learning to run weekly check-ins. One office client is 40% of wholesale; losing it would put the salesperson's role at risk."
      },
      "notice": "See how trainees are listed as employees with fixed start and end dates. Copy the way each continuity risk names who is being prepared to cover it."
@@ -184,7 +184,7 @@ export default module({
     {
      "org": "social",
      "profile": {
-      "role": "Apprentice baker, January cohort (six places). Essential: aged 18–24; left school early; available for early shifts for six months; wants to learn the trade. Desirable: none, on purpose; no experience or school certificate needed. Paid apprenticeship at the minimum wage, with health insurance, on a fixed six-month contract.",
+      "role": "Apprentice baker, March cohort (six places). Essential: aged 18–24; left school early; available for early shifts for six months; wants to learn the trade. Desirable: none, on purpose; no experience or school certificate needed. Paid apprenticeship at the minimum wage, with health insurance, on a fixed six-month contract.",
       "process": "Referrals from the municipal youth employment programme plus posters in the café and Instagram. Stages: information session at the bakery; short conversation with Diego and the café supervisor using the same five questions; a paid half-day trial shift scored on reliability, teamwork and willingness to learn. Lucía and Diego decide together and give everyone feedback, including those not selected.",
       "safer": "Trainees are adults, so standard checks: ID and proof of age; one reference (a teacher, youth worker or past employer); any health requirements for food handlers under our municipal health licence, confirmed with the municipality. Diego completes and files the checks in the trainee spreadsheet."
      },
@@ -304,7 +304,7 @@ export default module({
      "org": "social",
      "profile": {
       "types": "Permanent staff (Lucía, Diego, café supervisor, salesperson) | employment contract | role, salary, hours and shifts, leave, health insurance, notice | yes, local employment adviser\nTrainees (6 per cohort) | apprenticeship contract, fixed six months | minimum wage, shifts, health insurance, training plan, certificate, mentoring, end date | yes, adviser checks the template each year\nAccountant | services agreement | monthly books, tax returns, fee, confidentiality | yes\nLucía and Diego as shareholders | shareholders' agreement (separate from their employment) | shares, decisions, exit | yes",
-      "dates": "Cohort end dates: 30 June and 31 December, reviewed one month before (Diego). Trial periods for new permanent staff (Lucía). Health insurance enrolment within the first week (accountant). Contract template review each November before the January cohort (Diego with the adviser)."
+      "dates": "Cohort end dates: 30 June and 31 December, reviewed one month before (Diego). Trial periods for new permanent staff (Lucía). Health insurance enrolment within the first week (accountant). Contract template review each January before the March cohort (Diego with the adviser)."
      },
      "notice": "Notice that trainees are employees with fixed-term contracts, not interns. Copy the separation between Lucía and Diego's employment contracts and their shareholders' agreement."
     },
