@@ -18,12 +18,20 @@ import m10 from './course/m10-legal-compliance-risk.js';
 import m11 from './course/m11-fundraising-revenue.js';
 import m12 from './course/m12-partnerships.js';
 import m13 from './course/m13-strategy-to-action.js';
-// Entrepreneurs track: the starter course "Idea into Impact" (plan and story bible: docs/idea-into-impact.md).
-import f1 from './course/f01-clarify-your-idea.js';
-import f2 from './course/f02-shape-a-first-version.js';
-import f3 from './course/f03-show-it-can-work.js';
-import f4 from './course/f04-start-safely.js';
-import f5 from './course/f05-fund-it-and-plan.js';
+// Entrepreneurs track: courses 1–4 (modules 00–10) copied from the organisation courses and reworded for people
+// building something new. Each course/eNN-*.js adapts course/mNN-*.js (see course/adapt.js); ids are 100 + NN.
+import e0 from './course/e00-start-here.js';
+import e1 from './course/e01-strategic-foundations.js';
+import e2 from './course/e02-theory-of-change.js';
+import e3 from './course/e03-structure-governance.js';
+import e4 from './course/e04-people-culture.js';
+import e5 from './course/e05-internal-systems.js';
+import e6 from './course/e06-meal.js';
+import e7 from './course/e07-brand-identity.js';
+import e8 from './course/e08-marketing-communications.js';
+import e9 from './course/e09-financial-management.js';
+import e10 from './course/e10-legal-compliance-risk.js';
+export {FOUNDER_OFFSET} from './course/adapt.js';
 export {STAGES} from './course/kit.js';
 export {exampleOrgs,exampleOrg} from './course/examples.js';
 export {lessonVideos,moduleVideos} from './course/videos.js';
@@ -44,20 +52,29 @@ export const phases=[
 ];
 for(const p of phases)p.track='organisations';
 export const courses=phases;
-// The entrepreneurs' course: one short course in five modules that follow the same five steps.
-export const founderCourse={id:'idea',number:1,name:'Idea into Impact',title:'Idea into Impact: From an Idea to a Launch Plan',summary:'From an idea to a first plan you can act on',track:'entrepreneurs'};
-export const founderModules=[f1,f2,f3,f4,f5];
+// The entrepreneurs' courses: the first four courses, same modules and lessons, written for people starting out.
+export const founderPhases=[
+ {id:'entrepreneurs-clarify',number:1,name:'Clarify',title:'Clarify: Purpose, Strategy & Theory of Change',summary:'Why your idea needs to exist and the change you want to make'},
+ {id:'entrepreneurs-organise',number:2,name:'Organise',title:'Organise: Structure, People & Systems',summary:'Who decides, who does the work and how it will run'},
+ {id:'entrepreneurs-prove-show',number:3,name:'Prove & Show',title:'Prove & Show: MEAL, Brand & Communications',summary:'How you will know it works and how people will hear about it'},
+ {id:'entrepreneurs-protect',number:4,name:'Protect',title:'Protect: Finance, Legal, Compliance & Risk',summary:'Money, legal duties, policies and risk from the start'}
+];
+for(const p of founderPhases)p.track='entrepreneurs';
+export const founderModules=[e0,e1,e2,e3,e4,e5,e6,e7,e8,e9,e10];
 export const isFounder=m=>m?.track==='entrepreneurs';
-export const courseFor=m=>isFounder(m)?founderCourse:phases.find(p=>p.name===m.phase);
+export const phasesFor=x=>(x==='entrepreneurs'||x?.track==='entrepreneurs')?founderPhases:phases;
+export const courseFor=m=>phasesFor(m).find(p=>p.name===m.phase);
+export const allCourses=[...phases,...founderPhases];
 // Modules anyone can open without buying a course.
-export const freeModules=[0];
-// `modules` is the organisations track (the five foundation courses). `allModules` adds the entrepreneurs' course.
+export const freeModules=[0,100];
+// `modules` is the organisations track (the five foundation courses). `allModules` adds the entrepreneurs' courses.
 export const modules=[m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13];
 export const allModules=[...modules,...founderModules];
 export const trackModules=m=>isFounder(m)?founderModules:modules;
+export const courseModules=p=>(p.track==='entrepreneurs'?founderModules:modules).filter(m=>m.phase===p.name);
 export const moduleCount=modules.length;
 export const lessonCount=modules.reduce((n,m)=>n+m.lessons.length,0);
-export const moduleNumber=m=>isFounder(m)?String(m.no):String(m.id).padStart(2,'0');
+export const moduleNumber=m=>String(isFounder(m)?m.no:m.id).padStart(2,'0');
 export const moduleFor=id=>allModules.find(m=>m.id===Number(id));
 export const nextModule=m=>{const list=trackModules(m);return list[list.indexOf(m)+1]||null;};
 export const lessonSheets=l=>[].concat(l.sheet||[]);
@@ -90,4 +107,4 @@ export const lessonPath=(m,l)=>`${courseFor(m).id}/${lessonSlug(l)}`;
 // Courses whose lessons show no 'Explore further' readings (they stay in the Evidence Library).
 // Course 1 teaches from its own explanations and worked examples instead (October 2026 review).
 export const readingsHiddenIn=new Set(['Clarify','Organise','Prove & Show','Protect','Sustain & Run']);
-export const lessonReadings=(m,l)=>readingsHiddenIn.has(m.phase)?[]:allReadings(m.id,l.id);
+export const lessonReadings=(m,l)=>readingsHiddenIn.has(m.phase)?[]:allReadings(m.mirror??m.id,l.id);

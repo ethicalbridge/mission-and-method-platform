@@ -10,13 +10,13 @@ const t=(k,tag='span',attrs='')=>{if(!S[k])throw new Error(`Missing ${k}`);retur
 const note=(key,track,href)=>`<!-- track-note --><div class="aud-note aud-note-${track}"><div class="container"><p>${t(`track.${track}.label`,'b','class="aud-note-tag"')} ${t(`track.${key}.text`)} <a href="${href}" data-i18n="track.${key}.link">${e(S[`track.${key}.link`][0])}</a></p></div></div><!-- /track-note -->`;
 // page, key, track, link target, where to insert: 'hero' = after the first </section>, 'main' = after <main …>
 const pages=[
- ['courses.html','courses','org','work-with-julieta.html#path-idea','hero'],
- ['pricing.html','pricing','org','work-with-julieta.html#path-idea','hero'],
- ['planning-system.html','courses','org','work-with-julieta.html#path-idea','hero'],
- ['start-here.html','starthere','org','course-idea.html','main'],
- ['software.html','software','both','work-with-julieta.html#path-idea','main'],
+ ['courses.html','courses','org','courses-entrepreneurs.html','hero'],
+ ['pricing.html','pricing','org','courses-entrepreneurs.html','hero'],
+ ['planning-system.html','courses','org','courses-entrepreneurs.html','hero'],
+ ['start-here.html','starthere','org','courses-entrepreneurs.html','main'],
+ ['software.html','software','both','courses-entrepreneurs.html','main'],
 ];
-const css='<link rel="stylesheet" href="audiences.css?v=2">';
+const css='<link rel="stylesheet" href="audiences.css?v=3">';
 for(const [file,key,track,href,where] of pages){
  let h=readFileSync(file,'utf8').replace(/<!-- track-note -->[\s\S]*?<!-- \/track-note -->\n?/g,'');
  const n=note(key,track,href)+'\n';

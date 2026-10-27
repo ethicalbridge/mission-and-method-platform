@@ -57,3 +57,5 @@
 .aud-note-tag{display:inline-block;margin-right:8px;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:#fff;color:#0f5a55}
 .aud-note-both .aud-note-tag{color:#b44a26}
 .aud-note a{color:var(--deep,#123c48);font-weight:800;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+/* Entrepreneurs catalogue: four courses (scripts/generate-entrepreneur-courses.mjs) */
+@media(min-width:861px){.cc-flow.cc-flow-4{grid-template-columns:repeat(4,1fr)}}

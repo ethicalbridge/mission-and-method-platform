@@ -4,7 +4,7 @@
 // Used by generate-course-pages.mjs; apply on its own with: node scripts/course-modules-section.mjs
 import {readFileSync,writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
-import {modules,phases,moduleNumber,readingsFor,primaryFor,freeModules,lessonPath,lessonReadings,readingsHiddenIn} from '../course-data.js';
+import {modules,phases,moduleNumber,readingsFor,primaryFor,freeModules,lessonPath,lessonReadings,readingsHiddenIn,courseModules,phasesFor,isFounder} from '../course-data.js';
 const e=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const lessonURL=(m,l)=>`/${lessonPath(m,l)}`;
 const roleShort={'Core resource':'Core','Practical guide':'Practical','Go deeper':'Go deeper'};
@@ -18,22 +18,22 @@ function resourceList(m,l){
 
 function moduleBlock(m){
  const taught=m.lessons.filter(l=>!l.review);
- const resourceCount=taught.reduce((n,l)=>n+readingsFor(m.id,l.id).filter(i=>!i.crossRef).length,0);
+ const resourceCount=taught.reduce((n,l)=>n+readingsFor(m.mirror??m.id,l.id).filter(i=>!i.crossRef).length,0);
  const free=freeModules.includes(m.id);
- return `<details class="cm-module" id="module-${moduleNumber(m)}"><summary class="cm-module-header"><span class="cm-module-num">Module ${moduleNumber(m)}</span><span class="cm-title-block"><span class="cm-title">${e(m.title)}</span><span class="cm-meta">${m.lessons.length} lessons${readingsHiddenIn.has(m.phase)?'':` · ${resourceCount} resource${resourceCount===1?'':'s'}`}${free?' · <b>Free</b>':''}</span></span><span class="cm-expand" aria-hidden="true">+</span></summary><div class="cm-module-body"><p>${e(m.intro)}</p><p class="cm-output"><b>You create:</b> ${e(m.output)} · <b>Excel:</b> ${e(m.workbook.file)}</p><ol class="cm-lessons">${m.lessons.map((l,i)=>`<li class="cm-lesson${l.review?' cm-review':''}"><div class="cm-lesson-head"><span class="cm-lesson-no">${m.id}.${i+1}</span><a href="${lessonURL(m,l)}">${e(l.title)}</a><span class="cm-lesson-min">${l.review?'Module review':`${l.minutes} min`}</span></div>${l.review?'':resourceList(m,l)}</li>`).join('')}</ol><div class="cm-actions"><a class="button ghost" href="${m.slug}.html">Open Module ${moduleNumber(m)} →</a><a href="reading-library.html?module=${m.id}#library-results">Module ${moduleNumber(m)} in the Evidence Library →</a></div></div></details>`;
+ return `<details class="cm-module" id="module-${moduleNumber(m)}"><summary class="cm-module-header"><span class="cm-module-num">Module ${moduleNumber(m)}</span><span class="cm-title-block"><span class="cm-title">${e(m.title)}</span><span class="cm-meta">${m.lessons.length} lessons${readingsHiddenIn.has(m.phase)?'':` · ${resourceCount} resource${resourceCount===1?'':'s'}`}${free?' · <b>Free</b>':''}</span></span><span class="cm-expand" aria-hidden="true">+</span></summary><div class="cm-module-body"><p>${e(m.intro)}</p><p class="cm-output"><b>You create:</b> ${e(m.output)} · <b>Excel:</b> ${e(m.workbook.file)}</p><ol class="cm-lessons">${m.lessons.map((l,i)=>`<li class="cm-lesson${l.review?' cm-review':''}"><div class="cm-lesson-head"><span class="cm-lesson-no">${m.no??m.id}.${i+1}</span><a href="${lessonURL(m,l)}">${e(l.title)}</a><span class="cm-lesson-min">${l.review?'Module review':`${l.minutes} min`}</span></div>${l.review?'':resourceList(m,l)}</li>`).join('')}</ol><div class="cm-actions">${isFounder(m)?`<a class="button ghost" href="${lessonURL(m,m.lessons[0])}">Start Module ${moduleNumber(m)} →</a>`:`<a class="button ghost" href="${m.slug}.html">Open Module ${moduleNumber(m)} →</a>`}<a href="reading-library.html?module=${m.mirror??m.id}#library-results">Module ${moduleNumber(m)} in the Evidence Library →</a></div></div></details>`;
 }
 
 // Course header band: the same numbered dark band the Evidence Library uses for each course.
 export const courseBand=p=>{
- const mods=modules.filter(m=>m.phase===p.name);
+ const mods=courseModules(p);const lib=p.id.replace(/^entrepreneurs-/,'');
  const lessons=mods.reduce((n,m)=>n+m.lessons.length,0);
- const resources=mods.reduce((n,m)=>n+m.lessons.filter(l=>!l.review).reduce((k,l)=>k+readingsFor(m.id,l.id).filter(i=>!i.crossRef).length,0),0);
+ const resources=mods.reduce((n,m)=>n+m.lessons.filter(l=>!l.review).reduce((k,l)=>k+readingsFor(m.mirror??m.id,l.id).filter(i=>!i.crossRef).length,0),0);
  const hours=Math.round(mods.flatMap(m=>m.lessons).reduce((n,l)=>n+l.minutes,0)/60);
- return `<header class="course-band"><div class="course-band-badge" aria-hidden="true"><small>Course</small><b>${p.number}</b></div><div class="course-band-text"><span class="course-band-num">Course ${p.number} of ${phases.length} · Planning System</span><h1>${e(p.title)}</h1><p class="course-band-meta">${e(p.summary)} · ${mods.length} modules · ${lessons} lessons${readingsHiddenIn.has(p.name)?'':` · ${resources} resources`} · about ${hours} hours · <a href="reading-library.html?course=${p.id}#course-${p.id}">This course in the Evidence Library →</a></p></div></header>`;
+ return `<header class="course-band"><div class="course-band-badge" aria-hidden="true"><small>Course</small><b>${p.number}</b></div><div class="course-band-text"><span class="course-band-num">Course ${p.number} of ${phasesFor(p).length} · ${p.track==='entrepreneurs'?'For entrepreneurs':'Planning System'}</span><h1>${e(p.title)}</h1><p class="course-band-meta">${e(p.summary)} · ${mods.length} modules · ${lessons} lessons${readingsHiddenIn.has(p.name)?'':` · ${resources} resources`} · about ${hours} hours · <a href="reading-library.html?course=${lib}#course-${lib}">This course in the Evidence Library →</a></p></div></header>`;
 };
 
 export const courseModulesSection=p=>{
- const mods=modules.filter(m=>m.phase===p.name);
+ const mods=courseModules(p);
  return `<section class="cm-modules" id="modules" aria-labelledby="cm-heading"><h2 id="cm-heading">What you’ll build</h2><p class="cm-intro">${mods.length} modules, each opening to its lessons${readingsHiddenIn.has(p.name)?'':' and the resources placed inside them'}.</p>${mods.map(moduleBlock).join('')}</section>`;
 };
 
