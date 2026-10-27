@@ -9,8 +9,10 @@ const W = 595.28, H = 841.89, M = 54, TOP = 58, BOTTOM = 62;
 // ---------- text encoding (Windows-1252, the encoding the embedded fonts are subset to) ----------
 const CP = {0x20AC:0x80,0x201A:0x82,0x0192:0x83,0x201E:0x84,0x2026:0x85,0x2020:0x86,0x2021:0x87,0x02C6:0x88,0x2030:0x89,0x0160:0x8A,0x2039:0x8B,0x0152:0x8C,0x017D:0x8E,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2022:0x95,0x2013:0x96,0x2014:0x97,0x02DC:0x98,0x2122:0x99,0x0161:0x9A,0x203A:0x9B,0x0153:0x9C,0x017E:0x9E,0x0178:0x9F};
 const code = ch => { const u = ch.codePointAt(0); if (u >= 32 && u < 127 || u >= 160 && u <= 255) return u; return CP[u] || 63; };
-const clean = s => String(s ?? '').replace(/\r\n?/g, '\n').replace(/\t/g, '    ').normalize('NFC');
-const pdfString = s => '(' + [...s].map(ch => { const c = code(ch); if (c === 40 || c === 41 || c === 92) return '\\' + String.fromCharCode(c); return c < 127 ? String.fromCharCode(c) : '\\' + c.toString(8).padStart(3, '0'); }).join('') + ')';
+// Characters outside Windows-1252 that learners often type, mapped to close equivalents the fonts have
+const SUBST = { '\u2192': '›', '\u21D2': '›', '\u2794': '›', '\u27A1': '›', '\u2190': '‹', '\u2713': '•', '\u2714': '•', '\u2610': '–', '\u2611': '•', '\u2265': '>=', '\u2264': '<=', '\u2248': '~', '\u2212': '-', '\u2011': '-', '\u00A0': ' ', '\u202F': ' ', '\u2009': ' ' };
+const clean = s => String(s ?? '').replace(/\r\n?/g, '\n').replace(/\t/g, '    ').normalize('NFC').replace(/[\u2192\u21D2\u2794\u27A1\u2190\u2713\u2714\u2610\u2611\u2265\u2264\u2248\u2212\u2011\u00A0\u202F\u2009]/g, ch => SUBST[ch]);
+const pdfString = s => '(' + [...clean(s)].map(ch => { const c = code(ch); if (c === 40 || c === 41 || c === 92) return '\\' + String.fromCharCode(c); return c < 127 ? String.fromCharCode(c) : '\\' + c.toString(8).padStart(3, '0'); }).join('') + ')';
 const rgb = hex => [1, 3, 5].map(i => (parseInt(hex.slice(i, i + 2), 16) / 255).toFixed(3)).join(' ');
 const n = v => (Math.round(v * 100) / 100).toString();
 
@@ -79,6 +81,65 @@ class Layout {
   }
 }
 
+// ---------- one-page summary for whole-module outputs ----------
+// blocks: {type:'statement', label, text} · {type:'list', label, items:[]} · {type:'pathway', label, steps:[{label,text}], note:{label,text}}
+function summary(L, doc, inner) {
+  const blank = s => !clean(s).trim();
+  L.text(M, L.y + 8, (doc.summaryTitle || 'At a glance').toUpperCase(), 'extrabold', 8.5, C.teal, 1.3); L.y += 22;
+  for (const b of doc.summary) {
+    if (b.type === 'statement') {
+      const lines = L.wrap(blank(b.text) ? 'Not yet drafted.' : clean(b.text).replace(/\n+/g, ' '), 'serif', 14.5, inner - 20);
+      L.ensure(28 + lines.length * 19);
+      L.text(M, L.y + 8, b.label.toUpperCase(), 'extrabold', 7.5, C.muted, 1.1); L.y += 15;
+      lines.forEach((t, j) => L.text(M, L.y + 14 + j * 19, t, 'serif', 14.5, blank(b.text) ? C.muted : C.deep));
+      L.y += lines.length * 19 + 14;
+    } else if (b.type === 'list') {
+      const items = (b.items || []).filter(x => !blank(x));
+      const rows = items.length ? items.map(x => L.wrap(clean(x).replace(/\s*\|\s*/g, ' · '), 'regular', 10.5, inner - 26)) : [['Not yet drafted.']];
+      L.ensure(30 + Math.min(rows.flat().length, 6) * 15);
+      L.text(M, L.y + 8, b.label.toUpperCase(), 'extrabold', 7.5, C.muted, 1.1); L.y += 16;
+      for (const r of rows) {
+        if (L.ensure(r.length * 15 + 6)) L.y += 4;
+        if (items.length) L.rect(M + 2, L.y + 4.5, 5, 5, C.coral, null, 2.5);
+        r.forEach((t, j) => L.text(M + 16, L.y + 10 + j * 15, t, 'regular', 10.5, items.length ? C.ink : C.muted));
+        L.y += r.length * 15 + 5;
+      }
+      L.y += 10;
+    } else if (b.type === 'pathway') {
+      L.ensure(60);
+      L.text(M, L.y + 8, b.label.toUpperCase(), 'extrabold', 7.5, C.muted, 1.1); L.y += 18;
+      b.steps.forEach((s, i) => {
+        const lines = L.wrap(blank(s.text) ? 'Not yet drafted.' : clean(s.text).replace(/\s*\|\s*/g, ' · '), 'regular', 10, inner - 150).slice(0, 7);
+        const h = Math.max(38, lines.length * 14 + 20);
+        if (L.ensure(h + 18)) L.y += 4;
+        L.rect(M, L.y, inner, h, i === b.steps.length - 1 ? C.mint : C.white, C.line, 8);
+        L.rect(M, L.y, 118, h, C.deep, null, 8); L.rect(M + 110, L.y, 8, h, C.deep);
+        L.text(M + 14, L.y + h / 2 + 4, s.label, 'extrabold', 10.5, C.cream);
+        lines.forEach((t, j) => L.text(M + 134, L.y + 17 + j * 14, t, 'regular', 10, blank(s.text) ? C.muted : C.ink));
+        L.y += h;
+        if (i < b.steps.length - 1) { // arrow down to the next step
+          const x = M + 59; L.rect(x - 1, L.y + 2, 2, 8, C.teal);
+          L.ops.push(`${rgb(C.teal)} rg ${n(x - 5)} ${n(H - L.y - 10)} m ${n(x + 5)} ${n(H - L.y - 10)} l ${n(x)} ${n(H - L.y - 16)} l h f`);
+          L.y += 18;
+        }
+      });
+      L.y += 14;
+      if (b.note) {
+        const lines = L.wrap(blank(b.note.text) ? 'Not yet drafted.' : clean(b.note.text).replace(/\s*\|\s*/g, ' · '), 'regular', 10, inner - 32).slice(0, 12);
+        const h = lines.length * 14 + 40;
+        L.ensure(h + 10);
+        L.rect(M, L.y, inner, h, '#FFD9BD', null, 8);
+        L.text(M + 16, L.y + 18, b.note.label, 'extrabold', 10.5, C.ink);
+        lines.forEach((t, j) => L.text(M + 16, L.y + 34 + j * 14, t, 'regular', 10, C.ink));
+        L.y += h + 16;
+      }
+    }
+  }
+  // the detail starts on a fresh page so the summary reads as one page
+  L.newPage();
+  L.text(M, L.y + 8, 'IN FULL', 'extrabold', 8.5, C.teal, 1.3); L.y += 22;
+}
+
 // ---------- document ----------
 // doc = { title, orgName, date, sections:[{eyebrow, heading, fields:[{label, value}]}], created:{course, detail}, filename }
 function compose(L, doc) {
@@ -88,10 +149,11 @@ function compose(L, doc) {
   for (const line of L.wrap(doc.title, 'serif', 32, inner)) { L.text(M, L.y + 30, line, 'serif', 32, C.deep); L.y += 36; }
   L.y += 4; L.text(M, L.y + 10, doc.subtitle || '', 'regular', 10, C.muted); L.y += 20;
   L.rect(M, L.y, 30, 2.6, C.coral); L.y += 24;
+  if (doc.summary && doc.summary.length) summary(L, doc, inner);
   const PAD = 16, LEAD = 15.4, SIZE = 10.5;
   for (const sec of doc.sections) {
     if (sec.heading) {
-      L.ensure(70);
+      L.ensure(150);
       if (sec.eyebrow) { L.text(M, L.y + 8, sec.eyebrow.toUpperCase(), 'extrabold', 8, C.teal, 1.2); L.y += 16; }
       for (const line of L.wrap(sec.heading, 'serif', 19, inner)) { L.text(M, L.y + 18, line, 'serif', 19, C.deep); L.y += 23; }
       L.y += 8;

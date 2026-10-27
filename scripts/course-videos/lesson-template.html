@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Lesson video</title>
+<style>
+@font-face{font-family:"Nunito Sans";src:url("fonts/NunitoSans.ttf") format("truetype");font-weight:200 1000}
+@font-face{font-family:"DM Serif Display";src:url("fonts/DMSerifDisplay-Regular.ttf") format("truetype");font-weight:400}
+:root{--deep:#123C48;--cream:#FFFAF3;--white:#FFFFFF;--ink:#102E3B;--teal:#16746E;--coral:#E56F4A;--sun:#F8CA68;--mint:#D8EEE2;--deepcoral:#B9482A;--peach:#FFD9BD;--line:#D8DFD9;--muted:#546974;--lightteal:#7CC2AD}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font-family:"Nunito Sans",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+.scene{position:absolute;inset:0;opacity:0;padding:56px 76px;display:flex;flex-direction:column;justify-content:center}
+.deep{background:var(--deep);color:var(--cream)}.cream{background:var(--cream)}.white{background:var(--white)}.mintbg{background:var(--mint)}
+.eyebrow{font-weight:800;font-size:21px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:20px}
+.deep .eyebrow{color:var(--sun)}
+.serif{font-family:"DM Serif Display",serif;font-weight:400;letter-spacing:-.005em}
+.a{will-change:opacity,transform}
+/* title */
+.s-title{align-items:center;text-align:center}
+.s-title svg{width:96px;height:103px;margin-bottom:26px;overflow:visible}
+.s-title .eyebrow{color:var(--mint)}
+.s-title h1{font-size:96px;line-height:1.02;color:var(--cream);max-width:1100px}
+.s-title .sub{font-size:30px;font-weight:600;color:var(--mint);margin-top:22px}
+.s-title .rule{width:56px;height:4px;border-radius:2px;background:var(--coral);margin:24px auto 0}
+/* idea */
+.s-idea .q{font-size:70px;line-height:1.08;color:var(--deep);max-width:1120px}
+/* points */
+.s-points h2{font-size:52px;line-height:1.1;color:var(--deep);margin-bottom:40px}
+.row{display:flex;align-items:center;gap:28px;margin:16px 0}
+.row .c{flex:0 0 76px;height:76px;border-radius:50%;background:var(--deep);color:var(--cream);display:grid;place-items:center;font-weight:900;font-size:32px}
+.row b{font-size:38px;font-weight:700;color:var(--ink);line-height:1.25}
+/* example */
+.s-ex .org{font-size:34px;font-weight:900;color:var(--deep)}
+.s-ex .lab{font-size:24px;font-weight:600;color:var(--muted);margin-top:6px}
+.quote{margin-top:30px;background:var(--white);border-radius:16px;border-left:10px solid var(--teal);padding:34px 40px;box-shadow:0 10px 30px rgba(16,46,59,.08)}
+.quote p{font-size:44px;line-height:1.22;color:var(--deep)}
+.s-ex .foot{font-size:24px;color:var(--muted);margin-top:22px}
+/* create */
+.s-create .big{font-size:64px;line-height:1.1;color:var(--cream);max-width:1120px}
+.s-create .then{font-size:32px;color:var(--mint);margin-top:34px}
+.s-create .pill{display:inline-block;margin-top:30px;align-self:flex-start;background:var(--sun);color:var(--ink);font-weight:800;font-size:26px;padding:12px 22px;border-radius:999px}
+/* lessons list (module videos) */
+.s-list h2{font-size:52px;line-height:1.1;color:var(--deep);margin-bottom:28px}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:14px 44px}
+.li{display:flex;gap:16px;align-items:baseline;font-size:31px;line-height:1.25;color:var(--ink)}
+.li span{flex:0 0 62px;font-weight:900;color:var(--teal)}
+/* logo */
+.s-l{align-items:center;text-align:center}
+.s-l svg{width:150px;height:160px;overflow:visible}
+.wm{font-weight:900;font-size:72px;letter-spacing:-.01em;color:var(--cream);margin-top:24px}
+.wm em{font-style:normal;color:var(--sun)}
+.tagline{font-weight:700;font-size:21px;letter-spacing:.26em;color:var(--mint);margin-top:18px}
+</style></head>
+<body>
+<div id="stage"></div>
+<script src="data.js"></script>
+<script src="scripts.js"></script>
+<script src="course1-extra.js"></script>
+<script src="lesson-videos.js"></script>
+<script>
+const P=new URLSearchParams(location.search),KIND=P.get('kind')||'lesson',KEY=P.get('key'),LANG=P.get('lang')==='es'?'es':'en';
+document.documentElement.lang=LANG==='es'?'es':'en-GB';
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const pad=n=>String(n).padStart(2,'0');
+const course=Object.values(window.COURSE_DATA).find(c=>c.modules.some(m=>KIND==='module'?String(m.id)===KEY:m.lessons.some(l=>l.key===KEY)));
+const mod=course.modules.find(m=>KIND==='module'?String(m.id)===KEY:m.lessons.some(l=>l.key===KEY));
+const lesson=KIND==='module'?null:mod.lessons.find(l=>l.key===KEY);
+const ES=window.MODULES_ES||{};
+const T={en:{lesson:'Lesson',module:'Module',course:`Course ${course.number} · ${course.name}`,idea:'The idea',how:'How to do it well',howH:'Three things to get right',example:'An example',fictional:'A fictional example organisation, for learning.',turn:'Your turn',then:'Then save it, and download it as a PDF.',lessons:n=>`${n} lessons`,lessonsH:'What you will work through',create:'You create',logo:'Better foundations. Stronger organisations.',review:'Module review'},
+ es:{lesson:'Lección',module:'Módulo',course:`Curso ${course.number} · ${course.name}`,idea:'La idea',how:'Cómo hacerlo bien',howH:'Tres cosas para hacerlo bien',example:'Un ejemplo',fictional:'Una organización de ejemplo ficticia, para aprender.',turn:'Te toca',then:'Luego guárdalo y descárgalo en PDF.',lessons:n=>`${n} lecciones`,lessonsH:'Lo que vas a trabajar',create:'Creas',logo:'Mejores bases. Organizaciones más fuertes.',review:'Revisión del módulo'}}[LANG];
+const modTitle=LANG==='es'?ES[mod.id][0]:mod.title, modOutput=LANG==='es'?ES[mod.id][1]:mod.output;
+const titleOf=l=>LANG==='es'?(window.TITLES_ES[l.key]||l.title):l.title;
+const ORGS={idea:['Tide Line Youth Collective','Community group · idea stage','Grupo comunitario · etapa de idea','Indonesia'],ngo:['Imara Girls in Science','Registered nonprofit · delivering','ONG registrada · en marcha','Kenia'],social:['Pan del Barrio','Social enterprise · company','Empresa social · sociedad','Perú'],coop:['Vanita Weavers Cooperative','Cooperative · member-owned','Cooperativa · de sus socias','India'],hybrid:['Riverside Repair Hub','Hybrid · charity with a trading company','Híbrida · ONG con empresa comercial','Reino Unido']};
+const orgPlace=id=>LANG==='es'?ORGS[id][3]:{Kenia:'Kenya','Perú':'Peru','Reino Unido':'United Kingdom'}[ORGS[id][3]]||ORGS[id][3];
+const mark=(body,path,t0=0.2)=>`<svg viewBox="5 5 178 189" aria-hidden="true">
+ <g class="a" data-t="${t0}" data-fx="left"><path d="M7 79 Q7 75 10.5 77.5 L77 131 Q80 134 77 136.5 L10.5 189.5 Q7 192 7 188 Z" fill="${body}"/></g>
+ <g class="a" data-t="${t0+0.4}" data-fx="grow"><path d="M151 82 C116 99 70 139 43 188 L82 188 C91 151 117 111 151 82 Z" fill="${path}"/></g>
+ <g class="a" data-t="${t0+0.75}" data-fx="up"><path d="M181 74 Q181 70 177.5 72 Q155 85 139 105 Q137 107.5 137 111 L137 189 Q137 192 140 192 L178 192 Q181 192 181 189 Z" fill="${body}"/></g>
+ <g class="a" data-t="${t0+1.1}" data-fx="pop"><circle cx="159" cy="29.5" r="23" fill="#E56F4A"/></g></svg>`;
+const logo=[ 'deep s-l',4.6,`${mark('#FFFAF3','#7CC2AD',0.2)}<div class="wm a" data-t="1.5">Method <em>into</em> Impact</div><div class="tagline a" data-t="2.0">${T.logo.toUpperCase()}</div>`,[[1.5,`Method into Impact\n${T.logo}`]]];
+let scenes;
+if(KIND==='module'){
+ const V=window.MODULE_VIDEOS[mod.id][LANG];const ls=mod.lessons;
+ scenes=[
+  ['deep s-title',6,`${mark('#FFFAF3','#7CC2AD')}<div class="eyebrow a" data-t="1.6">${T.module} ${pad(mod.id)} · ${esc(T.course)}</div><h1 class="serif a" data-t="1.9">${esc(modTitle)}</h1><div class="rule a" data-t="2.5"></div>`,[[1.6,`${T.module} ${pad(mod.id)} · ${T.course}\n${modTitle}`]]],
+  ['cream s-idea',8,`<div class="eyebrow a" data-t="0.3">${T.idea}</div><div class="q serif a" data-t="0.6">${esc(V.idea)}</div>`,[[0.6,V.idea]]],
+  ['white s-list',3+ls.length*0.45+3.2,`<div class="eyebrow a" data-t="0.2">${T.lessons(ls.length)}</div><h2 class="serif a" data-t="0.4">${T.lessonsH}</h2><div class="list">${ls.map((l,i)=>`<div class="li a" data-t="${1.4+i*0.45}"><span>${l.number}</span>${esc(titleOf(l))}</div>`).join('')}</div>`,[[0.4,`${T.lessonsH}: ${ls.map(l=>`${l.number} ${titleOf(l)}`).join(' · ')}`]]],
+  ['deep s-create',8,`<div class="eyebrow a" data-t="0.3">${T.create}</div><div class="big serif a" data-t="0.6">${esc(V.create)}</div><div class="then a" data-t="2.6">${esc(T.then)}</div>${V.note?`<div class="pill a" data-t="3.6">${esc(V.note)}</div>`:''}`,[[0.6,`${T.create}: ${V.create}`],[2.6,`${T.then}${V.note?' '+V.note:''}`]]],
+  logo];
+}else{
+ const V=(KIND==='review'?window.REVIEW_VIDEOS:window.LESSON_VIDEOS)[KEY][LANG];
+ const head=['deep s-title',5.6,`${mark('#FFFAF3','#7CC2AD')}<div class="eyebrow a" data-t="1.5">${lesson.review?T.review:T.lesson+' '+lesson.number} · ${esc(modTitle)}</div><h1 class="serif a" data-t="1.8">${esc(titleOf(lesson))}</h1><div class="sub a" data-t="2.3">${esc(T.course)}</div><div class="rule a" data-t="2.7"></div>`,[[1.5,`${lesson.review?T.review:T.lesson+' '+lesson.number} · ${modTitle}\n${titleOf(lesson)}`]]];
+ const idea=['cream s-idea',7.4,`<div class="eyebrow a" data-t="0.3">${T.idea}</div><div class="q serif a" data-t="0.6">${esc(V.idea)}</div>`,[[0.6,V.idea]]];
+ const pts=['white s-points',11,`<div class="eyebrow a" data-t="0.2">${T.how}</div><h2 class="serif a" data-t="0.4">${T.howH}</h2>${V.points.map((p,i)=>`<div class="row a" data-t="${1.2+i*2.6}"><div class="c">${i+1}</div><b>${esc(p)}</b></div>`).join('')}`,V.points.map((p,i)=>[1.2+i*2.6,`${i+1}. ${p}`])];
+ const ex=V.example?['mintbg s-ex',9.4,`<div class="eyebrow a" data-t="0.3">${T.example}</div><div class="org a" data-t="0.6">${esc(ORGS[V.example.org][0])}</div><div class="lab a" data-t="0.8">${esc(ORGS[V.example.org][LANG==='es'?2:1])} · ${esc(orgPlace(V.example.org))}</div><div class="quote a" data-t="1.6"><p class="serif">${esc(V.example.text)}</p></div><div class="foot a" data-t="2.6">${T.fictional}</div>`,[[0.6,`${T.example}: ${ORGS[V.example.org][0]} (${ORGS[V.example.org][LANG==='es'?2:1]}, ${orgPlace(V.example.org)})`],[1.6,`“${V.example.text}”`]]]:null;
+ const turn=KIND==='review'?['deep s-create',6,`<div class="eyebrow a" data-t="0.3">${T.turn}</div><div class="big serif a" data-t="0.6">${esc(V.create)}</div>`,[[0.6,V.create]]]:['deep s-create',7,`<div class="eyebrow a" data-t="0.3">${T.turn}</div><div class="big serif a" data-t="0.6">${esc(V.create)}</div><div class="then a" data-t="2.4">${esc(T.then)}</div>`,[[0.6,V.create],[2.4,T.then]]];
+ scenes=[head,idea,pts,...(ex?[ex]:[]),turn,logo];
+}
+const stage=document.getElementById('stage');let t0=0;const FADE=0.6;const CUES=[];
+const els=scenes.map(([cls,dur,html,cues],i)=>{const s=document.createElement('section');s.className='scene '+cls;s.innerHTML=html;s.dataset.start=t0;s.dataset.end=t0+dur;stage.appendChild(s);
+ const sceneEnd=t0+dur-(i<scenes.length-1?FADE:0);(cues||[]).forEach(([t,text],j)=>CUES.push({start:t0+t,end:j<cues.length-1?t0+cues[j+1][0]:sceneEnd,text}));
+ t0+=dur-(i<scenes.length-1?FADE:0);return s;});
+window.DURATION=t0;
+const ts=x=>{const h=Math.floor(x/3600),m=Math.floor(x%3600/60),sec=(x%60).toFixed(3).padStart(6,'0');return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${sec}`;};
+window.VTT='WEBVTT\n\n'+CUES.map((c,i)=>`${i+1}\n${ts(c.start)} --> ${ts(Math.min(c.end,t0))}\n${c.text}`).join('\n\n')+'\n';
+// Fit long text: shrink a block until it fits its scene
+document.fonts.ready.then(()=>{for(const [sel,min] of [['.s-title h1',60],['.s-idea .q',46],['.quote p',30],['.s-create .big',42],['.row b',28]])document.querySelectorAll(sel).forEach(el=>{let size=parseFloat(getComputedStyle(el).fontSize);const sc=el.closest('.scene');while(size>min&&sc.scrollHeight>720){size-=2;el.style.fontSize=size+'px';}});window.FIT_DONE=true;});
+const clamp=x=>Math.max(0,Math.min(1,x));
+const ease=x=>1-Math.pow(1-x,3);
+const back=x=>{const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
+window.frame=t=>{const sig=[];for(const s of els){const a=+s.dataset.start,b=+s.dataset.end;const first=s===els[0],last=s===els[els.length-1];
+  const op=Math.min(first?1:clamp((t-a)/FADE),last?1:clamp((b-t)/FADE));s.style.opacity=op;s.style.visibility=op>0?'visible':'hidden';sig.push(op.toFixed(3));if(!op)continue;const L=t-a;
+  for(const e of s.querySelectorAll('.a')){const st=+e.dataset.t,fx=e.dataset.fx||'rise',d=+(e.dataset.d||0.7);const p=clamp((L-st)/d),q=ease(p);
+   if(fx==='rise'){e.style.opacity=q;e.style.transform=`translateY(${(1-q)*20}px)`;}
+   else if(fx==='left'){e.style.opacity=q;e.style.transform=`translateX(${(1-q)*-34}px)`;}
+   else if(fx==='up'){e.style.opacity=q;e.style.transform=`translateY(${(1-q)*40}px)`;}
+   else if(fx==='grow'){e.style.opacity=q;e.style.transformBox='fill-box';e.style.transformOrigin='0% 100%';e.style.transform=`scale(${0.2+0.8*q})`;}
+   else if(fx==='pop'){const b2=p>0?back(p):0;e.style.opacity=clamp(p*2.5);e.style.transformBox='fill-box';e.style.transformOrigin='50% 50%';e.style.transform=`scale(${b2})`;}
+   sig.push(p.toFixed(3));
+  }}return sig.join(',');};
+window.frame(0);
+</script></body></html>

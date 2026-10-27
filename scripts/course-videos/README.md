@@ -16,6 +16,24 @@ python3 scripts/course-videos/render.py clarify --lang es       # one course, on
 python3 scripts/course-videos/render.py clarify --stills        # still frames for review
 ```
 
+## Lesson, review and module videos
+
+Every lesson and module introduction can have a short video in the same style (`lesson-template.html`):
+a lesson video shows the title, the key idea, three points, an example from one of the five example organisations
+and what the learner writes; module videos list the module's lessons and its output.
+
+- `lesson-videos.js` – lesson texts (`LESSON_VIDEOS`), plus module, review and Spanish-title entries for Courses 2–5.
+- `course1-extra.js` – Course 1 module introductions, reviews and Spanish lesson titles, written by hand.
+
+```sh
+python3 scripts/course-videos/render.py --lessons 1.purpose 2.outcomes     # chosen lessons ("3" = Module 03 introduction)
+python3 scripts/course-videos/render.py --lessons --course organise        # a whole course
+```
+
+Output goes to `assets/videos/lessons/<module>-<lesson>…` and `assets/videos/modules/module-NN…`, and
+`course/videos.js` is rewritten so lesson and module pages show every video that exists in both languages.
+Only frames that change are captured, so a 40-second video renders in about half a minute.
+
 On the page, `assets/js/course-video.js` starts the video in the site language (the EN/ES switcher) and the English / Español buttons under the player switch it. Subtitles in either language are in the player's CC menu.
 
 Fonts are the Google Fonts originals under the SIL Open Font License (see `fonts/OFL-*.txt`).

@@ -2,7 +2,8 @@
 // Public development preview only; see docs/production-access.md before a paid launch.
 // Lesson content lives in course/mNN-*.js, one file per module. Each lesson ("section") has information,
 // an Excel sheet (lesson.sheet, in the module workbook) and a video slot (lesson.video).
-export {readingsFor,sources,resources,resourcePlan,resourceAnchor,primaryFor,ROLES} from './resource-library.js?v=ev5';
+export {readingsFor,sources,resources,resourcePlan,resourceAnchor,primaryFor,ROLES} from './resource-library.js?v=ev6';
+import {readingsFor as allReadings} from './resource-library.js?v=ev6';
 import m0 from './course/m00-start-here.js';
 import m1 from './course/m01-strategic-foundations.js';
 import m2 from './course/m02-theory-of-change.js';
@@ -18,6 +19,8 @@ import m11 from './course/m11-fundraising-revenue.js';
 import m12 from './course/m12-partnerships.js';
 import m13 from './course/m13-strategy-to-action.js';
 export {STAGES} from './course/kit.js';
+export {exampleOrgs,exampleOrg} from './course/examples.js';
+export {lessonVideos,moduleVideos} from './course/videos.js';
 
 // The Planning System is sold as five courses, one per phase. Each module's `phase` names its course.
 // Prices and product IDs live in pricing-config.js (courses[].id matches courses here).
@@ -64,3 +67,8 @@ export const legacyLessonKeys={
 // The static page for each one is written by scripts/generate-lesson-pages.mjs; rerun it after renaming or adding lessons.
 export const lessonSlug=l=>l.title.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').replace(/^your-/,'');
 export const lessonPath=(m,l)=>`${courseFor(m).id}/${lessonSlug(l)}`;
+
+// Courses whose lessons show no 'Explore further' readings (they stay in the Evidence Library).
+// Course 1 teaches from its own explanations and worked examples instead (October 2026 review).
+export const readingsHiddenIn=new Set(['Clarify']);
+export const lessonReadings=(m,l)=>readingsHiddenIn.has(m.phase)?[]:allReadings(m.id,l.id);
