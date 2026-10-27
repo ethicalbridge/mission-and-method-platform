@@ -59,3 +59,8 @@ export const legacyLessonKeys={
  '7.validation':'11.validation',
  '8.funding-mix':'11.income-mix','8.prospects':'11.prospects','8.case':'11.case','8.pipeline':'11.pipeline'
 };
+
+// Readable lesson addresses: /<course>/<lesson-title>, e.g. /clarify/organisation-profile.
+// The static page for each one is written by scripts/generate-lesson-pages.mjs; rerun it after renaming or adding lessons.
+export const lessonSlug=l=>l.title.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').replace(/^your-/,'');
+export const lessonPath=(m,l)=>`${courseFor(m).id}/${lessonSlug(l)}`;

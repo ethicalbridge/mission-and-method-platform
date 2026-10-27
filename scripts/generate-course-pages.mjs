@@ -5,7 +5,7 @@
 // - Course resources page (the Evidence Library has its own script: generate-evidence-library.mjs)
 // - Course size wording on pricing and software pages
 import {readFileSync,writeFileSync,existsSync,readdirSync} from 'node:fs';
-import {modules,phases,lessonCount,moduleCount,moduleNumber,lessonSheets,readingsFor,resources,courseToolLabels,courseFor,freeModules} from '../course-data.js';
+import {modules,phases,lessonCount,moduleCount,moduleNumber,lessonSheets,readingsFor,resources,courseToolLabels,courseFor,freeModules,lessonPath} from '../course-data.js';
 import {softwareProducts,previewToolSlugs} from '../products.js';
 import {pricing,money,coursesTotal,pathwaySaving,bundleSaving} from '../pricing-config.js';
 import {coursePricing,suiteIntro,conversionOptions} from './pricing-sections.mjs';
@@ -21,7 +21,7 @@ const courseHours=p=>Math.round(modules.filter(m=>m.phase===p.name).flatMap(m=>m
 const e=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const read=f=>readFileSync(f,'utf8');
 const write=(f,s)=>{writeFileSync(f,s,'utf8');console.log('wrote',f);};
-const lessonURL=(m,l=m.lessons[0])=>`learn.html?module=${m.id}&amp;lesson=${l.id}`;
+const lessonURL=(m,l=m.lessons[0])=>`/${lessonPath(m,l)}`;
 const startURL=lessonURL(modules[0]);
 const hours=Math.round(modules.flatMap(m=>m.lessons).reduce((n,l)=>n+l.minutes,0)/60);
 const moduleHours=m=>Math.round(m.lessons.reduce((n,l)=>n+l.minutes,0)/6)/10;

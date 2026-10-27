@@ -7,6 +7,7 @@ await mkdir('dist/client',{recursive:true});
 await mkdir('dist/server',{recursive:true});
 for(const entry of await readdir('.'))if(/\.(html|css|js)$/.test(entry))await cp(entry,`dist/client/${entry}`);
 await cp('assets','dist/client/assets',{recursive:true});
+for(const dir of ['clarify','organise','prove-show','protect','sustain-run'])await cp(dir,`dist/client/${dir}`,{recursive:true}); // lesson pages (scripts/generate-lesson-pages.mjs)
 try{await access('.openai/hosting.json');await mkdir('dist/.openai',{recursive:true});await cp('.openai/hosting.json','dist/.openai/hosting.json');}catch{}
 await writeFile('dist/server/index.js',`export default {async fetch(request,env){const url=new URL(request.url);if(url.pathname==='/')url.pathname='/index.html';return env.ASSETS.fetch(new Request(url,request));}};\n`);
 console.log('Built static preview in dist/client. Paid launch requires the access service documented in docs/production-access.md.');

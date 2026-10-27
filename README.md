@@ -16,7 +16,7 @@ node build.mjs
 
 `node scripts/generate-pages.mjs` regenerates the catalogue, module entry pages, product pages, resource library and shared page shells. Edit teaching content in `course-data.js`, product configuration in `products.js`, and generated page templates in the generator. Home and founder visual layouts remain in their HTML/CSS sources.
 
-Learning starts at `planning-system.html`. `learn.html` renders 45 numbered lessons and reviews. `organisation.html` assembles saved course outputs, exports Markdown and prints to PDF. The work-plan lesson includes dated tasks and a responsive Gantt view. Course backups can be imported with validation and explicit replacement confirmation.
+Learning starts at `planning-system.html`. Every lesson has a readable address, `/<course>/<lesson-title>` (for example `/clarify/organisation-profile`), served by a small page per lesson that `node scripts/generate-lesson-pages.mjs` writes into the course folders; rerun it after adding or renaming lessons. Old `learn.html?module=&lesson=` links still work and switch to the readable address. `learn.html` renders 45 numbered lessons and reviews. `organisation.html` assembles saved course outputs, exports Markdown and prints to PDF. The work-plan lesson includes dated tasks and a responsive Gantt view. Course backups can be imported with validation and explicit replacement confirmation.
 
 Each `software-*.html` page has a separate browser data namespace. Course answers are not imported into software. The common account page does not invent an identity or entitlement.
 

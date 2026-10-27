@@ -1,7 +1,7 @@
 // Writes the course ↔ tool cross-links into module pages and tool pages from the lesson tools in course-data.js.
 // Run after changing the map: node scripts/course-tool-links.mjs
 import {readFileSync,writeFileSync} from 'node:fs';
-import {modules,lessonTools,moduleToolSlugs,moduleNumber,courseToolLabels} from '../course-data.js';
+import {modules,lessonTools,moduleToolSlugs,moduleNumber,courseToolLabels,lessonPath} from '../course-data.js';
 import {softwareProducts} from '../products.js';
 const e=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const START='<!-- course-tools:start -->',END='<!-- course-tools:end -->';
@@ -16,7 +16,7 @@ for(const p of softwareProducts){
  const f=`software-${p.slug}.html`;let html;try{html=readFileSync(f,'utf8')}catch{continue}
  const uses=modules.flatMap(m=>m.lessons.filter(l=>(lessonTools[m.id]?.[l.id]||[]).includes(p.slug)).map(l=>({m,l})));
  const byModule=[...new Set(uses.map(u=>u.m))];
- const block=byModule.length?`<section class="catalog-section course-tools"><h2>Learn it in the course</h2><p>This tool is the live version of work taught in the Planning System. Each module’s Excel workbook imports into it.</p><ul>${byModule.map(m=>`<li><a href="${m.slug}.html"><b>Module ${moduleNumber(m)} · ${e(m.title)}</b></a> — ${uses.filter(u=>u.m===m).map(u=>`<a href="learn.html?module=${m.id}&lesson=${u.l.id}">${lessonNo(m,u.l)} ${e(u.l.title)}</a>`).join(' · ')}</li>`).join('')}</ul></section>`:'';
+ const block=byModule.length?`<section class="catalog-section course-tools"><h2>Learn it in the course</h2><p>This tool is the live version of work taught in the Planning System. Each module’s Excel workbook imports into it.</p><ul>${byModule.map(m=>`<li><a href="${m.slug}.html"><b>Module ${moduleNumber(m)} · ${e(m.title)}</b></a> — ${uses.filter(u=>u.m===m).map(u=>`<a href="/${lessonPath(m,u.l)}">${lessonNo(m,u.l)} ${e(u.l.title)}</a>`).join(' · ')}</li>`).join('')}</ul></section>`:'';
  writeFileSync(f,put(html,block));
 }
 console.log('done');
