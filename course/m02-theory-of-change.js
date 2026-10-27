@@ -439,7 +439,7 @@ export default module({
     ],
     [
      "Example: Imara Girls in Science",
-     "14 weekly clubs of 30 girls",
+     "14 weekly clubs of about 40 girls",
      "Girls choose science subjects at secondary school"
     ],
     [
@@ -465,7 +465,7 @@ export default module({
     {
      "org": "ngo",
      "profile": {
-      "outputs": "Weekly science clubs | 14 clubs, 30 girls each | girls aged 10–14 in partner public schools in two sub-counties | attendance register; coordinator observes one session a term\nHoliday science camp | 1 a year, 120 girls | club members, with transport for girls from distant schools | safeguarding plan signed off; girls' feedback forms\nTrained mentors | 25 | local women working in science, matched to clubs | training completed; background checks done\nParent sessions | 1 per school per term | parents and guardians of club members | attendance and questions recorded\nClub kits | 1 per school | all 14 partner schools | checked and restocked each term"
+      "outputs": "Weekly science clubs | 14 clubs, about 40 girls each | girls aged 10–14 in partner public schools in two sub-counties | attendance register; coordinator observes one session a term\nHoliday science camp | 1 a year, 120 girls | club members, with transport for girls from distant schools | safeguarding plan signed off; girls' feedback forms\nTrained mentors | 25 | local women working in science, matched to clubs | training completed; background checks done\nParent sessions | 1 per school per term | parents and guardians of club members | attendance and questions recorded\nClub kits | 1 per school | all 14 partner schools | checked and restocked each term"
      },
      "notice": "See how the reach column names exactly who each output is for. Copy the mix of quality checks: observation, girls' feedback and safeguarding sign-off."
     },

@@ -281,7 +281,7 @@ export default module({
     {
      "org": "ngo",
      "profile": {
-      "register": "Mentor onboarding | Brian | yes | Jan 2026 | Jan 2027\nWeekly club session | club coordinators | yes, a session guide | Jan 2026 | Jan 2027\nAttendance and survey entry | Brian | partly | Mar 2026 | Dec 2026\nPurchases over US$500 | Grace | yes | Jun 2026 | Jun 2027\nSafeguarding concern | Brian (safeguarding lead) | yes | Feb 2026 | Feb 2027\nCamp registration | Brian | no | never | Apr 2027",
+      "register": "Mentor onboarding | Brian | yes | Jan 2026 | Jan 2027\nWeekly club session | club coordinators | yes, a session guide | Jan 2026 | Jan 2027\nAttendance and survey entry | Brian | partly | Mar 2026 | Dec 2026\nPurchases over US$500 | Grace | yes | Jun 2026 | Jun 2027\nSafeguarding concern | Achieng (safeguarding lead; Brian deputy) | yes | Feb 2026 | Feb 2027\nCamp registration | Brian | no | never | Apr 2027",
       "map": "Mentor accepted after interview | references and police clearance; sign the mentor agreement and code of conduct; safeguarding training; shadow two club sessions; first session as a mentor | Brian runs it; Achieng approves; a club coordinator hosts the shadowing | mentor file in the restricted folder; training record | clearance not yet received: the mentor may shadow but is never alone with girls"
      },
      "notice": "See how the exception protects girls while a vetting check is pending. Copy the split of roles: Brian runs onboarding, but Achieng approves."
