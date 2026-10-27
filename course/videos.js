@@ -84,6 +84,7 @@ export const lessonVideos={
  "8.email": "assets/videos/lessons/8-email",
  "8.media": "assets/videos/lessons/8-media",
  "8.messaging": "assets/videos/lessons/8-messaging",
+ "8.reputation": "assets/videos/lessons/8-reputation",
  "8.social": "assets/videos/lessons/8-social",
  "8.storytelling": "assets/videos/lessons/8-storytelling",
  "8.strategy": "assets/videos/lessons/8-strategy",
