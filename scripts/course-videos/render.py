@@ -8,7 +8,7 @@ and subtitles course-<id>-intro.en.vtt / .es.vtt (same timeline, so either track
 Add --lang en or --lang es to render one language only.
 
 Course 1 lesson, review and module videos (lesson-template.html; texts in lesson-videos.js and course1-extra.js):
-    python3 scripts/course-videos/render.py --lessons [key ...] [--course organise]   # keys like 1.purpose 3 (module 3); --course renders a whole course
+    python3 scripts/course-videos/render.py --lessons [key ...] [--course organise]   # keys like 1.purpose 3 (module 3); --course renders a whole course; --missing skips existing
 writes assets/videos/lessons/<module>-<lesson>{,-es}.mp4/.jpg + .en.vtt/.es.vtt, assets/videos/modules/module-NN…,
 and updates course/videos.js so the lesson pages show them.
 Needs Python Playwright (Chromium) and ffmpeg. Silent by design: every word is on screen.
@@ -64,11 +64,13 @@ def render_item(page, kind, key, lang, base, stills=False):
     ff = subprocess.Popen(['ffmpeg', '-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', str(FPS), '-i', '-',
                            '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '24', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
                            f'{base}{sfx}.mp4'], stdin=subprocess.PIPE)
+    n = int(dur * FPS)
+    sigs = page.evaluate(f'window.frameSigs({n}, {FPS})')  # which frames differ, computed in one pass
     prev_sig, prev_img = None, None
-    for i in range(int(dur * FPS) + 1):  # only capture frames where something on screen changed
-        sig = page.evaluate(f'window.frame({i / FPS})')
-        if sig != prev_sig or prev_img is None:
-            prev_img = page.screenshot(type='jpeg', quality=92); prev_sig = sig
+    for i in range(n + 1):  # only capture frames where something on screen changed
+        if sigs[i] != prev_sig or prev_img is None:
+            page.evaluate(f'window.frame({i / FPS})')
+            prev_img = page.screenshot(type='jpeg', quality=92); prev_sig = sigs[i]
         ff.stdin.write(prev_img)
     ff.stdin.close(); ff.wait()
     return dur
@@ -109,7 +111,8 @@ def json_dumps(o):
 
 
 if __name__ == '__main__' and '--lessons' in sys.argv:
-    keys = [a for a in sys.argv[1:] if not a.startswith('--') and a not in ('en', 'es')]
+    skip = {sys.argv[i + 1] for i, a in enumerate(sys.argv[:-1]) if a in ('--course', '--lang')}
+    keys = [a for a in sys.argv[1:] if not a.startswith('--') and a not in skip]
     langs = [sys.argv[sys.argv.index('--lang') + 1]] if '--lang' in sys.argv else ['en', 'es']
     with sync_playwright() as p:
         b = p.chromium.launch()
@@ -119,6 +122,8 @@ if __name__ == '__main__' and '--lessons' in sys.argv:
             if (keys and key not in keys) or (not keys and '--course' not in sys.argv and int(key.split('.')[0]) > 2):
                 continue
             for lang in langs:
+                if '--missing' in sys.argv and pathlib.Path(f"{base}{'' if lang == 'en' else '-es'}.mp4").exists():
+                    continue
                 print(kind, key, lang, round(render_item(page, kind, key, lang, base, '--stills' in sys.argv), 1), 's', flush=True)
         b.close()
     if '--stills' not in sys.argv:
