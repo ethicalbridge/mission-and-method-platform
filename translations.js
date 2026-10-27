@@ -730,7 +730,11 @@ export const translations = {
     "track.starthere.text": "Module 0 opens the courses for organisations that are already running. Starting from an idea?",
     "track.starthere.link": "Start Idea into Impact instead →",
     "track.software.text": "Impact Tools work at any stage: entrepreneurs use a few to keep a first plan alive, organisations use the full suite to run the work.",
-    "track.software.link": "See the path for entrepreneurs →"
+    "track.software.link": "See the path for entrepreneurs →",
+    "nav.courses.ent": "For entrepreneurs",
+    "nav.courses.ent_sub": "Idea into Impact · coming soon",
+    "nav.courses.org": "For organisations",
+    "nav.courses.org_sub": "Five foundation courses · coming soon"
   },
 
   es: {
@@ -1460,6 +1464,10 @@ export const translations = {
     "track.starthere.text": "El Módulo 0 abre los cursos para organizaciones que ya están en marcha. ¿Empiezas desde una idea?",
     "track.starthere.link": "Empieza mejor con Idea into Impact →",
     "track.software.text": "Las Impact Tools sirven en cualquier etapa: los emprendedores usan algunas para mantener vivo su primer plan y las organizaciones usan la suite completa para gestionar el trabajo.",
-    "track.software.link": "Mira el camino para emprendedores →"
+    "track.software.link": "Mira el camino para emprendedores →",
+    "nav.courses.ent": "Para emprendedores",
+    "nav.courses.ent_sub": "Idea into Impact · próximamente",
+    "nav.courses.org": "Para organizaciones",
+    "nav.courses.org_sub": "Cinco cursos fundacionales · próximamente"
   }
 };

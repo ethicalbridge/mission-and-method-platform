@@ -249,3 +249,4 @@ nav.nav .nav-links a.nav-coming-soon {
 .wwj-section { padding: 24px 0 !important; }
 .wwj-hero { padding: 48px 0 36px !important; }
 .wwj-sect-head { margin-bottom: 18px !important; }
+.nav-dropdown[open]>summary span[data-i18n]{transform:none}

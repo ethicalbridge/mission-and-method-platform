@@ -371,3 +371,8 @@
 .wwj-form-success strong { display:block; font-size:16px; margin-bottom:6px; color:#06161c; }
 .wwj-form-success p { margin:0 0 8px; color:#1e3942; font-size:14px; }
 .wwj-form-success small { color:#546974; font-size:12px; }
+/* Path labels: big, colour-coded so "For entrepreneurs" / "For organisations" can't be missed */
+.wwj-path-a,.wwj-path-b{scroll-margin-top:90px}
+.wwj-path-a .wwj-sect-head .eyebrow,.wwj-path-b .wwj-sect-head .eyebrow{display:inline-block;font-size:clamp(17px,2.2vw,22px);letter-spacing:.12em;padding:10px 22px;border-radius:999px;margin-bottom:14px;line-height:1.2}
+.wwj-path-a .wwj-sect-head .eyebrow{background:#fdf0e9;color:#b44a26;border:2px solid #e56f4a}
+.wwj-path-b .wwj-sect-head .eyebrow{background:#d8eee2;color:#0f5a55;border:2px solid #16746e}

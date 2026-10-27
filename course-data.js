@@ -32,8 +32,8 @@ export {lessonVideos,moduleVideos} from './course/videos.js';
 // Prices and product IDs live in pricing-config.js (courses[].id matches courses here).
 // Two audiences, one method: entrepreneurs (an idea, nothing built yet) and organisations (already running).
 export const tracks={
- entrepreneurs:{id:'entrepreneurs',label:'For entrepreneurs',who:'You have an idea and want to start',page:'entrepreneurs.html'},
- organisations:{id:'organisations',label:'For organisations',who:'You already run an organisation',page:'organisations.html'}
+ entrepreneurs:{id:'entrepreneurs',label:'For entrepreneurs',who:'You have an idea and want to start',page:'work-with-julieta.html#path-idea'},
+ organisations:{id:'organisations',label:'For organisations',who:'You already run an organisation',page:'work-with-julieta.html#path-org'}
 };
 export const phases=[
  {id:'clarify',number:1,name:'Clarify',title:'Clarify: Purpose, Strategy & Theory of Change',summary:'Why we exist and what change we pursue'},
