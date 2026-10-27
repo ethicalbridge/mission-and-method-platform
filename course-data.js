@@ -70,5 +70,5 @@ export const lessonPath=(m,l)=>`${courseFor(m).id}/${lessonSlug(l)}`;
 
 // Courses whose lessons show no 'Explore further' readings (they stay in the Evidence Library).
 // Course 1 teaches from its own explanations and worked examples instead (October 2026 review).
-export const readingsHiddenIn=new Set(['Clarify']);
+export const readingsHiddenIn=new Set(['Clarify','Organise']);
 export const lessonReadings=(m,l)=>readingsHiddenIn.has(m.phase)?[]:allReadings(m.id,l.id);
