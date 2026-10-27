@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[0,1,2],"video":null,"id":3,"slug":"structure-governance","phase":"Organise","title":"Structure, Governance & Accountability","short":"Organigrams, governance, roles, decision rights, delegation, RACI and coordination","intro":"Move from mission and strategy to who actually does what. Design the work before the job titles, separate governance from management, decide who can decide what, and make accountability and coordination visible. A team of two needs this clarity as much as a team of two hundred.","output":"Structure & Accountability Pack","workbook":{"file":"Module-03-Structure-Governance-Accountability.xlsx","title":"Structure, Governance & Accountability workbook"},"promo":{"lesson":"raci","tools":["organisation-structure","meetings-actions-decisions"],"headline":"Know who owns what, across every plan","pitch":"Organisation Structure keeps your roles and reporting lines current and scans every other tool for owner names, so you can spot overload and gaps early. Meetings, Actions & Decisions turns your coordination rhythm into a record of what was decided and who follows up."}},
  lessons:[

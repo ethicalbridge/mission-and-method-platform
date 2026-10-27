@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1,2,3,10,11],"video":null,"id":12,"slug":"partnerships","phase":"Sustain & Run","title":"Partnerships & Ecosystem Building","short":"Identify, assess, design, formalise, manage, evaluate and renew or exit partnerships","intro":"No purpose-led organisation achieves its mission alone. Learn to identify the partners and ecosystem actors that matter, assess fit and risk, design fair partnerships with clear roles and governance, formalise them, manage the relationship, measure its value and decide when to renew, scale or exit.","output":"Partnership Strategy","workbook":{"file":"Module-12-Partnerships-Ecosystem.xlsx","title":"Partnerships & Ecosystem Building workbook"},"promo":{"lesson":"managing","tools":["ethical-bridge-crm","meetings-actions-decisions","issue-risk-management"],"headline":"Keep every partnership’s commitments and next conversations visible","pitch":"The relationship CRM keeps partners, funders and other contacts with their context, agreed actions and next conversations in one place. Meetings, Actions & Decisions records joint decisions and follow-ups, and Issue & Risk Management keeps partnership risks owned and reviewed."}},
  lessons:[

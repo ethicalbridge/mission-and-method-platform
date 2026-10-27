@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[0],"video":null,"id":1,"slug":"strategic-foundation","phase":"Clarify","title":"Strategic Foundations","short":"Purpose, context, stakeholders, vision, mission, values, form, positioning and objectives","intro":"Make the connected decisions every other module depends on: why you exist, the context you work in, who matters, the future you want, the work you do, how you behave, what kind of organisation you are, where you add unique value and what you will prioritise.","output":"Strategic Foundation","workbook":{"file":"Module-01-Strategic-Foundations.xlsx","title":"Strategic Foundations workbook"},"promo":{"lesson":"objectives","tools":["strategic-objectives"],"headline":"Turn your objectives into a living strategy","pitch":"Strategic Objectives keeps your external and internal objectives side by side, with actions, owners, progress and review decisions. Import this module’s workbook and your objectives become a plan your team can update every quarter."}},
  lessons:[

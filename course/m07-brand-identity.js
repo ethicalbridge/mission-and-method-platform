@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1,6],"video":null,"id":7,"slug":"brand-identity","phase":"Prove & Show","title":"Brand, Identity & Image","short":"Brand strategy, promise, voice, architecture, visual identity, guidelines and credibility","intro":"Translate your mission, values and positioning into an identity people recognise and trust. Brand is what people expect from you and how you are recognised; it is the foundation that Module 8 uses to communicate and reach audiences.","output":"Brand Platform + Guidelines","workbook":{"file":"Module-07-Brand-Identity-Image.xlsx","title":"Brand, Identity & Image workbook"},"promo":{"lesson":"consistency","tools":["marketing-social-planner","customer-persona"],"headline":"Keep your brand consistent in every message","pitch":"Marketing & Social Planner keeps key messages, campaigns and posts in one calendar, tagged to the objectives they advance and the audiences they target. Customer Persona Builder keeps the tone and messages that work for each audience close at hand."}},
  lessons:[

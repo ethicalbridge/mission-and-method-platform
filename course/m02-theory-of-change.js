@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1],"video":null,"id":2,"slug":"theory-of-change","phase":"Clarify","title":"Theory of Change","short":"From the problem to long-term impact, with the assumptions that connect them","intro":"Explain how your work could contribute to change. Work backwards from the future you seek, then check the pathway forwards. Build one pathway for each external objective. Your map is a reasoned hypothesis to test with the people affected, not proof that an intervention works.","output":"Theory of Change","workbook":{"file":"Module-02-Theory-of-Change.xlsx","title":"Theory of Change workbook"},"promo":{"lesson":"pathway","tools":["theory-of-change"],"headline":"See your whole pathway on one living map","pitch":"The Theory of Change Builder draws every pathway from inputs to impact, keeps assumptions and evidence beside each link, and saves review snapshots so you can show how your thinking changed. Import this module’s Pathways sheet to start."}},
  lessons:[

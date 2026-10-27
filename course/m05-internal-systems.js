@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1,3,4],"video":null,"id":5,"slug":"internal-systems","phase":"Organise","title":"Internal Systems & Operations","short":"How planning, people, money, compliance, information, tools and issues fit together","intro":"See how the internal systems of a strong organisation fit together, and choose the minimum set your stage needs. This module is a map: it introduces each system and the decisions it needs, and points to the later modules that go deeper into people, MEAL, finance, legal compliance and risk, and planning.","output":"Internal Systems Blueprint","workbook":{"file":"Module-05-Internal-Systems-Operations.xlsx","title":"Internal Systems & Operations workbook"},"promo":{"lesson":"stack","tools":["issue-risk-management","meetings-actions-decisions","organisation-structure","strategy-kpis-annual-planning"],"headline":"One connected toolset instead of ten disconnected apps","pitch":"The Impact Tools share one look, one way of importing and exporting Excel and one set of statuses, so strategy, people, risks, meetings and plans stop living in separate spreadsheets. Each tool works on its own, and you can add them one at a time."}},
  lessons:[

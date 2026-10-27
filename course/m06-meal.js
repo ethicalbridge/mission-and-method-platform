@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1,2,5],"video":null,"id":6,"slug":"meal","phase":"Prove & Show","title":"MEAL: Monitoring, Evaluation, Accountability & Learning","short":"Theory of Change → results framework → indicators → data → learning → decisions","intro":"Turn your Theory of Change into evidence you can use. Build a results framework, define indicators with honest baselines and targets, collect data ethically, listen to the people you serve, evaluate what matters and use what you learn to make better decisions. The same principles apply to programme MEAL in nonprofits and to impact measurement in social enterprises and startups.","output":"MEAL Framework","workbook":{"file":"Module-06-MEAL.xlsx","title":"MEAL workbook"},"promo":{"lesson":"monitoring","tools":["meal-strategy","theory-of-change"],"headline":"Compare planned and actual results every quarter, without rebuilding spreadsheets","pitch":"MEAL Strategy keeps every indicator with its definition, baseline, target, data source and owner, tracks planned against actual each quarter and records the learning and decisions from each review. It can pull indicators from your Theory of Change and KPIs from your annual plan."}},
  lessons:[

@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1,6,7],"video":null,"id":8,"slug":"marketing-communications","phase":"Prove & Show","title":"Marketing & Communications","short":"Strategy, audiences, messaging, ethical storytelling, channels, campaigns, community, reputation and measurement","intro":"Communicate your work and reach the audiences your mission needs: the people you serve, communities, supporters, customers, funders, partners, volunteers, job applicants and the public. Build a communications strategy on your brand and your evidence, choose channels that fit, tell stories ethically and measure what actually helps.","output":"Communications Plan","workbook":{"file":"Module-08-Marketing-Communications.xlsx","title":"Marketing & Communications workbook"},"promo":{"lesson":"content","tools":["marketing-social-planner","customer-persona"],"headline":"Plan campaigns and content in one calendar","pitch":"Marketing & Social Planner groups posts into campaigns, schedules them on a shared calendar, tags each one with the objective it advances and the persona it targets, and records results. Customer Persona Builder keeps each audience’s goals, barriers, messages and channels in one profile."}},
  lessons:[

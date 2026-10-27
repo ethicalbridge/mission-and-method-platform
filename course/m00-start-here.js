@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[],"video":null,"id":0,"slug":"start-here","phase":"Clarify","title":"Start Here: Your Organisation Journey","short":"How the course works, your organisation profile and a baseline health check","intro":"See the whole journey before you begin. Describe the organisation you are building, choose the examples that fit your legal form and stage, and record an honest starting point you will revisit at the end of the course.","output":"Organisation Profile + Baseline Health Check","workbook":{"file":"Module-00-Start-Here.xlsx","title":"Start Here workbook"},"promo":{"lesson":"journey","tools":["strategic-objectives","theory-of-change","strategy-kpis-annual-planning","meal-strategy"],"headline":"Every output you build can become a live, shared plan","pitch":"The course gives you the method and an Excel workbook for every module. The Impact Tools turn the same work into connected records your team can update, review and report on — objectives, pathways, KPIs, indicators, risks and people in one place."}},
  lessons:[

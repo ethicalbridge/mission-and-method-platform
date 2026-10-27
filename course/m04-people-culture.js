@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1,3],"video":null,"id":4,"slug":"people-culture","phase":"Organise","title":"People, Culture & Volunteers","short":"Workforce planning, recruitment, contracts, onboarding, development, pay, culture, volunteers and leaving well","intro":"Structure says who does what; this module helps you find, support and keep the people who do it. Plan the mix of staff, contractors and volunteers, recruit fairly, start people well, help them grow, look after wellbeing and let people leave without losing what they know.","output":"People Plan","workbook":{"file":"Module-04-People-Culture-Volunteers.xlsx","title":"People, Culture & Volunteers workbook"},"promo":{"lesson":"checkins","tools":["people-check-ins-development","onboarding-compliance"],"headline":"Make good people practice a habit, not a memory","pitch":"Onboarding & Staff Compliance builds a role-based induction plan for each new person and tracks policy acknowledgements and training. People Check-Ins & Development keeps a running record of one-to-ones, commitments and development goals linked to your objectives."}},
  lessons:[

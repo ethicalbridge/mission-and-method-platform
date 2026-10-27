@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
-// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
+// organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
  ...{"uses":[1,2,3,5],"video":null,"id":9,"slug":"financial-management","phase":"Protect","title":"Financial Management","short":"Budgets, cost allocation, restricted funds, cash flow, controls, reporting, audit and financial health","intro":"Manage money well enough to make good decisions, protect resources and earn trust. This module is practical, not an accounting qualification: it covers what founders and leaders need to budget, forecast, control, report and oversee finances, and when to bring in a qualified accountant. How you raise income is covered separately in Module 11.","output":"Financial Management Pack","workbook":{"file":"Module-09-Financial-Management.xlsx","title":"Financial Management workbook"},"promo":{"lesson":"reporting","tools":["strategy-kpis-annual-planning","donor-tracking"],"headline":"Connect money to plans and funder obligations","pitch":"Strategy, KPIs & Annual Planning keeps a budget beside every initiative in your annual plan, so spending and priorities are reviewed together. Donor Tracking keeps each grant’s amount, conditions and reporting calendar in one place, so restricted money and deadlines are never lost."}},
  lessons:[
