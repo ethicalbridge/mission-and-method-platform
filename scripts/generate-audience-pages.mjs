@@ -58,14 +58,6 @@ function page(p,{examples,courseHref,consultHref,otherHref,secondHref}){
     </div>
   </section>
 
-  <section class="aud-section aud-alt">
-    <div class="container">
-      <div class="aud-head">${t(`${p}.examples.eyebrow`,'div','class="aud-eyebrow"')}${t(`${p}.examples.title`,'h2')}${t(`${p}.examples.sub`,'p','class="aud-sub"')}</div>
-      <div class="aud-examples">${examples.map(([name,place],i)=>`<article class="aud-example"><b>${e(name)}</b><small>${e(place)}</small>${t(`${p}.examples.${i+1}`,'p')}</article>`).join('')}</div>
-      <p class="aud-switch">${t(`${p}.switch.text`,'span')} <a href="${otherHref}" data-i18n="${p}.switch.link">${e(S[`${p}.switch.link`][0])}</a></p>
-    </div>
-  </section>
-
   <section class="hm-final">
     <div class="hm-final-shapes" aria-hidden="true"><span class="hm-shape hm-shape-f1"></span><span class="hm-shape hm-shape-f2"></span></div>
     <div class="container"><div class="hm-final-inner">
