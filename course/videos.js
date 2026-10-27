@@ -29,5 +29,6 @@ export const lessonVideos={
 export const moduleVideos={
  "0": "assets/videos/modules/module-00",
  "1": "assets/videos/modules/module-01",
- "2": "assets/videos/modules/module-02"
+ "2": "assets/videos/modules/module-02",
+ "3": "assets/videos/modules/module-03"
 };
