@@ -55,7 +55,23 @@ export const lessonVideos={
  "5.minimum": "assets/videos/lessons/5-minimum",
  "5.processes": "assets/videos/lessons/5-processes",
  "5.stack": "assets/videos/lessons/5-stack",
- "5.systems": "assets/videos/lessons/5-systems"
+ "5.systems": "assets/videos/lessons/5-systems",
+ "6.accountability": "assets/videos/lessons/6-accountability",
+ "6.baselines": "assets/videos/lessons/6-baselines",
+ "6.data-collection": "assets/videos/lessons/6-data-collection",
+ "6.evaluation": "assets/videos/lessons/6-evaluation",
+ "6.indicators": "assets/videos/lessons/6-indicators",
+ "6.learning": "assets/videos/lessons/6-learning",
+ "6.meal-framework": "assets/videos/lessons/6-meal-framework",
+ "6.meal-plan": "assets/videos/lessons/6-meal-plan",
+ "6.monitoring": "assets/videos/lessons/6-monitoring",
+ "6.reporting": "assets/videos/lessons/6-reporting",
+ "6.results-framework": "assets/videos/lessons/6-results-framework",
+ "6.system": "assets/videos/lessons/6-system",
+ "7.architecture": "assets/videos/lessons/7-architecture",
+ "7.definitions": "assets/videos/lessons/7-definitions",
+ "7.strategy": "assets/videos/lessons/7-strategy",
+ "7.voice": "assets/videos/lessons/7-voice"
 };
 export const moduleVideos={
  "0": "assets/videos/modules/module-00",
@@ -63,5 +79,7 @@ export const moduleVideos={
  "2": "assets/videos/modules/module-02",
  "3": "assets/videos/modules/module-03",
  "4": "assets/videos/modules/module-04",
- "5": "assets/videos/modules/module-05"
+ "5": "assets/videos/modules/module-05",
+ "6": "assets/videos/modules/module-06",
+ "7": "assets/videos/modules/module-07"
 };
