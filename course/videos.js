@@ -45,13 +45,16 @@ export const lessonVideos={
  "4.recruitment": "assets/videos/lessons/4-recruitment",
  "4.volunteers": "assets/videos/lessons/4-volunteers",
  "4.workforce": "assets/videos/lessons/4-workforce",
+ "5.blueprint": "assets/videos/lessons/5-blueprint",
  "5.compliance-essentials": "assets/videos/lessons/5-compliance-essentials",
  "5.cycle": "assets/videos/lessons/5-cycle",
  "5.finance-overview": "assets/videos/lessons/5-finance-overview",
  "5.hr-overview": "assets/videos/lessons/5-hr-overview",
  "5.information": "assets/videos/lessons/5-information",
+ "5.issues": "assets/videos/lessons/5-issues",
  "5.minimum": "assets/videos/lessons/5-minimum",
  "5.processes": "assets/videos/lessons/5-processes",
+ "5.stack": "assets/videos/lessons/5-stack",
  "5.systems": "assets/videos/lessons/5-systems"
 };
 export const moduleVideos={
