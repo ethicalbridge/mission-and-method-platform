@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {modules,lessonTools,moduleToolSlugs} from '../course-data.js';
+import {modules,allModules,lessonTools,moduleToolSlugs} from '../course-data.js';
 import {availableToolSlugs,softwareProducts,retiredTools} from '../products.js';
 
 test('every mapped lesson exists and every mapped tool is a live tool',()=>{
  for(const [moduleId,map] of Object.entries(lessonTools)){
-  const m=modules.find(x=>x.id===Number(moduleId));assert.ok(m,`module ${moduleId}`);
+  const m=allModules.find(x=>x.id===Number(moduleId));assert.ok(m,`module ${moduleId}`);
   for(const [lessonId,slugs] of Object.entries(map)){
    assert.ok(m.lessons.some(l=>l.id===lessonId),`${moduleId}.${lessonId} exists`);
    for(const slug of slugs)assert.ok(availableToolSlugs.includes(slug),`${slug} is live`);

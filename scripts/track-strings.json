@@ -1,0 +1,46 @@
+{
+ "track.org.label": [
+  "For organisations",
+  "Para organizaciones"
+ ],
+ "track.both.label": [
+  "For both paths",
+  "Para los dos caminos"
+ ],
+ "track.courses.text": [
+  "These five foundation courses are for organisations that are already running. Starting from an idea?",
+  "Estos cinco cursos fundacionales son para organizaciones que ya están en marcha. ¿Empiezas desde una idea?"
+ ],
+ "track.courses.link": [
+  "See the path for entrepreneurs →",
+  "Mira el camino para emprendedores →"
+ ],
+ "track.pricing.text": [
+  "These prices are for the five foundation courses for organisations. Starting from an idea? Idea into Impact is the short starter course for entrepreneurs.",
+  "Estos precios son para los cinco cursos fundacionales para organizaciones. ¿Empiezas desde una idea? Idea into Impact es el curso inicial corto para emprendedores."
+ ],
+ "track.pricing.link": [
+  "See the path for entrepreneurs →",
+  "Mira el camino para emprendedores →"
+ ],
+ "track.starthere.text": [
+  "Module 0 opens the courses for organisations that are already running. Starting from an idea?",
+  "El Módulo 0 abre los cursos para organizaciones que ya están en marcha. ¿Empiezas desde una idea?"
+ ],
+ "track.starthere.link": [
+  "Start Idea into Impact instead →",
+  "Empieza mejor con Idea into Impact →"
+ ],
+ "track.software.text": [
+  "Impact Tools work at any stage: entrepreneurs use a few to keep a first plan alive, organisations use the full suite to run the work.",
+  "Las Impact Tools sirven en cualquier etapa: los emprendedores usan algunas para mantener vivo su primer plan y las organizaciones usan la suite completa para gestionar el trabajo."
+ ],
+ "track.software.link": [
+  "See the path for entrepreneurs →",
+  "Mira el camino para emprendedores →"
+ ],
+ "courses.hero.eyebrow": [
+  "COURSES FOR ORGANISATIONS · FIVE QUESTIONS · ONE PATHWAY",
+  "CURSOS PARA ORGANIZACIONES · CINCO PREGUNTAS · UN CAMINO"
+ ]
+}
