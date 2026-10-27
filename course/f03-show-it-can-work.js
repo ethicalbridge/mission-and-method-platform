@@ -2,7 +2,7 @@ import {module,lesson,review} from './kit.js';
 // Idea into Impact (entrepreneurs track). Story bible: docs/idea-into-impact.md
 export default module({
  id:103, no:3, slug:'idea-prove-show', phase:'Idea into Impact', track:'entrepreneurs',
- title:'Show it can work', short:'How you will know it works · Who else is out there, and why you · Your one-minute pitch',
+ title:'Show it can work', short:'How you will know it works, who else is out there and why you, and your one-minute pitch',
  intro:'In this step you decide how you will measure your pilot, where your idea fits among the people who already help, and how to explain it all in one minute. You need these now, before you ask anyone for money, time or permission.',
  output:'Measures and pitch', uses:[], workbook:{file:'Idea-into-Impact.xlsx',title:'Idea into Impact workbook'},
  lessons:[
@@ -19,16 +19,16 @@ export default module({
    reflect:'Which of your measures would you be tempted to make look better than it is, and how will you stop yourself?',
    exercise:'Write three measures for your pilot, with at least one outcome. For each, write the number that would make you happy, then how and when you will collect it.',
    fields:[
-    {key:'measures',label:'Three things you will measure',hint:'One per line: what you count or ask, and what number would make you happy (Young people at each session: happy if 12 of 15 come every time).'},
-    {key:'collect',label:'How and when you will collect it',hint:'Who collects it, with what (a sign-in sheet, three short questions, a count), and when (each session, month 3).'},
-    {key:'claim',label:'What you will not claim yet',hint:'The big changes your pilot is too small or too short to prove, and how you will word your results instead (“people told us”, “early signs”).'}
+    {key:'measures',label:'Three things you will measure',hint:'One per line: what you count or ask, and what number would make you happy (e.g. Young people at each session: happy if 12 of 15 come every time).'},
+    {key:'collect',label:'How and when you will collect it',hint:'Who collects it, with what (a sign-in sheet, three short questions, a count), and when (e.g. each session, month 3).'},
+    {key:'claim',label:'What you will not claim yet',hint:'The big changes your pilot is too small or too short to prove, and how you will word your results instead (e.g. “people told us”, “early signs”).'}
    ],
    check:'Did you write down the number that would make you happy before your pilot starts?',
    gallery:{title:'Three founders, same exercise',intro:'Each founder picks three measures they can really collect, and names the claim they will not make yet.',prompt:'Which founder is closest to you?',
     items:[
      {org:'idea',profile:{
-      measures:'Young people at each planting day: we count names on a sign-in sheet. Happy if at least 12 of the 15 come to all three days.\nSeedlings planted and how many are alive at 3 and 6 months. Happy if at least 60% are alive at 3 months.\nYoung people who can explain why mangroves matter: a short quiz on the first and last day. Happy if most score higher at the end.',
-      collect:'Sari keeps the sign-in sheet at every planting day. At 3 and 6 months, Sari and the youth team leaders count the living seedlings in marked plots at the site. The quiz is five questions and takes ten minutes, at the start of the first day and the end of the third. We write all results in one notebook the same week.',
+      measures:'Young people at each planting day: we count names on a sign-in sheet. Happy if at least 12 of the 15 come to all three days.\nSeedlings planted, and how many are alive at the end of the pilot (month 3) and again at month 6. Happy if at least 60% are alive at month 3.\nYoung people who can explain why mangroves matter: a short quiz on the first and last day. Happy if most score higher at the end.',
+      collect:'Sari keeps the sign-in sheet at every planting day. At the end of month 3 and again at month 6, Sari and the youth team leaders count the living seedlings in marked plots at the site. The quiz is five questions and takes ten minutes, at the start of the first day and the end of the third. We write all results in one notebook the same week.',
       claim:'We will not claim that flooding or erosion has gone down. That would take years, and many other things affect it. After the pilot we will only say how many young people came, how many seedlings survived and what young people learned. We will call these early signs, not proof.'},
       notice:'Notice the mix: one output (seedlings planted) and two outcomes (seedlings surviving, young people learning). Copy the way each measure has its own number for “happy”.'},
      {org:'huerta',profile:{
@@ -38,7 +38,7 @@ export default module({
       notice:'Notice that Camila collects most answers at workshops women already attend, so nobody needs extra time. Copy that: collect where people already are.'},
      {org:'mentors',profile:{
       measures:'Pupils at each Saturday session. Happy if 20 of the 24 pupils attend most sessions.\nMentors at each Saturday session. Happy if 5 of the 6 mentors come to at least 7 of the 8 Saturdays.\nPupils who submit their senior high school choices on time. Happy if every pupil in the pilot does.',
-      collect:'Abena takes a register of pupils and mentors at the start of every Saturday. The head teacher tells us which pupils submitted their school choices by the deadline. At the end of term, pupils and parents fill in a short paper form: did the guidance help you choose? I add everything to one sheet each Sunday evening.',
+      collect:'Abena takes a register of pupils and mentors at the start of every Saturday. The head teacher tells us which pupils submitted their school choices by the deadline. After the last Saturday, pupils and parents fill in a short paper form: did the guidance help you choose? I add everything to one sheet each Sunday evening.',
       claim:'We will not claim that we improved BECE results. We will compare our group’s results with the school’s previous year, but many things affect them: teachers, families, the exam itself. We will report the numbers carefully, with what pupils and parents told us, and never say we caused them.'},
       notice:'Notice that Kwame measures his mentors as well as his pupils, because his biggest assumption is that mentors keep coming. Copy that: measure your riskiest assumption.'}
     ]}
@@ -56,9 +56,9 @@ export default module({
    reflect:'If you were one of the people you want to help, would you really choose your idea over what you do today? Why?',
    exercise:'List what people do today and who else helps, one per line. Then write why people would choose you, and name two or three groups you could work with.',
    fields:[
-    {key:'others',label:'What people do today and who else helps',hint:'One per line: what people do now, and each programme, group or business that already helps, with what it does well or badly (Private tutors: good, but too expensive for most families).'},
+    {key:'others',label:'What people do today and who else helps',hint:'One per line: what people do now, and each programme, group or business that already helps, with what it does well or badly (e.g. Private tutors: good, but too expensive for most families).'},
     {key:'different',label:'Why you',hint:'What you do differently (who, where, how often, price, trust) and why people would choose you over what they do today.'},
-    {key:'partners',label:'Who could help you',hint:'One per line: a person or group, and what they could give (a room, materials, introductions, advice, money).'}
+    {key:'partners',label:'Who could help you',hint:'One per line: a person or group, and what they could give (e.g. a room, materials, introductions, advice, money).'}
    ],
    check:'Could you name at least two others who already help, without saying anything unfair about them?',
    gallery:{title:'Three founders, same exercise',intro:'Each founder lists what already exists, finds a real difference and turns some of the others into partners.',prompt:'Which founder is closest to you?',
@@ -94,14 +94,14 @@ export default module({
    exercise:'Write your pitch in about 120 words using the five parts, then write your ask separately. Say the pitch aloud, time it, and cut until it fits in one minute.',
    fields:[
     {key:'pitch',label:'Your pitch',hint:'About 120 words: the problem, what you do, why you, what you have learned so far, and your ask. Write it as you would say it.'},
-    {key:'ask',label:'Your ask',hint:'What exactly you ask for, from whom, and by when (a room on Saturdays from the head teacher, agreed in writing before the first session).'}
+    {key:'ask',label:'Your ask',hint:'What exactly you ask for, from whom, and by when (e.g. a room on Saturdays from the head teacher, agreed in writing before the first session).'}
    ],
    check:'Have you said your pitch aloud, to a real person, in one minute or less?',
    gallery:{title:'Three founders, same exercise',intro:'Each founder uses the same five parts, but speaks to a different listener with a different ask.',prompt:'Which founder is closest to you?',
     items:[
      {org:'idea',profile:{
-      pitch:'In our two villages in North Bali, mangroves have been cleared for shrimp ponds and building. Flooding and erosion are getting worse. Young people grow up beside this coast but have few chances to protect it. We run monthly planting-and-monitoring days led by young people, plus school sessions. I am a teacher here and Sari is a marine biologist from the area, so we know the families and the right species. We spoke to 11 young people, 6 parents and 2 village heads. Young people want to measure, not just plant, and a pond owner is open to a buffer strip. Our pilot needs US$600 for seedlings, boots and gloves. Would you fund part of it?',
-      ask:'US$600 for seedlings, boots and gloves for the pilot. We will ask the local dive operator for most of it and two village businesses for the rest, before our first planting day. We will also ask the head teacher for the school’s permission to run two sessions a month, before the start of the pilot.'},
+      pitch:'In our two villages in North Bali, mangroves have been cleared for shrimp ponds and building. Flooding and erosion are getting worse. Young people grow up beside this coast but have few chances to protect it. We run monthly planting-and-monitoring days led by young people, plus school sessions. I am a teacher here and Sari is a marine biologist from the area, so we know the families and the right species. We spoke to 11 young people, 6 parents and 2 village heads. Young people want to measure, not just plant, and a pond owner is open to a buffer strip. Our three-month pilot costs about US$700. We put in US$100 and need US$600 for seedlings, boots, gloves and a boat. Would you fund part of it?',
+      ask:'US$600 for seedlings, boots, gloves and the boat to our site for the pilot. We will ask the local dive operator for most of it and two village businesses for the rest, before our first planting day. We will also ask the head teacher for the school’s permission to run two sessions a month, before the start of the pilot.'},
       notice:'Notice that Wayan speaks to the dive operator about the coast their business depends on. Copy how the proof is short and real: who they spoke to and one surprise.'},
      {org:'huerta',profile:{
       pitch:'In Comuna 8, many women who head their households spend a large share of their income on food. Fresh vegetables are often too expensive. Yet many have a patio, rooftop or balcony that stays empty. Huerta Viva sells low-cost garden kits that women pay in small instalments, with a practical workshop every month and a shared Saturday stall to sell surplus. I am an agronomist, and Luz Marina is a community leader here. We spoke to 18 women: most want to save on food first, and they can come once a month, not every week. Kits sold to schools at full price pay for the women’s kits. Would your school pre-order kits for its classrooms?',
