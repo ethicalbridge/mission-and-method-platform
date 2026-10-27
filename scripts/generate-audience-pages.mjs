@@ -55,12 +55,6 @@ function page(p,{examples,courseHref,consultHref,otherHref,secondHref}){
       ${t(`${p}.steps.title`,'h2')}
       ${t(`${p}.steps.sub`,'p','class="aud-sub"')}
       <ol class="aud-steps">${[1,2,3,4,5].map(n=>`<li><span class="aud-step-no" aria-hidden="true">${n}</span>${t(`${p}.steps.${n}`,'span')}</li>`).join('')}</ol>
-      <div class="aud-finish">
-        ${t(`${p}.finish.eyebrow`,'div','class="aud-eyebrow"')}
-        ${t(`${p}.finish.title`,'h3')}
-        ${t(`${p}.finish.body`,'p')}
-        <a class="aud-link" href="${secondHref}" data-i18n="${p}.ways.2.link">${e(S[`${p}.ways.2.link`][0])}</a>
-      </div>
     </div>
   </section>
 
