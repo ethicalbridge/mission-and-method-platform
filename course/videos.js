@@ -69,9 +69,25 @@ export const lessonVideos={
  "6.results-framework": "assets/videos/lessons/6-results-framework",
  "6.system": "assets/videos/lessons/6-system",
  "7.architecture": "assets/videos/lessons/7-architecture",
+ "7.brand-platform": "assets/videos/lessons/7-brand-platform",
+ "7.consistency": "assets/videos/lessons/7-consistency",
+ "7.credibility": "assets/videos/lessons/7-credibility",
  "7.definitions": "assets/videos/lessons/7-definitions",
+ "7.guidelines": "assets/videos/lessons/7-guidelines",
  "7.strategy": "assets/videos/lessons/7-strategy",
- "7.voice": "assets/videos/lessons/7-voice"
+ "7.visual": "assets/videos/lessons/7-visual",
+ "7.voice": "assets/videos/lessons/7-voice",
+ "8.audiences": "assets/videos/lessons/8-audiences",
+ "8.campaigns": "assets/videos/lessons/8-campaigns",
+ "8.community": "assets/videos/lessons/8-community",
+ "8.content": "assets/videos/lessons/8-content",
+ "8.email": "assets/videos/lessons/8-email",
+ "8.media": "assets/videos/lessons/8-media",
+ "8.messaging": "assets/videos/lessons/8-messaging",
+ "8.social": "assets/videos/lessons/8-social",
+ "8.storytelling": "assets/videos/lessons/8-storytelling",
+ "8.strategy": "assets/videos/lessons/8-strategy",
+ "8.website": "assets/videos/lessons/8-website"
 };
 export const moduleVideos={
  "0": "assets/videos/modules/module-00",
@@ -81,5 +97,6 @@ export const moduleVideos={
  "4": "assets/videos/modules/module-04",
  "5": "assets/videos/modules/module-05",
  "6": "assets/videos/modules/module-06",
- "7": "assets/videos/modules/module-07"
+ "7": "assets/videos/modules/module-07",
+ "8": "assets/videos/modules/module-08"
 };
