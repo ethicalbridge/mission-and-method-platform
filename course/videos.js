@@ -24,11 +24,36 @@ export const lessonVideos={
  "2.pathway": "assets/videos/lessons/2-pathway",
  "2.problem": "assets/videos/lessons/2-problem",
  "2.understanding": "assets/videos/lessons/2-understanding",
- "2.use": "assets/videos/lessons/2-use"
+ "2.use": "assets/videos/lessons/2-use",
+ "3.accountability": "assets/videos/lessons/3-accountability",
+ "3.board": "assets/videos/lessons/3-board",
+ "3.capabilities": "assets/videos/lessons/3-capabilities",
+ "3.coordination": "assets/videos/lessons/3-coordination",
+ "3.delegation": "assets/videos/lessons/3-delegation",
+ "3.governance": "assets/videos/lessons/3-governance",
+ "3.raci": "assets/videos/lessons/3-raci",
+ "3.roles": "assets/videos/lessons/3-roles",
+ "3.structure": "assets/videos/lessons/3-structure",
+ "3.team-pack": "assets/videos/lessons/3-team-pack",
+ "4.checkins": "assets/videos/lessons/4-checkins",
+ "4.contracts": "assets/videos/lessons/4-contracts",
+ "4.culture": "assets/videos/lessons/4-culture",
+ "4.offboarding": "assets/videos/lessons/4-offboarding",
+ "4.onboarding": "assets/videos/lessons/4-onboarding",
+ "4.pay": "assets/videos/lessons/4-pay",
+ "4.people-plan": "assets/videos/lessons/4-people-plan",
+ "4.recruitment": "assets/videos/lessons/4-recruitment",
+ "4.volunteers": "assets/videos/lessons/4-volunteers",
+ "4.workforce": "assets/videos/lessons/4-workforce",
+ "5.minimum": "assets/videos/lessons/5-minimum",
+ "5.processes": "assets/videos/lessons/5-processes",
+ "5.systems": "assets/videos/lessons/5-systems"
 };
 export const moduleVideos={
  "0": "assets/videos/modules/module-00",
  "1": "assets/videos/modules/module-01",
  "2": "assets/videos/modules/module-02",
- "3": "assets/videos/modules/module-03"
+ "3": "assets/videos/modules/module-03",
+ "4": "assets/videos/modules/module-04",
+ "5": "assets/videos/modules/module-05"
 };
