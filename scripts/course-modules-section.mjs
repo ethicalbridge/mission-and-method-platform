@@ -4,9 +4,9 @@
 // Used by generate-course-pages.mjs; apply on its own with: node scripts/course-modules-section.mjs
 import {readFileSync,writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
-import {modules,phases,moduleNumber,readingsFor,primaryFor,freeModules} from '../course-data.js';
+import {modules,phases,moduleNumber,readingsFor,primaryFor,freeModules,lessonPath} from '../course-data.js';
 const e=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-const lessonURL=(m,l)=>`learn.html?module=${m.id}&amp;lesson=${l.id}`;
+const lessonURL=(m,l)=>`/${lessonPath(m,l)}`;
 const roleShort={'Core resource':'Core','Practical guide':'Practical','Go deeper':'Go deeper'};
 const libraryHref=item=>{const home=primaryFor(item)||item;return `reading-library.html?module=${home.module}#${home.anchor}`;};
 

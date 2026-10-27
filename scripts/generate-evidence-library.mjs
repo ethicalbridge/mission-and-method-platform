@@ -2,12 +2,12 @@
 // Every resource gets one anchor (resourceAnchor) shared with its lesson page, so the two link to each other.
 // Run after changing readings: node scripts/generate-evidence-library.mjs
 import {readFileSync,writeFileSync} from 'node:fs';
-import {modules,moduleNumber,resources,courseFor,courses} from '../course-data.js';
+import {modules,moduleNumber,resources,courseFor,courses,lessonPath} from '../course-data.js';
 import {ROLES} from '../resource-library.js';
 const e=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const read=f=>readFileSync(f,'utf8');
 const write=(f,s)=>{writeFileSync(f,s,'utf8');console.log('wrote',f);};
-const lessonURL=(m,l=m.lessons[0])=>`learn.html?module=${m.id}&amp;lesson=${l.id}`;
+const lessonURL=(m,l=m.lessons[0])=>`/${lessonPath(m,l)}`;
 const taught=m=>m.lessons.filter(l=>!l.review);
 // ---------- reading-library.html ----------
 let lib=read('reading-library.html');
