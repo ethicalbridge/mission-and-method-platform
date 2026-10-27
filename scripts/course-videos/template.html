@@ -77,62 +77,83 @@ html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font
 <script src="scripts.js"></script>
 <script src="data.js"></script>
 <script>
-const P=new URLSearchParams(location.search),ID=P.get('course');
-const C=window.COURSE_DATA[ID],S=window.COURSE_VIDEOS[ID];
+const P=new URLSearchParams(location.search),ID=P.get('course'),LANG=P.get('lang')==='es'?'es':'en';
+document.documentElement.lang=LANG==='es'?'es':'en-GB';
+const C=window.COURSE_DATA[ID],S=LANG==='es'?window.COURSE_VIDEOS_ES[ID]:window.COURSE_VIDEOS[ID];
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const pad=n=>String(n).padStart(2,'0');
-const WORDS=['Zero','One','Two','Three','Four','Five'];
+// Fixed words on screen, per language
+const T={en:{course:(n)=>`Course ${n} of 5 · Planning System`,about:'What this course is about',build:(n)=>`What you’ll build · ${['zero','one','two','three','four','five'][n]} modules`,buildH:'Every module ends in a document you can use.',module:'Module',free:'Free',create:'You create',
+  how:'How every lesson works',howH:'The same five steps, every time.',steps:['Learn the concept','See an example','Reflect','Complete the exercise','Save the output'],foot:'Each lesson has a short video, a written lesson with examples, a guided exercise and an Excel sheet.',
+  end:'By the end, you will have',fits:'Where this course fits',fitsH:'Five courses. One method.',here:'You are here',facts:(m,l,h)=>`${m} modules · ${l} lessons · about ${h} hours · self-paced`,limits:'Honest about limits.',next:(n,name)=>`Next: Course ${n} · ${name}`,last:'This course completes the Planning System.',tagline:'Better foundations. Stronger organisations.'},
+ es:{course:(n)=>`Curso ${n} de 5 · Planning System`,about:'De qué trata este curso',build:(n)=>`Lo que vas a construir · ${['cero','un','dos','tres','cuatro','cinco'][n]} módulos`,buildH:'Cada módulo termina en un documento útil.',module:'Módulo',free:'Gratis',create:'Creas',
+  how:'Cómo funciona cada lección',howH:'Los mismos cinco pasos, siempre.',steps:['Aprende el concepto','Mira un ejemplo','Reflexiona','Completa el ejercicio','Guarda el resultado'],foot:'Cada lección tiene un video corto, una lección escrita con ejemplos, un ejercicio guiado y una hoja de Excel.',
+  end:'Al final, tendrás',fits:'Dónde encaja este curso',fitsH:'Cinco cursos. Un método.',here:'Estás aquí',facts:(m,l,h)=>`${m} módulos · ${l} lecciones · unas ${h} horas · a tu ritmo`,limits:'Honestos sobre los límites.',next:(n,name)=>`Siguiente: Curso ${n} · ${name}`,last:'Este curso completa el Planning System.',tagline:'Mejores bases. Organizaciones más fuertes.'}}[LANG];
 // Logo mark: same geometry as the site's brand-mark SVG. fx attributes drive the build-in.
 const mark=(body,path)=>`<svg viewBox="5 5 178 189" aria-hidden="true">
  <g class="a" data-t="0.3" data-fx="left"><path d="M7 79 Q7 75 10.5 77.5 L77 131 Q80 134 77 136.5 L10.5 189.5 Q7 192 7 188 Z" fill="${body}"/></g>
  <g class="a" data-t="0.75" data-fx="grow"><path d="M151 82 C116 99 70 139 43 188 L82 188 C91 151 117 111 151 82 Z" fill="${path}"/></g>
  <g class="a" data-t="1.15" data-fx="up"><path d="M181 74 Q181 70 177.5 72 Q155 85 139 105 Q137 107.5 137 111 L137 189 Q137 192 140 192 L178 192 Q181 192 181 189 Z" fill="${body}"/></g>
  <g class="a" data-t="1.6" data-fx="pop"><circle cx="159" cy="29.5" r="23" fill="#E56F4A"/></g></svg>`;
-const sub=C.title.split(': ').slice(1).join(': ');
-const mods=C.modules.map(m=>({...m,title:(S.moduleTitles&&S.moduleTitles[m.id])||m.title,line:S.modules[m.id]}));
+const sub=LANG==='es'?S.subtitle:C.title.split(': ').slice(1).join(': ');
+const ES=window.MODULES_ES||{};
+const mods=C.modules.map(m=>({...m,title:LANG==='es'?ES[m.id][0]:((S.moduleTitles&&S.moduleTitles[m.id])||m.title),output:LANG==='es'?ES[m.id][1]:m.output,line:S.modules[m.id]}));
 const tick='<svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#102E3B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const names=['Clarify','Organise','Prove & Show','Protect','Sustain & Run'];
 
-// Timeline (seconds). Each scene: [class, duration, html]
-const cardTime=4.4, cardStart=1.6;
+// Timeline (seconds). Each scene: [class, duration, html, subtitle cues [[time in scene, text]]]
+const cardTime=4.4, cardStart=1.6, nextAt=S.note?8.4:6;
 const scenes=[
  ['deep s-title',6.2,`${mark('#FFFAF3','#7CC2AD')}
-   <div class="eyebrow a" data-t="2.1">Course ${C.number} of 5 · Planning System</div>
+   <div class="eyebrow a" data-t="2.1">${T.course(C.number)}</div>
    <h1 class="serif a" data-t="2.4">${esc(C.name)}</h1>
-   <div class="sub a" data-t="2.9">${esc(sub)}</div><div class="rule a" data-t="3.3"></div>`],
- ['cream s-q',10.5,`<div class="eyebrow a" data-t="0.3">What this course is about</div>
+   <div class="sub a" data-t="2.9">${esc(sub)}</div><div class="rule a" data-t="3.3"></div>`,
+   [[2.1,`${T.course(C.number)}\n${C.name}: ${sub}`]]],
+ ['cream s-q',10.5,`<div class="eyebrow a" data-t="0.3">${T.about}</div>
    <div class="q serif a" data-t="0.6">${esc(S.question)}</div>
    <div class="p a" data-t="3.6">${esc(S.problem)}</div>
-   <div class="pr a" data-t="6.2">${esc(S.promise)}</div>`],
- ['cream s-m',cardStart+mods.length*cardTime+1.6,`<div class="eyebrow a" data-t="0.2">What you’ll build · ${WORDS[mods.length].toLowerCase()} modules</div>
-   <h2 class="serif a" data-t="0.4">Every module ends in a document you can use.</h2>
+   <div class="pr a" data-t="6.2">${esc(S.promise)}</div>`,
+   [[0.6,S.question],[3.6,S.problem],[6.2,S.promise]]],
+ ['cream s-m',cardStart+mods.length*cardTime+1.6,`<div class="eyebrow a" data-t="0.2">${T.build(mods.length)}</div>
+   <h2 class="serif a" data-t="0.4">${T.buildH}</h2>
    <div class="cards" style="grid-template-columns:repeat(${mods.length},1fr)">${mods.map((m,i)=>`
     <div class="card a" data-t="${cardStart+i*cardTime}" data-on="${cardStart+i*cardTime}">
-     <div class="tags"><span class="tag">Module ${pad(m.id)}</span>${m.free?'<span class="tag free">Free</span>':''}</div>
+     <div class="tags"><span class="tag">${T.module} ${pad(m.id)}</span>${m.free?`<span class="tag free">${T.free}</span>`:''}</div>
      <h3>${esc(m.title)}</h3><p>${esc(m.line)}</p>
-     <div class="out"><small>You create</small><b>${esc(m.output)}</b></div></div>`).join('')}</div>`],
- ['white s-r',11,`<div class="eyebrow a" data-t="0.2">How every lesson works</div>
-   <h2 class="serif a" data-t="0.4">The same five steps, every time.</h2>
+     <div class="out"><small>${T.create}</small><b>${esc(m.output)}</b></div></div>`).join('')}</div>`,
+   [[0.4,T.buildH],...mods.map((m,i)=>[cardStart+i*cardTime,`${T.module} ${pad(m.id)}${m.free?` (${T.free})`:''} · ${m.title}\n${m.line} ${T.create}: ${m.output}.`])]],
+ ['white s-r',11,`<div class="eyebrow a" data-t="0.2">${T.how}</div>
+   <h2 class="serif a" data-t="0.4">${T.howH}</h2>
    <div class="steps"><svg viewBox="0 0 1128 210" preserveAspectRatio="none"><path class="a" data-t="1.2" data-fx="draw" data-d="4.2" d="M112 42 L1016 42" fill="none" stroke="#16746E" stroke-width="4" stroke-linecap="round" pathLength="1"/></svg>
-   ${['Learn the concept','See an example','Reflect','Complete the exercise','Save the output'].map((s,i)=>`<div class="step a ${i==4?'last':''}" data-t="${1.2+i*1}" data-fx="pop2"><div class="c">${i+1}</div><b>${s}</b></div>`).join('')}</div>
-   <div class="foot a" data-t="6.6">Each lesson has a short video, a written lesson with examples, a guided exercise and an Excel sheet.</div>`],
- ['deep s-o',4+mods.length*1.3+4.6,`<div class="eyebrow a" data-t="0.3">By the end, you will have</div>
+   ${T.steps.map((s,i)=>`<div class="step a ${i==4?'last':''}" data-t="${1.2+i*1}" data-fx="pop2"><div class="c">${i+1}</div><b>${s}</b></div>`).join('')}</div>
+   <div class="foot a" data-t="6.6">${T.foot}</div>`,
+   [[0.4,T.howH],[1.2,T.steps.map((s,i)=>`${i+1}. ${s}`).join(' · ')],[6.6,T.foot]]],
+ ['deep s-o',4+mods.length*1.3+4.6,`<div class="eyebrow a" data-t="0.3">${T.end}</div>
    <div class="list">${mods.map((m,i)=>`<div class="item serif a" data-t="${1+i*1.3}"><span class="tick">${tick}</span>${esc(m.output)}</div>`).join('')}</div>
-   <div class="end a" data-t="${1.6+mods.length*1.3}">${esc(S.endLine)}</div>`],
- ['cream s-p',S.note?13:11,`<div class="eyebrow a" data-t="0.2">Where this course fits</div>
-   <h2 class="serif a" data-t="0.4">Five courses. One method.</h2>
-   <div class="path a" data-t="1">${names.map((n,i)=>`<div class="pc ${i+1==C.number?'cur':''}"><div class="n">${i+1}</div><span>${esc(n)}</span>${i+1==C.number?'<div class="here">You are here</div>':''}</div>`).join('')}</div>
-   <div class="facts a" data-t="2.6">${mods.length} modules · ${C.lessons} lessons · about ${C.hours} hours · self-paced</div>
+   <div class="end a" data-t="${1.6+mods.length*1.3}">${esc(S.endLine)}</div>`,
+   [[1,`${T.end}: ${mods.map(m=>m.output).join(' · ')}`],[1.6+mods.length*1.3,S.endLine]]],
+ ['cream s-p',S.note?13:11,`<div class="eyebrow a" data-t="0.2">${T.fits}</div>
+   <h2 class="serif a" data-t="0.4">${T.fitsH}</h2>
+   <div class="path a" data-t="1">${names.map((n,i)=>`<div class="pc ${i+1==C.number?'cur':''}"><div class="n">${i+1}</div><span>${esc(n)}</span>${i+1==C.number?`<div class="here">${T.here}</div>`:''}</div>`).join('')}</div>
+   <div class="facts a" data-t="2.6">${T.facts(mods.length,C.lessons,C.hours)}</div>
    <div class="cta a" data-t="4">${esc(S.start)}</div>
-   ${S.note?`<div class="note a" data-t="6"><b>Honest about limits.</b> ${esc(S.note)}</div>`:''}
-   <div class="next a" data-t="${S.note?8.4:6}">${C.number<5?`Next: Course ${C.number+1} · ${esc(names[C.number])}`:'This course completes the Planning System.'}</div>`],
+   ${S.note?`<div class="note a" data-t="6"><b>${T.limits}</b> ${esc(S.note)}</div>`:''}
+   <div class="next a" data-t="${nextAt}">${C.number<5?T.next(C.number+1,esc(names[C.number])):T.last}</div>`,
+   [[0.4,`${T.fitsH} ${T.here}: ${C.number}. ${C.name}`],[2.6,T.facts(mods.length,C.lessons,C.hours)],[4,S.start],...(S.note?[[6,`${T.limits} ${S.note}`]]:[]),[nextAt,C.number<5?T.next(C.number+1,names[C.number]):T.last]]],
  ['deep s-l',5.2,`${mark('#FFFAF3','#7CC2AD')}
    <div class="wm a" data-t="2.0">Method <em>into</em> Impact</div>
-   <div class="tagline a" data-t="2.6">BETTER FOUNDATIONS. STRONGER ORGANISATIONS.</div>`]
+   <div class="tagline a" data-t="2.6">${T.tagline.toUpperCase()}</div>`,
+   [[2,`Method into Impact\n${T.tagline}`]]]
 ];
 const stage=document.getElementById('stage');let t0=0;const FADE=0.6;
-const els=scenes.map(([cls,dur,html],i)=>{const s=document.createElement('section');s.className='scene '+cls;s.innerHTML=html;s.dataset.start=t0;s.dataset.end=t0+dur;stage.appendChild(s);t0+=dur-(i<scenes.length-1?FADE:0);return s;});
+const CUES=[];
+const els=scenes.map(([cls,dur,html,cues],i)=>{const s=document.createElement('section');s.className='scene '+cls;s.innerHTML=html;s.dataset.start=t0;s.dataset.end=t0+dur;stage.appendChild(s);
+ const sceneEnd=t0+dur-(i<scenes.length-1?FADE:0);(cues||[]).forEach(([t,text],j)=>CUES.push({start:t0+t,end:j<cues.length-1?t0+cues[j+1][0]:sceneEnd,text}));
+ t0+=dur-(i<scenes.length-1?FADE:0);return s;});
 window.DURATION=t0;
+// WebVTT subtitles for the same timeline (identical in both languages, so either track fits either video)
+const ts=x=>{const h=Math.floor(x/3600),m=Math.floor(x%3600/60),sec=(x%60).toFixed(3).padStart(6,'0');return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${sec}`;};
+window.VTT='WEBVTT\n\n'+CUES.map((c,i)=>`${i+1}\n${ts(c.start)} --> ${ts(Math.min(c.end,t0))}\n${c.text}`).join('\n\n')+'\n';
 const clamp=x=>Math.max(0,Math.min(1,x));
 const ease=x=>1-Math.pow(1-x,3);
 const back=x=>{const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};

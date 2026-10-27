@@ -23,6 +23,8 @@ function setLang(lang) {
   if (!SUPPORTED.includes(lang)) return;
   try { localStorage.setItem(STORAGE_KEY, lang); } catch {}
   applyLang(lang);
+  // Let page features that are not text (e.g. course videos) follow the switch.
+  document.dispatchEvent(new CustomEvent('mim:lang', { detail: lang }));
 }
 
 function translate(key, lang) {
