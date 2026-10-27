@@ -360,7 +360,7 @@ export default module({
      "org": "coop",
      "profile": {
       "reserved": "General body: electing the committee; approving audited accounts; the annual bonus to members; changing the by-laws; admitting a grant that affects control. Committee: piece rates; the annual budget; yarn contracts over the purchase limit; appointing and appraising the manager; quality standards; new shop partnerships.",
-      "calendar": "April | committee approves the budget and piece rates | draft budget, yarn prices | Meera, treasurer\nJune | audit by the state cooperative department | full accounts, piece register | accounts clerk, treasurer\nAugust | general body meeting: accounts, bonus, elections when due | audited accounts, bonus proposal, manager’s report | secretary, Meera\nSeptember | festival-season stock and working capital | orders, cash forecast | Meera\nEvery month | committee meeting: sales, payments, rejections | monthly summary | Meera"
+      "calendar": "April | committee approves the budget and piece rates | draft budget, yarn prices | Meera, treasurer\nJune | audit by the state cooperative department | full accounts, piece register | accounts clerk, treasurer\nSeptember | general body meeting: accounts, bonus, elections when due | audited accounts, bonus proposal, manager’s report | secretary, Meera\nSeptember | festival-season stock and working capital | orders, cash forecast | Meera\nEvery month | committee meeting: sales, payments, rejections | monthly summary | Meera"
      },
      "notice": "Notice that the annual bonus sits with the members, not the committee. In a cooperative, decisions about members’ money go to the members."
     },

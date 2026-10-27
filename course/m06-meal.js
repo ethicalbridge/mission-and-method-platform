@@ -527,7 +527,7 @@ export default module({
      "org": "coop",
      "profile": {
       "roles": "Payment and income figures | accounts clerk | 1 day a month\nQuality register | quality officer | part of daily work; 2 hours a month to summarise\nMonthly summary for the committee | Meera | half a day a month\nMember survey at village meetings | committee members, in pairs | 1 day a year\nAGM results report | Meera and the treasurer | 3 days a year",
-      "calendar": "Payment and quality data | monthly | before each committee meeting\nCommittee review | monthly | first week of the month\nFestival season check on payments | once | September\nMember survey | yearly | February\nAnnual general meeting with results | yearly | April",
+      "calendar": "Payment and quality data | monthly | before each committee meeting\nCommittee review | monthly | first week of the month\nFestival season check on payments | once | September\nMember survey | yearly | February\nAnnual general meeting with results | yearly | September",
       "budget": "Printing results for village meetings (in Malayalam) | US$50 | other costs\nTravel for committee members to village meetings | US$120 | other costs\nCooperative software (already required) | no extra cost | accounts\nStaff time | in salaries | staff costs"
      },
      "notice": "Look at the AGM, where results go back to the members who own the cooperative. Copy the idea that your main report can be a meeting, not a document."

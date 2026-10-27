@@ -2338,8 +2338,8 @@ window.LESSON_VIDEOS = {
     "Put monthly and annual finance dates in your calendar."
    ],
    "example": {
-    "org": "coop",
-    "text": "Vanita: the clerk records and pays weavers; Meera manages; the committee approves yarn over US$2,000; the state department audits."
+    "org": "idea",
+    "text": "Tide Line: Ibu Made keeps the cash book; Sari buys; spending over US$100 needs both co-founders; receipts checked monthly."
    },
    "create": "You write your finance roles and monthly and annual cycle."
   },
@@ -2352,8 +2352,8 @@ window.LESSON_VIDEOS = {
     "Pon en tu calendario las fechas financieras mensuales y anuales."
    ],
    "example": {
-    "org": "coop",
-    "text": "Vanita: el auxiliar contable registra y paga a las tejedoras; Meera gestiona; el comité aprueba hilo sobre US$2,000; el departamento estatal audita."
+    "org": "idea",
+    "text": "Tide Line: Ibu Made lleva el libro de caja; Sari compra; gastos de más de US$100 requieren a ambos cofundadores; recibos revisados cada mes."
    },
    "create": "Escribes tus roles financieros y tu ciclo mensual y anual."
   }
@@ -2385,6 +2385,64 @@ window.LESSON_VIDEOS = {
     "text": "Imara: US$140,000, con US$10,000 para reservas; la Fundación A aporta el 50% y termina el próximo año; lo primero que se pausa es la reserva."
    },
    "create": "Escribes tus rubros, el estado de tus ingresos y tu plan ante faltantes."
+  }
+ },
+ "9.programme-budget": {
+  "en": {
+   "idea": "A project’s true cost includes its fair share of the costs that keep you running.",
+   "points": [
+    "List direct costs: quantity times unit cost.",
+    "Allocate shared costs with one written basis.",
+    "Name the costs unpaid help is covering."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: apprenticeship direct costs US$22,130, plus US$4,550 shared; about US$2,223 per trainee. Employer fees cover 56%."
+   },
+   "create": "You create one full-cost project budget."
+  },
+  "es": {
+   "title": "Presupuestos de proyecto y costo completo",
+   "idea": "El costo real de un proyecto incluye su parte justa de los costos que te sostienen.",
+   "points": [
+    "Lista los costos directos: cantidad por costo unitario.",
+    "Reparte los costos compartidos con un criterio escrito.",
+    "Nombra los costos que cubre la ayuda no pagada."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: costos directos del aprendizaje US$22,130, más US$4,550 compartidos; unos US$2,223 por aprendiz. Las empresas cubren el 56%."
+   },
+   "create": "Creas el presupuesto completo de un proyecto."
+  }
+ },
+ "9.restricted": {
+  "en": {
+   "idea": "Know which money is committed to what, and show how each restricted fund is used.",
+   "points": [
+    "Give each grant a code in your accounts.",
+    "Record spending against it and track the balance.",
+    "Keep enough flexible money for core costs."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: of £47,000 in the bank, £36,200 is restricted and £8,000 designated for the move. Little is actually free."
+   },
+   "create": "You create a funds register with balances and reporting dates."
+  },
+  "es": {
+   "title": "Fondos restringidos y no restringidos",
+   "idea": "Sabe a qué está comprometido cada dinero y muestra cómo usas cada fondo restringido.",
+   "points": [
+    "Dale a cada subvención un código contable.",
+    "Registra el gasto de cada fondo y su saldo.",
+    "Guarda dinero flexible para los costos básicos."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: de £47,000 en el banco, £36,200 están restringidas y £8,000 reservadas para la mudanza. Muy poco está libre."
+   },
+   "create": "Creas un registro de fondos con saldos y fechas de informe."
   }
  },
  "10.legal-map": {
@@ -3720,6 +3778,267 @@ window.LESSON_VIDEOS = {
    },
    "create": "Escribes criterios de renovación y un plan de salida."
   }
+ },
+ "13.annual-plan": {
+  "en": {
+   "idea": "An annual plan turns strategy into this year’s few priorities, and names what waits.",
+   "points": [
+    "Start from each coded objective, not from activities.",
+    "Choose few priorities; capacity and funding set limits.",
+    "Name what you postpone and when you’ll decide."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "ISO1: replace Foundation A’s income for 2028 with a Foundation C proposal and a monthly giving test. Lead: Achieng."
+   },
+   "create": "You write this year’s cascade and what you postpone."
+  },
+  "es": {
+   "title": "De la estrategia al plan anual",
+   "idea": "Un plan anual convierte la estrategia en pocas prioridades para este año y dice qué espera.",
+   "points": [
+    "Parte de cada objetivo con código, no de actividades.",
+    "Elige pocas prioridades; capacidad y fondos ponen límites.",
+    "Nombra lo que pospones y cuándo lo decidirás."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "ISO1: reemplazar los ingresos de la Fundación A para 2028 con una propuesta a la Fundación C y donaciones mensuales. Responsable: Achieng."
+   },
+   "create": "Escribes la cascada de este año y lo que pospones."
+  }
+ },
+ "13.kpis": {
+  "en": {
+   "idea": "Few balanced KPIs, with baselines and targets, show whether the year is on track.",
+   "points": [
+    "One to three KPIs per objective, no more.",
+    "Balance delivery, results, money, people and stakeholders.",
+    "Add quarterly steps so drift shows early."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: visitors from the most deprived areas, 22% now, 30% by March 2028; shop profit covering 18% of charity costs."
+   },
+   "create": "You create your KPI set with baselines, targets and owners."
+  },
+  "es": {
+   "title": "Indicadores clave (KPI) y metas",
+   "idea": "Pocos KPI equilibrados, con línea de base y meta, muestran si el año va bien.",
+   "points": [
+    "De uno a tres KPI por objetivo, no más.",
+    "Equilibra entregas, resultados, dinero, personas y actores.",
+    "Agrega metas trimestrales para ver desvíos a tiempo."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: visitantes de zonas más desfavorecidas, 22% hoy, 30% para marzo de 2028; la tienda cubre el 18% de los costos de la entidad benéfica."
+   },
+   "create": "Creas tu conjunto de KPI con líneas de base, metas y responsables."
+  }
+ },
+ "13.deliverables": {
+  "en": {
+   "idea": "Define what “done” means, and who accepts it, before the work starts.",
+   "points": [
+    "Each deliverable supports a priority or KPI.",
+    "Write acceptance criteria someone else can check.",
+    "Include review time, not just drafting time."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: an agreement signed by all 8 employers, requiring a written contract and health insurance. Lucía accepts it."
+   },
+   "create": "You write deliverables with acceptance criteria and a reviewer."
+  },
+  "es": {
+   "title": "Entregables y aceptación",
+   "idea": "Define qué significa “terminado” y quién lo acepta, antes de empezar.",
+   "points": [
+    "Cada entregable apoya una prioridad o un KPI.",
+    "Escribe criterios de aceptación que otra persona pueda verificar.",
+    "Incluye tiempo de revisión, no solo de redacción."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: un acuerdo firmado por los 8 empleadores que exige contrato escrito y seguro de salud. Lo acepta Lucía."
+   },
+   "create": "Escribes entregables con criterios de aceptación y quién los revisa."
+  }
+ },
+ "13.ownership": {
+  "en": {
+   "idea": "Every deliverable needs one owner who has agreed it fits their real time.",
+   "points": [
+    "Name one accountable owner and the contributors.",
+    "Estimate effort and elapsed time separately.",
+    "Count routine operations before adding new work."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Tide Line: Sari owns safeguarding training, 5 days. With planting days, her 8 days a month are full, so village 2 waits."
+   },
+   "create": "You create an ownership and capacity check for your plan."
+  },
+  "es": {
+   "title": "Responsables y capacidad",
+   "idea": "Cada entregable necesita un responsable que confirme que cabe en su tiempo real.",
+   "points": [
+    "Nombra un responsable y a quienes contribuyen.",
+    "Estima por separado el esfuerzo y el tiempo transcurrido.",
+    "Cuenta el trabajo de rutina antes de sumar tareas."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Tide Line: Sari lleva la capacitación en protección (5 días). Con la siembra, sus 8 días al mes se llenan; la aldea 2 espera."
+   },
+   "create": "Creas una revisión de responsables y capacidad para tu plan."
+  }
+ },
+ "13.dependencies": {
+  "en": {
+   "idea": "Map only real dependencies, and plan what you’ll do if one slips.",
+   "points": [
+    "Separate tasks that must wait from parallel ones.",
+    "Mark outside decisions and how uncertain they are.",
+    "When a prerequisite slips, review later dates at once."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Vanita: festival yarn needs the working-capital loan approved by June; if not, we buy yarn only for confirmed orders."
+   },
+   "create": "You create your dependency map and milestones."
+  },
+  "es": {
+   "title": "Hitos y dependencias",
+   "idea": "Señala solo las dependencias reales y planifica qué harás si una se retrasa.",
+   "points": [
+    "Separa lo que debe esperar de lo que va en paralelo.",
+    "Marca las decisiones externas y su incertidumbre.",
+    "Si algo previo se retrasa, revisa enseguida las fechas siguientes."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Vanita: el hilo de temporada necesita el préstamo de capital de trabajo aprobado en junio; si no, compramos solo para pedidos confirmados."
+   },
+   "create": "Creas tu mapa de dependencias y tus hitos."
+  }
+ },
+ "13.timeline": {
+  "en": {
+   "idea": "A Gantt shows timing; capacity and dependencies show whether the plan can work.",
+   "points": [
+    "Give every task an owner, start and finish.",
+    "Check overlaps against capacity and dependencies.",
+    "Change dates by recorded decision, not by tidying."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "Imara: Brian updates the Gantt monthly; any milestone moving over two weeks goes to Achieng and into the decision log."
+   },
+   "create": "You create your Gantt and a schedule review rule."
+  },
+  "es": {
+   "title": "Tu plan de trabajo y diagrama de Gantt",
+   "idea": "Un Gantt muestra los tiempos; la capacidad y las dependencias muestran si el plan funciona.",
+   "points": [
+    "Da a cada tarea responsable, inicio y fin.",
+    "Revisa los cruces contra capacidad y dependencias.",
+    "Cambia fechas por decisión registrada, no para ordenar."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "Imara: Brian actualiza el Gantt cada mes; si un hito se mueve más de dos semanas, decide Achieng y queda en el registro de decisiones."
+   },
+   "create": "Creas tu diagrama de Gantt y una regla de revisión."
+  }
+ },
+ "13.integration": {
+  "en": {
+   "idea": "Check budget, funding, risks, communications and partnerships against one plan, then adjust.",
+   "points": [
+    "Every initiative is costed and in the budget.",
+    "Every top risk has an action in the plan.",
+    "Where links fail, cut, re-phase or fund."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: the travel allowance was uncosted; trimming the subscription pilot paid for it. A café campaign was refocused on employers."
+   },
+   "create": "You write an integration check and the adjustments it needs."
+  },
+  "es": {
+   "title": "Un solo plan: presupuesto, riesgos, fondos, comunicación y alianzas",
+   "idea": "Contrasta presupuesto, fondos, riesgos, comunicación y alianzas con un solo plan, y ajusta.",
+   "points": [
+    "Cada iniciativa tiene costo y está en el presupuesto.",
+    "Cada riesgo principal tiene una acción en el plan.",
+    "Si un vínculo falla, recorta, reprograma o busca fondos."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Pan del Barrio: la ayuda de transporte no tenía costo; se pagó recortando el piloto de suscripción. Una campaña del café se enfocó en empleadores."
+   },
+   "create": "Escribes una revisión de integración y los ajustes necesarios."
+  }
+ },
+ "13.reviews": {
+  "en": {
+   "idea": "Regular reviews with a one-page dashboard turn plans into decisions.",
+   "points": [
+    "Weekly blockers, monthly numbers, quarterly decisions, yearly strategy.",
+    "Bring one dashboard to every review.",
+    "End each review with owners and dates."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: Monday team check; monthly accounts and dashboard; quarterly staff review; trustees see the dashboard and every change each quarter."
+   },
+   "create": "You create your review rhythm and one-page dashboard."
+  },
+  "es": {
+   "title": "El ritmo de revisión del desempeño",
+   "idea": "Revisiones regulares con un tablero de una página convierten los planes en decisiones.",
+   "points": [
+    "Bloqueos semanales, cifras mensuales, decisiones trimestrales, estrategia anual.",
+    "Lleva el mismo tablero a cada revisión.",
+    "Cierra cada revisión con responsables y fechas."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Riverside: revisión del equipo los lunes; cuentas y tablero cada mes; revisión trimestral con todo el personal; la junta ve el tablero y cada cambio."
+   },
+   "create": "Creas tu ritmo de revisión y tu tablero de una página."
+  }
+ },
+ "13.refresh": {
+  "en": {
+   "idea": "Each year, check your results and repeat the health check against your baseline.",
+   "points": [
+    "Same areas, same scale, evidence for every change.",
+    "Separate “written down” from “actually practised”.",
+    "Turn findings into changes to objectives and plans."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Tide Line: finance went from not started to practised; partnerships only documented. Survival target lowered openly to 60% for new sites."
+   },
+   "create": "You write your repeated health check and next year’s changes."
+  },
+  "es": {
+   "title": "Revisión anual, actualización estratégica y chequeo de salud",
+   "idea": "Cada año, revisa tus resultados y repite el chequeo de salud para comparar con el inicio.",
+   "points": [
+    "Mismas áreas, misma escala y evidencia de cada cambio.",
+    "Distingue lo escrito de lo que realmente se practica.",
+    "Convierte los hallazgos en cambios a objetivos y planes."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Tide Line: las finanzas pasaron de no iniciadas a practicadas; las alianzas, solo documentadas. Meta de supervivencia bajada abiertamente al 60% en sitios nuevos."
+   },
+   "create": "Escribes tu chequeo de salud repetido y los cambios del próximo año."
+  }
  }
 };
 Object.assign(window.MODULE_VIDEOS, {
@@ -3812,6 +4131,16 @@ Object.assign(window.MODULE_VIDEOS, {
    "idea": "Este módulo te ayuda a elegir, diseñar y gestionar alianzas que sirven a tu estrategia, reparten el poder con equidad y terminan bien.",
    "create": "Tu estrategia de alianzas: mapa, prioridades, acuerdos, chequeos de salud y planes de salida."
   }
+ },
+ "13": {
+  "en": {
+   "idea": "This module helps you turn your strategy into a realistic annual plan, deliver it with clear owners and review it regularly.",
+   "create": "Your Organisation Operating Plan: priorities, KPIs, deliverables, owners, schedule, reviews and annual refresh."
+  },
+  "es": {
+   "idea": "Este módulo te ayuda a convertir tu estrategia en un plan anual realista, cumplirlo con responsables claros y revisarlo con regularidad.",
+   "create": "Tu Plan Operativo de la Organización: prioridades, KPI, entregables, responsables, calendario, revisiones y actualización anual."
+  }
  }
 });
 Object.assign(window.REVIEW_VIDEOS, {
@@ -3879,6 +4208,28 @@ Object.assign(window.REVIEW_VIDEOS, {
     "Revisa que cada una tenga responsables, chequeo y salida."
    ],
    "create": "Revisas y descargas tu estrategia de alianzas."
+  }
+ },
+ "13.work-plan": {
+  "en": {
+   "title": "Your Organisation Operating Plan",
+   "idea": "Bring priorities, KPIs, owners, dates and reviews together in one operating plan.",
+   "points": [
+    "Check every priority traces to a coded objective.",
+    "Check owners have agreed the work fits their time.",
+    "Check the plan matches budget, risks and funding."
+   ],
+   "create": "You review and download your Organisation Operating Plan."
+  },
+  "es": {
+   "title": "Tu Plan Operativo de la Organización",
+   "idea": "Reúne prioridades, KPI, responsables, fechas y revisiones en un solo plan operativo.",
+   "points": [
+    "Revisa que cada prioridad venga de un objetivo con código.",
+    "Revisa que cada responsable confirme que tiene tiempo.",
+    "Revisa que el plan coincida con presupuesto, riesgos y fondos."
+   ],
+   "create": "Revisas y descargas tu Plan Operativo de la Organización."
   }
  },
  "3.team-pack": {
@@ -4083,6 +4434,8 @@ Object.assign(window.TITLES_ES, {
  "8.comms-plan": "Tu plan de comunicación",
  "9.roles": "Roles y ciclo financiero",
  "9.core-budget": "El presupuesto de la organización",
+ "9.programme-budget": "Presupuestos de proyecto y costo completo",
+ "9.restricted": "Fondos restringidos y no restringidos",
  "10.legal-map": "Tu mapa legal y regulatorio",
  "10.policy-needs": "Qué políticas necesitas de verdad",
  "10.contracts": "Contratos y acuerdos",
@@ -4131,5 +4484,15 @@ Object.assign(window.TITLES_ES, {
  "12.risk": "Riesgos de la alianza y resolución de conflictos",
  "12.monitoring": "Monitoreo, chequeos de salud e indicadores de la alianza",
  "12.renewal": "Renovar, escalar o salir",
- "12.partnership-strategy": "Tu estrategia de alianzas"
+ "12.partnership-strategy": "Tu estrategia de alianzas",
+ "13.annual-plan": "De la estrategia al plan anual",
+ "13.kpis": "Indicadores clave (KPI) y metas",
+ "13.deliverables": "Entregables y aceptación",
+ "13.ownership": "Responsables y capacidad",
+ "13.dependencies": "Hitos y dependencias",
+ "13.timeline": "Tu plan de trabajo y diagrama de Gantt",
+ "13.integration": "Un solo plan: presupuesto, riesgos, fondos, comunicación y alianzas",
+ "13.reviews": "El ritmo de revisión del desempeño",
+ "13.refresh": "Revisión anual, actualización estratégica y chequeo de salud",
+ "13.work-plan": "Tu Plan Operativo de la Organización"
 });
