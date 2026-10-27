@@ -18,12 +18,23 @@ import m10 from './course/m10-legal-compliance-risk.js';
 import m11 from './course/m11-fundraising-revenue.js';
 import m12 from './course/m12-partnerships.js';
 import m13 from './course/m13-strategy-to-action.js';
+// Entrepreneurs track: the starter course "Idea into Impact" (plan and story bible: docs/idea-into-impact.md).
+import f1 from './course/f01-clarify-your-idea.js';
+import f2 from './course/f02-shape-a-first-version.js';
+import f3 from './course/f03-show-it-can-work.js';
+import f4 from './course/f04-start-safely.js';
+import f5 from './course/f05-fund-it-and-plan.js';
 export {STAGES} from './course/kit.js';
 export {exampleOrgs,exampleOrg} from './course/examples.js';
 export {lessonVideos,moduleVideos} from './course/videos.js';
 
 // The Planning System is sold as five courses, one per phase. Each module's `phase` names its course.
 // Prices and product IDs live in pricing-config.js (courses[].id matches courses here).
+// Two audiences, one method: entrepreneurs (an idea, nothing built yet) and organisations (already running).
+export const tracks={
+ entrepreneurs:{id:'entrepreneurs',label:'For entrepreneurs',who:'You have an idea and want to start',page:'entrepreneurs.html'},
+ organisations:{id:'organisations',label:'For organisations',who:'You already run an organisation',page:'organisations.html'}
+};
 export const phases=[
  {id:'clarify',number:1,name:'Clarify',title:'Clarify: Purpose, Strategy & Theory of Change',summary:'Why we exist and what change we pursue'},
  {id:'organise',number:2,name:'Organise',title:'Organise: Structure, People & Systems',summary:'Who does what and how we run'},
@@ -31,21 +42,29 @@ export const phases=[
  {id:'protect',number:4,name:'Protect',title:'Protect: Finance, Legal, Compliance & Risk',summary:'Money, duties, policies and risk'},
  {id:'sustain-run',number:5,name:'Sustain & Run',title:'Sustain & Run: Funding, Partnerships & Operating Plan',summary:'Resources, partners and a plan you run'}
 ];
+for(const p of phases)p.track='organisations';
 export const courses=phases;
-export const courseFor=m=>phases.find(p=>p.name===m.phase);
+// The entrepreneurs' course: one short course in five modules that follow the same five steps.
+export const founderCourse={id:'idea',number:1,name:'Idea into Impact',title:'Idea into Impact: From an Idea to a Launch Plan',summary:'From an idea to a first plan you can act on',track:'entrepreneurs'};
+export const founderModules=[f1,f2,f3,f4,f5];
+export const isFounder=m=>m?.track==='entrepreneurs';
+export const courseFor=m=>isFounder(m)?founderCourse:phases.find(p=>p.name===m.phase);
 // Modules anyone can open without buying a course.
 export const freeModules=[0];
+// `modules` is the organisations track (the five foundation courses). `allModules` adds the entrepreneurs' course.
 export const modules=[m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13];
+export const allModules=[...modules,...founderModules];
+export const trackModules=m=>isFounder(m)?founderModules:modules;
 export const moduleCount=modules.length;
 export const lessonCount=modules.reduce((n,m)=>n+m.lessons.length,0);
-export const moduleNumber=m=>String(m.id).padStart(2,'0');
-export const moduleFor=id=>modules.find(m=>m.id===Number(id));
-export const nextModule=m=>modules[modules.indexOf(m)+1]||null;
+export const moduleNumber=m=>isFounder(m)?String(m.no):String(m.id).padStart(2,'0');
+export const moduleFor=id=>allModules.find(m=>m.id===Number(id));
+export const nextModule=m=>{const list=trackModules(m);return list[list.indexOf(m)+1]||null;};
 export const lessonSheets=l=>[].concat(l.sheet||[]);
 
 // Course ↔ Impact Tools map, derived from each lesson's tools. Each slug is the live tool version of that lesson's work.
 // Tools stay standalone: nothing is copied automatically; the learner imports the module workbook into the tool.
-export const lessonTools=Object.fromEntries(modules.map(m=>[m.id,Object.fromEntries(m.lessons.filter(l=>l.tools.length).map(l=>[l.id,l.tools]))]));
+export const lessonTools=Object.fromEntries(allModules.map(m=>[m.id,Object.fromEntries(m.lessons.filter(l=>l.tools.length).map(l=>[l.id,l.tools]))]));
 export const toolsFor=(moduleId,lessonId)=>lessonTools[moduleId]?.[lessonId]||[];
 export const moduleToolSlugs=moduleId=>{const m=moduleFor(moduleId);return [...new Set([...Object.values(lessonTools[moduleId]||{}).flat(),...(m?.promo?.tools||[])])];};
 // Display names used inside the course (keeps the course free of other brands).
