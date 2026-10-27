@@ -15,12 +15,16 @@ export const lessonVideos={
  "1.stakeholders": "assets/videos/lessons/1-stakeholders",
  "1.values": "assets/videos/lessons/1-values",
  "1.vision": "assets/videos/lessons/1-vision",
+ "2.activities": "assets/videos/lessons/2-activities",
+ "2.assumptions": "assets/videos/lessons/2-assumptions",
  "2.impact": "assets/videos/lessons/2-impact",
+ "2.inputs": "assets/videos/lessons/2-inputs",
  "2.outcomes": "assets/videos/lessons/2-outcomes",
  "2.outputs": "assets/videos/lessons/2-outputs",
  "2.pathway": "assets/videos/lessons/2-pathway",
  "2.problem": "assets/videos/lessons/2-problem",
- "2.understanding": "assets/videos/lessons/2-understanding"
+ "2.understanding": "assets/videos/lessons/2-understanding",
+ "2.use": "assets/videos/lessons/2-use"
 };
 export const moduleVideos={
  "0": "assets/videos/modules/module-00",
