@@ -1,6 +1,6 @@
 import {module,lesson,review} from './kit.js';
-// Course 1 content, reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the
-// five example organisations (course/examples.js, story in docs/course-1-examples.md) complete each exercise.
+// Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
+// organisations (course/examples.js; story in docs/course-1-examples.md) complete each exercise.
 export default module({
  ...{"uses":[0],"video":null,"id":1,"slug":"strategic-foundation","phase":"Clarify","title":"Strategic Foundations","short":"Purpose, context, stakeholders, vision, mission, values, form, positioning and objectives","intro":"Make the connected decisions every other module depends on: why you exist, the context you work in, who matters, the future you want, the work you do, how you behave, what kind of organisation you are, where you add unique value and what you will prioritise.","output":"Strategic Foundation","workbook":{"file":"Module-01-Strategic-Foundations.xlsx","title":"Strategic Foundations workbook"},"promo":{"lesson":"objectives","tools":["strategic-objectives"],"headline":"Turn your objectives into a living strategy","pitch":"Strategic Objectives keeps your external and internal objectives side by side, with actions, owners, progress and review decisions. Import this module’s workbook and your objectives become a plan your team can update every quarter."}},
  lessons:[
@@ -13,14 +13,14 @@ export default module({
   "title": "Purpose",
   "sheet": "Purpose",
   "learn": [
-   "Purpose explains why your organisation needs to exist. Start with a specific unmet need and the people or environment affected by it. A personal motivation can start the journey, but an organisation needs a reason that matters beyond its founder.",
-   "Separate the need from your preferred solution. “We need an app” names a solution; “rural families cannot find reliable information about local services” names a problem. You may discover that a phone line or a trusted community worker meets that need better.",
-   "Talk with people affected, including those who may disagree with your initial idea. Record what you have heard, what evidence you have and what is still an assumption. Module 2 analyses the causes of the problem in depth; here you only need a clear, honest description of the need.",
-   "A useful purpose statement names the change that motivates you without promising more than you can influence. It should remain meaningful if your activities change. Use it to decide whether a proposed project belongs within your work."
+   "Purpose explains why your organisation needs to exist. Start with a specific unmet need and the people or environment affected by it. A personal motivation can start the journey, but an organisation needs a reason that matters beyond its founders.",
+   "Separate the need from your preferred solution. “We need an app” names a solution; “rural families cannot find reliable information about local services” names a problem. A phone line or a trusted community worker might meet that need better.",
+   "Talk with the people affected, including those who may disagree with your idea. Record what you have heard, what evidence you have and what is still an assumption. Module 2 looks at causes in depth; here you only need a clear, honest description of the need.",
+   "A useful purpose statement names the change that motivates you without promising more than you can influence. It should still make sense if your activities change, and it helps you decide whether a new project belongs in your work."
   ],
   "weak": "We exist to make a difference.",
-  "strong": "We exist so that distance and income do not prevent rural women from understanding and exercising their rights.",
-  "why": "The stronger example identifies a barrier and the people affected. It still leaves room to test different ways of addressing the barrier.",
+  "strong": "Imara Girls in Science: “We exist so that girls in Kisumu can choose science, and the futures it opens, with confidence.”",
+  "why": "It names who is affected and the change they need, but leaves room to test different ways of getting there.",
   "reflect": "Whose description of the problem have you heard? Who has not yet been included?",
   "exercise": "Write the need before drafting your purpose. Name one evidence gap and a realistic way to investigate it.",
   "fields": [
@@ -40,7 +40,59 @@ export default module({
     "hint": "We exist so that…"
    }
   ],
-  "check": "Could someone understand why you exist without knowing your planned activities?"
+  "check": "Could someone understand why you exist without knowing your planned activities?",
+  "gallery": {
+   "title": "Five example purpose statements",
+   "intro": "Each organisation describes the need first, separates evidence from open questions, and only then writes its purpose.",
+   "prompt": "Which example is closest to your organisation?",
+   "items": [
+    {
+     "org": "idea",
+     "profile": {
+      "need": "Mangroves along the coast of our two villages in North Bali have been cleared for shrimp ponds and building, and erosion and flooding are getting worse. Young people aged 12–17 grow up beside this coast but have few chances to learn about it or act on it.",
+      "evidence": "Known: villagers and village heads describe more flooding; we can see the cleared areas; past plantings failed. Not known: how many young people would take part regularly, and which sites and species give seedlings the best chance. Next step: ask families at two village meetings and visit a local nursery.",
+      "purpose": "We exist so that young people in coastal villages can protect and restore the coast they depend on."
+     },
+     "notice": "Notice that the need names both the environment and the young people. Copy how each open question comes with a concrete next step to answer it."
+    },
+    {
+     "org": "ngo",
+     "profile": {
+      "need": "Girls aged 10–14 in Kisumu public schools get little hands-on science because labs are few and classes are large. They fall behind in maths and science, rarely meet women in science careers, and many drop science subjects in secondary school.",
+      "evidence": "Known: our attendance records; head teachers confirm labs are scarce; many girls tell us the club was their first experiment. Not known: how many club members keep science subjects in secondary school. Next step: follow one group of girls through their first year of secondary school.",
+      "purpose": "We exist so that girls in Kisumu can choose science, and the futures it opens, with confidence."
+     },
+     "notice": "Notice the purpose says “choose science”, not “become scientists”: it promises only what the organisation can influence. Copy that restraint."
+    },
+    {
+     "org": "social",
+     "profile": {
+      "need": "Young people aged 18–24 in San Juan de Lurigancho who left school early struggle to find formal, safe work. Informal jobs pay little, teach few skills and give no work history that employers trust.",
+      "evidence": "Known: high youth informality in Lima; Diego’s years as a youth worker; what our trainees tell us about the jobs they had before. Not known: whether certified graduates still have formal work a year later. Next step: contact every graduate at 3 and 12 months.",
+      "purpose": "We exist so that young people who left school early can build a skilled, formal working life."
+     },
+     "notice": "Notice that bread does not appear in the purpose. Copy how the purpose would stay true even if the business changed what it sells."
+    },
+    {
+     "org": "coop",
+     "profile": {
+      "need": "Handloom weavers in our district, mostly women, earn little because middlemen take most of the price. Yarn costs keep rising, power-loom copies undercut handloom, and young people from weaving families are choosing other work.",
+      "evidence": "Known: eleven years of members’ sales and payment records; the gap between what middlemen paid and what shops charge. Not known: how much more online buyers will pay for authentic handloom, and what would make young people stay. Next step: test prices on two collections and talk with members’ children.",
+      "purpose": "We exist so that handloom weavers in our district earn a fair living from their craft."
+     },
+     "notice": "Notice how the cooperative uses records it already holds as evidence. Copy that before you plan new research: you may know more than you think."
+    },
+    {
+     "org": "hybrid",
+     "profile": {
+      "need": "Households in Leeds throw away items that could be repaired, wasting money and resources. Repair skills and affordable repair are disappearing, which hits low-income households hardest. Many people who come to us also say they feel isolated.",
+      "evidence": "Known: what people bring to our repair cafés and how many items we fix; council waste data. Not known: whether people repair again instead of buying new, and how many visitors are on low incomes. Next step: a short survey at repair cafés, repeated three months later.",
+      "purpose": "We exist so that people in Leeds can repair, reuse and share instead of throwing away."
+     },
+     "notice": "Notice that “share” keeps the tool library inside the purpose. Copy the test: check that each of your activities fits inside the statement you wrote."
+    }
+   ]
+  }
  }),
  lesson({
   "minutes": 20,
@@ -51,14 +103,14 @@ export default module({
   "title": "Context and landscape analysis",
   "sheet": "Context analysis",
   "learn": [
-   "Context analysis looks outward at the environment your organisation will operate in: social, economic, political, legal, technological and environmental conditions, and the trends changing them. It helps you see opportunities and constraints before you commit to a strategy.",
-   "Map who is already active: public services, community groups, nonprofits, businesses, funders and networks. Note what they do, for whom and how well. A crowded landscape is not necessarily a reason to stop, but it is a reason to collaborate, specialise or choose a different gap.",
-   "Use simple frameworks as prompts rather than forms to fill. A PESTLE scan (political, economic, social, technological, legal, environmental) and a SWOT (strengths, weaknesses, opportunities, threats) are enough for most small organisations. Write each point as a specific observation with a source, not a general statement.",
-   "Revisit your context at least once a year and whenever something important changes, such as a new law, a funding shift or a crisis. The decisions you make in this module rest on it."
+   "Context analysis looks outward at the conditions you will work in, and at the trends changing them: social, economic, political, legal, technological and environmental. It helps you see opportunities and constraints before you commit to a strategy.",
+   "Map who is already active: public services, community groups, nonprofits, businesses, funders and networks. Note what they do, for whom and how well. A crowded field is not a reason to stop, but it is a reason to collaborate, specialise or choose a different gap.",
+   "Use simple frameworks as prompts, not forms to fill. A PESTLE scan (political, economic, social, technological, legal, environmental) and a SWOT (strengths, weaknesses, opportunities, threats) are enough for most small organisations. Write each point as a specific observation with a source, and say what it means for you.",
+   "Revisit your context at least once a year, and whenever something important changes, such as a new law, a funding shift or a crisis. The decisions in the rest of this module rest on it."
   ],
   "weak": "There is a lot of need and not much support.",
-  "strong": "Two public employment programmes operate in the district but require online registration; 40% of young people in our survey lack reliable internet. A new municipal youth fund opens next year.",
-  "why": "The stronger analysis names actual actors, a specific barrier with a source and a dated opportunity. Each point can shape a decision.",
+  "strong": "Imara Girls in Science: the new competency-based curriculum asks schools for practical science, but most of our partner schools have no lab (our school visits). Other STEM programmes work mainly in Nairobi, not Kisumu.",
+  "why": "It names a real policy change, a specific gap with its source and the other actors, so each point can shape a decision.",
   "reflect": "Which actor already working on this issue could become a partner, and which could see you as competition?",
   "exercise": "Complete a short context scan and a list of the main actors in your landscape.",
   "fields": [
@@ -78,7 +130,59 @@ export default module({
     "hint": "Two or three specific points under each heading."
    }
   ],
-  "check": "Is each observation specific, sourced and connected to an implication for your organisation?"
+  "check": "Is each observation specific, sourced and connected to an implication for your organisation?",
+  "gallery": {
+   "title": "Five example context scans",
+   "intro": "Each organisation records specific, sourced observations, maps who else is active and sums up a short SWOT.",
+   "prompt": "Which example is closest to your organisation?",
+   "items": [
+    {
+     "org": "idea",
+     "profile": {
+      "trends": "Environmental | Mangroves cleared for shrimp ponds and building; flooding worse | Our coastal walks; village heads | Restore only where village heads agree to protect the land\nEnvironmental | Rainy season Nov–Mar; survival depends on species and tidal zone | Local nursery; past failed plantings | Plant in season, with the right species, and monitor survival\nEconomic | Shrimp ponds and tourism bring income | Village meetings | Pond owners may resist; avoid working ponds\nSocial | Village custom (adat) and village heads decide on land use | Village heads | Agree every site with them first\nPolitical | Provincial environment office runs occasional planting events | Office staff | A possible partner, not a competitor",
+      "actors": "Provincial environment office | occasional planting events | general public | one-off events; possible partner\nLocal school | environmental lessons | pupils | interested in our sessions; little practical work on the coast\nDive operators | reef clean-ups | tourists | not youth or mangroves; possible funders\nLocal nursery | grows mangrove seedlings | sells to anyone | our supplier; can advise on species",
+      "swot": "Strengths: co-founders from the area and trusted; Sari’s marine biology training.\nWeaknesses: not registered; no safeguarding policy; very small budget.\nOpportunities: supportive village heads; an interested school; dive operators as funders.\nThreats: pond owners clearing restored areas; seedlings dying at the wrong sites; tourism pressure."
+     },
+     "notice": "Notice that a group with no budget can build a scan from what it sees and hears locally. Copy how every observation ends in a practical implication."
+    },
+    {
+     "org": "ngo",
+     "profile": {
+      "trends": "Political | Competency-based curriculum stresses practical learning | Curriculum guidance; head teachers | Our clubs match what schools must now deliver; offer teacher workshops\nSocial | Few labs and large classes in public schools | Our school visits | Bring kits to schools rather than relying on labs\nEconomic | Our funding comes mainly from two foundations | Our accounts | Diversify income so no funder exceeds 40%\nTechnological | More families have mobile phones | Parent sessions | Try SMS reminders to parents, within safeguarding rules\nSocial | Some families cannot afford secondary science costs | Parents; teachers | A risk to our results; track it",
+      "actors": "County education office | oversees public schools | all pupils | supportive; could help spread hands-on methods\nOther STEM nonprofits | science and coding programmes | mixed groups, mostly in Nairobi | little overlap in Kisumu; possible partners\nUniversities | science degrees | students | a source of women mentors\nTutoring centres | exam coaching | families who can pay | different aim; we do not tutor",
+      "swot": "Strengths: clubs running since 2019 in 14 schools; local women scientists as mentors; head teachers’ trust.\nWeaknesses: two funders give most income; little data beyond attendance.\nOpportunities: curriculum reform; supportive county office; local businesses sponsoring the camp.\nThreats: a funder leaving; schools cutting club time; secondary science costs for families."
+     },
+     "notice": "Notice how a national policy change becomes a local opportunity. Copy the way each trend leads to a specific decision rather than a general worry."
+    },
+    {
+     "org": "social",
+     "profile": {
+      "trends": "Social | Most young people in Lima work informally | National statistics; trainees’ stories | Paid, contracted training is what makes us different\nEconomic | Flour prices rising | Supplier invoices | Margins shrink; review prices and waste\nEconomic | Offices and cafés want artisan bread | Our three office clients; new enquiries | Grow wholesale to help cover training\nLegal | Benefit company (BIC) law available | Our accountant | Could lock in our purpose; decide this year\nPolitical | Municipal youth employment programme | Municipality staff | Referral partner; possible funder",
+      "actors": "Municipal youth programme | training and referrals | young people in the district | refers trainees to us\nSupermarkets | cheap bread | all households | we compete on quality, not price\nTraining institutes | baking courses | people who can pay fees | unpaid study; our trainees need to earn\nFood businesses | hire bakers | experienced adults | our employer partners hire graduates",
+      "swot": "Strengths: customers return for quality; paid apprenticeship with a recognised certificate; Lucía’s pastry skills.\nWeaknesses: near break-even, no cash reserve; training paid from bread sales.\nOpportunities: office demand; BIC status; municipal referrals and funding.\nThreats: flour prices; supermarket competition; losing an office client."
+     },
+     "notice": "Notice how existing courses are named honestly as alternatives. Copy the explanation of why your people cannot use what already exists."
+    },
+    {
+     "org": "coop",
+     "profile": {
+      "trends": "Economic | Middlemen take most of the price | Members’ sales records | Selling direct is our main lever\nTechnological | Online craft marketplaces growing | Our online shop sales | Grow direct online sales towards 40% of revenue\nLegal | Power-loom copies sold as handloom | Shops; online listings | Weaver names on every piece prove authenticity\nPolitical | Government handloom schemes | State cooperative department | Possible dye-unit grant; check the effect on control\nSocial | Young people prefer other work | Members’ families | Apprenticeships must offer a real income\nEnvironmental | Monsoon disrupts dyeing | Production records | A shared dye unit could protect output",
+      "actors": "Middlemen traders | buy from weavers, sell to shops | individual weavers | the system we offer an alternative to\nOther handloom cooperatives | similar products | weavers elsewhere | none in our district sells online direct; possible partners\nOnline marketplaces | sell many makers’ crafts | urban and overseas buyers | our channel, but they also host copies\nState cooperative department | regulates and audits | all cooperatives | approves big changes; link to schemes",
+      "swot": "Strengths: 140 members; eleven years of trust; open books; traceable weaver names.\nWeaknesses: little marketing; tight working capital; few young members.\nOpportunities: online marketplaces; handloom schemes; buyers seeking authentic craft.\nThreats: power-loom copies; rising yarn prices; young people leaving weaving."
+     },
+     "notice": "Notice that the actor list includes other cooperatives as possible partners, not only competitors. Copy the last column: say what each actor means for you."
+    },
+    {
+     "org": "hybrid",
+     "profile": {
+      "trends": "Political | Council waste reduction targets | Leeds City Council waste strategy | Our diversion data supports council funding\nLegal | Right-to-repair rules | Government guidance | More spare parts; more public interest in repair\nEconomic | Cost-of-living pressures | Repair café conversations | More demand for free repair and cheap refurbished goods\nEconomic | Rising rents | Local property agents | Workshop and shop costs may rise\nSocial | Retired engineers keen to volunteer | Volunteer applications | Our main source of skills\nLegal | Electrical safety and insurance rules | Our insurer | Train every volunteer who repairs electrical items",
+      "actors": "Commercial repairers | paid repairs | anyone who can pay | we refer paid work to them and do not compete\nCharity shops | sell donated goods | low-income shoppers | overlap with our shop; ours sells tested, refurbished items\nCouncil waste team | waste reduction | all residents | funder and partner\nCommunity centres | host local groups | residents | possible venues for pop-up repair cafés",
+      "swot": "Strengths: skilled volunteers; the city’s only combined repair café, tool library and shop; trading income.\nWeaknesses: shop profits below target; trading figures unclear to trustees; safety training depends on one person.\nOpportunities: council targets; right to repair; cost-of-living demand.\nThreats: rising rent; cheap new goods; a safety incident."
+     },
+     "notice": "Notice that it decides how to relate to each actor, including who it will not compete with. Copy that: a list of actors is only useful once you know your stance."
+    }
+   ]
+  }
  }),
  lesson({
   "minutes": 20,
@@ -89,14 +193,14 @@ export default module({
   "title": "Stakeholder mapping",
   "sheet": "Stakeholder map",
   "learn": [
-   "Stakeholders are the people and organisations who affect, or are affected by, your work. They include the people you serve, communities, staff and volunteers, funders or customers, partners, regulators, local authorities and anyone who could support or block your work.",
-   "Distinguish four roles that are often confused: who benefits, who pays, who decides and who influences. In a nonprofit the person who benefits rarely pays. In a social enterprise the paying customer may be an employer or a public body rather than the end user. Naming these roles early prevents designing for the wrong person.",
-   "A simple influence–interest grid helps you decide how to engage each group: involve closely those with high interest and high influence, keep informed those with high interest and low influence, consult those with high influence and low interest, and monitor the rest. Give particular attention to people with high interest but little power, who are easily overlooked.",
-   "Stakeholder mapping feeds later modules: your Theory of Change (whose behaviour must change), governance (who holds you accountable), communications (audiences) and partnerships (who to work with)."
+   "Stakeholders are the people and organisations who affect, or are affected by, your work: the people you serve, communities, staff and volunteers, funders or customers, partners, regulators, local authorities, and anyone who could support or block what you do.",
+   "Separate four roles that are often confused: who benefits, who pays, who decides and who influences. In a nonprofit the person who benefits rarely pays. In a social enterprise the paying customer may be an employer or a public body rather than the end user. Naming these roles early stops you designing for the wrong person.",
+   "An influence–interest grid helps you decide how to engage each group. Involve closely those with high interest and high influence, consult those with high influence and low interest, keep informed those with high interest and low influence, and monitor the rest. Pay particular attention to people with high interest but little power: they are the easiest to overlook.",
+   "You will come back to this map in your Theory of Change, when you ask whose behaviour has to change for your outcomes to happen."
   ],
   "weak": "Stakeholders: the community, donors and the government.",
-  "strong": "Young job-seekers (benefit, high interest, low influence: involve in design); two local employers (pay for training places, decide on recruitment: involve); district labour office (regulates placements, high influence: consult quarterly).",
-  "why": "The stronger map distinguishes roles and says how each group will be engaged, which makes it usable.",
+  "strong": "Pan del Barrio: trainees (benefit, high interest, low influence: monthly meeting with Diego); office clients (pay, decide on contracts: consult each quarter); municipal youth programme (refers trainees, possible funder: consult each cohort).",
+  "why": "It separates who benefits from who pays and decides, and says how each group will be engaged, which makes the map usable.",
   "reflect": "Who is affected by your work but has the least say in it?",
   "exercise": "Build a stakeholder map and decide how you will engage each priority group.",
   "fields": [
@@ -111,7 +215,91 @@ export default module({
     "hint": "Which group has high interest but little influence, and how will you include them?"
    }
   ],
-  "check": "Have you separated who benefits, who pays, who decides and who influences?"
+  "check": "Have you separated who benefits, who pays, who decides and who influences?",
+  "anatomy": {
+   "title": "Four roles, four questions",
+   "intro": "One group can hold more than one role. The examples come from the five organisations.",
+   "cols": [
+    "Role",
+    "Ask",
+    "Example"
+   ],
+   "rows": [
+    [
+     "Benefits",
+     "Whose life or environment should change?",
+     "Pan del Barrio’s trainees; the girls in Imara’s clubs."
+    ],
+    [
+     "Pays",
+     "Whose money keeps the work going?",
+     "Pan del Barrio’s office clients; Imara’s two foundation funders."
+    ],
+    [
+     "Decides",
+     "Who can say yes or no to what you do?",
+     "The village heads who agree Tide Line’s restoration sites; Imara’s head teachers."
+    ],
+    [
+     "Influences",
+     "Who shapes results without a formal decision?",
+     "Shrimp pond owners near Tide Line’s sites; Leeds City Council’s waste team."
+    ],
+    [
+     "Several at once",
+     "Does any group hold more than one role?",
+     "Vanita’s member weavers benefit, own the cooperative and elect its committee."
+    ]
+   ],
+   "after": 1
+  },
+  "gallery": {
+   "title": "Five example stakeholder maps",
+   "intro": "Each organisation separates who benefits, pays, decides and influences, and names the group most easily overlooked.",
+   "prompt": "Which example is closest to your organisation?",
+   "items": [
+    {
+     "org": "idea",
+     "profile": {
+      "map": "Young people aged 12–17 | benefit | high | low | youth team leaders help plan planting days\nParents | decide (consent) | high | high | involve: meet before the first planting day; consent forms\nVillage heads | decide on land use | medium | high | consult before choosing any site\nSchool principal | decides on school sessions | medium | medium | consult each term\nShrimp pond owners | influence (possible opposition) | high | high | involve early; avoid working ponds\nProvincial environment office | influences | low | medium | invite to planting days\nLocal donors and dive operators | pay (possible) | low | low | monitor; report survival rates",
+      "overlooked": "The young people themselves. They care most about the coast but have no voice in village decisions. Our youth team will plan the planting days, and we will ask village heads to let two youth leaders report at the village meeting each season."
+     },
+     "notice": "Notice that parents appear as people who decide, because young people need their consent. Copy the habit of asking who can say no, not only who benefits."
+    },
+    {
+     "org": "ngo",
+     "profile": {
+      "map": "Girls aged 10–14 | benefit | high | low | girls’ advisory group meets each term\nParents and guardians | decide (consent, subject choice) | high | medium | termly parent sessions\nHead teachers | decide on access | medium | high | consult each term; written agreement\nCounty education office | influences | medium | high | consult termly\nTwo foundation funders | pay, decide on grants | medium | high | report quarterly; invite to annual review\nVolunteer mentors | deliver | high | medium | involve: training and feedback each term\nLocal businesses | pay (camp) | low | low | thank and report after the camp",
+      "overlooked": "Girls who stop coming to the clubs. Our advisory group hears from girls who attend, not from those who leave, often because of chores or distance. With a parent’s consent, coordinators will speak with two leavers per club each term and share what they hear."
+     },
+     "notice": "Notice the overlooked group is inside the programme: girls who left. Copy the idea that people you already serve can still go unheard."
+    },
+    {
+     "org": "social",
+     "profile": {
+      "map": "Trainees aged 18–24 | benefit | high | low | monthly meeting with Diego\nOffice clients | pay, decide on contracts | medium | high | consult each quarter on quality and orders\nCafé and bread customers | pay | low | medium | monitor sales and comments\nFood-sector employers | decide on hiring graduates | high | high | involve in shaping the certificate assessment\nMunicipal youth programme | refers trainees, possible funder | medium | high | consult each cohort\nTrainees’ families | influence | high | medium | invite to the certificate day\nFlour supplier | influences costs | low | medium | monitor; review prices twice a year",
+      "overlooked": "Trainees who leave before the six months end. They know best whether the wage and hours are workable, but they leave without being asked. Diego will hold a short exit conversation with everyone who leaves early."
+     },
+     "notice": "Notice how clearly the trainees who benefit are separated from the clients who pay. Copy that separation if your income comes from someone other than the people you serve."
+    },
+    {
+     "org": "coop",
+     "profile": {
+      "map": "Member weavers | benefit, own and govern | high | high | general meeting; elect the committee\nElected committee | decides | high | high | monthly meeting; approves budgets and rules\nRetail shops | pay | medium | medium | visit twice a year; show new collections\nOnline buyers | pay | low | medium | weaver stories on listings; monitor reviews\nState cooperative department | regulates, audits | low | high | consult; annual audit and returns\nGovernment handloom schemes | possible funder | low | high | consult before applying\nYoung people in weaving families | future members | medium | low | keep informed: apprentice open day",
+      "overlooked": "Members who weave at home around care duties. On paper they have a vote; in practice they miss meetings. Meera will visit them before each general meeting to collect their questions, and the committee will hold one meeting a year at a time more of them can attend."
+     },
+     "notice": "Notice that members benefit, own and govern at once. Copy the check on whether formal power, such as a vote, is real power in practice."
+    },
+    {
+     "org": "hybrid",
+     "profile": {
+      "map": "Repair café visitors | benefit | high | low | feedback cards at every café\nVolunteers | deliver | high | medium | involve: termly volunteer meeting\nTrustees | decide, accountable | high | high | quarterly board meeting with clear trading reports\nLeeds City Council waste team | pays, influences | medium | high | consult; share diversion data quarterly\nGrant funders | pay | medium | high | report as agreed\nSchools | decide on workshops | medium | medium | consult each term\nShop customers | pay | medium | low | monitor sales and reviews",
+      "overlooked": "Low-income households who never come to a repair café. They have the most to gain, but many do not know we exist or cannot get to us. We will run a quarterly pop-up repair café at a community centre and ask people there what would help."
+     },
+     "notice": "Notice that the people it most wants to reach are not yet visitors. Copy the plan to go where they already are instead of waiting for them to arrive."
+    }
+   ]
+  }
  }),
  lesson({
   "minutes": 20,
@@ -741,7 +929,7 @@ export default module({
     {
      "org": "idea",
      "profile": {
-      "objectives": "ESO1 | Young people in the two villages lead regular restoration of degraded mangrove areas | Youth teams plant and monitor monthly; at least two-thirds of seedlings survive | Sari\nESO2 | Young people understand and speak up for their coast in village decisions | Young people present their findings at village meetings | Wayan\nISO1 | Register a legal entity with a small board | Entity registered after local legal advice | Wayan\nISO2 | Safe, trained volunteer team | All volunteers trained in safeguarding; parental consent in place | Sari\nISO3 | A small, reliable local funding base | Local donors and dive operators cover yearly costs | Wayan",
+      "objectives": "ESO1 | Young people in the two villages lead regular restoration of degraded mangrove areas | Youth teams plant and monitor monthly; most seedlings survive (target set after the first monitoring round) | Sari\nESO2 | Young people understand and speak up for their coast in village decisions | Young people present their findings at village meetings | Wayan\nISO1 | Register a legal entity with a small board | Entity registered after local legal advice | Wayan\nISO2 | Safe, trained volunteer team | All volunteers trained in safeguarding; parental consent in place | Sari\nISO3 | A small, reliable local funding base | Local donors and dive operators cover yearly costs | Wayan",
       "priorities": "We postpone a third village, tourist planting events and a website until we know survival rates and the entity is registered. With two days a week each, we run ESO2 through the school sessions we already plan, not as a separate programme."
      },
      "notice": "Notice the owners: with no staff, the two co-founders share every objective, which is a good reason to keep the list short."

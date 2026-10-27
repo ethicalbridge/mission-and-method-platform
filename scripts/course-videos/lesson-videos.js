@@ -1,5 +1,174 @@
-// Lesson video texts for Course 1 (en/es): written from the reviewed lesson content.
+// Lesson, module and review video texts (en/es) written from the reviewed lesson content (Courses 2–5 and lessons of Course 1).
+// Course 1 module intros, reviews and Spanish titles are in course1-extra.js; entries here are added to them.
 window.LESSON_VIDEOS = {
+ "0.journey": {
+  "en": {
+   "idea": "Work in order: each course builds on decisions made in the one before.",
+   "points": [
+    "Find the module you need most right now.",
+    "Check which earlier decisions it depends on.",
+    "Set a learning rhythm you can actually keep."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Module 03 Governance: trustees need to see how shop profits reach the charity. It depends on our mission and objectives first."
+   },
+   "create": "You write your priority module, its dependencies and your rhythm."
+  },
+  "es": {
+   "idea": "Avanza en orden: cada curso se apoya en las decisiones del anterior.",
+   "points": [
+    "Identifica el módulo que más necesitas ahora.",
+    "Revisa de qué decisiones anteriores depende.",
+    "Define un ritmo de aprendizaje que puedas sostener."
+   ],
+   "example": {
+    "org": "hybrid",
+    "text": "Módulo 03 Gobernanza: la junta debe ver cómo llegan las ganancias de la tienda a la organización benéfica. Primero necesitamos misión y objetivos."
+   },
+   "create": "Escribes tu módulo prioritario, sus dependencias y tu ritmo."
+  }
+ },
+ "0.profile": {
+  "en": {
+   "idea": "One page of plain facts that people read first and you reuse everywhere.",
+   "points": [
+    "Use plain words: what you do, for whom, where.",
+    "State your legal form, stage and size honestly.",
+    "Write open decisions as questions, not guesses."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "Imara Girls in Science: weekly after-school science clubs for girls aged 10–14 in 14 Kisumu public schools. Registered nonprofit, six staff, 25 volunteer mentors."
+   },
+   "create": "You write your one-page organisation profile in six parts."
+  },
+  "es": {
+   "idea": "Una página de datos claros que otros leen primero y que reutilizas siempre.",
+   "points": [
+    "Usa palabras simples: qué haces, para quién y dónde.",
+    "Indica con honestidad tu forma jurídica, etapa y tamaño.",
+    "Escribe lo pendiente como preguntas, no como suposiciones."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "Imara Girls in Science: clubes semanales de ciencia para niñas de 10 a 14 años en 14 escuelas públicas de Kisumu. ONG registrada, seis empleados."
+   },
+   "create": "Escribes el perfil de una página de tu organización en seis partes."
+  }
+ },
+ "0.health-check": {
+  "en": {
+   "idea": "Rate each area honestly, with evidence, to see where to start.",
+   "points": [
+    "Rate: not started, informal, documented, practised, reviewed.",
+    "Back every rating with one specific piece of evidence.",
+    "Ask a colleague to rate too, and compare."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Safeguarding: not started, although we plan activities with 12–17-year-olds. Finance: not started; Sari keeps receipts, no budget."
+   },
+   "create": "You create a baseline rating of your organisation and three priorities."
+  },
+  "es": {
+   "idea": "Califica cada área con honestidad y evidencia para saber dónde empezar.",
+   "points": [
+    "Califica: no iniciado, informal, documentado, practicado, revisado.",
+    "Respalda cada calificación con una evidencia concreta.",
+    "Pide a un colega que también califique y compara."
+   ],
+   "example": {
+    "org": "idea",
+    "text": "Protección infantil: no iniciada, aunque planeamos actividades con jóvenes de 12 a 17 años. Finanzas: no iniciadas; Sari guarda los recibos, sin presupuesto."
+   },
+   "create": "Creas una evaluación inicial de tu organización y tres prioridades."
+  }
+ },
+ "1.purpose": {
+  "en": {
+   "idea": "Start from a real need, then say why you exist, not what you do.",
+   "points": [
+    "Describe who is affected, where, and what happens.",
+    "Separate what you know from what you assume.",
+    "Keep your purpose true even if activities change."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Middlemen take most of the price. We exist so that handloom weavers in our district earn a fair living from their craft."
+   },
+   "create": "You write the need, your evidence and your purpose."
+  },
+  "es": {
+   "idea": "Parte de una necesidad real; luego di por qué existes, no qué haces.",
+   "points": [
+    "Describe quién está afectado, dónde y qué le sucede.",
+    "Separa lo que sabes de lo que supones.",
+    "Tu propósito debe seguir vigente aunque cambien tus actividades."
+   ],
+   "example": {
+    "org": "coop",
+    "text": "Los intermediarios se llevan casi todo. Existimos para que quienes tejen en telar manual en nuestro distrito ganen un ingreso justo con su oficio."
+   },
+   "create": "Escribes la necesidad, tu evidencia y tu propósito."
+  }
+ },
+ "1.context": {
+  "en": {
+   "idea": "Look outward before you plan: what is changing, and who is already there?",
+   "points": [
+    "Write specific observations, each with a source.",
+    "Map who already works on this, and how well.",
+    "Link every point to a decision for you."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "The new curriculum asks for practical science, but most partner schools have no lab. Other STEM programmes work mainly in Nairobi."
+   },
+   "create": "You write a context scan, an actor list and a SWOT."
+  },
+  "es": {
+   "idea": "Mira hacia afuera antes de planificar: ¿qué está cambiando y quién ya está ahí?",
+   "points": [
+    "Escribe observaciones concretas, cada una con su fuente.",
+    "Identifica quién ya trabaja en esto y qué tan bien.",
+    "Conecta cada punto con una decisión para ti."
+   ],
+   "example": {
+    "org": "ngo",
+    "text": "El nuevo currículo pide ciencia práctica, pero la mayoría de las escuelas aliadas no tiene laboratorio. Otros programas STEM trabajan sobre todo en Nairobi."
+   },
+   "create": "Escribes un análisis del contexto, una lista de actores y un FODA."
+  }
+ },
+ "1.stakeholders": {
+  "en": {
+   "idea": "Separate who benefits, who pays, who decides and who influences.",
+   "points": [
+    "List everyone who affects, or is affected by, your work.",
+    "Rate each group’s interest and influence.",
+    "Decide how you will engage each priority group."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Trainees benefit but have little influence: monthly meeting with Diego. Office clients pay and decide on contracts: consulted every quarter."
+   },
+   "create": "You create a stakeholder map and a plan to include the overlooked."
+  },
+  "es": {
+   "idea": "Distingue quién se beneficia, quién paga, quién decide y quién influye.",
+   "points": [
+    "Enumera a quienes afectan tu trabajo o se ven afectados.",
+    "Valora el interés y la influencia de cada grupo.",
+    "Decide cómo involucrarás a cada grupo prioritario."
+   ],
+   "example": {
+    "org": "social",
+    "text": "Los aprendices se benefician pero tienen poca influencia: reunión mensual con Diego. Las empresas clientes pagan y deciden los contratos: consulta trimestral."
+   },
+   "create": "Creas tu mapa de actores e incluyes a quienes suelen olvidarse."
+  }
+ },
  "1.vision": {
   "en": {
    "idea": "A vision describes the better future you want to help create, not your services.",
@@ -421,3 +590,6 @@ window.LESSON_VIDEOS = {
   }
  }
 };
+Object.assign(window.MODULE_VIDEOS, {});
+Object.assign(window.REVIEW_VIDEOS, {});
+Object.assign(window.TITLES_ES, {});
