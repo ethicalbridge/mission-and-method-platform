@@ -1,12 +1,16 @@
 // Entrepreneurs' courses: which ones this learner has, and a simulated checkout until payments are connected.
-// Each course is bought on its own, or all four together ('entrepreneurs-all'). Ownership is kept in the same browser
-// store as the organisation courses (course-access.js). TEST MODE: the "payment" is the test code below; nothing is
+// Each course is bought on its own, or all four together ('entrepreneurs-all'). In test mode ownership is kept in
+// this browser session only (same key as course-access.js, in sessionStorage). TEST MODE: the "payment" is the test code below; nothing is
 // charged and nothing leaves the browser. When the payment provider is connected, replace confirmPurchase() with
 // the real checkout and read ownership from the server (docs/production-access.md).
 import {COURSE_ACCESS_KEY,ownedCourseIds} from './course-access.js?v=ev5';
 export const FOUNDER_ALL='entrepreneurs-all';
 const TEST_CODE='1234';
-const store=()=>{try{return globalThis.localStorage;}catch{return null;}};
+// Test purchases last only for this browser session (like the 1234 page gate): closing the browser or tab locks the
+// courses again, so the purchase flow can be tested from the start each time.
+const store=()=>{try{return globalThis.sessionStorage;}catch{return null;}};
+// Earlier test purchases were kept permanently; clear those once so the courses start locked.
+try{const ls=globalThis.localStorage,kept=ownedCourseIds(ls);if(kept.some(x=>x.startsWith('entrepreneurs-')))ls.setItem(COURSE_ACCESS_KEY,JSON.stringify(kept.filter(x=>!x.startsWith('entrepreneurs-'))));}catch{}
 export const ownsFounderCourse=id=>{const owned=ownedCourseIds(store());return owned.includes(FOUNDER_ALL)||owned.includes(id);};
 export const ownsAllFounderCourses=()=>ownedCourseIds(store()).includes(FOUNDER_ALL);
 export function grantFounder(id){const s=store();if(!s)return false;const owned=new Set(ownedCourseIds(s));owned.add(id);try{s.setItem(COURSE_ACCESS_KEY,JSON.stringify([...owned]));return true;}catch{return false;}}
