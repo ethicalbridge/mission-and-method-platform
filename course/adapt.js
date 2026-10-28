@@ -6,6 +6,7 @@
 // Lesson overrides: title, part, learn, weak, strong, why, reflect, exercise, check,
 //   fields:{key:{label,hint}}, anatomy:{title,intro,cols,rows} (or null to drop the table).
 import {splits} from './founder-splits.js';
+import {lessons as marketing} from './founder-marketing.js';
 const TEXT=['title','part','learn','weak','strong','why','reflect','exercise','check','exampleBox','tocExample','connects','templates'];
 export const FOUNDER_OFFSET=100;
 // A hint written as "Column | column (examples) | …" becomes an entry table with those columns, so each answer goes in
@@ -42,6 +43,8 @@ export function adapt(base,mod,lessons){
    Object.assign(f,v);
   }
  }
+ // Marketing additions: templates to adapt, brand support, references to the other courses.
+ for(const l of m.lessons){const x=marketing[`${m.id}.${l.id}`];if(!x)continue;if(x.templates&&!l.templates)l.templates=x.templates;if(x.support)l.support=x.support;if(x.bridges)l.bridges=x.bridges;}
  for(const l of m.lessons)if(l.fields)l.fields=l.fields.map(f=>{const sp=splits[`${m.id}.${l.id}.${f.key}`];if(sp&&!f.type)return {...f,type:'parts',hint:sp.hint||'One answer per box.',parts:sp.parts.map(([label,placeholder])=>({label,placeholder}))};return asTable(f);});
  return m;
 }

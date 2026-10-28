@@ -283,3 +283,15 @@
 .templates-note{margin:0;padding:.8rem 1rem;border-left:4px solid #e56f4a;background:#fff;border-radius:6px;font-size:.93rem;line-height:1.55}
 .templates-link,.templates-link *{text-decoration:none!important}
 .templates-link:hover b{text-decoration:underline!important}
+/* Entrepreneurs: references between courses, support from Julieta, course-end consult invitation */
+.course-bridge{margin:1.4rem 0;padding:.85rem 1.1rem;border-radius:10px;border:1px solid #d9e6e3;border-left:5px solid #1f6f66;background:#f4f9f8}
+.course-bridge.is-back{border-left-color:#3c5560;background:#f3f5f6}
+.course-bridge .eyebrow{display:block;margin-bottom:.25rem}
+.course-bridge .eyebrow a{color:inherit}
+.course-bridge p{margin:0;text-align:left!important;font-size:.96rem;line-height:1.55}
+.support-box,.course-consult{display:flex;gap:1.2rem;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:1.6rem 0 .4rem;padding:1.2rem 1.4rem;border-radius:14px;background:#14304a;color:#fff}
+.support-box h3,.course-consult h3{margin:.15rem 0 .35rem;color:#fff}
+.support-box p,.course-consult p{margin:0;color:#e6eef0;text-align:left!important;max-width:60ch;line-height:1.55}
+.support-box .eyebrow{color:#9fd3c7}
+.support-box>div,.course-consult>div{flex:1 1 320px}
+.support-box .button,.course-consult .button{background:#e56f4a;border-color:#e56f4a;color:#fff;white-space:nowrap}
