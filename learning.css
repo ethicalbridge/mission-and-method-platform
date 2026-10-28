@@ -219,3 +219,5 @@
 .example-list li:last-child{border-bottom:0}
 .example-list li.gap{margin-top:14px;border-top:2px solid #d8eee2}
 .example-list b{color:#16746e;margin-right:4px}
+/* Reading text: lines end at the same edge */
+#read p,.learning-step.exercise > p,.reflection p{text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
