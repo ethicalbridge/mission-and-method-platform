@@ -1,5 +1,5 @@
-import base from './m10-legal-compliance-risk.js';
-import {adapt} from './adapt.js';
+import base from './m10-legal-compliance-risk.js?v=c1687a22e';
+import {adapt} from './adapt.js?v=c1687a22e';
 // Entrepreneurs' version of m10: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:`Legal, Compliance, Policies & Risk`,

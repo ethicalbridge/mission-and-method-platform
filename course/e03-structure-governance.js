@@ -1,5 +1,5 @@
-import base from './m03-structure-governance.js';
-import {adapt} from './adapt.js';
+import base from './m03-structure-governance.js?v=c1687a22e';
+import {adapt} from './adapt.js?v=c1687a22e';
 // Entrepreneurs' version of m03: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'Structure, Governance & Accountability',

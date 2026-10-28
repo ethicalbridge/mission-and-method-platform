@@ -1,3 +1,4 @@
+import './version-course-imports.mjs'; // keep course/ imports versioned so browsers load the newest lessons
 // Writes one small page per lesson at <course>/<lesson-title>.html, so every lesson has a readable address
 // (methodintoimpact.com/clarify/organisation-profile). Each page is learn.html with the lesson named on <body>;
 // learning.js renders it. Old learn.html?module=&lesson= links still work and switch to the readable address.

@@ -1,5 +1,5 @@
-import base from './m04-people-culture.js';
-import {adapt} from './adapt.js';
+import base from './m04-people-culture.js?v=c1687a22e';
+import {adapt} from './adapt.js?v=c1687a22e';
 // Entrepreneurs' version of m04: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'People, Culture & Volunteers',

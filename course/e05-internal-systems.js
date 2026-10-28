@@ -1,5 +1,5 @@
-import base from './m05-internal-systems.js';
-import {adapt} from './adapt.js';
+import base from './m05-internal-systems.js?v=c1687a22e';
+import {adapt} from './adapt.js?v=c1687a22e';
 // Entrepreneurs' version of m05: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'Internal Systems & Operations',

@@ -1,11 +1,11 @@
-import {recaps,modules,allModules,founderModules,founderPhases,phasesFor,courseModules as modulesOfCourse,FOUNDER_OFFSET,isFounder,trackModules,phases,readingsFor,primaryFor,toolsFor,moduleCount,moduleNumber,moduleFor,nextModule,lessonSheets,courseToolLabels,STAGES,courseFor,freeModules,lessonPath,lessonReadings,exampleOrg,exampleOrgs as allOrgs,lessonVideos,moduleVideos} from './course-data.js?v=ev41';
+import {recaps,modules,allModules,founderModules,founderPhases,phasesFor,courseModules as modulesOfCourse,FOUNDER_OFFSET,isFounder,trackModules,phases,readingsFor,primaryFor,toolsFor,moduleCount,moduleNumber,moduleFor,nextModule,lessonSheets,courseToolLabels,STAGES,courseFor,freeModules,lessonPath,lessonReadings,exampleOrg,exampleOrgs as allOrgs,lessonVideos,moduleVideos} from './course-data.js?v=ev42';
 import {pricing,money} from './pricing-config.js';
-import {courseComplete} from './course/founder-marketing.js';
+import {courseComplete} from './course/founder-marketing.js?v=c1687a22e';
 const courseLabel=p=>`Course ${p.number} · ${p.name}`;
 import {softwareProducts,resourceManifest,previewToolSlugs} from './products.js';
 import {hasToolAccess} from './tool-access.js';
 import {ownsCourse} from './course-access.js?v=ev5';
-import {readState,mutateState,emptyState,lessonKey,storeKey,valueOf,stats,isFilled,invalidate,escapeHTML as e,download,STORAGE_KEY,validateState,FIRST_LESSON} from './learning-store.js?v=ev43';
+import {readState,mutateState,emptyState,lessonKey,storeKey,valueOf,stats,isFilled,invalidate,escapeHTML as e,download,STORAGE_KEY,validateState,FIRST_LESSON} from './learning-store.js?v=ev44';
 const root=document.querySelector('#learning-root');
 let state;let storageError='';try{state=readState();}catch(err){state=emptyState();storageError='Saved work could not be loaded. Storage may be unavailable or the saved file may be damaged. Your existing data has not been overwritten. You can export this session or restore a backup from Your Organisation.';}
 const urlFor=(m,l)=>`/${lessonPath(m,l)}`;
