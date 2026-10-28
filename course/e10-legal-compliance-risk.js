@@ -18,13 +18,13 @@ export default adapt(base,{
    `You do not need a legal background yourself, but you do need to know which questions to ask, and to ask them before you launch rather than after. Rules differ by country and change over time, so mark which items someone with a legal background has confirmed and which are still open. If you plan to work in more than one country, map each one.`
   ],
   weak:`We will sort out the legal side once we are up and running.`,
-  strong:`“Before launch: choose and register a legal form; register for tax before the first sale; parental consent and checks on adults before any activity with young people; data protection for the sign-up list; public liability insurance before the first event. An accountant has confirmed the tax steps; the right legal form is still an open question.”`,
+  strong:`“Before the first market day: register the kitchen and stall with the food authority; register for tax before the first sale; a basic food-hygiene certificate for everyone who handles food; written traineeship agreements and pay that meet employment law, with extra rules for trainees aged 17; data protection for trainees’ records; public liability and product insurance for the stall. Our accountant has confirmed the tax steps; when to register as a company with a social purpose is still an open question for someone with a legal background.”`,
   why:`It names each duty before it applies, who oversees it and who owns it, and is honest about what still needs advice.`,
   reflect:`Which obligation would you be least prepared to show you are meeting on the day you launch?`,
   exercise:`Build your legal and regulatory map for what you are about to start.`,
   fields:{
-   map:{label:`Legal map`,hint:`Area | obligation | authority | when it starts and how often | owner (you or a co-founder) | confirmed by an adviser?`},
-   open:{label:`Open legal questions`,hint:`Questions to resolve with qualified advice before you register or launch, and by when.`}
+   map:{label:`Legal map`,hint:`Area (e.g. food hygiene) | obligation (e.g. register the kitchen and stall) | authority (e.g. the local food authority) | when it starts and how often (e.g. before the first sale; inspections) | owner (you or a co-founder) | confirmed by an adviser?`},
+   open:{label:`Open legal questions`,hint:`Questions to resolve with qualified advice before you register or launch, and by when, e.g. may trainees aged 17 work early-morning shifts?`}
   },
   check:`Does every obligation have an owner and a date, including those that start before you launch?`
  },
@@ -35,18 +35,18 @@ export default adapt(base,{
    `Sort the result into three groups: required before you start (a legal duty or a high risk), required soon (triggered by registration, the first hire, growth or a new activity) and good practice. Give each policy an owner, an approval route and a review date, and note where you need qualified local advice.`
   ],
   weak:`Download every policy template we can find before we start.`,
-  strong:`“Young people aged 12 to 17 will take part from the first day, so safeguarding, a code of conduct for adults, parental consent and photo rules, and activity safety come first. A finance policy follows registration. An HR policy waits for the first paid role.”`,
+  strong:`“Trainees, some aged 17, start in the first month and we sell food every Saturday, so safeguarding, a code of conduct, food hygiene and allergen labelling, kitchen safety and the traineeship agreement come first. A finance policy follows registration. A full staff handbook waits for the shop in year 2.”`,
   why:`The priority follows the activity and the harm it could cause, not the length of a template or the size you hope to reach.`,
   reflect:`Which gap could cause the greatest harm on your first day of activity?`,
   exercise:`Run a policy needs assessment and build a prioritised policy register for your launch and first year.`,
   fields:{
-   factors:{label:`Needs assessment`,hint:`Factor (form, planned activities, geography, size, funding and customers, risk) | what it requires.`},
-   policies:{label:`Policy register`,hint:`Policy | reason needed | priority (before launch, soon, good practice) | owner | approval | review date | advice needed.`}
+   factors:{label:`Needs assessment`,hint:`Factor (form, planned activities, geography, size, funding and customers, risk) | what it requires (for example trainees aged 17 need safeguarding before they start).`},
+   policies:{label:`Policy register`,hint:`Policy (e.g. food hygiene and allergens) | reason needed (e.g. we sell food every Saturday) | priority (before launch, soon, good practice) | owner (e.g. the baker co-founder) | approval | review date | advice needed.`}
   },
   check:`Does your priority order follow legal duty and risk, not document length or what larger organisations have?`,
   anatomy:{
    title:`Policy needs by activity`,
-   intro:`Start from what you plan to do. Each activity points to the policies it usually needs, and to when they must be ready.`,
+   intro:`Start from what you plan to do. Each activity points to the policies it usually needs, and to when they must be ready. The bakery does all five in its first month.`,
    cols:[`If you will…`,`You usually need`,`Have it ready`],
    rows:[
     [`Work with children or adults at risk`,`Safeguarding, code of conduct, safer recruitment, consent and photos`,`Before the first activity, even a pilot`],
@@ -63,14 +63,14 @@ export default adapt(base,{
    `Before signing, check who the parties are and who may sign for you (before you register, an agreement may bind you personally); what each side must do and by when; payment and reporting terms; ownership of materials, data and confidentiality; liability, insurance and indemnities; how the contract ends; and which country’s law applies. A memorandum of understanding can be binding or not, so say which in the text.`,
    `Start a contracts register from the first agreement, with key dates and obligations, and store signed copies where you and your co-founders can find them. Templates are starting points only. Ask someone with a legal background to review contracts that are large, long or unusual, or that make you liable for things outside your control.`
   ],
-  weak:`We signed what the first funder sent us.`,
-  strong:`“Every agreement goes in one register: parties, whose name it is in, value, reporting dates, end date, who signed and a link to the signed copy. Both co-founders approve anything over US$1,000, and anything with unusual liability is checked by someone with a legal background first.”`,
+  weak:`We signed the kitchen agreement the landlord sent us.`,
+  strong:`“Every agreement goes in one register (the shared-kitchen rental, the youth fund’s grant, the wholesale terms with the two cafés and the canteen, each trainee’s agreement) with parties, whose name it is in, value, key dates, who signed and a link to the signed copy. Both co-founders approve anything over US$1,000, and the kitchen agreement, which makes us liable for damage to shared equipment, was checked by someone with a legal background first.”`,
   why:`It tracks every obligation and date from the first agreement, and matches the level of review to the risk.`,
   reflect:`Which obligation in an agreement you have signed, or are about to sign, could you fail without realising?`,
   exercise:`Set up your contracts register and pre-signature checklist before you sign your next agreement.`,
   fields:{
-   register:{label:`Contracts register`,hint:`Agreement | parties (and whose name it is in) | value | key obligations | key dates | signatory | review needed?`},
-   checklist:{label:`Pre-signature checklist`,hint:`Questions you and your co-founders check before anyone signs.`}
+   register:{label:`Contracts register`,hint:`Agreement (e.g. shared-kitchen rental) | parties (and whose name it is in) | value (e.g. US$800 a month) | key obligations (e.g. kitchen clean by 2 pm) | key dates (e.g. notice period, renewal) | signatory | review needed?`},
+   checklist:{label:`Pre-signature checklist`,hint:`Questions you and your co-founders check before anyone signs, e.g. whose name is it in, what must we deliver, who pays if shared equipment breaks?`}
   },
   check:`Would you know every obligation and deadline in the agreements you have signed so far?`
  },
@@ -81,12 +81,12 @@ export default adapt(base,{
    `Write policies in plain language, short enough to be read, and linked to your values. Each one should name an owner, who it applies to, the main rules, how to report a concern, what happens after a breach and a review date. Share it with everyone who joins, from the first volunteer, and ask them to confirm they have read it.`
   ],
   weak:`Everyone involved must behave professionally at all times.`,
-  strong:`“Each founder and volunteer declares family and business links when they join and every year; anyone whose relative supplies us leaves the discussion and does not decide on that order; gifts from suppliers or sponsors above a small value are declared at the next team meeting.”`,
+  strong:`“Each co-founder, mentor and adviser declares family and business links when they join and every year; if someone’s relative supplies our flour or rents us kitchen time, that person leaves the discussion and does not decide on the order; gifts from suppliers or customers worth more than US$25 are declared at the next founders’ meeting.”`,
   why:`It turns a principle into a record, a rule for decisions and a clear line on gifts.`,
   reflect:`Which conflict of interest exists in your founding team or close circle today, declared or not?`,
   exercise:`Outline your core policies and how each will be put into practice from the start.`,
   fields:{
-   policies:{label:`Core policies`,hint:`Policy | applies to (founders, volunteers, future staff and board) | main rules | reporting route | owner | review date.`},
+   policies:{label:`Core policies`,hint:`Policy (e.g. conflicts of interest) | applies to (founders, volunteers, future staff and board) | main rules (e.g. declare relatives who supply us) | reporting route | owner | review date.`},
    declarations:{label:`Declarations and registers`,hint:`Which declarations you will collect from the start (conflicts, gifts) and how you will record them.`}
   },
   check:`Does each policy explain what to do and how to report a concern, even one about a founder?`
@@ -97,25 +97,25 @@ export default adapt(base,{
    `A proportionate framework, even for a team of two, has a policy and code of conduct; a named safeguarding lead and a deputy (with someone outside the founders to receive concerns about you); safer recruitment; training; safe activity design (supervision, two adults present, safe spaces, online rules); a way to report concerns; a procedure to respond, record and refer to the right local authority; and support for the person affected.`,
    `Safeguarding procedures must fit local law and local services. Get qualified local expertise before your first activity and check referral contacts every year. Never record confidential case details in this workspace. Review the framework after any concern and at least once a year.`
   ],
-  weak:`We all care about children, so we do not need a safeguarding policy yet.`,
-  strong:`“Before the first session: a lead and a deputy trained; every volunteer checked and trained before working with young people; no adult ever alone with a young person; the reporting route printed on the sign-in sheet; local referral contacts confirmed, then rechecked each year.”`,
-  why:`It names roles, routes and checks before anyone takes part, and ties them to local services that are verified, not assumed.`,
+  weak:`We all care about our trainees, so we do not need a safeguarding policy yet.`,
+  strong:`“Before the first trainee starts: a lead (the co-founder from the youth centre) and a deputy (the baker), both trained; every mentor checked and trained before supervising trainees; a trainee aged 17 never works an early shift alone with one adult; concerns about a founder go to the youth-centre manager who will join our advisory group; the reporting route on the kitchen noticeboard; local referral contacts confirmed with the youth centre, then rechecked each year.”`,
+  why:`It names roles, routes and checks before any trainee starts, including a route around the founders, and ties them to local services that are verified, not assumed.`,
   reflect:`If a child or adult told your first volunteer about abuse, what would that volunteer do?`,
   exercise:`Outline your safeguarding framework before your first activity (without case details).`,
   fields:{
-   scope:{label:`Who could be at risk and how`,hint:`People, planned activities and channels where harm could occur.`},
+   scope:{label:`Who could be at risk and how`,hint:`People, planned activities and channels where harm could occur, e.g. trainees aged 17 on early shifts, photos of trainees on social media.`},
    framework:{label:`Framework elements`,hint:`Lead and deputy, route for concerns about founders, policy, recruitment, training, safe design, reporting, response and referral, support.`},
-   local:{label:`Local requirements to confirm`,hint:`Laws, authorities and referral pathways to verify with local expertise before you start.`}
+   local:{label:`Local requirements to confirm`,hint:`Laws, authorities and referral pathways to verify with local expertise before you start, e.g. working-hours rules for under-18s, who to call about a trainee at risk.`}
   },
   check:`Could anyone report a concern safely, including one about a founder, and would it reach a trained person quickly?`,
   anatomy:{
    title:`Safe practice in three moments`,
    intro:`Safeguarding works before, during and after an activity. Each moment needs its own habits, from the very first session.`,
-   cols:[`Moment`,`What good practice looks like`,`In a new initiative`],
+   cols:[`Moment`,`What good practice looks like`,`In the bakery`],
    rows:[
-    [`Before`,`Vetting, training, consent, a risk check for the activity`,`Parental consent and a site check before each session, including pilots`],
-    [`During`,`Two adults present, clear roles, a named focal person on site`,`Even if only the two founders run it, both stay present and one is named as focal person`],
-    [`If a concern arises`,`Listen, do not investigate, tell the focal person the same day, refer as the procedure says`,`A volunteer tells the lead, who follows the referral route confirmed before launch`]
+    [`Before`,`Vetting, training, consent, a risk check for the activity`,`Mentors checked, a kitchen safety check and, where the law requires it, a parent’s consent for trainees aged 17, before the first shift of the pilot`],
+    [`During`,`Two adults present, clear roles, a named focal person on site`,`Even if only the two founders are on shift, both stay present when a trainee under 18 works, and one is named as focal person`],
+    [`If a concern arises`,`Listen, do not investigate, tell the focal person the same day, refer as the procedure says`,`A mentor tells the lead, who follows the referral route confirmed with the youth centre before launch`]
    ]
   }
  },
@@ -125,14 +125,14 @@ export default adapt(base,{
    `Start with a data inventory, even if you hold very little yet: what personal data you hold or plan to collect (participants, supporters, customers, members, volunteers, future staff), why, on what lawful basis, where it is stored, who can see it, who you share it with and how long you keep it. Data about children, health, ethnicity or similar sensitive matters needs extra care.`,
    `Then put in place a privacy notice, consent where that is your basis, access controls, secure tools, a retention schedule, a way to handle requests from people about their data, data-sharing agreements with partners and a plan for a data breach. This is far easier to build in now than to fix later. Train everyone who handles personal data, and confirm local duties, such as registering with an authority, with qualified advice.`
   ],
-  weak:`We will keep all our contacts in a shared spreadsheet and sort it out later.`,
-  strong:`“Sign-up forms ask only for a first name, age group and a parent’s phone number; bank details are stored where only the two founders can open them; names appear with photos only with yearly consent; contacts are deleted a year after someone stops taking part.”`,
+  weak:`We will keep trainees’ and customers’ details in one shared spreadsheet and sort it out later.`,
+  strong:`“Trainee records hold only name, date of birth, contact and emergency contact, pay details and certificate dates, in a folder only the two founders can open; the youth centre’s referral notes stay with the youth centre; cake-order lists keep a name and phone number and are deleted after three months; photos of trainees are used only with their yearly written consent.”`,
   why:`It knows what data it will hold, limits who sees it and decides when each record goes, before the first record exists.`,
   reflect:`What sensitive information could you decide never to collect?`,
   exercise:`Build your data inventory for what you hold or plan to collect, and list your privacy actions.`,
   fields:{
-   inventory:{label:`Data inventory`,hint:`Data set (now or planned) | whose data | purpose | lawful basis | where stored | access | shared with | retention.`},
-   privacy:{label:`Information and safeguarding actions`,hint:`Minimum data needed | access | retention decision | specialist review needed before you start collecting.`}
+   inventory:{label:`Data inventory`,hint:`Data set, now or planned (e.g. trainee records) | whose data (e.g. trainees aged 17–24) | purpose (e.g. pay and certificates) | lawful basis (e.g. the traineeship agreement) | where stored | access (e.g. both founders) | shared with (e.g. the youth centre, with consent) | retention (for example as long as pay and tax rules require).`},
+   privacy:{label:`Information and safeguarding actions`,hint:`Minimum data needed (e.g. no school records) | access | retention decision | specialist review needed before you start collecting.`}
   },
   check:`Will you collect only the personal data you need, and protect it from the first record?`
  },
@@ -143,12 +143,12 @@ export default adapt(base,{
    `Make the routes visible and simple from your first activity. You can combine them, but sensitive matters must reach trained and independent people. Some incidents must be reported to regulators, funders or insurers within set times; list those duties as they arise and confirm them with qualified advice.`
   ],
   weak:`People can talk to the founders if there is a problem.`,
-  strong:`“Concerns about a founder go to an independent adviser we have named; complaints are acknowledged within three working days and answered within twenty; one incident form covers accidents, unsafe products, data breaches and safeguarding; serious incidents are reported to the regulator, funders and insurer as their rules require.”`,
+  strong:`“Concerns about a founder go to the youth-centre manager who will join our advisory group; complaints from customers and trainees are acknowledged within three working days and answered within twenty; one incident form covers burns and cuts, allergen mistakes, data breaches and safeguarding; serious incidents are reported to the food authority, the youth fund and our insurer as their rules require.”`,
   why:`It offers a route around the founders, sets timescales and lists outside reporting duties.`,
   reflect:`What if the concern is about you or your co-founder?`,
   exercise:`Design your reporting channels and timescales before you launch.`,
   fields:{
-   channels:{label:`Reporting channels`,hint:`Type (whistleblowing, complaint, incident) | how to report | who receives | independent route (outside the founders) | timescale.`},
+   channels:{label:`Reporting channels`,hint:`Type (whistleblowing, complaint, incident) | how to report (e.g. incident form on the kitchen noticeboard) | who receives (e.g. the baker co-founder) | independent route (outside the founders) | timescale (for example the same day).`},
    external:{label:`External reporting duties`,hint:`What must be reported to whom, and how quickly, once you start operating.`}
   },
   check:`Is there a safe route when the concern involves a founder or the most senior person?`,
@@ -157,9 +157,9 @@ export default adapt(base,{
    intro:`They often share a form, but each has a different purpose and needs a different person to receive it, even in a very small team.`,
    cols:[`Type`,`What it covers`,`Who should receive it`],
    rows:[
-    [`Whistleblowing`,`Suspected wrongdoing inside the organisation: fraud, abuse, cover-ups`,`Someone independent of the people involved: a trusted adviser now, the chair once you have a board`],
-    [`Complaint`,`Someone unhappy with your service, product or behaviour`,`A named person, with a route to the other founder or an independent adviser`],
-    [`Incident`,`Something that happened: accident, data breach, safeguarding concern`,`The owner for that area, the same day for serious cases`]
+    [`Whistleblowing`,`Suspected wrongdoing inside the organisation: takings going missing, a mentor mistreating a trainee, a cover-up`,`Someone independent of the people involved: a trusted adviser now, the chair once you have a board`],
+    [`Complaint`,`Someone unhappy with your product, service or behaviour: a mislabelled loaf, a café’s late delivery`,`A named person, with a route to the other founder or an independent adviser`],
+    [`Incident`,`Something that happened: a burn in the kitchen, a lost order list, a safeguarding concern`,`The owner for that area, the same day for serious cases`]
    ]
   }
  },
@@ -169,13 +169,13 @@ export default adapt(base,{
    `Volunteers, including friends who help in the early days, need a lighter but real framework: role descriptions, expenses, supervision, conduct and how concerns are handled. Keep volunteer documents clear that volunteering is not employment, and confirm locally how that line is drawn, especially if you pay expenses or small amounts.`,
    `Module 4 already designed much of this: recruitment, onboarding, check-ins, pay, culture and offboarding. Here, decide which policies must be in place before the first person joins and which can wait until your first hire, have each one checked by a qualified local employment adviser and list it in your policy register with an owner and a review date. Use templates as starting points only.`
   ],
-  weak:`We will copy a big organisation’s staff handbook when we hire.`,
-  strong:`“A two-page volunteer agreement and a health and safety note now; a short staff handbook of five policies (contracts, hours, sickness, grievance and discipline, anti-harassment) drafted before the first hire and checked by a local employment adviser.”`,
+  weak:`We will copy a big bakery chain’s staff handbook when we open the shop.`,
+  strong:`“Before the first trainee: a two-page traineeship agreement (pay, hours, six-month term, mentor, hygiene certificate), a kitchen health and safety note and working-hours rules for trainees aged 17; a short staff handbook of five policies (contracts, hours, sickness, grievance and discipline, anti-harassment) drafted before the shop opens; all checked by a local employment adviser.”`,
   why:`It is proportionate to a team that is just forming, checked against local law and ready before it is needed.`,
   reflect:`Which situation with a volunteer or a first hire would you not know how to handle fairly?`,
   exercise:`List the HR and workplace policies you will need, what triggers each one, and their status.`,
   fields:{
-   policies:{label:`HR and workplace policies`,hint:`Policy | applies to (volunteers, first hires) | legally required? | needed by (now or first hire) | status | owner | review date.`}
+   policies:{label:`HR and workplace policies`,hint:`Policy (e.g. traineeship agreement) | applies to (e.g. trainees, first hires, volunteers) | legally required? | needed by (now or first hire) | status | owner | review date.`}
   },
   check:`Have the workplace policies you will legally need been checked for your country before you take anyone on?`
  },
@@ -185,13 +185,13 @@ export default adapt(base,{
    `Use plain language and test it with someone who did not write it, such as a co-founder, a volunteer or a friend. Ask them where they would pause, guess or need permission. Fix those points before you treat the procedure as ready.`,
    `Include what to do in an urgent situation and how to raise a concern. Do not write emergency or safeguarding instructions on your own: base them on qualified local advice and the local services people would actually contact, and have them ready before your first activity.`
   ],
-  weak:`We will just follow best practice.`,
-  strong:`“Before any item goes on sale, a trained person tests it, labels it and records the result; a founder signs off; any item that fails is tagged ‘do not sell’ and kept apart; the label is checked again before pricing.”`,
-  why:`Each step has a role and a record, and the exception (a failed test) has a clear path.`,
+  weak:`We will just follow good hygiene practice.`,
+  strong:`“Before any batch goes on the stall: the person who baked it checks it against the recipe card, labels it with ingredients, allergens and bake date, and records it on the batch sheet; a co-founder signs off; any batch that fails is tagged ‘not for sale’ and kept apart; labels are checked again before pricing.”`,
+  why:`Each step has a role and a record, and the exception (a failed batch) has a clear path.`,
   reflect:`Which task do you carry in your head that nobody else could repeat?`,
   exercise:`Draft one priority procedure for your launch and plan a walkthrough.`,
   fields:{
-   procedure:{label:`Priority procedure`,hint:`Trigger | scope | roles (now and as you grow) | numbered steps | records | exceptions | review.`},
+   procedure:{label:`Priority procedure`,hint:`Trigger (e.g. a batch is ready for the stall) | scope | roles (now and as you grow) | numbered steps | records (e.g. batch sheet) | exceptions (e.g. a missing allergen label) | review.`},
    test:{label:`Procedure test`,hint:`Who will walk through it (a co-founder, volunteer or friend), and what needs checking?`}
   },
   check:`Could the first person who joins you follow the sequence and recognise an exception?`
@@ -203,13 +203,13 @@ export default adapt(base,{
    `Review on a schedule (often every one to three years), and also after an incident, when the law changes, when you register or when your activities change. Record what changed and why, and tell people about significant changes. Link acknowledgements to onboarding, so the first people who join read what applies to them from the start.`
   ],
   weak:`Our policies are in someone’s email somewhere.`,
-  strong:`“A register of five policies, each with an owner, version and next review; both founders approve them now, and the board will once it exists; every volunteer confirms the code of conduct, safeguarding and data protection when they join and after each major update.”`,
+  strong:`“A register of six policies (safeguarding, food hygiene and allergens, code of conduct, conflicts of interest, data protection, traineeship rules), each with an owner, version and next review; both founders approve them now, and the advisory group will review them once it exists; every trainee and mentor confirms the code of conduct, safeguarding, hygiene and data rules on their first day and after each major update.”`,
   why:`It keeps every policy owned, current and known by the people it applies to, and is ready to grow.`,
   reflect:`When will your first policy be due for review, and who will remember?`,
   exercise:`Set up your policy register and review schedule from your first policies.`,
   fields:{
-   register:{label:`Policy register`,hint:`Policy | version | status | owner | approver (founders now, board later) | next review | who must acknowledge.`},
-   communication:{label:`Communication and training`,hint:`How the first people who join will learn about and acknowledge policies.`}
+   register:{label:`Policy register`,hint:`Policy (e.g. food hygiene and allergens) | version (e.g. 1.0) | status | owner | approver (founders now, board later) | next review | who must acknowledge (for example every trainee and mentor).`},
+   communication:{label:`Communication and training`,hint:`How the first people who join will learn about and acknowledge policies, e.g. a first-day induction for each trainee with a signed checklist.`}
   },
   check:`Is every policy owned, current and acknowledged by the people it applies to, from the first person who joins?`
  },
@@ -219,13 +219,13 @@ export default adapt(base,{
    `Find risks systematically: from your objectives and Theory of Change assumptions, your planned activities, people, money, partners, legal map, data, reputation, safety and the outside context. Involve your co-founders, early volunteers and the people you will serve; those closest to the work often see risks that founders miss.`,
    `Score each risk for likelihood and impact on a simple scale, such as 1 to 5, and multiply them. Score it first before controls (inherent risk), then with the controls you have or will have in place at launch (residual risk). The scores support a conversation; they do not make a judgement right on their own.`
   ],
-  weak:`Risk: something goes wrong.`,
-  strong:`“A laptop holding participants’ records is stolen, exposing their data and their families’ trust; likelihood 3, impact 4 (inherent 12); with a password, encryption and first names only, likelihood 2, impact 3 (residual 6).”`,
+  weak:`Risk: food safety.`,
+  strong:`“A batch is mislabelled in the rush before market → a customer with a nut allergy eats it → serious harm, a claim and lost trust; likelihood 3, impact 5 (inherent 15); with a second person checking every allergen label and nuts stored and baked apart, likelihood 1, impact 5 (residual 5).”`,
   why:`It links a cause, a harm and the controls, and shows the difference the controls make.`,
   reflect:`Which risk to your new initiative would you rather not talk about?`,
   exercise:`Identify and assess the main risks to what you are starting, without personal case details.`,
   fields:{
-   risks:{label:`Risk assessment`,hint:`Cause → event → consequence | category | likelihood | impact | inherent score | controls you have or plan | residual score.`}
+   risks:{label:`Risk assessment`,hint:`Cause → event → consequence (e.g. cafés pay late → cash runs short → trainee pay delayed) | category (e.g. financial) | likelihood | impact | inherent score | controls you have or plan (e.g. weekly invoicing) | residual score.`}
   },
   check:`Is each risk described as cause, event and consequence, with inherent and residual scores?`,
   anatomy:{
@@ -248,24 +248,24 @@ export default adapt(base,{
    `Set your risk appetite: how much risk you will accept in each area. Many organisations have a very low appetite for safeguarding, legal and financial integrity risks, and more room for trying new ideas, which is where a new initiative often needs to take risks. Then decide what is escalated: which scores go to both founders, which to an adviser and, later, to the board, and how fast.`
   ],
   weak:`One founder keeps a list of worries in their head.`,
-  strong:`“A register of twelve risks, each with one owner, a response and a dated action; residual scores of 12 or more go to the founders’ monthly meeting, and any safety incident or concern about a participant goes to both founders the same day.”`,
+  strong:`“A register of twelve risks, each with one owner (food safety and money with the baker, safeguarding and trainees with the co-founder from the youth centre), a response and a dated action; residual scores of 12 or more go to the founders’ monthly meeting, and any kitchen injury or concern about a trainee goes to both founders the same day.”`,
   why:`It makes every risk someone’s job and sets clear rules for what is escalated and how fast.`,
   reflect:`Which of your risks has no realistic owner in a team your size?`,
   exercise:`Build your first risk register with owners, responses and escalation rules.`,
   fields:{
-   register:{label:`Risk register`,hint:`Risk | owner (one person) | response (avoid, reduce, transfer, accept) | mitigation action | due | review date.`},
+   register:{label:`Risk register`,hint:`Risk (e.g. a mixer guard fails during a shift) | owner (one person) | response (avoid, reduce, transfer, accept) | mitigation action (e.g. daily equipment check) | due | review date.`},
    appetite:{label:`Risk appetite and escalation`,hint:`Appetite by area and what is escalated to whom (founders, adviser, later the board), how fast.`}
   },
   check:`Does every significant risk have an owner, an action and an escalation route, even in a team of one or two?`,
   anatomy:{
    title:`One example risk register row`,
-   intro:`A single row from a new initiative’s register, read from left to right.`,
+   intro:`A single row from the bakery’s register, read from left to right.`,
    cols:[`Column`,`What it records`,`Example entry`],
    rows:[
-    [`Risk`,`Cause → event → consequence`,`No equipment check before events → faulty equipment used → injury, claim`],
+    [`Risk`,`Cause → event → consequence`,`No daily check of the shared kitchen’s mixer → a guard fails during a trainee’s shift → injury, claim`],
     [`Score`,`Inherent and residual`,`Inherent 15; residual 8`],
-    [`Owner and response`,`One person; avoid, reduce, transfer or accept`,`The co-founder who runs events; reduce and transfer (public liability insurance)`],
-    [`Action and due`,`What will lower the score, by when`,`Equipment checklist written and insurance in place, before the first event`],
+    [`Owner and response`,`One person; avoid, reduce, transfer or accept`,`The baker co-founder; reduce and transfer (employer’s and public liability insurance)`],
+    [`Action and due`,`What will lower the score, by when`,`Daily equipment checklist in use and insurance in place, before the first trainee’s shift`],
     [`Review and escalation`,`When it is next checked; who hears about it`,`Monthly by the owner; both founders each quarter; any incident to the other founder within 24 hours`]
    ]
   }
@@ -277,13 +277,13 @@ export default adapt(base,{
    `When a risk happens, it becomes an issue: respond, then ask what the register missed. Over time, the register becomes a record of what you have learned while building.`
   ],
   weak:`We will look at the risks once a year, if we remember.`,
-  strong:`“Cash and safety risks checked at every monthly founders’ meeting; the full register each year alongside the budget; each risk linked to the objective it threatens; cash below three months of costs triggers an immediate review.”`,
+  strong:`“Cash, food safety and trainee risks checked at every monthly founders’ meeting; the full register each December alongside the budget; each risk linked to the objective it threatens (late payments to ISO2, trainees leaving early to ESO2); cash below US$2,000 or stall sales under 250 loaves a week for a month triggers an immediate review.”`,
   why:`It keeps risk on the agenda where decisions are made and uses clear signs to act early.`,
   reflect:`What early warning sign would tell you that the biggest risk to your launch is growing?`,
   exercise:`Set your risk review routine and early warning indicators from launch.`,
   fields:{
    routine:{label:`Risk review routine`,hint:`Which risks, how often, by whom, reported to whom (founders, adviser, later the board).`},
-   warnings:{label:`Early warning indicators`,hint:`Risk | warning sign | threshold | who watches it (you or a co-founder).`}
+   warnings:{label:`Early warning indicators`,hint:`Risk | warning sign (e.g. loaves sold at the stall) | threshold (e.g. under 250 a week for a month) | who watches it (you or a co-founder).`}
   },
   check:`Will you notice a growing risk before it becomes a crisis for something so new?`
  },
