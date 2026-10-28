@@ -164,3 +164,5 @@
 .recap-text b{display:block;color:#102e3b}.recap-text small{display:block;margin:2px 0 6px;color:#16746e;font-weight:700}.recap-text p{margin:0;color:#546974;font-size:15px}
 @media(max-width:640px){.recap-list li{flex-direction:column;align-items:flex-start}}
 .recap-list .button{white-space:nowrap;flex:0 0 auto}
+.rating-output td.rating-dot{text-align:center;color:#c9d3cd;font-size:16px}.rating-output td.rating-dot.is-on{color:#16746e}
+.rating-output thead th{text-align:center}.rating-output thead th:first-child,.rating-output thead th:last-child{text-align:left}

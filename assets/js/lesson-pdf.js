@@ -141,21 +141,38 @@ function summary(L, doc, inner) {
 }
 
 // ---------- structured fields ----------
-// f.table = {cols:[…], rows:[[…]]}: a rating table (area · where it stands · evidence), repeating its header on new pages.
+// f.table = {scale:[…], rows:[{area, pick, evidence}]}: the rating table as filled in (one column per rating, the chosen one
+// marked), repeating its header on new pages.
 function fieldLabel(L, f, inner) { L.ensure(60); for (const t of L.wrap(f.label, 'extrabold', 11, inner)) { L.text(M, L.y + 11, t, 'extrabold', 11, C.deep); L.y += 15; } L.y += 6; }
 function fieldTable(L, f, inner) {
   fieldLabel(L, f, inner);
-  const widths = [0.3, 0.2, 0.5].map(x => x * inner), pad = 8, lead = 13, size = 9.5;
-  const xs = widths.map((_, i) => M + widths.slice(0, i).reduce((a, b) => a + b, 0));
-  const header = () => { L.rect(M, L.y, inner, 24, C.deep, null, 6); f.table.cols.forEach((c, i) => L.text(xs[i] + pad, L.y + 15.5, c.toUpperCase(), 'extrabold', 7.5, C.cream, 1)); L.y += 24; };
+  const sc = f.table.scale, k = sc.length, pad = 7, lead = 12.5, size = 9;
+  const wArea = inner * 0.22, wScale = inner * 0.1, wEv = inner - wArea - k * wScale;
+  const xs = [M, ...sc.map((_, i) => M + wArea + i * wScale), M + wArea + k * wScale];
+  const header = () => {
+    const heads = sc.map(c => L.wrap(c.toUpperCase(), 'extrabold', 6, wScale - 4));
+    const h = Math.max(28, Math.max(...heads.map(x => x.length)) * 8.5 + 16);
+    L.rect(M, L.y, inner, h, C.deep, null, 6);
+    L.text(xs[0] + pad, L.y + h / 2 + 3, 'AREA', 'extrabold', 7, C.cream, 0.8);
+    heads.forEach((lines, i) => lines.forEach((t, j) => { const w = L.width(t, 'extrabold', 6); L.text(xs[i + 1] + (wScale - w) / 2, L.y + (h - lines.length * 8.5) / 2 + 7 + j * 8.5, t, 'extrabold', 6, C.cream); }));
+    L.text(xs[k + 1] + pad, L.y + h / 2 + 3, 'EVIDENCE', 'extrabold', 7, C.cream, 0.8);
+    L.y += h;
+  };
   header();
   f.table.rows.forEach((row, r) => {
-    const cells = row.map((c, i) => L.wrap(String(c), i === 0 ? 'bold' : i === 1 ? 'extrabold' : 'regular', size, widths[i] - 2 * pad));
-    const h = Math.max(...cells.map(x => x.length)) * lead + 2 * pad - 2;
+    const area = L.wrap(row.area, 'bold', size, wArea - 2 * pad);
+    const ev = L.wrap(row.evidence || '—', 'regular', size, wEv - 2 * pad);
+    const h = Math.max(area.length, ev.length, 1) * lead + 2 * pad;
     if (L.ensure(h)) header();
     L.rect(M, L.y, inner, h, r % 2 ? C.cream : C.white, null);
     L.rect(M, L.y + h - 0.75, inner, 0.75, C.line);
-    cells.forEach((lines, i) => lines.forEach((t, j) => L.text(xs[i] + pad, L.y + pad + 9 + j * lead, t, i === 0 ? 'bold' : i === 1 ? 'extrabold' : 'regular', size, i === 1 ? C.teal : C.ink)));
+    area.forEach((t, j) => L.text(xs[0] + pad, L.y + pad + 9 + j * lead, t, 'bold', size, C.ink));
+    sc.forEach((_, i) => {
+      const cx = xs[i + 1] + wScale / 2, cy = L.y + h / 2, d = 10;
+      if (i === row.pick) { L.rect(cx - d / 2, cy - d / 2, d, d, C.white, C.teal, d / 2); L.rect(cx - 3, cy - 3, 6, 6, C.teal, null, 3); }
+      else L.rect(cx - d / 2, cy - d / 2, d, d, C.white, C.line, d / 2);
+    });
+    ev.forEach((t, j) => L.text(xs[k + 1] + pad, L.y + pad + 9 + j * lead, t, 'regular', size, row.evidence ? C.ink : C.muted));
     L.y += h;
   });
   L.y += 18;

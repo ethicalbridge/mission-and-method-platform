@@ -103,7 +103,7 @@ export default adapt(base,{
   fields:{
    ratings:{label:'Capability ratings',type:'rating',
     hint:'For each area, choose where it stands today and add one piece of evidence. At this stage most areas will be not started or informal, and that is fine.',
-    evidenceHint:'e.g. no budget yet; receipts kept by one founder',
+    evidenceHint:'One piece of evidence',
     scale:[
      {label:'Not started',meaning:'Nothing exists yet.'},
      {label:'Informal',meaning:'It happens, but lives in one person’s head.'},
