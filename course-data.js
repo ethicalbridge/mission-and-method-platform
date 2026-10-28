@@ -32,6 +32,7 @@ import e8 from './course/e08-marketing-communications.js';
 import e9 from './course/e09-financial-management.js';
 import e10 from './course/e10-legal-compliance-risk.js';
 export {FOUNDER_OFFSET} from './course/adapt.js';
+export {recaps} from './course/founder-recaps.js';
 export {STAGES} from './course/kit.js';
 export {exampleOrgs,exampleOrg} from './course/examples.js';
 export {lessonVideos,moduleVideos} from './course/videos.js';

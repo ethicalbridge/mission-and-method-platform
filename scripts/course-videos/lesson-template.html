@@ -61,6 +61,11 @@ html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font
 .s-list2 .row .c{flex-basis:64px;height:64px;font-size:28px}
 .mist .row .c{background:var(--deepcoral)}
 .exs .row .c{background:var(--teal)}
+.s-recap h2{font-size:48px;line-height:1.1;color:var(--deep);margin-bottom:26px}
+.rrow{display:flex;gap:24px;align-items:flex-start;margin:12px 0;padding:14px 0;border-bottom:2px solid var(--mint)}
+.rrow .n{flex:0 0 92px;font-weight:900;font-size:30px;color:var(--teal)}
+.rrow b{display:block;font-size:31px;color:var(--deep);line-height:1.2}
+.rrow p{font-size:28px;line-height:1.3;color:var(--muted);margin-top:4px}
 </style></head>
 <body>
 <div id="stage"></div>
@@ -73,6 +78,7 @@ html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font
 <script src="founder-entrepreneurs-prove-show.js"></script>
 <script src="founder-entrepreneurs-protect.js"></script>
 <script src="founder-long-pilot.js"></script>
+<script src="founder-recaps-data.js"></script>
 <script src="founder-long-entrepreneurs-clarify.js"></script>
 <script src="founder-long-entrepreneurs-organise.js"></script>
 <script src="founder-long-entrepreneurs-prove-show.js"></script>
@@ -88,7 +94,7 @@ const lesson=KIND==='module'?null:mod.lessons.find(l=>l.key===KEY);
 const ES=window.MODULES_ES||{};
 const T={en:{lesson:'Lesson',module:'Module',course:`Course ${course.number} · ${course.name}${course.track==='entrepreneurs'?' · For entrepreneurs':''}`,idea:'The idea',how:'How to do it well',howH:'Three things to get right',example:'An example',fictional:'A fictional example organisation, for learning.',turn:'Your turn',then:'Then save it, and download it as a PDF.',lessons:n=>`${n} lessons`,lessonsH:'What you will work through',create:'You create',logo:'Better foundations. Stronger organisations.',review:'Module review'},
  es:{lesson:'Lección',module:'Módulo',course:`Curso ${course.number} · ${course.name}${course.track==='entrepreneurs'?' · Para emprendedores':''}`,idea:'La idea',how:'Cómo hacerlo bien',howH:'Tres cosas para hacerlo bien',example:'Un ejemplo',fictional:'Una organización de ejemplo ficticia, para aprender.',turn:'Te toca',then:'Luego guárdalo y descárgalo en PDF.',lessons:n=>`${n} lecciones`,lessonsH:'Lo que vas a trabajar',create:'Creas',logo:'Mejores bases. Organizaciones más fuertes.',review:'Revisión del módulo'}}[LANG];
-const T2={en:{what:'What it is',parts:'The parts',eg:'For example:',examples:'Examples',why:'Why it matters',use:'How you will use it',avoid:'What to avoid'},es:{what:'Qué es',parts:'Las partes',eg:'Por ejemplo:',examples:'Ejemplos',why:'Por qué importa',use:'Cómo lo usarás',avoid:'Qué evitar'}}[LANG];
+const T2={en:{what:'What it is',parts:'The parts',eg:'For example:',examples:'Examples',recap:'What you built',summary:'Module recap',next:'What comes next',why:'Why it matters',use:'How you will use it',avoid:'What to avoid'},es:{what:'Qué es',parts:'Las partes',eg:'Por ejemplo:',examples:'Ejemplos',recap:'Lo que construiste',summary:'Resumen del módulo',next:'Lo que viene',why:'Por qué importa',use:'Cómo lo usarás',avoid:'Qué evitar'}}[LANG];
 const modTitle=LANG==='es'?ES[mod.id][0]:mod.title, modOutput=LANG==='es'?ES[mod.id][1]:mod.output;
 const titleOf=l=>{if(l.review&&course.track==='entrepreneurs')return (LANG==='es'?'Resumen: ':'Recap: ')+(LANG==='es'?ES[mod.id][0]:mod.title).split(':')[0];return LANG==='es'?(window.TITLES_ES[l.key]||l.title):l.title;};
 const ORGS={idea:['Tide Line Youth Collective','Community group · idea stage','Grupo comunitario · etapa de idea','Indonesia'],ngo:['Imara Girls in Science','Registered nonprofit · delivering','ONG registrada · en marcha','Kenia'],social:['Pan del Barrio','Social enterprise · company','Empresa social · sociedad','Perú'],coop:['Vanita Weavers Cooperative','Cooperative · member-owned','Cooperativa · de sus socias','India'],hybrid:['Riverside Repair Hub','Hybrid · charity with a trading company','Híbrida · ONG con empresa comercial','Reino Unido']};
@@ -123,7 +129,11 @@ if(KIND==='module'){
   if(L.what)out.push(['cream s-def',read(L.what)+2.4,`<div class="eyebrow a" data-t="0.3">${esc(T2.what)}</div><div class="q serif a" data-t="0.6">${esc(L.what)}</div>`,[[0.6,L.what]]]);
   if(L.parts){let t=1.0;const cs=L.parts.items.map(c=>{const at=t;t+=read(c.text+' '+(c.example||''))+0.5;return [at,c];});const n=L.parts.items.length;
    out.push([`cream s-cards`,t+1.8,`<div class="eyebrow a" data-t="0.2">${esc(T2.parts)}</div><h2 class="serif a" data-t="0.4">${esc(L.parts.title)}</h2><div class="cards" style="grid-template-columns:repeat(${n},1fr)">${cs.map(([at,c])=>`<div class="card a" data-t="${at}"><div class="lbl">${esc(c.label)}</div><p>${esc(c.text)}</p>${c.example?`<div class="ex">${esc(T2.eg)} ${esc(c.example)}</div>`:''}</div>`).join('')}</div>`,[[0.4,L.parts.title],...cs.map(([at,c])=>[at,`${c.label}: ${c.text}${c.example?` ${T2.eg} ${c.example}`:''}`])]]);}
+  if(L.recap&&L.what)out.splice(out.length-1,1,['cream s-def',read(L.what)+2.4,`<div class="eyebrow a" data-t="0.3">${esc(T2.summary)}</div><div class="q serif a" data-t="0.6">${esc(L.what)}</div>`,[[0.6,L.what]]]);
+  if(L.recap){const it=L.recap.items;for(let k=0;k<it.length;k+=3){let t=1.0;const rows=it.slice(k,k+3).map(r=>{const at=t;t+=read(r.label+' '+r.text)+0.4;return [at,r];});
+   out.push(['white s-recap',t+1.6,`<div class="eyebrow a" data-t="0.2">${esc(T2.recap)}${it.length>3?` · ${Math.floor(k/3)+1}/${Math.ceil(it.length/3)}`:''}</div><h2 class="serif a" data-t="0.4">${esc(L.recap.title)}</h2>${rows.map(([at,r])=>`<div class="rrow a" data-t="${at}"><span class="n">${esc(r.label.split(' ')[0])}</span><div><b>${esc(r.label.split(' ').slice(1).join(' '))}</b><p>${esc(r.text)}</p></div></div>`).join('')}`,[[0.4,L.recap.title],...rows.map(([at,r])=>[at,`${r.label}: ${r.text}`])]]);}}
   if(L.examples)out.push(list('exs',T2.examples,L.examples.title,L.examples.items,'✓'));
+  if(L.next)out.push(['deep s-create',read(L.next)+2.6,`<div class="eyebrow a" data-t="0.3">${esc(T2.next)}</div><div class="big serif a" data-t="0.6" style="font-size:52px">${esc(L.next)}</div>`,[[0.6,L.next]]]);
   if(L.why)out.push(list('',T2.why,L.why.title,L.why.points));
   if(L.use)out.push(list('',T2.use,L.use.title,L.use.points));
   if(L.mistakes)out.push(list('mist',T2.avoid,L.mistakes.title,L.mistakes.points,'✕'));
@@ -138,7 +148,7 @@ window.DURATION=t0;
 const ts=x=>{const h=Math.floor(x/3600),m=Math.floor(x%3600/60),sec=(x%60).toFixed(3).padStart(6,'0');return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${sec}`;};
 window.VTT='WEBVTT\n\n'+CUES.map((c,i)=>`${i+1}\n${ts(c.start)} --> ${ts(Math.min(c.end,t0))}\n${c.text}`).join('\n\n')+'\n';
 // Fit long text: shrink a block until it fits its scene
-document.fonts.ready.then(()=>{for(const [sel,min] of [['.s-title h1',60],['.s-idea .q',46],['.quote p',30],['.s-create .big',42],['.row b',26],['.card p',22],['.s-def .q',38]])document.querySelectorAll(sel).forEach(el=>{let size=parseFloat(getComputedStyle(el).fontSize);const sc=el.closest('.scene');while(size>min&&sc.scrollHeight>720){size-=2;el.style.fontSize=size+'px';}});window.FIT_DONE=true;});
+document.fonts.ready.then(()=>{for(const [sel,min] of [['.s-title h1',60],['.s-idea .q',46],['.quote p',30],['.s-create .big',42],['.row b',26],['.card p',22],['.s-def .q',38],['.rrow p',24]])document.querySelectorAll(sel).forEach(el=>{let size=parseFloat(getComputedStyle(el).fontSize);const sc=el.closest('.scene');while(size>min&&sc.scrollHeight>720){size-=2;el.style.fontSize=size+'px';}});window.FIT_DONE=true;});
 const clamp=x=>Math.max(0,Math.min(1,x));
 const ease=x=>1-Math.pow(1-x,3);
 const back=x=>{const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};

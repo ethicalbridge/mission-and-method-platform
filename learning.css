@@ -223,3 +223,7 @@
 #read p,.learning-step.exercise > p,.reflection p{text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
 /* Every lesson: all running text justified the same way (short labels and notes stay left-aligned) */
 .lesson-content p:not(.subtle):not(.saved-status):not(.course-tag):not(.field-hint),.module-opening p,.recap-text p,.example p,.example-list li{text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
+.recap-key{margin:4px 0 6px!important;color:#102e3b!important;font-size:16px!important}
+.recap-text small{margin:0!important}
+.recap-next{margin:6px 0 18px;padding:16px 18px;border-radius:12px;background:#d8eee2}
+.recap-next b{display:block;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#0f5a55;margin-bottom:4px}.recap-next p{margin:0}
