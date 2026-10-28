@@ -140,6 +140,43 @@ function summary(L, doc, inner) {
   L.text(M, L.y + 8, 'IN FULL', 'extrabold', 8.5, C.teal, 1.3); L.y += 22;
 }
 
+// ---------- structured fields ----------
+// f.table = {cols:[…], rows:[[…]]}: a rating table (area · where it stands · evidence), repeating its header on new pages.
+function fieldLabel(L, f, inner) { L.ensure(60); for (const t of L.wrap(f.label, 'extrabold', 11, inner)) { L.text(M, L.y + 11, t, 'extrabold', 11, C.deep); L.y += 15; } L.y += 6; }
+function fieldTable(L, f, inner) {
+  fieldLabel(L, f, inner);
+  const widths = [0.3, 0.2, 0.5].map(x => x * inner), pad = 8, lead = 13, size = 9.5;
+  const xs = widths.map((_, i) => M + widths.slice(0, i).reduce((a, b) => a + b, 0));
+  const header = () => { L.rect(M, L.y, inner, 24, C.deep, null, 6); f.table.cols.forEach((c, i) => L.text(xs[i] + pad, L.y + 15.5, c.toUpperCase(), 'extrabold', 7.5, C.cream, 1)); L.y += 24; };
+  header();
+  f.table.rows.forEach((row, r) => {
+    const cells = row.map((c, i) => L.wrap(String(c), i === 0 ? 'bold' : i === 1 ? 'extrabold' : 'regular', size, widths[i] - 2 * pad));
+    const h = Math.max(...cells.map(x => x.length)) * lead + 2 * pad - 2;
+    if (L.ensure(h)) header();
+    L.rect(M, L.y, inner, h, r % 2 ? C.cream : C.white, null);
+    L.rect(M, L.y + h - 0.75, inner, 0.75, C.line);
+    cells.forEach((lines, i) => lines.forEach((t, j) => L.text(xs[i] + pad, L.y + pad + 9 + j * lead, t, i === 0 ? 'bold' : i === 1 ? 'extrabold' : 'regular', size, i === 1 ? C.teal : C.ink)));
+    L.y += h;
+  });
+  L.y += 18;
+}
+// f.items = ['…','…','…']: numbered boxes, one per line.
+function fieldItems(L, f, inner) {
+  fieldLabel(L, f, inner);
+  f.items.forEach((item, i) => {
+    const empty = !clean(item).trim();
+    const lines = L.wrap(empty ? 'Not yet drafted.' : item, 'regular', 10.5, inner - 60);
+    const h = Math.max(40, lines.length * 15 + 22);
+    L.ensure(h + 8);
+    L.rect(M, L.y, inner, h, C.white, C.line, 8);
+    L.rect(M + 12, L.y + h / 2 - 11, 22, 22, C.coral, null, 11);
+    const num = String(i + 1); L.text(M + 23 - L.width(num, 'black', 11) / 2, L.y + h / 2 + 4, num, 'black', 11, C.white);
+    lines.forEach((t, j) => L.text(M + 46, L.y + (h - lines.length * 15) / 2 + 11 + j * 15, t, 'regular', 10.5, empty ? C.muted : C.ink));
+    L.y += h + 8;
+  });
+  L.y += 10;
+}
+
 // ---------- document ----------
 // doc = { title, orgName, date, sections:[{eyebrow, heading, fields:[{label, value}]}], created:{course, detail}, filename }
 function compose(L, doc) {
@@ -159,6 +196,8 @@ function compose(L, doc) {
       L.y += 8;
     }
     for (const f of sec.fields) {
+      if (f.table) { fieldTable(L, f, inner); continue; }
+      if (f.items) { fieldItems(L, f, inner); continue; }
       const empty = !clean(f.value).trim();
       const lines = L.wrap(empty ? 'Not yet drafted.' : f.value, 'regular', SIZE, inner - 2 * PAD);
       const labelLines = L.wrap(f.label, 'extrabold', 11, inner - 2 * PAD);

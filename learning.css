@@ -134,3 +134,33 @@
 .course-band-idea .course-band-badge b{font-size:30px}
 .idea-founders{margin:28px 0;padding:22px;border-radius:16px;background:#fff;border:1px solid #ede8dd}
 .idea-founders h2{font-size:26px;margin:0 0 6px}.idea-founders p{margin:0 0 8px;color:var(--muted)}.idea-founders ul{margin:0;padding-left:20px;line-height:1.7}
+/* Structured exercise fields: rating table and numbered boxes (learning.js fieldInput) */
+.rating-key{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 12px;padding:10px 14px;border-radius:12px;background:#f4f7f5;font-size:13px}
+.rating-key div{display:flex;gap:6px}.rating-key dt{font-weight:800;color:#123c48}.rating-key dd{margin:0;color:#546974}
+.rating-table-wrap{overflow-x:auto;margin:0 0 18px;border:1px solid #d8dfd9;border-radius:14px;background:#fff}
+.rating-table{width:100%;min-width:720px;border-collapse:collapse;font-size:14px}
+.rating-table th,.rating-table td{padding:10px 8px;border-bottom:1px solid #eef1ee;text-align:center;vertical-align:middle}
+.rating-table thead th{background:#123c48;color:#fffaf3;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.25}
+.rating-table thead th:first-child,.rating-table tbody th{text-align:left}
+.rating-table tbody th{font-weight:700;color:#102e3b;min-width:150px}
+.rating-table tbody tr:nth-child(even){background:#fffaf3}
+.rating-table tbody tr:last-child th,.rating-table tbody tr:last-child td{border-bottom:0}
+.rating-cell input{width:20px;height:20px;accent-color:#16746e;cursor:pointer}
+.rating-evidence{min-width:220px;text-align:left!important}
+.rating-evidence input{width:100%;padding:8px 10px;border:1px solid #c9d3cd;border-radius:8px;font:inherit;font-size:14px}
+.numbered-fields{list-style:none;counter-reset:nf;padding:0;margin:6px 0 18px;display:grid;gap:10px}
+.numbered-fields li{counter-increment:nf;display:flex;align-items:center;gap:12px}
+.numbered-fields li::before{content:counter(nf);flex:0 0 32px;height:32px;border-radius:50%;background:#e56f4a;color:#fff;font-weight:900;display:grid;place-items:center}
+.numbered-fields input{flex:1;padding:12px 14px;border:1px solid #c9d3cd;border-radius:10px;font:inherit}
+.output-table{width:100%;border-collapse:collapse;margin:6px 0 14px;font-size:14px}
+.output-table th,.output-table td{padding:8px 10px;border-bottom:1px solid #e3e8e4;text-align:left}
+.output-table thead th{background:#123c48;color:#fffaf3;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.output-table td:nth-child(2){font-weight:800;color:#16746e}
+.output-list{margin:6px 0 14px;padding-left:22px}.output-list li{margin:4px 0}
+/* Entrepreneurs' module recap (learning.js recapBody) */
+.recap-list{list-style:none;padding:0;margin:16px 0;display:grid;gap:12px}
+.recap-list li{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px 18px;border:1px solid #d8dfd9;border-radius:14px;background:#fff}
+.recap-list li.is-done{border-left:4px solid #16746e}
+.recap-text b{display:block;color:#102e3b}.recap-text small{display:block;margin:2px 0 6px;color:#16746e;font-weight:700}.recap-text p{margin:0;color:#546974;font-size:15px}
+@media(max-width:640px){.recap-list li{flex-direction:column;align-items:flex-start}}
+.recap-list .button{white-space:nowrap;flex:0 0 auto}

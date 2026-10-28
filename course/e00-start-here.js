@@ -96,13 +96,22 @@ export default adapt(base,{
    ]
   },
   weak:'Everything is fine; we just need funding.',
-  strong:'“Legal and compliance: not started; no safeguarding policy, although we plan to work with 12–17-year-olds. Finance: not started; one co-founder keeps receipts, no budget. Partnerships: informal; local leaders support us in conversation, nothing in writing.”',
+  strong:'“Legal and compliance: not started; no safeguarding policy, although we plan to work with 12–17-year-olds. Finance: not started; one co-founder keeps receipts, no budget. Communications: informal; local leaders support us in conversation, nothing in writing.”',
   why:'It names the gaps that matter for what you plan to do, so a vague worry becomes a priority list.',
   reflect:'Which low rating would cause the most harm if it was still unchanged when you start your first activities?',
   exercise:'Rate each area as it stands today, give one piece of evidence and name your three priorities for this course.',
   fields:{
-   ratings:{label:'Capability ratings',hint:'One per line: area | rating (not started / informal / documented / practised / reviewed) | evidence. Areas: strategy, theory of change, governance, people, systems, MEAL, brand, communications, finance, legal and compliance, risk, resources, partnerships, planning. At this stage most will be not started or informal.'},
-   priorities:{label:'Top three priorities',hint:'Which three areas will you build first, and why?'}
+   ratings:{label:'Capability ratings',type:'rating',
+    hint:'For each area, choose where it stands today and add one piece of evidence. At this stage most areas will be not started or informal, and that is fine.',
+    evidenceHint:'e.g. no budget yet; receipts kept by one founder',
+    scale:[
+     {label:'Not started',meaning:'Nothing exists yet.'},
+     {label:'Informal',meaning:'It happens, but lives in one person’s head.'},
+     {label:'Documented',meaning:'It is written down.'},
+     {label:'Practised',meaning:'People actually use it.'},
+     {label:'Reviewed',meaning:'You check it works and improve it.'}],
+    areas:['Purpose and strategy','Theory of change','Governance and decisions','People and roles','Internal systems','Monitoring and evidence (MEAL)','Brand and identity','Communications','Finance','Legal and compliance','Risk']},
+   priorities:{label:'Top three priorities',type:'list',count:3,hint:'Which three areas will you build first, and why? One per box, most important first.',placeholder:'Area: why it comes first'}
   },
   check:'Is every rating supported by a specific piece of evidence, even if the evidence is that nothing exists yet?'
  },
