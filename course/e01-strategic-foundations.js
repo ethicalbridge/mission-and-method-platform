@@ -35,22 +35,26 @@ export default adapt(base,{
  },
  context:{
   learn:[
-   'Context analysis looks outward at the conditions you will enter, and at the trends changing them: social, economic, political, legal, technological and environmental. It helps you see opportunities and constraints before you commit your time, savings or a legal form to one strategy.',
-   'Map who is already active: public services, community groups, nonprofits, businesses, funders and networks. Note what they do, for whom and how well. A crowded field is not a reason to stop, but it is a reason to collaborate, specialise, choose a different gap or even join an existing effort instead of starting your own.',
-   'Use simple frameworks as prompts, not forms to fill. A PESTLE scan (political, economic, social, technological, legal, environmental) and a SWOT (strengths, weaknesses, opportunities, threats) are enough at the start. Write each point as a specific observation with a source, even if the source is your own conversations, and say what it means for your idea.',
-   'Revisit your context before each big step, such as registering, launching or accepting your first funding, and at least once a year after that. A new law, a funding shift or a crisis can change the picture. The decisions in the rest of this module rest on it.'
+   'Before you build anything, look at the world your idea will enter. Who has the problem, how do they solve it today, and what is changing around them? Prices, rules, technology, local habits and the weather can all open a door for your idea or close one. Context analysis turns these into a short, honest picture you can act on.',
+   'Map who is already active: businesses selling something similar, public services, nonprofits, informal groups and the “do nothing” option people use today. Note what each offers, to whom, at what price or cost, and how well. Competitors and alternatives are good news: they prove the need exists. Your job is to find the gap they leave, the people they miss or a way to work with them, which can sometimes mean joining an existing effort instead of starting your own.',
+   'Use two simple frameworks as prompts, not forms. A PESTLE scan looks at six outside factors: political, economic, social, technological, legal and environmental. A SWOT analysis sets your strengths and weaknesses (inside: your skills, money, time and network) against the opportunities and threats around you (outside). Write each point as a specific observation with a source, even if the source is your own conversations with future customers or users, and say what it means for your idea.',
+   'Revisit your context before each big step, such as registering, launching, setting prices or accepting your first funding or investment. A new competitor, a law, a price change or a crisis can change the picture. The decisions in the rest of this module, from your purpose to your objectives, rest on it.'
   ],
-  weak:'There is a lot of need and not much support.',
-  strong:'The new curriculum asks schools for practical science, but five of the six schools we visited have no lab (our school visits). The two other science programmes we found work in the capital, not in our district.',
-  why:'It names a real policy change, a specific gap with its source and the other actors, so each point can shape a decision about where to start.',
-  reflect:'Which actor already working on this issue could become a partner, and which could see you as competition?',
-  exercise:'Complete a short context scan and a list of the main actors in the landscape you are about to enter.',
+  weak:'There is a big market and nobody is doing this well.',
+  strong:'Economic: rents near the market rose about 20% this year (two landlords we spoke to), so our first space must be shared or mobile. Who is active: two cafés sell coffee but neither offers training jobs for young people; the youth centre runs courses but has no work placements, so it could refer trainees to us.',
+  why:'Each point names a specific change or actor, its source and what it means for the idea, so it can shape a real decision: where to start, what to charge and who to partner with.',
+  reflect:'Which business or group already serving these people could become your partner, your supplier or your first customer, and which would see you as competition?',
+  exercise:'Scan the six outside factors, list the main businesses and groups already active, and finish with a SWOT analysis of your idea.',
   fields:{
-   trends:{label:'Context scan',hint:'One per line: factor (political, economic, social, technological, legal, environmental) | observation | source | implication for our idea.'},
-   actors:{label:'Who is already active',hint:'Organisation or service | what they do | for whom | gap or overlap with our idea.'},
-   swot:{label:'Strengths, weaknesses, opportunities, threats',hint:'Two or three specific points under each heading. Your strengths can include your own skills, relationships and experience.'}
+   trends:{label:'Context scan (PESTLE)',hint:'One line per factor: what you observed, where it comes from and what it means for your idea. Leave a line empty only if nothing relevant applies.',type:'table',
+    columns:[{label:'Factor'},{label:'What you observed',placeholder:'e.g. rents near the market rose this year'},{label:'Source',placeholder:'e.g. two landlords'},{label:'What it means for your idea',placeholder:'e.g. start in a shared space'}],
+    rowLabels:['Political','Economic','Social','Technological','Legal','Environmental']},
+   actors:{label:'Who is already active',hint:'Competitors, alternatives and possible partners: one per line.',type:'table',rows:5,
+    columns:[{label:'Business, group or service',placeholder:'e.g. Corner café'},{label:'What they offer',placeholder:'e.g. coffee and snacks'},{label:'For whom',placeholder:'e.g. office workers'},{label:'Gap, overlap or partnership',placeholder:'e.g. no training jobs: possible partner'}]},
+   swot:{label:'SWOT analysis',hint:'Two or three specific points in each box. Strengths and weaknesses are inside (your skills, money, time, network); opportunities and threats are outside.',type:'parts',layout:'swot',
+    parts:[{label:'Strengths',placeholder:'e.g. ten years as a baker; a trusted name in the neighbourhood'},{label:'Weaknesses',placeholder:'e.g. no savings for equipment; only weekends free'},{label:'Opportunities',placeholder:'e.g. the market reopens in March with new stalls'},{label:'Threats',placeholder:'e.g. rising flour prices; a chain opening nearby'}]}
   },
-  check:'Is each observation specific, sourced and connected to an implication for what you are building?'
+  check:'Is each observation specific, sourced and connected to what it means for your idea?'
  },
  stakeholders:{
   learn:[

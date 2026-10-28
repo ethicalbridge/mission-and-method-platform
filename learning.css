@@ -174,3 +174,15 @@
 .output-parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0 14px}
 .output-parts dt{grid-row:1;font-size:12px;font-weight:800;text-transform:uppercase;color:#16746e}.output-parts dd{grid-row:2;margin:0;white-space:pre-line}
 @media(max-width:760px){.field-parts{grid-template-columns:1fr}.output-parts{grid-template-columns:1fr}.output-parts dt,.output-parts dd{grid-row:auto}}
+/* Entry tables (type 'table') and the SWOT square (type 'parts', layout 'swot') */
+.entry-table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}
+.entry-table thead th{background:#123c48;color:#fffaf3;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:10px}
+.entry-table tbody th{text-align:left;padding:10px;font-weight:800;color:#102e3b;background:#f4f7f5;width:16%;vertical-align:top}
+.entry-table td{padding:6px;border-bottom:1px solid #eef1ee;vertical-align:top}
+.entry-table textarea{width:100%;min-height:52px;padding:8px 10px;border:1px solid #c9d3cd;border-radius:8px;font:inherit;font-size:14px;resize:vertical}
+.field-parts.swot,.output-parts.swot{grid-template-columns:repeat(2,minmax(0,1fr))}
+.field-parts.swot .field-part{padding:12px;border-radius:14px;background:#fff;border:1px solid #d8dfd9;border-top:5px solid #16746e}
+.field-parts.swot .field-part:nth-child(2){border-top-color:#e56f4a}.field-parts.swot .field-part:nth-child(3){border-top-color:#7cc2ad}.field-parts.swot .field-part:nth-child(4){border-top-color:#e8a23b}
+.field-parts.swot .field-part:nth-child(3) label{color:#16746e}.field-parts.swot .field-part:nth-child(4) label{color:#9a6512}
+.output-parts.swot dt,.output-parts.swot dd{grid-row:auto}
+@media(max-width:760px){.field-parts.swot,.output-parts.swot{grid-template-columns:1fr}}

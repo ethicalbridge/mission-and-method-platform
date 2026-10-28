@@ -177,9 +177,42 @@ function fieldTable(L, f, inner) {
   });
   L.y += 12;
 }
+// f.grid = {cols:[…], rows:[[…]], labelled}: an entry table, one row per line; column widths follow the column count.
+function fieldGrid(L, f, inner) {
+  fieldLabel(L, f, inner);
+  const n = f.grid.cols.length, pad = 6, lead = 11.5, size = 8.8;
+  const first = n === 4 ? 0.2 : 1 / n, rest = (1 - first) / (n - 1);
+  const widths = f.grid.cols.map((_, i) => inner * (i ? rest : first));
+  const xs = widths.map((_, i) => M + widths.slice(0, i).reduce((a, b) => a + b, 0));
+  const header = () => {
+    const heads = f.grid.cols.map((c, i) => L.wrap(c.toUpperCase(), 'extrabold', 6.8, widths[i] - 2 * pad));
+    const h = Math.max(...heads.map(x => x.length)) * 9 + 14;
+    L.rect(M, L.y, inner, h, C.deep, null, 6);
+    heads.forEach((lines, i) => lines.forEach((t, j) => L.text(xs[i] + pad, L.y + 11 + j * 9, t, 'extrabold', 6.8, C.cream)));
+    L.y += h;
+  };
+  header();
+  f.grid.rows.forEach((row, r) => {
+    const cells = row.map((c, i) => L.wrap(c || '—', i === 0 ? 'bold' : 'regular', size, widths[i] - 2 * pad));
+    const h = Math.max(...cells.map(x => x.length)) * lead + 2 * pad;
+    if (L.ensure(h)) header();
+    L.rect(M, L.y, inner, h, r % 2 ? C.cream : C.white, null);
+    L.rect(M, L.y + h - 0.75, inner, 0.75, C.line);
+    cells.forEach((lines, i) => lines.forEach((t, j) => L.text(xs[i] + pad, L.y + pad + 8.5 + j * lead, t, i === 0 ? 'bold' : 'regular', size, row[i] ? C.ink : C.muted)));
+    L.y += h;
+  });
+  L.y += 12;
+}
 // f.parts = [{label, text}]: one answer in labelled parts (e.g. what we know / assume / need to learn), side by side.
 function fieldParts(L, f, inner) {
   fieldLabel(L, f, inner);
+  if (f.layout === 'swot' && f.parts.length === 4) { // the usual SWOT square: strengths | weaknesses over opportunities | threats
+    const top = { ...f, layout: '', parts: f.parts.slice(0, 2), label: '' }, bottom = { ...f, layout: '', parts: f.parts.slice(2), label: '' };
+    partsRow(L, top, inner, [C.teal, C.coral]); partsRow(L, bottom, inner, [C.lightteal, '#E8A23B']); L.y += 6; return;
+  }
+  partsRow(L, f, inner, [C.teal, C.coral, C.lightteal]);
+}
+function partsRow(L, f, inner, colours) {
   const k = f.parts.length, gap = 8, w = (inner - gap * (k - 1)) / k, pad = 10, lead = 13.5, size = 9.5;
   const cols = f.parts.map(p => ({ head: L.wrap(p.label.toUpperCase(), 'extrabold', 7.5, w - 2 * pad), body: L.wrap(clean(p.text || '').trim() ? p.text : 'Not yet drafted.', 'regular', size, w - 2 * pad), empty: !clean(p.text || '').trim() }));
   const h = Math.max(...cols.map(c => c.head.length * 10 + 8 + c.body.length * lead)) + 2 * pad;
@@ -187,12 +220,12 @@ function fieldParts(L, f, inner) {
   cols.forEach((c, i) => {
     const x = M + i * (w + gap);
     L.rect(x, L.y, w, h, C.white, C.line, 8);
-    L.rect(x, L.y + 8, 3, h - 16, i === 0 ? C.teal : i === 1 ? C.coral : C.lightteal, null, 1.5);
+    L.rect(x, L.y + 8, 3, h - 16, colours[i % colours.length], null, 1.5);
     c.head.forEach((t, j) => L.text(x + pad, L.y + pad + 7 + j * 10, t, 'extrabold', 7.5, C.teal, 0.6));
     const top = L.y + pad + c.head.length * 10 + 8;
     c.body.forEach((t, j) => L.text(x + pad, top + 9 + j * lead, t, 'regular', size, c.empty ? C.muted : C.ink));
   });
-  L.y += h + 12;
+  L.y += h + 8;
 }
 // f.items = ['…','…','…']: numbered boxes, one per line.
 function fieldItems(L, f, inner) {
@@ -232,6 +265,7 @@ function compose(L, doc) {
     for (const f of sec.fields) {
       if (f.table) { fieldTable(L, f, inner); continue; }
       if (f.items) { fieldItems(L, f, inner); continue; }
+      if (f.grid) { fieldGrid(L, f, inner); continue; }
       if (f.parts) { fieldParts(L, f, inner); continue; }
       const empty = !clean(f.value).trim();
       const lines = L.wrap(empty ? 'Not yet drafted.' : f.value, 'regular', SIZE, inner - 2 * PAD);
