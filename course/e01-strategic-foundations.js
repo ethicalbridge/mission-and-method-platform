@@ -202,7 +202,7 @@ const m=adapt(base,{
    'This is strategic positioning: where you will add value that others do not. How you express that position in words and images comes later, in Module 7.'
   ],
   weak:'We will be unique because we care more than anyone else.',
-  strong:'The only girls-only, club-based science programme planned for public schools in our district, with mentors who are local women scientists we already know. We will not offer general tutoring or exam coaching.',
+  strong:'The only bakery in our neighbourhood that trains young people while they work, and the owner has ten years of baking experience. We sell bread and cakes, but we will not open a café.',
   why:'It names an advantage others can check, a clear focus and the work it turns down from the start.',
   reflect:'If you never started, what would be missing that no one else provides?',
   exercise:'Write your positioning statement and list the choices it implies. Mark any advantage you still need to prove.',
