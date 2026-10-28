@@ -8,6 +8,8 @@ import {ownsCourse} from './course-access.js?v=ev5';
 import {ownsFounderCourse,ownsAllFounderCourses,openFounderCheckout,FOUNDER_ALL} from './founder-checkout.js?v=1';
 import {readState,mutateState,emptyState,lessonKey,storeKey,valueOf,stats,isFilled,invalidate,escapeHTML as e,download,STORAGE_KEY,validateState,FIRST_LESSON} from './learning-store.js?v=ev44';
 const root=document.querySelector('#learning-root');
+// ?reset-answers empties every saved answer, completed lesson and task in this browser (course access is kept).
+{const q=new URLSearchParams(location.search);if(q.has('reset-answers')){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(emptyState()));}catch{}q.delete('reset-answers');history.replaceState(history.state,'',location.pathname+(q.size?`?${q}`:'')+location.hash);}}
 let state;let storageError='';try{state=readState();}catch(err){state=emptyState();storageError='Saved work could not be loaded. Storage may be unavailable or the saved file may be damaged. Your existing data has not been overwritten. You can export this session or restore a backup from Your Organisation.';}
 const urlFor=(m,l)=>`/${lessonPath(m,l)}`;
 // Which lesson this page shows: a lesson page carries it on <body>; learn.html?module=&lesson= (old links) in the query.
