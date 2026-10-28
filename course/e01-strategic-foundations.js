@@ -150,16 +150,16 @@ const m=adapt(base,{
   learn:[
    'Values are the principles that guide what you do when decisions are hard. A single word such as integrity or inclusion is only a starting point. Describe what people will actually do, and how you would notice whether it happens.',
    'Choose a small set you can practise consistently; three to five is a useful range. Agree them with your co-founders and, where you can, with the first people who will be expected to live by them. Do not adopt a value just because other organisations display it.',
-   'For each value, write a behaviour, something you avoid and a way to check. Inclusion might mean budgeting for accessible participation and checking who is missing from your early conversations. That takes time and money, not only welcoming words, so it belongs in your first budget too.',
+   'For each value, explain in one sentence what it means for you, how it will show in what you do and what you will avoid. Inclusion might mean budgeting for accessible participation and checking who is missing from your early conversations. That takes time and money, not only welcoming words, so it belongs in your first budget too.',
    'Values can pull against each other. Openness does not mean publishing private information about participants. Agree now how you will handle trade-offs and who can raise a concern safely, before your first hard decision arrives. Values set early shape the culture of everything you build, and they will come back when you write your code of conduct.'
   ],
   weak:'Our values will be excellence, integrity and impact.',
-  strong:'“Open books”: every co-founder, and later every member, can see the accounts; we keep no side deals or unrecorded cash; we share the figures and answer questions at every meeting, from the first one.',
-  why:'It turns a word into a behaviour others can see and a check they can make themselves, starting before there is much money to track.',
+  strong:'Respect: we listen before we decide, and treat the people we serve as experts in their own lives.\nHonesty: we say what we know and what we do not, and we never promise results we cannot show.\nOpenness: anyone who works with us can see how money is raised and spent.\nLearning: we test our ideas early, admit mistakes and change course when the evidence asks us to.',
+  why:'Each value is a short word followed by what it means for you in practice, so anyone joining you understands what to expect and can tell whether you live by it.',
   reflect:'What principle would you protect even if it cost time, revenue or a funding offer?',
-  exercise:'Create three to five entries using: value → behaviour → boundary → evidence. Test them against one difficult decision you can foresee in your first year.',
+  exercise:'Choose three to five values. For each one, explain in a sentence what it means for you, how it will show in what you do and what you will avoid. Then test them against one difficult decision you can foresee in your first year.',
   fields:{
-   values:{label:'Our values in practice',hint:'One per line: value | behaviour | what we avoid | how we check.'},
+   values:{label:'Our values in practice',hint:'One per line: value | what it means for us | how it shows in practice | what we avoid.'},
    tradeoff:{label:'A difficult decision we can foresee',hint:'Which values could conflict as you start, and how would you decide?'}
   },
   check:'Could someone joining you observe whether you are practising each value?'
