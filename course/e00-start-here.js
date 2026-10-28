@@ -19,7 +19,7 @@ export default adapt(base,{
    'Within each module, lessons move from understanding a concept to designing, implementing, managing and reviewing it. For now, some of these steps will be plans rather than practice, and that is fine. You do not need to finish in one sitting. Draft honestly, mark what is uncertain and come back: later modules show you where earlier answers need revising.'
   ],
   weak:'Skip straight to registration and copy a template.',
-  strong:'“We most need Module 10, because we want to register before our first activity. Registration depends on our choice of form and on our mission, so we will work through Module 01 first and reach Module 10 within three months.”',
+  strong:'“We most need Module 10, because we want to register the bakery before our three informal months at the market stall end. Registration depends on our choice of form and on our mission, so we will work through Module 01 first and reach Module 10 within three months.”',
   why:'It names the urgent need, checks which earlier decisions it relies on and sets a realistic route, so urgency becomes a reason to work in order rather than to skip ahead.',
   reflect:'Which decision feels most urgent as you start, and which earlier decision does it depend on?',
   exercise:'Look at the course map. Note the module you most need as you start, the earlier decisions it depends on and when you plan to reach it.',
@@ -53,7 +53,7 @@ export default adapt(base,{
    intro:'Six parts, the same ones you complete in the exercise below.',
    rows:[
     ['Name','What will you be called?','A registered name if you already have one, or a working name.'],
-    ['In one sentence','What will you do, for whom and where?','“We want to run after-school science clubs for girls aged 10 to 14 in two districts of our city.”'],
+    ['In one sentence','What will you do, for whom and where?','“We want to bake and sell bread at our weekly market and give young people who left school early a paid traineeship, in one neighbourhood of our city.”'],
     ['Intended legal form and registration','What kind of organisation do you plan to become, and where?','Nonprofit association, foundation, company, cooperative, a hybrid of two entities, an informal group for now, or not decided yet.'],
     ['Stage and who is involved','How far along are you, and who is involved so far?','Stage (idea, testing, first activities or sales), founders and co-founders, volunteers or advisers, any budget or first-year estimate, when you started.'],
     ['Activities, people and places','What do you plan to do, with whom and where?','Planned activities, who will take part or buy, locations. Flag work with children or vulnerable adults, personal data or money from the public.'],
@@ -61,8 +61,8 @@ export default adapt(base,{
    ]
   },
   weak:'We are starting something to help young people.',
-  strong:'“Working name still to be chosen. Mangrove restoration and environmental education with young people in two coastal villages. Idea stage: two co-founders, four volunteers, no paid staff, no budget yet. Not registered; choosing between an association and a foundation.”',
-  why:'The stronger version says what it will do, for whom and where, the stage, who is involved so far, and gives an honest note on form. Each of those changes which policies, governance and funding options will apply.',
+  strong:'“Working name still to be chosen. A neighbourhood bakery that sells bread and cakes at the Saturday market and trains young people aged 17–24 who left school early through six-month paid traineeships. Idea and pilot stage: two co-founders (a baker and a youth worker), four trainees planned for year 1, first-year costs estimated at about US$48,000. Not registered; informal for the first three months, then leaning towards a company with a social purpose.”',
+  why:'The stronger version says what it will do, for whom and where, the stage, who is involved so far, and gives an honest note on form. Each of those changes which policies, governance and funding options will apply: trainees as young as 17, for example, mean safeguarding matters from day one.',
   reflect:'Which parts of your profile are decided, and which are still assumptions or hopes?',
   exercise:'Write your founding profile in the six parts. Keep each part short and factual. Mark anything undecided as a question rather than guessing.',
   fields:{
@@ -85,18 +85,18 @@ export default adapt(base,{
   ],
   anatomy:{
    title:'The five ratings, with one example',
-   intro:'The same area, finance, at each level, as it might look in an organisation that is just starting. Use it to calibrate your own ratings.',
+   intro:'The same area, finance, at each level, as it might look in our bakery in its first months. Use it to calibrate your own ratings.',
    cols:['Rating','What it means','Finance at this level'],
    rows:[
-    ['Not started','Nothing exists yet.','No budget. The founder pays costs personally and keeps receipts in a drawer.'],
-    ['Informal','It happens, but it lives in one person’s head or habits.','One founder tracks money in a personal spreadsheet that nobody else can read.'],
-    ['Documented','It is written down.','A first-year budget and a one-page note on who can spend what exist, but are rarely opened.'],
-    ['Practised','People actually use it.','Both co-founders approve every payment over an agreed amount, and spending is compared with the budget each month.'],
-    ['Reviewed','You check whether it works and improve it.','The founders review the budget and spending rules every few months, and lowered the approval limit after a near miss.']
+    ['Not started','Nothing exists yet.','No budget. One founder pays for flour and the stall personally and keeps receipts in a drawer.'],
+    ['Informal','It happens, but it lives in one person’s head or habits.','The baker tracks stall takings and ingredient costs in a personal notebook that nobody else can read.'],
+    ['Documented','It is written down.','A first-year budget (about US$48,000 of costs) and a one-page note on who can spend what exist, but are rarely opened.'],
+    ['Practised','People actually use it.','Both co-founders approve every payment over an agreed amount, and takings and spending are compared with the budget each month.'],
+    ['Reviewed','You check whether it works and improve it.','The founders review the budget and spending rules every three months, and lowered the approval limit after a large flour order went unchecked.']
    ]
   },
   weak:'Everything is fine; we just need funding.',
-  strong:'“Legal and compliance: not started; no safeguarding policy, although we plan to work with 12–17-year-olds. Finance: not started; one co-founder keeps receipts, no budget. Communications: informal; local leaders support us in conversation, nothing in writing.”',
+  strong:'Legal and compliance: not started; no safeguarding policy, although some trainees will be 17, and no food-hygiene registration yet.\nFinance: informal; the baker keeps receipts and stall takings in a notebook, no budget.\nCommunications: informal; the youth centre backs us in conversation, nothing in writing.',
   why:'It names the gaps that matter for what you plan to do, so a vague worry becomes a priority list.',
   reflect:'Which low rating would cause the most harm if it was still unchanged when you start your first activities?',
   exercise:'Rate each area as it stands today, give one piece of evidence and name your three priorities for this course.',
@@ -111,7 +111,7 @@ export default adapt(base,{
      {label:'Practised',meaning:'People actually use it.'},
      {label:'Reviewed',meaning:'You check it works and improve it.'}],
     areas:['Purpose and strategy','Theory of change','Governance and decisions','People and roles','Internal systems','Monitoring and evidence (MEAL)','Brand and identity','Communications','Finance','Legal and compliance','Risk']},
-   priorities:{label:'Top three priorities',type:'list',count:3,hint:'Which three areas will you build first, and why? One per box, most important first.',placeholder:'Area: why it comes first'}
+   priorities:{label:'Top three priorities',type:'list',count:3,hint:'Which three areas will you build first, and why? One per box, most important first.',placeholder:'Area: why it comes first, e.g. Legal and compliance: some trainees are 17'}
   },
   check:'Is every rating supported by a specific piece of evidence, even if the evidence is that nothing exists yet?'
  },

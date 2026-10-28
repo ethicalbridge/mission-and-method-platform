@@ -14,21 +14,21 @@ const m=adapt(base,{
  purpose:{
   learn:[
    'Purpose explains why what you are building needs to exist. Start with a specific unmet need and the people or environment affected by it. A personal motivation often starts the journey, and that is fine, but a new organisation needs a reason that matters beyond its founders if others are to join it, fund it or buy from it.',
-   'Separate the need from your preferred solution. Founders often fall in love with an idea before they have checked the problem. “We need an app” names a solution; “rural families cannot find reliable information about local services” names a problem. A phone line or a trusted community worker might meet that need better.',
+   'Separate the need from your preferred solution. Founders often fall in love with an idea before they have checked the problem. “We need a training bakery” names a solution; “young people in our neighbourhood who left school early cannot find a first job” names a problem. A placement scheme with bakeries that already exist might meet that need better.',
    'Before you build anything, talk with the people affected, including those who may disagree with your idea or see no need for it. Record what you have heard, what evidence you have and what is still an assumption. Module 2 looks at causes in depth; here you only need a clear, honest description of the need.',
    'A useful purpose statement names the change that motivates you without promising more than you can influence. It should still make sense if your first idea changes, which it probably will, and it helps you decide whether a new opportunity belongs in what you are building.'
   ],
   weak:'We want to start something that makes a difference.',
-  strong:'“We exist so that girls in our town can choose science, and the futures it opens, with confidence.”',
+  strong:'“We exist so that young people who left school early can build skills and a working life, and our neighbourhood has good bread at a fair price.”',
   why:'It names who is affected and the change they need, but leaves room to test different ways of getting there before you commit to one.',
   reflect:'Whose description of the problem have you heard so far? Who have you not yet asked?',
   exercise:'Write the need before drafting your purpose. Name one evidence gap and a realistic way to investigate it in the next few weeks, before you invest more time or money.',
   fields:{
    need:{label:'The need we want to address',hint:'Who experiences the problem, where, and what happens as a result?'},
    evidence:{label:'Evidence and open questions',hint:'Keep three lists apart, so a guess never passes for a fact.',type:'parts',parts:[
-    {label:'What we know',placeholder:'Facts you have seen or heard from the people affected.'},
-    {label:'What we assume',placeholder:'What you believe but have not checked yet.'},
-    {label:'What we need to learn',placeholder:'The questions to answer next, and how you will find out.'}]},
+    {label:'What we know',placeholder:'Facts you have seen or heard from the people affected, e.g. young people at the youth centre say employers ask for experience they cannot get.'},
+    {label:'What we assume',placeholder:'What you believe but have not checked yet, e.g. neighbours will choose our bread over the supermarket’s.'},
+    {label:'What we need to learn',placeholder:'The questions to answer next, and how you will find out, e.g. would the two cafés buy wholesale? Ask them before we bake.'}]},
    purpose:{label:'Our purpose',hint:'We exist so that…'}
   },
   check:'Could someone understand why your initiative should exist without knowing your planned activities?'
@@ -64,25 +64,25 @@ const m=adapt(base,{
    'You will come back to this map in your Theory of Change, when you ask whose behaviour has to change for your outcomes to happen, and again as you grow and new groups appear.'
   ],
   weak:'Stakeholders: the community, funders and the government.',
-  strong:'Young people we want to train (benefit, high interest, low influence: a monthly conversation with the founders); local employers (pay for placements, decide on hiring: consult before we launch); the municipal youth programme (could refer trainees, possible funder: meet this quarter).',
-  why:'It separates who benefits from who pays and decides, and says how each group will be engaged from the start, which makes the map usable.',
+  strong:'Trainees: benefit; high interest, low influence. A monthly conversation with the founders.\nMarket shoppers: pay; their choices decide whether we survive. Ask for feedback at the stall every week.\nCafés and canteen: pay wholesale and decide on orders. Agree terms before we launch.\nYouth centre: refers trainees and influences who applies. Meet every month.\nYouth fund: pays a US$6,000 grant and decides on renewal. A short report each quarter.',
+  why:'It separates who benefits (trainees) from who pays and decides (shoppers, cafés, the youth fund), and says how each group will be engaged from the start, which makes the map usable.',
   reflect:'Who will be affected by what you build but has the least say in it?',
   exercise:'Build a stakeholder map for your idea and decide how you will engage each priority group before and after you launch.',
   fields:{
-   map:{label:'Stakeholder map',hint:'Stakeholder | role (benefits / pays / decides / influences) | interest | influence | how we will engage.'},
+   map:{label:'Stakeholder map',hint:'Stakeholder (e.g. trainees) | role (benefits / pays / decides / influences) | interest (e.g. high) | influence (e.g. low) | how we will engage (a monthly conversation with the founders).'},
    overlooked:{label:'Who could be overlooked',hint:'Which group has high interest but little influence, and how will you include them from the start?'}
   },
   check:'Have you separated who will benefit, who will pay, who decides and who influences?',
   anatomy:{
    title:'Four roles, four questions',
-   intro:'One group can hold more than one role. The examples show the kind of answer to look for.',
+   intro:'One group can hold more than one role. The examples are for our bakery.',
    cols:['Role','Ask','Example'],
    rows:[
-    ['Benefits','Whose life or environment should change?','The young people you want to train; the girls you want to reach.'],
-    ['Pays','Whose money will keep the work going?','Customers who buy your product; a funder; members who pay a fee.'],
-    ['Decides','Who can say yes or no to what you do?','A landowner or village head who agrees a site; a head teacher who opens a school to you; a licensing authority.'],
-    ['Influences','Who shapes results without a formal decision?','Neighbours near your site; a local council team; groups already working on the same issue.'],
-    ['Several at once','Does any group hold more than one role?','In a cooperative, members can benefit, own the organisation and elect its committee.']
+    ['Benefits','Whose life or environment should change?','Young people who left school early, trained in paid traineeships; families who buy good bread at a fair price.'],
+    ['Pays','Whose money will keep the work going?','Market shoppers and neighbours; two cafés and an office canteen that buy wholesale; the local youth fund.'],
+    ['Decides','Who can say yes or no to what you do?','The market manager who allocates stall pitches; the shared kitchen that rents us a slot; the food-safety inspector.'],
+    ['Influences','Who shapes results without a formal decision?','The youth centre that refers trainees; neighbours who recommend us; other bakers at the market.'],
+    ['Several at once','Does any group hold more than one role?','A trainee who lives nearby benefits from the traineeship and may also buy our bread.']
    ]
   }
  },
@@ -94,8 +94,8 @@ const m=adapt(base,{
    'Start with the people or place you want to serve, imagine an important barrier removed and describe the result in everyday words. Then read it to someone affected by the issue and ask what they picture. If their answer is vague, replace abstract words with a concrete condition, and keep the sentence short enough to remember and repeat when you explain your idea.'
   ],
   weak:'We want to help communities.',
-  strong:'“A town where girls who love science have the skills, support and role models to follow it.”',
-  why:'It names a place, the people and the conditions that would be different, without mentioning the clubs or camps the founders plan to run.',
+  strong:'“A neighbourhood where every young person has a way into good work, and good food is affordable.”',
+  why:'It names a place, the people and the conditions that would be different, without mentioning the stall, the shop or the traineeships the founders plan to run.',
   reflect:'If what you are building succeeded, what would people be able to do that they cannot do now?',
   exercise:'Describe the future first, then reduce it to one memorable sentence. Test that sentence with someone affected by the issue before you put it on a website or a registration form.',
   fields:{
@@ -106,12 +106,12 @@ const m=adapt(base,{
   check:'Does your vision describe a desired future rather than the services you plan to offer?',
   anatomy:{
    title:'Purpose, vision and mission',
-   intro:'Three statements that answer different questions, shown for a community repair project at the planning stage.',
+   intro:'Three statements that answer different questions, shown for our bakery at the pilot stage.',
    cols:['Statement','The question it answers','Example'],
    rows:[
-    ['Purpose','Why do we exist?','So that people in our city can repair, reuse and share instead of throwing away.'],
-    ['Vision','What future are we working towards?','A city where repairing and sharing are normal, affordable and open to everyone.'],
-    ['Mission','What will we do, for whom and how?','Monthly repair cafés and a small tool library for residents, starting in one neighbourhood.']
+    ['Purpose','Why do we exist?','So that young people who left school early can build skills and a working life, and our neighbourhood has good bread at a fair price.'],
+    ['Vision','What future are we working towards?','A neighbourhood where every young person has a way into good work, and good food is affordable.'],
+    ['Mission','What will we do, for whom and how?','We bake and sell good bread, and train young people who left school early, through paid traineeships in a real bakery, starting with one market stall.']
    ]
   }
  },
@@ -120,29 +120,29 @@ const m=adapt(base,{
    'A mission says what your organisation will do, for whom and how. It turns your purpose into a practical scope that your co-founders, the first people who join, partners, customers and supporters can use. Vision is the future you want; mission is the work you will do towards it.',
    'A useful starting structure is: “We help [people] achieve [change] through [approach].” Adapt it so it sounds natural. Name your main approach without listing every activity you have in mind, and include a place when it really limits your scope. Starting narrow is a strength, not a weakness.',
    'Common mistakes are trying to serve everyone, claiming to solve the whole problem and using jargon that hides the actual work. Do not describe a planned capability as a fact. At the start most of your approach is untested, so say what is a proposal and how you will test it.',
-   'Use the mission as a decision filter from day one. A community repair project, for example, might decide not to sell new goods even when it could make money, because that would work against repair and reuse. A clear mission makes choices like this easy to explain to co-founders, funders and customers.'
+   'Use the mission as a decision filter from day one. Our bakery, for example, might decide not to open a café even when it could make money, because serving tables would leave less time for training. A clear mission makes choices like this easy to explain to co-founders, funders and customers.'
   ],
   weak:'We will provide innovative solutions for everyone in need.',
-  strong:'“We help residents of our neighbourhood keep things in use and learn repair skills through free monthly repair cafés and a small tool library, starting at one site.”',
+  strong:'“We bake and sell good bread, and train young people who left school early, through paid traineeships in a real bakery, starting with one market stall.”',
   why:'It names who benefits, the change and the approach, so a reader can tell at once which projects fit and which do not.',
   reflect:'Which attractive opportunity, offer or grant would fall outside your mission?',
   exercise:'Draft one sentence. Underline who you will serve, what will change and your approach. If one is missing, revise the sentence.',
   fields:{
-   people:{label:'Who we will serve',hint:'Be specific about the people, organisations or ecosystems you will start with.'},
+   people:{label:'Who we will serve',hint:'Be specific about the people, organisations or ecosystems you will start with, e.g. young people aged 17–24 who left school early, referred by the youth centre, and neighbours who shop at the market.'},
    approach:{label:'Our main approach',hint:'What will you actually do, and what is still a proposal to test?'},
    mission:{label:'Our mission',hint:'We help… through…'},
-   boundaries:{label:'What we will not take on',hint:'Name one boundary that keeps your work focused while you start.'}
+   boundaries:{label:'What we will not take on',hint:'Name one boundary that keeps your work focused while you start, e.g. we will not open a café or cater events in year 1.'}
   },
   check:'Could a new co-founder, volunteer or partner explain your work after reading this once?',
   anatomy:{
    title:'The parts of a mission sentence',
-   intro:'Check your draft for each part, shown here for a girls’ science club idea.',
+   intro:'Check your draft for each part, shown here for our bakery.',
    cols:['Part','Question','Example'],
    rows:[
-    ['Who you serve','Who exactly benefits?','Girls aged 10 to 14'],
-    ['Where','Does a place limit your scope?','Two public schools in our town, to start'],
-    ['The change','What will be different for them?','Science confidence and skills'],
-    ['Your approach','How will you mainly do it?','Weekly hands-on clubs, with mentoring by women in science']
+    ['Who you serve','Who exactly benefits?','Young people aged 17–24 who left school early; neighbours who buy bread'],
+    ['Where','Does a place limit your scope?','One neighbourhood, starting with a stall at the weekly market'],
+    ['The change','What will be different for them?','Baking skills and a first paid job; good bread at a fair price'],
+    ['Your approach','How will you mainly do it?','Six-month paid traineeships in a real bakery, with a mentor and a food-hygiene certificate']
    ]
   }
  },
@@ -150,16 +150,16 @@ const m=adapt(base,{
   learn:[
    'Values are the principles that guide what you do when decisions are hard. A single word such as integrity or inclusion is only a starting point. Describe what people will actually do, and how you would notice whether it happens.',
    'Choose a small set you can practise consistently; three to five is a useful range. Agree them with your co-founders and, where you can, with the first people who will be expected to live by them. Do not adopt a value just because other organisations display it.',
-   'For each value, explain in one sentence what it means for you, how it will show in what you do and what you will avoid. Inclusion might mean budgeting for accessible participation and checking who is missing from your early conversations. That takes time and money, not only welcoming words, so it belongs in your first budget too.',
-   'Values can pull against each other. Openness does not mean publishing private information about participants. Agree now how you will handle trade-offs and who can raise a concern safely, before your first hard decision arrives. Values set early shape the culture of everything you build, and they will come back when you write your code of conduct.'
+   'For each value, explain in one sentence what it means for you, how it will show in what you do and what you will avoid. Respect for trainees might mean paying them for training hours as well as shifts, and setting shift times they can actually reach. That takes time and money, not only welcoming words, so it belongs in your first budget too.',
+   'Values can pull against each other. Openness does not mean publishing private information about trainees. Agree now how you will handle trade-offs and who can raise a concern safely, before your first hard decision arrives. Values set early shape the culture of everything you build, and they will come back when you write your code of conduct.'
   ],
   weak:'Our values will be excellence, integrity and impact.',
-  strong:'Respect: we listen before we decide, and treat the people we serve as experts in their own lives.\nHonesty: we say what we know and what we do not, and we never promise results we cannot show.\nOpenness: anyone who works with us can see how money is raised and spent.\nLearning: we test our ideas early, admit mistakes and change course when the evidence asks us to.',
+  strong:'Respect: we listen to trainees before we decide, and treat them as colleagues, not cases.\nHonesty: we say what goes into our bread, and we never promise a trainee a job we cannot offer.\nOpenness: trainees, partners and our funder can see how money is raised and spent.\nLearning: we test recipes and training ideas early, admit mistakes and change course when the evidence asks us to.',
   why:'Each value is a short word followed by what it means for you in practice, so anyone joining you understands what to expect and can tell whether you live by it.',
   reflect:'What principle would you protect even if it cost time, revenue or a funding offer?',
   exercise:'Choose three to five values. For each one, explain in a sentence what it means for you, how it will show in what you do and what you will avoid. Then test them against one difficult decision you can foresee in your first year.',
   fields:{
-   values:{label:'Our values in practice',hint:'One per line: value | what it means for us | how it shows in practice | what we avoid.'},
+   values:{label:'Our values in practice',hint:'One per line: value (e.g. respect) | what it means for us (e.g. we listen to trainees before we decide) | how it shows in practice (e.g. a monthly trainee meeting) | what we avoid (setting shift times without asking trainees).'},
    tradeoff:{label:'A difficult decision we can foresee',hint:'Which values could conflict as you start, and how would you decide?'}
   },
   check:'Could someone joining you observe whether you are practising each value?'
@@ -177,9 +177,9 @@ const m=adapt(base,{
   reflect:'Where will most of your resources come from in three years, and would your intended form allow that?',
   exercise:'Use the table above to pick two or three forms that could suit you, including staying informal for now. Note why each could fit and what worries you, then choose your current preference and list what you still need to check before you register.',
   fields:{
-   options:{label:'Options you are considering',hint:'Form (e.g. informal group, nonprofit, company, cooperative) | why it could fit you | what worries you about it. Two or three options are enough, and staying informal for now counts as one.'},
+   options:{label:'Options you are considering',hint:'Form (e.g. informal group, nonprofit, company, cooperative) | why it could fit you (e.g. most income will come from selling bread) | what worries you about it (profits could be paid out unless our rules lock in the purpose). Two or three options are enough, and staying informal for now counts as one.'},
    choice:{label:'Current preference and reasons',hint:'Which form fits best for your start, and what would make you change it later?'},
-   advice:{label:'Questions to ask before you register',hint:'What do you still need to check with someone who knows the rules where you are?'}
+   advice:{label:'Questions to ask before you register',hint:'What do you still need to check with someone who knows the rules where you are? For example: can a company with a social purpose still receive a grant from the local youth fund?'}
   },
   check:'Does your preference follow from how the work will be resourced and governed, rather than from what sounds most credible?',
   anatomy:{
@@ -202,14 +202,14 @@ const m=adapt(base,{
    'This is strategic positioning: where you will add value that others do not. How you express that position in words and images comes later, in Module 7.'
   ],
   weak:'We will be unique because we care more than anyone else.',
-  strong:'The only bakery in our neighbourhood that trains young people while they work, and the owner has ten years of baking experience. We sell bread and cakes, but we will not open a café.',
+  strong:'The only bakery in our neighbourhood that trains young people while they work: one of us has ten years of baking experience and the other six years with young people at the youth centre. We sell bread and cakes, but we will not open a café.',
   why:'It names an advantage others can check, a clear focus and the work it turns down from the start.',
   reflect:'If you never started, what would be missing that no one else provides?',
   exercise:'Write your positioning statement and list the choices it implies. Mark any advantage you still need to prove.',
   fields:{
    advantage:{label:'Our comparative advantage',hint:'What do you and your co-founders bring that others do not, and what evidence shows it?'},
    position:{label:'Positioning statement',hint:'For [people] who [need], we will [approach], unlike [alternatives], because [advantage].'},
-   choices:{label:'What we will not do',hint:'Work, groups or opportunities you will decline or refer while you start.'}
+   choices:{label:'What we will not do',hint:'Work, groups or opportunities you will decline or refer while you start, e.g. no café, no catering, no trainees under 17.'}
   },
   check:'Is your advantage something you can show, or clearly marked as something still to prove?'
  },
@@ -226,8 +226,8 @@ const m=adapt(base,{
   reflect:'Which internal capability, if you do not build it early, would most limit your external objectives?',
   exercise:'Draft your external and internal objectives with codes, a picture of success and an owner. Record what you will postpone until you have the people and money to do it well.',
   fields:{
-   objectives:{label:'Objectives portfolio',hint:'One per line: code (ESO1 / ISO1) | objective | what success looks like at the end of the period | owner (a founder is fine).'},
-   priorities:{label:'Choices and capacity',hint:'What will you postpone so these first objectives have enough time and resources?'}
+   objectives:{label:'Objectives portfolio',hint:'One per line: code (ESO1 / ISO1) | objective (e.g. young people who left school early gain baking skills and a first paid job) | what success looks like at the end of the period (e.g. 3 of 4 trainees finish; 2 find a job within three months) | owner (a founder is fine).'},
+   priorities:{label:'Choices and capacity',hint:'What will you postpone so these first objectives have enough time and resources? For example: a shop of our own waits until year 2.'}
   },
   check:'Have you separated external results from the internal capabilities you need to build, with a code and an owner for each?',
   anatomy:{
@@ -251,16 +251,16 @@ Object.assign(purpose,{
  title:'Purpose, vision and mission',minutes:45,
  learn:[
   'Purpose, vision and mission are three short statements that answer three different questions. Purpose: why should this exist? Vision: what future are we working towards? Mission: what will we do, for whom and how? People starting out often mix them up, so this lesson builds all three together, in that order.',
-  'Purpose explains why what you are building needs to exist. Start with a specific unmet need and the people or environment affected by it, not with your favourite solution. “We need an app” names a solution; “rural families cannot find reliable information about local services” names a problem. A personal motivation often starts the journey, but others will only join, fund or buy if the reason matters beyond you. Talk with the people affected first, and keep what you know apart from what you assume.',
+  'Purpose explains why what you are building needs to exist. Start with a specific unmet need and the people or environment affected by it, not with your favourite solution. “We need a training bakery” names a solution; “young people in our neighbourhood who left school early cannot find a first job” names a problem. A personal motivation often starts the journey, but others will only join, fund or buy if the reason matters beyond you. Talk with the people affected first, and keep what you know apart from what you assume.',
   'Vision describes the future you want to help create: what will be different for people, communities or the environment if things go well. It is not a list of services, a revenue target or a picture of how big you will grow. Many people and organisations contribute to the same future, so be ambitious and honest about your part. Read it to someone affected by the issue and ask what they picture; if their answer is vague, make it more concrete.',
   'Mission says what you will actually do, for whom and how. A useful structure is: “We help [people] achieve [change] through [approach].” Name your main approach without listing every activity, and include a place when it limits your scope. Starting narrow is a strength. At the start much of your approach is untested, so say what is still a proposal.',
   'Use the three together as a filter from day one. Purpose stays steady even if your first idea changes; vision keeps you pointed at the same future; mission tells you which opportunities fit now and which to turn down, even when they bring money. Write the need first, then the purpose, then the future, then the work.',
   'Think ahead, but not forever. Your foundation should look one to five years ahead. If what you are building is very new, a shorter horizon is fine, or plan for five years with a one-year pilot and review after that year. Because this foundation will guide all your work, from your plans to your budget, treat it as a living document: come back to it at least once a year and whenever something important changes, such as a pilot ending, a new partner or a change in the rules.'
  ],
- anatomy:{...vision.anatomy,after:0,intro:'Three statements, three questions, shown for a community repair project at the planning stage.'},
+ anatomy:{...vision.anatomy,after:0,intro:'Three statements, three questions, shown for our bakery at the pilot stage.'},
  weak:'We want to make a difference, help communities and offer innovative solutions for everyone.',
- strong:'Purpose: “We exist so that people in our city can repair, reuse and share instead of throwing away.” Vision: “A city where repairing and sharing are normal, affordable and open to everyone.” Mission: “We help residents keep things in use through monthly repair cafés and a small tool library, starting at one site.”',
- why:'Each statement answers its own question: why it exists, the future it works towards and the work it will do now. Together they tell a reader which projects fit and which do not.',
+ strong:'Purpose: “We exist so that young people who left school early can build skills and a working life, and our neighbourhood has good bread at a fair price.”\nVision: “A neighbourhood where every young person has a way into good work, and good food is affordable.”\nMission: “We bake and sell good bread, and train young people who left school early, through paid traineeships in a real bakery, starting with one market stall.”',
+ why:'Each statement answers its own question: why the bakery exists, the future it works towards and the work it will do now. Together they tell a reader which opportunities fit (a wholesale order from a café) and which do not (opening a café of its own).',
  reflect:'If what you are building succeeded, what would people be able to do that they cannot do now, and which attractive opportunity would fall outside your mission?',
  exercise:'Work in order: describe the need and your evidence, write your purpose, describe the future and your vision, then write your mission and one boundary. Test the vision and mission with someone affected before you put them on a website or a registration form.',
  check:'Does each statement answer its own question: why you exist, the future you want and the work you will do?',

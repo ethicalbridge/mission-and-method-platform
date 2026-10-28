@@ -19,8 +19,8 @@ export default adapt(base,{
    'Build one pathway for each external strategic objective (ESO) you set in Module 1. Internal objectives do not need their own pathway; they appear as inputs and conditions, such as the team, money and skills you still have to build. Expect your theory to change once you start, and revisit it when evidence contradicts it.'
   ],
   weak:'Our training will create jobs.',
-  strong:'“ESO1: if trainees gain baking skills and a recognised certificate, and employers trust that certificate, then more graduates will get formal jobs in food businesses.”',
-  why:'It names the condition between training and a job: employers have to trust and hire certified graduates. That is something you can check before you launch.',
+  strong:'“ESO2: if young people who left school early bake in a real bakery for six months and earn a food-hygiene certificate, and local food businesses trust that experience, then more of them will get a first paid job, because experience is what employers ask for and what they could not get before.”',
+  why:'It names the condition between training and a job: local food businesses have to trust and hire the young people the bakery trains. That is something you can check before you launch, by asking the cafés and the canteen that already buy from you.',
   reflect:'What has to happen outside your own initiative for your idea to work?',
   exercise:'Write a short “if… then… because…” explanation of the change you hope to bring about for your first external objective.',
   check:'Have you explained the connection rather than only drawing an arrow, and marked what is still a guess?',
@@ -29,14 +29,14 @@ export default adapt(base,{
   },
   anatomy:{
    title:'The parts of a pathway',
-   intro:'Each part sits in a sphere; your claims get more modest as you move down the table. The example is a repair café that is still being planned.',
-   cols:['Part','Sphere and meaning','Example: a planned repair café, ESO1'],
+   intro:'Each part sits in a sphere; your claims get more modest as you move down the table. The example is our bakery’s training pathway during the pilot.',
+   cols:['Part','Sphere and meaning','Example: our bakery, ESO2'],
    rows:[
-    ['Inputs','Control: the resources you will put in','Two founders’ time, 10 volunteers still to recruit, a borrowed hall, tools, insurance'],
-    ['Activities','Control: what you will do','Run repair cafés, train volunteers, lend tools'],
-    ['Outputs','Control: what you will deliver, counted','12 repair cafés in the first year (about 400 items), 60 tool loans'],
-    ['Outcomes','Influence: changes in the people you work with','Residents learn simple repairs and repair before buying new'],
-    ['Impact','Interest: wider change many actors shape','Less waste and lower household costs in the town']
+    ['Inputs','Control: the resources you will put in','Two founders’ time, a rented slot in a shared kitchen, a market stall, trainee pay, a US$6,000 youth-fund grant'],
+    ['Activities','Control: what you will do','Recruit trainees with the youth centre, bake and sell together, give each trainee a mentor, prepare them for the hygiene certificate'],
+    ['Outputs','Control: what you will deliver, counted','4 six-month paid traineeships in year 1, 4 food-hygiene certificate courses'],
+    ['Outcomes','Influence: changes in the people you work with','Trainees gain baking skills and work habits; 3 of 4 finish and 2 find a job within three months'],
+    ['Impact','Interest: wider change many actors shape','More young people in the neighbourhood who left school early in stable, decent work']
    ]
   }
  },
@@ -47,8 +47,8 @@ export default adapt(base,{
    'Build the tree with the people affected, not for them, even before you have anything to offer. Talk to them, ask what they see as the main barriers and what strengths already exist, and note whose view is missing. Do not collect personal stories or sensitive data without a good reason and safeguards.',
    'Choose a scope you can influence with the time and resources you will have at the start. Mark uncertain causes as hypotheses and note what evidence could prove you wrong. Your context analysis in Module 1 shows what else is happening; this lesson explains why the problem persists and whether your idea addresses a real cause.'
   ],
-  weak:'There is no training programme like the one we want to start.',
-  strong:'“Handloom weavers in our district earn little and irregularly because middlemen take most of the price, yarn bought alone is expensive and power-loom copies undercut them.”',
+  weak:'There is no training bakery like the one we want to start.',
+  strong:'“Young people in our neighbourhood who left school early struggle to find a first job, because employers ask for experience and certificates they cannot get, and unpaid courses do not pay the rent.”',
   why:'It describes the barrier and its causes without naming the initiative the founders plan to start as the answer.',
   reflect:'Which cause is supported by evidence, and which is still a guess you need to check?',
   exercise:'Write the problem you want to work on, its scope, likely causes and one question to investigate before you launch.',
@@ -59,12 +59,12 @@ export default adapt(base,{
   },
   anatomy:{
    title:'A problem tree in three parts',
-   intro:'Start with the trunk, then dig down to causes and up to consequences. The example is a girls’ science club that is still being planned.',
-   cols:['Part','Question to ask','Example: a planned girls’ science club'],
+   intro:'Start with the trunk, then dig down to causes and up to consequences. The example is the problem behind our bakery’s training.',
+   cols:['Part','Question to ask','Example: our bakery'],
    rows:[
-    ['Trunk: core problem','What is the problem, for whom and where?','Girls in local public schools drop science subjects in secondary school'],
-    ['Roots: causes','Why does this happen? Ask again for each answer.','Little practical teaching, low confidence, few role models, family expectations, cost'],
-    ['Branches: consequences','What happens because of it?','Few young women from the area in science study and careers']
+    ['Trunk: core problem','What is the problem, for whom and where?','Young people who left school early in our neighbourhood cannot find a first paid job'],
+    ['Roots: causes','Why does this happen? Ask again for each answer.','No work experience, no recognised certificate, employers wary of the risk, unpaid courses they cannot afford, low confidence'],
+    ['Branches: consequences','What happens because of it?','Long spells without work, low income, insecure jobs, young people leaving the neighbourhood']
    ]
   }
  },
@@ -75,76 +75,76 @@ export default adapt(base,{
    'Be honest about what you will be able to show. An improvement you observe does not by itself prove your work caused it. For almost every new initiative, contribution rather than attribution is the honest claim, so name who else plays a part. Funders, investors and partners tend to trust founders who say this plainly.'
   ],
   weak:'Our idea will eliminate poverty.',
-  strong:'“ESO1: contribute, over ten years or more, to more young women from our region studying science and working in science-related careers.”',
+  strong:'“ESO2: contribute, over ten years or more, to more young people in our neighbourhood who left school early having stable, decent work.”',
   why:'It names the people and the condition, links to the vision and claims contribution rather than sole credit.',
   reflect:'What wider change would still matter after a participant leaves your programme or a customer stops using your service?',
   exercise:'Draft your impact statement and identify the other actors who already influence it.',
   check:'Does the statement acknowledge the limits of what a new initiative can control?',
   fields:{
    impact:{label:'Long-term impact',hint:'Use your vision and objective as a starting point; name the population and the condition you want to see.'},
-   actors:{label:'Other influences',hint:'Which organisations, policies, markets or wider conditions already shape this change?'}
+   actors:{label:'Other influences',hint:'Which organisations, policies, markets or wider conditions already shape this change? For example: the youth centre, local employers, public job schemes, the cost of living.'}
   }
  },
  outcomes:{
   learn:[
-   'Outcomes are the changes your work will help bring about in people, relationships, institutions or conditions: a new skill, a different choice, a changed rule. They sit between what you deliver and the long-term impact. An attendance count is an output; a girl who can now run an experiment on her own is showing an outcome.',
+   'Outcomes are the changes your work will help bring about in people, relationships, institutions or conditions: a new skill, a different choice, a changed rule. They sit between what you deliver and the long-term impact. A count of trainees enrolled is an output; a trainee who can now run the morning bake without help is showing an outcome.',
    'Work backwards from your impact. What has to change just before it becomes more likely? What earlier change makes that possible? Arrange the answers as short-term, medium-term and long-term outcomes. Keep a few strong links rather than filling a diagram with every possibility; a small new team can only follow a few.',
-   'For each outcome, note the evidence that would show it is happening, such as an observed skill, a subject choice or a new local rule. Think now about what a small team could realistically collect from the first day. You do not need indicators yet; you will turn these signals into indicators, baselines and targets in Module 6.',
+   'For each outcome, note the evidence that would show it is happening, such as an observed skill, a job offer or a new local rule. Think now about what a small team could realistically collect from the first day. You do not need indicators yet; you will turn these signals into indicators, baselines and targets in Module 6.',
    'Look for effects you did not intend, including unequal ones. Who might be left out, take on extra work or be affected differently? Naming these before you launch lets you design them out rather than fix them later.'
   ],
-  weak:'100 participants will attend.',
-  strong:'“Girls in partner schools gain confidence and practical skills in science, and then more of them choose science subjects at secondary school.”',
-  why:'It describes changes in the girls, in a sequence, rather than counting who turned up.',
+  weak:'Four trainees will attend.',
+  strong:'“Trainees gain baking skills and the habits of a working day, then earn a food-hygiene certificate, then at least 2 of 4 find a job within three months of finishing.”',
+  why:'It describes changes in the trainees, in a sequence, rather than counting who turned up.',
   reflect:'Whose behaviour or circumstances would need to change first?',
   exercise:'List the early and later outcomes you expect, with the kind of evidence that would show each one.',
   check:'Are your outcomes changes rather than a list of planned activities?',
   fields:{
-   outcomes:{label:'Expected outcome sequence',hint:'Short-term → medium-term → long-term change | evidence a small team could collect.'},
-   unintended:{label:'Possible unintended effects',hint:'Who might be excluded, burdened or affected differently once you start?'}
+   outcomes:{label:'Expected outcome sequence',hint:'Short-term → medium-term → long-term change (e.g. trainees bake to standard → earn the certificate → find a job) | evidence a small team could collect (a weekly skills checklist; job offers at three months).'},
+   unintended:{label:'Possible unintended effects',hint:'Who might be excluded, burdened or affected differently once you start? For example: young people who cannot reach an early shift, or who care for a child.'}
   }
  },
  outputs:{
   learn:[
-   'Outputs are the immediate products and services your activities will deliver: sessions held, kits handed out, apprenticeships completed, items repaired. They will be mostly within your control, and they show whether delivery happened, not whether anyone’s life improved.',
+   'Outputs are the immediate products and services your activities will deliver: loaves baked and sold, traineeships completed, certificates gained, wholesale orders delivered. They will be mostly within your control, and they show whether delivery happened, not whether anyone’s life improved.',
    'Describe quality and reach as well as quantity. Ten sessions the intended people cannot reach are not the same as ten accessible, relevant ones. For each output, say who it is for and how you will check it was good enough. Set first-year numbers you can realistically deliver, and raise them as you grow.',
    'Use outputs to manage delivery, and keep them apart from outcomes, or a busy launch gets reported as an effective one. A simple test: you can usually count an output on the day it happens; an outcome takes weeks, months or years to show.'
   ],
   weak:'We will raise awareness in the community.',
-  strong:'“In our first year: 12 repair cafés, about 400 items brought in, free and open to all residents, every electrical repair safety-tested before it goes home.”',
+  strong:'“In our first year: four six-month paid traineeships for young people referred by the youth centre, each with a mentor and a food-hygiene course; 300 loaves a week at the Saturday stall, every batch checked against our recipe and hygiene log.”',
   why:'It gives a deliverable, a quantity, the intended reach and a quality check that can all be verified.',
   reflect:'What evidence would show that you delivered the service you promised?',
   exercise:'List the outputs your outcomes will need in your first year, including quality and reach.',
   check:'Can you verify each output without assuming it caused an outcome?',
   fields:{
-   outputs:{label:'Planned outputs',hint:'Product or service | first-year quantity | intended reach | quality check.'}
+   outputs:{label:'Planned outputs',hint:'Product or service (e.g. paid traineeships) | first-year quantity (e.g. 4) | intended reach (e.g. young people who left school early, referred by the youth centre) | quality check (each trainee has a mentor and a hygiene course).'}
   },
   anatomy:{
    title:'Output or outcome?',
-   intro:'The same pathway, one step apart. Both examples are initiatives still being planned.',
+   intro:'The same pathway, one step apart. Both examples come from our bakery’s pilot.',
    cols:['Question','Output','Outcome'],
    rows:[
     ['What is it?','Something you deliver','A change in people, institutions or conditions'],
     ['Who controls it?','Mostly you and your founding team','You contribute; other people and the context matter too'],
     ['When can you see it?','On the day of delivery','Weeks, months or years later'],
-    ['Example: a planned girls’ science club','4 weekly clubs of about 20 girls','Girls choose science subjects at secondary school'],
-    ['Example: a planned repair café','12 repair cafés, about 400 items','Residents repair before buying new']
+    ['Example: our training (ESO2)','4 six-month paid traineeships','Trainees find a first paid job'],
+    ['Example: our bread (ESO3)','300 loaves a week at the market stall','Local families buy good bread at a fair price']
    ]
   }
  },
  activities:{
   learn:[
-   'Activities are the actions you, your co-founders and any partners will take to produce your outputs. Start each one with a verb and give enough detail to estimate the work and assign it: recruit mentors, agree sites, train team leaders, run sessions, follow up.',
+   'Activities are the actions you, your co-founders and any partners will take to produce your outputs. Start each one with a verb and give enough detail to estimate the work and assign it: agree referrals with the youth centre, book kitchen time, recruit trainees, run training shifts, follow up.',
    'Check every activity against an output. If an activity supports no output, either add the missing output or drop the activity. Then add the work that is easy to forget when you are starting: preparation, permissions, registration steps, coordination, safeguarding and follow-up.',
    'Ask whether each activity is feasible and acceptable where you plan to work. A sound plan can still fail if the timing, language, cost of taking part or local custom keeps people away. Check with the people involved, ideally through a small trial, before you fix dates.'
   ],
   weak:'Do community engagement.',
-  strong:'“Recruit six trainees for the first cohort with the local youth employment programme, agree start dates and sign paid contracts before the first shift.”',
-  why:'The action is specific enough to assign, schedule and link to an output: apprenticeship places filled.',
+  strong:'“Recruit four trainees for the first six-month cohort with the youth centre, agree start dates and sign paid traineeship contracts before the first shift.”',
+  why:'The action is specific enough to assign, schedule and link to an output: traineeship places filled.',
   reflect:'What preparation is easy to overlook before your first activity?',
   exercise:'List the main activities you plan and the output each supports.',
   check:'Does every activity have a clear purpose in the pathway?',
   fields:{
-   activities:{label:'Planned activities and outputs',hint:'Action | output supported | partner or who will be responsible (founder, volunteer, future hire).'}
+   activities:{label:'Planned activities and outputs',hint:'Action (e.g. agree referrals with the youth centre) | output supported (e.g. 4 traineeships filled) | partner or who will be responsible (founder, partner, future hire).'}
   }
  },
  inputs:{
@@ -154,20 +154,20 @@ export default adapt(base,{
    'Match resources to activities. If one founder holds several specialist roles, you may need a smaller first scope or extra support. You will cost these inputs properly in Module 9; here, aim for a clear list and honest gaps.'
   ],
   weak:'We need to raise money.',
-  strong:'“Working capital to buy the first month’s yarn in bulk, a designer’s time for two collections a year and online shop fees. Working capital is the main gap.”',
+  strong:'“A rented slot in a shared kitchen, a pitch at the Saturday market, flour and ingredients, the baker’s time to mentor and pay for four trainees. Trainee pay is the main gap: the US$6,000 youth-fund grant covers part of it.”',
   why:'It names the resources, links them to activities and shows what funding would actually pay for.',
   reflect:'Which missing resource could stop you starting at all?',
   exercise:'List the main inputs you will need, what you already have and the gaps.',
   check:'Have you included your own time, other people’s time and access needs as well as money?',
   fields:{
-   inputs:{label:'Founding resource plan',hint:'Resource | activity supported | available now | gap | how to secure it.'}
+   inputs:{label:'Founding resource plan',hint:'Resource (e.g. kitchen slot) | activity supported (e.g. training shifts) | available now (e.g. two days a week) | gap (e.g. a third day) | how to secure it (ask the shared kitchen for a weekday rate).'}
   }
  },
  assumptions:{
   learn:[
    'An assumption is something that must be true for one step in your pathway to lead to the next. At each link, ask: “what has to be true for this to happen?” Before you launch, almost every link rests on assumptions. Collect them here, alongside what you already know about each one.',
-   'Make each assumption specific enough to check. “The project succeeds” cannot be tested; “head teachers will give club time” can. Prioritise the ones that are both important and uncertain. Check them cheaply before you commit money: ask future participants, look at existing records or run a small pilot. Decide in advance what you will do if one turns out to be false.',
-   'Keep external risks separate from your response to them. You cannot control the monsoon or a rise in flour prices, but you can plan around them. Note the risks that sit on your pathway now; Module 10 shows how to carry them into a risk register.'
+   'Make each assumption specific enough to check. “The bakery succeeds” cannot be tested; “the two cafés will buy wholesale every week” can. Prioritise the ones that are both important and uncertain. Check them cheaply before you commit money: ask future participants, look at existing records or run a small pilot. Decide in advance what you will do if one turns out to be false.',
+   'Keep external risks separate from your response to them. You cannot control a rise in flour prices or the rent for a shared kitchen, but you can plan around them. Note the risks that sit on your pathway now; Module 10 shows how to carry them into a risk register.'
   ],
   weak:'Participants will benefit.',
   strong:'“Trainees can stay for six months on the wage we plan to pay. Test it before launch by asking ten young people what they would need to stay, then ask the first cohort again at months two and four.”',
@@ -176,18 +176,18 @@ export default adapt(base,{
   exercise:'Write your critical assumptions, the evidence you have so far and how you will test them before and after you launch.',
   check:'Have you identified evidence that could challenge the idea you are most attached to?',
   fields:{
-   assumptions:{label:'Assumptions and tests',hint:'Connection | assumption | current evidence (or “none yet”) | test | decision if false.'}
+   assumptions:{label:'Assumptions and tests',hint:'Connection (e.g. activities → outputs) | assumption (e.g. trainees can reach a 6am shift) | current evidence (e.g. none yet) | test (e.g. ask the first four trainees) | decision if false (move the first shift to 8am).'}
   },
   anatomy:{
    title:'Where assumptions sit',
-   intro:'Every arrow in your pathway carries at least one assumption. The examples are initiatives still being planned.',
+   intro:'Every arrow in your pathway carries at least one assumption. The examples come from our bakery’s training pathway.',
    cols:['Link','Question to ask','Example'],
    rows:[
-    ['Inputs → activities','Will the resources really be there when needed?','Science club: volunteer mentors will stay for a full year.'],
-    ['Activities → outputs','Can people take part as planned?','Mangrove project: parents will let their children join planting days.'],
-    ['Outputs → short-term outcomes','Does what we deliver lead to change?','Repair café: residents will trust volunteer repairs.'],
-    ['Short-term → longer-term outcomes','Does the early change carry on?','Science club: confidence will turn into science subject choices.'],
-    ['Outcomes → impact','Do wider conditions allow the change to last?','Bakery apprenticeship: employers will keep hiring certified graduates.']
+    ['Inputs → activities','Will the resources really be there when needed?','The shared kitchen will keep our slot at the same rent for the whole year.'],
+    ['Activities → outputs','Can people take part as planned?','Young people referred by the youth centre can reach a 6am shift.'],
+    ['Outputs → short-term outcomes','Does what we deliver lead to change?','Six months of real shifts are enough to learn the core skills.'],
+    ['Short-term → longer-term outcomes','Does the early change carry on?','Skills and a certificate will turn into job offers.'],
+    ['Outcomes → impact','Do wider conditions allow the change to last?','Local food businesses will keep hiring the young people we train.']
    ]
   }
  },
@@ -198,7 +198,7 @@ export default adapt(base,{
    'Then use it. Your Theory of Change feeds your indicators in Module 6, the way you present your idea to funders, customers and partners, and your first-year priorities. Review it after your pilot or first year, then at least once a year, and sooner if a failed assumption, new evidence or a big change in context tells you something is wrong.'
   ],
   weak:'Our Theory of Change diagram is finished.',
-  strong:'“Version 0.2, March: after testing with eight future participants, two head teachers and a possible funder, we added termly parent sessions as an output. Next review after the pilot term.”',
+  strong:'“Version 0.2, March: after testing with eight young people at the youth centre, two café owners and the local youth fund, we added a fortnightly mentor check-in for each trainee as an output. Next review after the first six-month cohort.”',
   why:'It shows who tested the pathway, what changed because of their feedback and when it will be reviewed.',
   reflect:'Who is best placed to tell you your pathway is wrong before you launch?',
   exercise:'Plan how you will test your Theory of Change before you launch, then write the version and review plan.',
