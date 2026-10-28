@@ -268,3 +268,5 @@
 .staged-table td.cell-locked.is-empty div{font-style:italic;color:#8a979b}
 .staged-table td.cell-edit textarea{border-color:#1f6f66;background:#fff}
 .staged-empty{padding:1rem 1.2rem;border:1px dashed #cfd6d8;border-radius:10px;background:#f3f5f5}
+.staged-table td.cell-edit textarea{min-height:6.2rem}
+.staged-table td.cell-done div,.staged-table td.cell-locked div{min-height:3.2rem}
