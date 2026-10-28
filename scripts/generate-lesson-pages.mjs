@@ -17,13 +17,16 @@ for(const m of allModules)for(const [i,l] of m.lessons.entries()){
   .replace('<body data-page=""',`<body data-lesson-page data-module="${m.id}" data-lesson="${e(l.id)}" data-page=""`);
  mkdirSync(c.id,{recursive:true});writeFileSync(`${path}.html`,html);count++;
 }
-// Entrepreneurs' module reviews were renamed "Recap: …": keep their earlier addresses working.
+// Entrepreneurs' lessons whose title changed (recaps, the merged 1.1 Purpose, vision and mission…) keep their earlier
+// addresses working: each organisation lesson's address in the entrepreneurs' folder redirects to the lesson that holds it now.
 let moved=0;
 for(const m of allModules.filter(x=>x.track==='entrepreneurs')){
- const l=m.lessons.at(-1),org=modules.find(x=>x.id===m.mirror)?.lessons.at(-1),c=courseFor(m);
- if(!l?.review||!org)continue;
- const old=`${c.id}/${lessonSlug(org)}`,now=lessonPath(m,l);
- if(old===now||existsSync(`${old}.html`))continue;
- writeFileSync(`${old}.html`,`<!doctype html><html lang="en"><head><meta charset="utf-8"><!-- data-lesson-page redirect --><meta http-equiv="refresh" content="0; url=/${now}"><link rel="canonical" href="/${now}"><title>Moved | Method into Impact</title><script>location.replace('/${now}'+location.search+location.hash);</script></head><body><p>This lesson has moved. <a href="/${now}">Continue →</a></p></body></html>`);moved++;
+ const c=courseFor(m),orgModule=modules.find(x=>x.id===m.mirror);if(!orgModule)continue;
+ for(const l0 of orgModule.lessons){
+  const target=m.lessons.find(x=>x.id===l0.id)||m.lessons.find(x=>x.id===m.merged?.[l0.id]);if(!target)continue;
+  const old=`${c.id}/${lessonSlug(l0)}`,now=lessonPath(m,target);
+  if(old===now||existsSync(`${old}.html`))continue;
+  writeFileSync(`${old}.html`,`<!doctype html><html lang="en"><head><meta charset="utf-8"><!-- data-lesson-page redirect --><meta http-equiv="refresh" content="0; url=/${now}"><link rel="canonical" href="/${now}"><title>Moved | Method into Impact</title><script>location.replace('/${now}'+location.search+location.hash);</script></head><body><p>This lesson has moved. <a href="/${now}">Continue →</a></p></body></html>`);moved++;
+ }
 }
 console.log(`wrote ${count} lesson pages, ${moved} redirects`);

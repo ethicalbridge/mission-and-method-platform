@@ -271,4 +271,5 @@ Object.assign(purpose,{
  ]
 });
 m.lessons=m.lessons.filter(l=>l!==vision&&l!==mission);
+m.merged={vision:'purpose',mission:'purpose'}; // old addresses of 1.4 Vision and 1.5 Mission lead to 1.1
 export default m;
