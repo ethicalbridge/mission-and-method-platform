@@ -4,7 +4,9 @@
 // a minimal PDF writer that embeds Nunito Sans and DM Serif Display (subset to Windows-1252 text).
 const FONT_BASE = new URL('../pdf/', import.meta.url);
 const C = { deep:'#123C48', ink:'#102E3B', teal:'#16746E', coral:'#E56F4A', cream:'#FFFAF3', white:'#FFFFFF', line:'#D8DFD9', muted:'#546974', mint:'#D8EEE2', lightteal:'#7CC2AD' };
-const W = 595.28, H = 841.89, M = 54, TOP = 58, BOTTOM = 62;
+// A4 portrait; a document with a wide table (more than five columns) is laid out on A4 landscape so the table fits.
+const A4 = [595.28, 841.89], M = 54, TOP = 58, BOTTOM = 62;
+let W = A4[0], H = A4[1];
 
 // ---------- text encoding (Windows-1252, the encoding the embedded fonts are subset to) ----------
 const CP = {0x20AC:0x80,0x201A:0x82,0x0192:0x83,0x201E:0x84,0x2026:0x85,0x2020:0x86,0x2021:0x87,0x02C6:0x88,0x2030:0x89,0x0160:0x8A,0x2039:0x8B,0x0152:0x8C,0x017D:0x8E,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2022:0x95,0x2013:0x96,0x2014:0x97,0x02DC:0x98,0x2122:0x99,0x0161:0x9A,0x203A:0x9B,0x0153:0x9C,0x017E:0x9E,0x0178:0x9F};
@@ -166,6 +168,7 @@ function fieldTable(L, f, inner) {
     if (L.ensure(h)) header();
     L.rect(M, L.y, inner, h, r % 2 ? C.cream : C.white, null);
     L.rect(M, L.y + h - 0.75, inner, 0.75, C.line);
+    if (f.grid.blank) xs.slice(1).forEach(x => L.rect(x, L.y, 0.75, h, C.line));
     area.forEach((t, j) => L.text(xs[0] + pad + 2, L.y + pad + 8.5 + j * lead, t, 'bold', size, C.ink));
     sc.forEach((_, i) => {
       const cx = xs[i + 1] + wScale / 2, cy = L.y + h / 2, d = 10;
@@ -180,7 +183,7 @@ function fieldTable(L, f, inner) {
 // f.grid = {cols:[…], rows:[[…]], labelled}: an entry table, one row per line; column widths follow the column count.
 function fieldGrid(L, f, inner) {
   fieldLabel(L, f, inner);
-  if (f.grid.cols.length > 6) { // too many columns for the page: one card per row, column names as labels
+  if (f.grid.cols.length > (W > H ? 8 : 6)) { // too many columns for the page: one card per row, column names as labels
     f.grid.rows.forEach(row => {
       const lines = row.flatMap((c, i) => L.wrap(`${f.grid.cols[i]}: ${c || '—'}`, 'regular', 9, inner - 28).map((t, j) => ({ t, bold: j === 0, label: f.grid.cols[i] })));
       const h = lines.length * 12.5 + 18;
@@ -204,11 +207,13 @@ function fieldGrid(L, f, inner) {
   };
   header();
   f.grid.rows.forEach((row, r) => {
-    const cells = row.map((c, i) => L.wrap(c || '—', i === 0 ? 'bold' : 'regular', size, widths[i] - 2 * pad));
-    const h = Math.max(...cells.map(x => x.length)) * lead + 2 * pad;
+    // A staged table (f.grid.blank) is printed like the one on screen: every column, empty boxes left empty to fill in.
+    const cells = row.map((c, i) => c ? L.wrap(c, i === 0 ? 'bold' : 'regular', size, widths[i] - 2 * pad) : f.grid.blank ? [] : ['—']);
+    const h = Math.max(f.grid.blank ? 48 : 0, Math.max(1, ...cells.map(x => x.length)) * lead + 2 * pad);
     if (L.ensure(h)) header();
     L.rect(M, L.y, inner, h, r % 2 ? C.cream : C.white, null);
     L.rect(M, L.y + h - 0.75, inner, 0.75, C.line);
+    if (f.grid.blank) xs.slice(1).forEach(x => L.rect(x, L.y, 0.75, h, C.line));
     cells.forEach((lines, i) => lines.forEach((t, j) => L.text(xs[i] + pad, L.y + pad + 8.5 + j * lead, t, i === 0 ? 'bold' : 'regular', size, row[i] ? C.ink : C.muted)));
     L.y += h;
   });
@@ -326,6 +331,8 @@ function compose(L, doc) {
 
 async function build(doc) {
   const fonts = await loadFonts();
+  const wide = (doc.sections || []).some(sec => (sec.fields || []).some(f => f.grid && f.grid.cols.length > 5));
+  [W, H] = wide ? [A4[1], A4[0]] : A4;
   const L = new Layout(fonts); compose(L, doc);
   const enc = new TextEncoder(), chunks = [], offsets = []; let size = 0, nextId = 1;
   const push = b => { const bytes = typeof b === 'string' ? enc.encode(b) : b; chunks.push(bytes); size += bytes.length; };

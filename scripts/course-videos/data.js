@@ -1140,7 +1140,7 @@ window.COURSE_DATA={
   "name": "Clarify",
   "title": "Clarify: Purpose, Strategy & Theory of Change",
   "track": "entrepreneurs",
-  "lessons": 22,
+  "lessons": 21,
   "hours": 7,
   "modules": [
    {
@@ -1289,14 +1289,8 @@ window.COURSE_DATA={
       "review": false
      },
      {
-      "key": "102.use",
-      "number": "2.9",
-      "title": "Test, write and use your Theory of Change",
-      "review": false
-     },
-     {
       "key": "102.pathway",
-      "number": "2.10",
+      "number": "2.9",
       "title": "Recap: Theory of Change",
       "review": true
      }

@@ -23,7 +23,7 @@ export const recaps={
   next:{en:'Your Theory of Change builds one pathway for each external objective, and later modules use your values, form and priorities to organise, prove and protect the work.',es:'Tu Teoría del Cambio construye un camino por cada objetivo externo, y los módulos siguientes usan tus valores, forma y prioridades para organizar, demostrar y proteger el trabajo.'}
  },
  102:{
-  summary:{en:'You explained how your planned work could lead to change, from inputs to long-term impact, and named the assumptions to test with the people affected before and after you launch.',es:'Explicaste cómo tu trabajo previsto podría generar cambio, desde los insumos hasta el impacto a largo plazo, y nombraste los supuestos que probarás con las personas afectadas antes y después de lanzar.'},
+  summary:{en:'You built your Theory of Change in one table, a step at a time: from the problem you want to solve to the inputs, activities, outputs, outcomes and long-term impact, with the assumptions to test with the people affected before and after you launch.',es:'Construiste tu Teoría de Cambio en una sola tabla, paso a paso: del problema que quieres resolver a los insumos, actividades, productos, resultados e impacto a largo plazo, con los supuestos a probar con las personas afectadas antes y después de lanzar.'},
   lessons:{
    understanding:{en:'A Theory of Change makes your reasoning explicit: if we do this, why might that change follow?',es:'Una Teoría del Cambio hace explícito tu razonamiento: si hacemos esto, ¿por qué seguiría ese cambio?'},
    problem:{en:'The problem is the situation and its causes, not the absence of the solution you have in mind.',es:'El problema es la situación y sus causas, no la falta de la solución que tienes en mente.'},
@@ -32,8 +32,7 @@ export const recaps={
    outputs:{en:'Outputs show that delivery happened and are mostly within your control, but not that lives improved.',es:'Los productos muestran que hubo entrega y dependen sobre todo de ti, pero no prueban que mejoraran vidas.'},
    activities:{en:'Activities are the actions, each starting with a verb, that you and partners take to produce outputs.',es:'Las actividades son las acciones, cada una con un verbo, con que tú y tus aliados generan productos.'},
    inputs:{en:'Inputs are every resource your activities need, including your own and volunteers’ unpaid time.',es:'Los insumos son todos los recursos de tus actividades, incluido tu tiempo y el del voluntariado sin pago.'},
-   assumptions:{en:'Before launch almost every link rests on assumptions; the critical ones need evidence and a test.',es:'Antes de lanzar, casi cada vínculo se apoya en supuestos; los críticos necesitan evidencia y una prueba.'},
-   use:{en:'A Theory of Change is useful when people can read it, question it and use it to decide.',es:'Una Teoría del Cambio es útil cuando la gente puede leerla, cuestionarla y usarla para decidir.'}
+   assumptions:{en:'Before launch almost every link rests on assumptions; the critical ones need evidence and a test.',es:'Antes de lanzar, casi cada vínculo se apoya en supuestos; los críticos necesitan evidencia y una prueba.'}
   },
   next:{en:'Your pathways shape the structure and people you need in Organise, and become the results framework and indicators you will measure in MEAL.',es:'Tus caminos definen la estructura y las personas que necesitas en Organise, y se convierten en el marco de resultados y los indicadores que medirás en MEAL.'}
  },

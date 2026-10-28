@@ -17,7 +17,7 @@ const m=adapt(base,{
    "Every Theory of Change follows the same chain. It starts with the problem you want to solve. To tackle it, you will need resources (inputs), which you use to carry out your work (activities). Your activities deliver products and services you can count (outputs), which lead to changes for the people you work with (outcomes). Over time, and together with others, those changes contribute to a wider, lasting change (long-term impact). Here is what the whole chain looks like for our bakery.",
    "Notice the label on each step. You control your inputs, activities and outputs: they depend mainly on you. You can influence outcomes, because they happen in the people you work with directly, but they also depend on those people and on their circumstances. You can only contribute to the long-term impact, which many other people, organisations and conditions shape. That is why your claims should become more modest as you move down the chain, especially while your idea is still untested.",
    "The arrows alone do not explain a Theory of Change; the short “because” lines do. Write one for each important link, and check your reasoning against what future participants or customers tell you and what others working on the same issue have already learned. Build one pathway for each external strategic objective (ESO) you set in Module 1. Internal objectives do not need their own pathway; they appear as inputs and conditions, such as the team, money and skills you still have to build.",
-   "In the lessons that follow, we build your own Theory of Change one step at a time, in the same order as the example: the problem you are trying to solve (2.2), then your inputs (2.3), activities (2.4), outputs (2.5), outcomes (2.6) and long-term impact (2.7). You fill in one table as you go, a column per lesson, so each step builds on the one before and you can always see the whole chain. Then you add the assumptions that hold the links together (2.8), the table’s last column, and write, review and use the whole Theory of Change (2.9). Expect it to change once you start, and revisit it whenever evidence contradicts it."
+   "In the lessons that follow, we build your own Theory of Change one step at a time, in the same order as the example: the problem you are trying to solve (2.2), then your inputs (2.3), activities (2.4), outputs (2.5), outcomes (2.6) and long-term impact (2.7). You fill in one table as you go, a column per lesson, so each step builds on the one before and you can always see the whole chain. Finally, you add the assumptions that hold the links together (2.8), the table’s last column, and your Theory of Change is complete. Expect it to change once you start, and revisit it whenever evidence contradicts it."
   ],
   weak:'Our training will create jobs.',
   strong:'“ESO2: if young people who left school early bake in a real bakery for six months and earn a food-hygiene certificate, and local food businesses trust that experience, then more of them will get a first paid job, because experience is what employers ask for and what they could not get before.”',
@@ -244,12 +244,15 @@ const m=adapt(base,{
  pathway:{title:'Your Theory of Change'}
 });
 
-// 2.1 is reading only: it explains what a Theory of Change is; the pathway itself is built in 2.2–2.9.
+// 2.1 is reading only: it explains what a Theory of Change is; the pathway itself is built in 2.2–2.8.
 const understanding=m.lessons.find(l=>l.id==='understanding');
 Object.assign(understanding,{weak:'',strong:'',why:'',reflect:'',exercise:'',check:'',fields:[]});
 // Built forwards, the way founders think about it: problem → inputs → activities → outputs → outcomes → long-term impact.
 const order=['understanding','problem','inputs','activities','outputs','outcomes','impact','assumptions','use','pathway'];
 m.lessons.sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
+// The organisation course's “Test, write and use” lesson is left out here: the table built in 2.2–2.8 is the Theory of Change.
+m.lessons=m.lessons.filter(l=>l.id!=='use');
+m.merged={...(m.merged||{}),use:'pathway'}; // its old address leads to the recap
 // One pathway table for the whole Theory of Change, built a column at a time: 2.2 starts it with the problem (one row
 // per cause you will tackle), and 2.3–2.8 each unlock one more column. It is saved once, with 2.2 (store), so every
 // lesson shows the same rows: earlier columns as written, this lesson's column to fill in, later columns locked.

@@ -122,7 +122,7 @@
  },
  "102.pathway": {
   "en": {
-   "what": "You explained how your planned work could lead to change, from inputs to long-term impact, and named the assumptions to test with the people affected before and after you launch.",
+   "what": "You built your Theory of Change in one table, a step at a time: from the problem you want to solve to the inputs, activities, outputs, outcomes and long-term impact, with the assumptions to test with the people affected before and after you launch.",
    "recap": {
     "title": "One lesson at a time",
     "items": [
@@ -157,17 +157,13 @@
      {
       "label": "2.8 Assumptions, risks and evidence",
       "text": "Before launch almost every link rests on assumptions; the critical ones need evidence and a test."
-     },
-     {
-      "label": "2.9 Test, write and use your Theory of Change",
-      "text": "A Theory of Change is useful when people can read it, question it and use it to decide."
      }
     ]
    },
    "next": "Your pathways shape the structure and people you need in Organise, and become the results framework and indicators you will measure in MEAL."
   },
   "es": {
-   "what": "Explicaste cómo tu trabajo previsto podría generar cambio, desde los insumos hasta el impacto a largo plazo, y nombraste los supuestos que probarás con las personas afectadas antes y después de lanzar.",
+   "what": "Construiste tu Teoría de Cambio en una sola tabla, paso a paso: del problema que quieres resolver a los insumos, actividades, productos, resultados e impacto a largo plazo, con los supuestos a probar con las personas afectadas antes y después de lanzar.",
    "recap": {
     "title": "Una lección a la vez",
     "items": [
@@ -202,10 +198,6 @@
      {
       "label": "2.8 Supuestos, riesgos y evidencia",
       "text": "Antes de lanzar, casi cada vínculo se apoya en supuestos; los críticos necesitan evidencia y una prueba."
-     },
-     {
-      "label": "2.9 Prueba, redacta y usa tu Teoría de Cambio",
-      "text": "Una Teoría del Cambio es útil cuando la gente puede leerla, cuestionarla y usarla para decidir."
      }
     ]
    },
