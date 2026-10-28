@@ -19,24 +19,24 @@ export default adapt(base,{
    'This module builds one chain, adding a link in each lesson: Theory of Change → results framework → indicators → data → learning → decisions. Building it now, before your first pilot or launch, means you will have evidence from day one instead of trying to reconstruct it later.'
   ],
   weak:'We will collect as much data as possible once we start.',
-  strong:'“After our first pilot group, our MEAL system will show whether participants finished, what they learned and whether anything changed for them, so that we can decide whether to run a second group, what to change and who to approach for support.”',
-  why:'Each piece of data is tied to a decision that a named founder will take, even before the work has started.',
+  strong:'“After our pilot with four trainees, our MEAL system will show how many finished, which baking skills they gained, whether they found a job and whether the stall is moving towards covering its costs, so that we can decide whether to take on four more trainees, what to change in the training and whether to plan our own shop for year 2.”',
+  why:'Each piece of data is tied to a decision one of the two co-founders will take, even before the first trainee starts.',
   reflect:'Which decision about your idea will your first data collection inform?',
   exercise:'Write the purpose of your MEAL system and the decisions it must inform in your first year.',
   fields:{
-   purpose:{label:'Purpose of our MEAL system',hint:'What questions it must answer in the first year, and for whom (you, co-founders, participants, customers, members, funders or supporters).'},
-   decisions:{label:'Decisions MEAL should inform',hint:'Decision | who makes it (you or a co-founder) | when | what evidence you will need.'}
+   purpose:{label:'Purpose of our MEAL system',hint:'What questions it must answer in the first year, and for whom: for example you and your co-founder, the trainees, the youth centre that refers them, customers and a local youth fund.'},
+   decisions:{label:'Decisions MEAL should inform',hint:'Decision (e.g. take on four more trainees) | who makes it (you or a co-founder) | when (e.g. end of the pilot) | what evidence you will need (how many finished and found work).'}
   },
   check:'Is every part of your planned system linked to a decision or an obligation?',
   anatomy:{
    title:'The four parts of MEAL',
    intro:'Each part answers a different question; even a founder working alone needs all four, in a light form.',
-   cols:['Part','Question it answers','Example (a first pilot)'],
+   cols:['Part','Question it answers','Example (the bakery pilot)'],
    rows:[
-    ['Monitoring','Are we doing what we planned, and what is changing?','A simple sheet filled in at every session: who came, what was done, what happened.'],
-    ['Evaluation','Did it make a difference, for whom and why?','A short review at the end of the pilot of whether participants changed what they do.'],
-    ['Accountability','Can the people we serve shape the work and raise concerns?','A feedback card at each session; a trusted person outside the founding team for sensitive concerns.'],
-    ['Learning','What will we change because of what we found?','A review after the pilot that turns findings into two or three decisions for the next round.']
+    ['Monitoring','Are we doing what we planned, and what is changing?','A weekly sheet: loaves baked, sold and wasted at the stall, and each trainee’s shifts and skills signed off.'],
+    ['Evaluation','Did it make a difference, for whom and why?','A short review at the end of the six-month pilot: did trainees finish, gain skills and find work, and why or why not?'],
+    ['Accountability','Can the people we serve shape the work and raise concerns?','A feedback chat with each trainee every two weeks; a contact at the youth centre, outside the founding team, for sensitive concerns.'],
+    ['Learning','What will we change because of what we found?','A review after the pilot that turns findings into two or three decisions for the next four trainees.']
    ]
   }
  },
@@ -46,13 +46,13 @@ export default adapt(base,{
    'Start from your pathway in Module 2. Copy the outcomes and outputs you will actually be able to monitor in your first year or pilot, not every box in the diagram. Keep the codes from your strategy, for example ESO1, Outcome 1.1 and Output 1.1.1, so that results, budgets and plans can be linked as your initiative grows.',
    'Then check the logic in two directions. Vertically: if the outputs are delivered and the assumptions hold, do the outcomes follow? Horizontally: can you measure each result with evidence you can actually obtain with the time and people you have? Treat impact as something you will contribute to over years, not something you can measure in your first year.'
   ],
-  weak:'Our results framework is our list of planned activities with numbers.',
-  strong:'“ESO1 → Outcome 1.2 ‘Participants find paid work within three months of finishing’ → Output 1.2.1 ‘Introductions to five local employers during the pilot’, with evidence (follow-up calls, written offers) and the assumption that employers will value what participants have learned.”',
-  why:'It follows the pathway, keeps codes that will link to strategy and budgets, and carries the assumption across from the Theory of Change.',
+  weak:'Our results framework is our list of what we will bake and sell, with numbers.',
+  strong:'ESO2: Young people who left school early gain baking skills and a first paid job.\nOutcome 2.2: Trainees find a paid job within three months of finishing.\nOutput 2.2.1: Each trainee does two trial shifts with local employers, including the two cafés we supply.\nEvidence: a follow-up call at three months; job offers seen.\nAssumption: local employers value a bakery traineeship and a food-hygiene certificate.',
+  why:'It follows the pathway from ESO2, keeps codes that will link to the strategy and budget, and carries the assumption about employers across from the Theory of Change.',
   reflect:'Which outcome in your Theory of Change will you not be able to monitor yet, and why?',
   exercise:'Build your results framework for one external objective, sized to your first year or pilot.',
   fields:{
-   framework:{label:'Results framework',hint:'Code | level (impact, outcome, output) | result statement | evidence source you can realistically obtain | assumption.'}
+   framework:{label:'Results framework',hint:'Code (e.g. ESO2, 2.2, 2.2.1) | level (impact, outcome, output) | result statement (e.g. trainees find a paid job within three months) | evidence source you can realistically obtain (e.g. follow-up call at three months) | assumption (local employers value the traineeship).'}
   },
   check:'Does every result trace back to a pathway in your Theory of Change?'
  },
@@ -62,26 +62,26 @@ export default adapt(base,{
    'Mix numbers and percentages with qualitative signs, such as changes people describe or practice you observe. For every percentage, define the numerator (who counts as a success) and the denominator (out of whom). Decide now how you will break the data down, for example by gender, age, disability or location, so that unequal results become visible from your very first group.',
    'Watch for common traps: counting activities as outcomes, indicators that reward easy numbers, counting the same person twice across activities, and indicators you cannot collect ethically. Record each indicator on a reference sheet with its definition, unit, source, method, frequency, owner and which direction is better. Starting with a few well-defined indicators is better than many vague ones.'
   ],
-  weak:'Number of lives changed.',
-  strong:'“Percentage of pilot participants who complete the course (numerator: participants who attend at least 8 of 10 sessions; denominator: everyone who attended the first session), broken down by gender and by how far they travel.”',
-  why:'It is defined exactly, uses an attendance list the founder will keep anyway and would show early whether some people are being left behind.',
+  weak:'Number of young people helped.',
+  strong:'“Percentage of trainees who complete the six-month traineeship (numerator: trainees who work at least 90% of their planned shifts and pass the basic food-hygiene certificate; denominator: every trainee who started), broken down by age (17 or 18–24) and gender.”',
+  why:'It is defined exactly, uses the shift rota and certificate records the bakery keeps anyway, and would show early whether the youngest trainees are being left behind.',
   reflect:'Which of your planned indicators could improve while the real situation gets worse?',
   exercise:'Define indicators for the priority results of your first year or pilot.',
   fields:{
-   indicators:{label:'Indicator reference sheet',hint:'Code | result | indicator | definition | unit | numerator/denominator | disaggregation | source | frequency | owner (you, a co-founder or a volunteer).'}
+   indicators:{label:'Indicator reference sheet',hint:'Code (e.g. 2.1) | result | indicator (e.g. % of trainees who complete) | definition | unit | numerator/denominator | disaggregation (e.g. age, gender) | source (e.g. shift rota) | frequency | owner (you or your co-founder).'}
   },
   check:'Would two people measure each indicator the same way from its definition?',
   anatomy:{
    title:'The anatomy of an indicator',
-   intro:'The parts you record for every indicator, shown with one for a first pilot. Baselines and targets come in the next lesson.',
-   cols:['Part','What it records','Example (a first pilot)'],
+   intro:'The parts you record for every indicator, shown with one from the bakery pilot. Baselines and targets come in the next lesson.',
+   cols:['Part','What it records','Example (the bakery pilot)'],
    rows:[
-    ['Indicator','The sign you track, with its definition','% of participants in paid work three months after finishing'],
-    ['Baseline','The value before you start, or a plan to measure it','To be established: work status asked at sign-up for the first group'],
-    ['Target','The value you aim for, and by when','Provisional: half of participants by the end of the first year'],
-    ['Source','Where the data comes from, and how','Follow-up call; offer letter seen or employer confirms'],
-    ['Frequency','How often you collect it','Three months after each group finishes'],
-    ['Owner','Who collects it and answers for it','The founder, until someone else joins']
+    ['Indicator','The sign you track, with its definition','% of trainees in a paid job three months after finishing'],
+    ['Baseline','The value before you start, or a plan to measure it','To be established: work status asked when the youth centre refers each trainee'],
+    ['Target','The value you aim for, and by when','Provisional: 2 of the 4 pilot trainees by the end of year 1'],
+    ['Source','Where the data comes from, and how','Follow-up call; job offer seen or employer confirms'],
+    ['Frequency','How often you collect it','Three months after each trainee finishes'],
+    ['Owner','Who collects it and answers for it','The co-founder who works with the trainees']
    ]
   }
  },
@@ -91,13 +91,13 @@ export default adapt(base,{
    'If you do not know the baseline, do not invent it. Plan how and when you will establish it: a short question at sign-up, existing public records, a first measurement in your pilot or published data for your area. Write “to be established by [date]” until you have it.',
    'Set targets that are ambitious but realistic, based on similar work elsewhere, the time and help you have and the time change usually takes. Your first groups will be small, and small numbers swing a lot, so treat a percentage from six people with care. Break annual targets into quarterly milestones where that helps you manage, and revise targets openly, with a reason, never quietly.'
   ],
-  weak:'Target: 100% success.',
-  strong:'“Participants still using the new practice six months later. Baseline: to be established at sign-up for the first pilot group (March 2027). Provisional target: half of participants by December 2027, confirmed or revised after the first follow-up.”',
-  why:'It refuses to invent a baseline for something that has not started yet and sets a provisional target it will check against real results.',
+  weak:'Target: every trainee gets a job.',
+  strong:'“Weekly food waste at the stall (bread and cakes neither sold nor given away). Baseline: to be measured over our first four Saturdays. Provisional target: under 5% of what we bake by the end of year 1, confirmed or revised once we have three months of figures.”',
+  why:'It refuses to invent a baseline for a stall that has not opened yet and sets a provisional target it will check against real weekly figures.',
   reflect:'Which of your targets is based on hope rather than evidence?',
   exercise:'Set baselines (or plans to establish them before or during your pilot) and targets for your indicators.',
   fields:{
-   targets:{label:'Baselines and targets',hint:'Indicator | baseline or plan to establish it | target (provisional if new) | date | quarterly milestones | evidence for the target.'}
+   targets:{label:'Baselines and targets',hint:'Indicator (e.g. weekly food waste) | baseline or plan to establish it (e.g. measured over the first four Saturdays) | target (provisional if new) | date | quarterly milestones | evidence for the target.'}
   },
   check:'Is every baseline either measured or planned, never invented?'
  },
@@ -108,12 +108,12 @@ export default adapt(base,{
    'Check quality in five ways: validity (it measures what it claims), reliability (it is collected the same way each time), timeliness, precision and integrity (it has not been changed). Build simple checks into your routine from the start: brief anyone who helps you collect data, spot-check a sample and keep definitions to hand. Test every tool with a few of the people who will use it before your pilot begins.'
   ],
   weak:'Send a long survey to everyone at the end of the first year.',
-  strong:'“We fill in a one-page sheet at every session; we ask participants for contact details only with consent; once a month we check five entries against the sign-in sheets, and we tested the sheet with three future participants before launch.”',
-  why:'The method fits the indicator, consent is built in and a small regular check keeps the data trustworthy from the start.',
+  strong:'“We fill in a tally sheet at the stall every Saturday (baked, sold, left over); each trainee and their mentor sign a skills checklist every two weeks; we ask for contact details for follow-up only with consent; once a month we check five tally sheets against the till record, and we tested the checklist with two youth-centre staff and one young person before the pilot.”',
+  why:'Each method fits its indicator and the bakery’s routine, consent is built in and a small monthly check keeps the data trustworthy from the start.',
   reflect:'What data are you planning to collect that you would never use?',
   exercise:'Draft your data collection plan for your first year or pilot.',
   fields:{
-   plan:{label:'Data collection plan',hint:'Indicator | method and tool | who collects (you, a co-founder or a volunteer) | when | consent approach | where stored and who can see it.'},
+   plan:{label:'Data collection plan',hint:'Indicator (e.g. loaves sold) | method and tool (e.g. Saturday tally sheet) | who collects (you, your co-founder or a trainee’s mentor) | when | consent approach | where stored and who can see it.'},
    quality:{label:'Quality checks',hint:'How you will check validity, reliability and integrity with the time and help you have.'}
   },
   check:'Does each method protect participants and produce data you can trust?'
@@ -125,14 +125,14 @@ export default adapt(base,{
    'Budget for MEAL from the beginning. Printing, tools, your time, transport, translation, participant compensation, evaluation and learning sessions all cost money or time. Many funders accept a MEAL budget line, and customers, members or supporters will trust you more if you can show results; include MEAL in your first proposals and in your budget in Module 9.'
   ],
   weak:'We will do monitoring when we have time.',
-  strong:'“One co-founder fills in the attendance sheet at each session; the other types it up and checks it monthly; together we review a one-page summary each quarter; the MEAL budget is US$200 for the first year, plus about two days of our own time a quarter.”',
+  strong:'“The baker co-founder fills in the stall tally every Saturday; the co-founder who works with the trainees keeps their checklists and types both up monthly; together we review a one-page summary each quarter; the MEAL budget is US$300 for year 1 (printing, a kitchen scale for weighing waste, phone calls for follow-up), plus about two days of our own time a quarter.”',
   why:'Each task has a person, a rhythm and a cost, so MEAL does not depend on goodwill or spare time that will never come.',
   reflect:'Who in your founding team will have the time to analyse data, not just collect it?',
   exercise:'Write the roles, calendar and budget for your MEAL system in your first year.',
   fields:{
-   roles:{label:'Roles and responsibilities',hint:'Task | who (founder, co-founder, volunteer or future team member) | time needed.'},
-   calendar:{label:'MEAL calendar',hint:'Activity | frequency | dates, starting from your first pilot or launch.'},
-   budget:{label:'MEAL budget',hint:'Item | estimated cost (including your own time) | funding source.'}
+   roles:{label:'Roles and responsibilities',hint:'Task (e.g. Saturday tally sheet) | who (you, your co-founder or a mentor) | time needed.'},
+   calendar:{label:'MEAL calendar',hint:'Activity (e.g. quarterly review) | frequency | dates, starting from your first pilot or launch.'},
+   budget:{label:'MEAL budget',hint:'Item (e.g. printing, a kitchen scale for waste) | estimated cost (including your own time) | funding source.'}
   },
   check:'Are MEAL roles and costs visible in your plans and first budget?'
  },
@@ -143,12 +143,12 @@ export default adapt(base,{
    'Keep the presentation simple: a few indicators, a traffic-light status (green on track, amber at risk, red off track) and a line of comment for each. Share it with the people who can act on it, including co-founders, volunteers and early partners and, where it makes sense, the people you serve.'
   ],
   weak:'We will look at the numbers at the end of the first year.',
-  strong:'“Each month we look at four indicators with planned and actual values and a traffic light; when attendance turned red in the second month, we found the session time clashed with school pick-up and moved it before the next session.”',
+  strong:'“Each month we look at four indicators with planned and actual values and a traffic light; when trainee attendance turned red in the second month, we found the 5 a.m. Saturday start did not fit the first buses, so trainees now start at 6 a.m. and the baker co-founder does the first bake alone.”',
   why:'Monitoring is regular, visual and leads straight to an explanation and an action.',
   reflect:'If an indicator turned red tomorrow, who would notice and what would they do?',
   exercise:'Design your monitoring dashboard and the routine you will use to review it from your first activity.',
   fields:{
-   dashboard:{label:'Monitoring dashboard',hint:'Indicator | target | planned this period | actual | status | comment.'},
+   dashboard:{label:'Monitoring dashboard',hint:'Indicator (e.g. loaves sold a week) | target (e.g. 300) | planned this period | actual | status (green, amber, red) | comment.'},
    routine:{label:'Monitoring routine',hint:'Who prepares, who reviews (you, co-founders, advisers), how often and what happens to red items.'}
   },
   check:'Does every gap between planned and actual lead to an explanation and, if needed, an action?'
@@ -160,7 +160,7 @@ export default adapt(base,{
    'Decide whether to evaluate it yourselves or, later, commission someone external. An end-of-pilot review you run yourselves can be enough at the start; external evaluation brings independence but needs terms of reference, a budget and management time. Before you start, plan how you will share the findings and respond to each recommendation.'
   ],
   weak:'We will do an impact evaluation once we are big enough.',
-  strong:'“At the end of our six-month pilot we will ask whether participants changed their practice, who did not and why, and what each session cost; we will write a response to each finding before deciding whether to register and scale up.”',
+  strong:'“At the end of our six-month pilot we will ask whether the four trainees finished and gained the skills we promised, who did not and why, what each traineeship cost and how close the stall came to covering its costs; we will write a response to each finding before deciding whether to take on four more trainees and start planning our own shop.”',
   why:'It asks a few questions that matter, is timed for a real decision and commits to responding.',
   reflect:'What is the one question about your idea you most need an honest answer to?',
   exercise:'Draft your evaluation plan for your pilot or first year.',
@@ -176,10 +176,10 @@ export default adapt(base,{
    cols:['','Monitoring','Evaluation'],
    rows:[
     ['Main question','Are we doing what we planned, and what is changing?','Did it make a difference, for whom, why and at what cost?'],
-    ['When','Continuously: after each session, monthly, quarterly','At set points: end of pilot, end of first year or later'],
+    ['When','Continuously: every Saturday, monthly, quarterly','At set points: end of the pilot, end of year 1 or later'],
     ['Who','You and your founding team, as part of the work','Yourselves at first; an external evaluator later, for independence'],
-    ['Typical evidence','Registers, logs, simple dashboards','Monitoring data plus interviews, group discussions, comparison'],
-    ['Leads to','Quick fixes and adjustments','Bigger decisions: continue, change, register, scale up or stop']
+    ['Typical evidence','Stall tally sheets, trainee checklists, a simple dashboard','Monitoring data plus interviews with trainees and the youth centre, cost per trainee'],
+    ['Leads to','Quick fixes: bake less on rainy days, move a shift','Bigger decisions: take on more trainees, change the training, open a shop or stop']
    ]
   }
  },
@@ -190,12 +190,12 @@ export default adapt(base,{
    'Record feedback and complaints, respond within agreed times and close the loop: tell people what changed because of their feedback, or why it could not. Look at the feedback log regularly for patterns. Serious concerns, such as abuse or fraud, follow the procedures in Module 10, which you should have in place before your first activity.'
   ],
   weak:'People can always talk to us.',
-  strong:'“Participants can give feedback at each session, on an anonymous card halfway through and at the end, or to a trusted adviser outside the founding team about any concern with us; we reply within ten working days and share a ‘you said, we did’ note after each group.”',
-  why:'The channels suit participants, one bypasses the founders entirely, and the loop is visibly closed.',
+  strong:'“Trainees can raise anything in a one-to-one chat with their mentor every two weeks, on an anonymous card halfway through and at the end, or with a named contact at the youth centre, outside the founding team, about any concern with us; we reply within ten working days and share a ‘you said, we did’ note with each group of trainees.”',
+  why:'The channels suit young trainees, one bypasses the founders entirely (which matters because some trainees are 17), and the loop is visibly closed.',
   reflect:'What would stop a participant from complaining to you, the founder?',
   exercise:'Design the feedback and complaints mechanism you will have in place before your first activity.',
   fields:{
-   channels:{label:'Feedback channels',hint:'Channel | who it suits | who receives it (including someone outside the founding team) | response time.'},
+   channels:{label:'Feedback channels',hint:'Channel (e.g. one-to-one with a mentor) | who it suits (e.g. trainees) | who receives it (including someone outside the founding team) | response time.'},
    loop:{label:'Closing the loop',hint:'How you will record, analyse, respond and report back.'}
   },
   check:'Could someone raise a sensitive concern without going through the founders?',
@@ -205,10 +205,10 @@ export default adapt(base,{
    cols:['Channel','Who it suits','Watch out for'],
    rows:[
     ['Face-to-face conversation','People who prefer talking; low literacy','People may not criticise a founder they like or depend on'],
-    ['Anonymous card or box','Children, shy or worried participants','You cannot reply to one person, so report back to all'],
-    ['Phone or messaging line','Parents, people at a distance','Needs a named person who answers on time, even when you are busy'],
+    ['Anonymous card or box','Shy or worried trainees; customers at the stall','You cannot reply to one person, so report back to all'],
+    ['Phone or messaging line','Trainees’ families, cafés and the office canteen','Needs a named person who answers on time, even on a busy Saturday'],
     ['Group meeting or forum','Shared issues; collective decisions','Louder voices dominate; some will not speak in public'],
-    ['Named person outside the founding team','Sensitive concerns, including safeguarding','Must be known, trusted and briefed; an adviser can do this before you have a board']
+    ['Named person outside the founding team','Sensitive concerns, including safeguarding','Must be known, trusted and briefed; a youth-centre contact or a planned adviser can do this before you have a board']
    ]
   }
  },
@@ -219,13 +219,13 @@ export default adapt(base,{
    'Adaptive management means changing activities, targets or even your Theory of Change in response to evidence, openly and with the agreement of those who need to agree, including co-founders, members and funders where required. Early on, changing course is expected. Treat disappointing findings as useful information, not failures to hide.'
   ],
   weak:'We will think about lessons learned once the first year is over.',
-  strong:'“At the review after our second month we saw that half the sign-ups never came to a first session; one co-founder agreed to phone each new sign-up within two days, starting the next week, and we will check the show-up rate at the next review.”',
+  strong:'“At the review after our second month we saw that a fifth of our bread was left over on rainy Saturdays; the baker co-founder agreed to bake 20% less when rain is forecast, starting the next week, and to offer what is left to the office canteen at half price; we will check weekly waste at the next review.”',
   why:'A finding leads to a recorded decision with an owner and a date, checked at the next review.',
   reflect:'What is the last decision about your idea you changed because of evidence?',
   exercise:'Plan your learning routine and record a first review, even if it is from a test or conversations so far.',
   fields:{
    routine:{label:'Learning routine',hint:'Format, frequency, who takes part (founders, volunteers, participants, advisers) and how decisions are recorded.'},
-   review:{label:'First review record',hint:'Finding | feedback | learning | decision | owner | due.'}
+   review:{label:'First review record',hint:'Finding (e.g. a fifth of bread left over on rainy Saturdays) | feedback | learning | decision (e.g. bake less when rain is forecast) | owner | due.'}
   },
   check:'Does each review end with recorded decisions that someone owns?'
  },
@@ -235,14 +235,14 @@ export default adapt(base,{
    'Report honestly from the very first report. Keep outputs separate from outcomes, contribution separate from attribution, and evidence separate from hopes. Include what did not work and what you changed. A new initiative builds credibility when what it claims matches what its data shows.',
    'Put reporting in your MEAL calendar and reuse the same data rather than recreating it for each audience. Module 8 shows how to turn evidence into communications, and the reporting plan you write here will grow into the reports that funders, members or customers ask for later.'
   ],
-  weak:'Our idea will change hundreds of lives.',
-  strong:'“In our first six-month pilot, 14 of the 20 people who started completed the course. Of 11 we reached three months later, 6 said they were using what they learned. The numbers are small and we could not reach everyone, so we are following up again at six months.”',
-  why:'It gives real numbers, says how many people answered and is honest about the limits of early evidence.',
+  weak:'Our bakery is changing young people’s lives.',
+  strong:'“In our six-month pilot, 3 of our 4 trainees finished and gained their basic food-hygiene certificate, and 2 of them found a job within three months. The numbers are very small, so we are following up with all three again at six months and will report again after the next four trainees.”',
+  why:'It gives real numbers, says how small the group is and is honest about the limits of early evidence.',
   reflect:'Which claim you currently make about your idea could you not support with evidence?',
   exercise:'Build your reporting plan by audience for your first year.',
   fields:{
-   plan:{label:'Reporting plan',hint:'Audience (co-founders, participants, customers, members, funders or supporters) | what they need | format | frequency | owner.'},
-   claims:{label:'Evidence behind our main claims',hint:'Claim | evidence you have or will collect | limits.'}
+   plan:{label:'Reporting plan',hint:'Audience (e.g. the youth fund, the youth centre, trainees, wholesale customers) | what they need | format | frequency | owner.'},
+   claims:{label:'Evidence behind our main claims',hint:'Claim (e.g. our trainees find jobs) | evidence you have or will collect | limits.'}
   },
   check:'Could you show the evidence behind every claim you make?'
  },
