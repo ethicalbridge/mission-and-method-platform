@@ -16,7 +16,8 @@ const m=adapt(base,{
    'A Theory of Change makes your reasoning explicit: if we do this work, why might a particular change follow? It covers the context, the people involved, the sequence of changes and the assumptions that connect them. Writing it before you launch lets you test your idea on paper first. Social enterprises and startups sometimes call the same thing an impact thesis or impact logic.',
    'A pathway runs from the problem to inputs, activities, outputs, outcomes and long-term impact, and in this module you build it in that order. A diagram helps people see it, but arrows alone do not explain it. Add a short sentence on each important connection, and test your reasoning against what future participants or customers tell you and what others working on the issue have already learned.',
    'Separate three spheres. You will control your activities and outputs. You will influence the changes in the people and institutions you work with directly. You can only contribute to the wider impact, which many actors shape. Make your claims more modest as you move outwards, especially while your idea is still untested.',
-   'Build one pathway for each external strategic objective (ESO) you set in Module 1. Internal objectives do not need their own pathway; they appear as inputs and conditions, such as the team, money and skills you still have to build. Expect your theory to change once you start, and revisit it when evidence contradicts it.'
+   'Build one pathway for each external strategic objective (ESO) you set in Module 1. Internal objectives do not need their own pathway; they appear as inputs and conditions, such as the team, money and skills you still have to build. Expect your theory to change once you start, and revisit it when evidence contradicts it.',
+   'In the lessons that follow, we will go through the pathway one step at a time: first the problem you are trying to solve, then your inputs, activities, outputs and outcomes, and finally the long-term impact you hope to contribute to. By the end of the module, you will have built your Theory of Change.'
   ],
   weak:'Our training will create jobs.',
   strong:'“ESO2: if young people who left school early bake in a real bakery for six months and earn a food-hygiene certificate, and local food businesses trust that experience, then more of them will get a first paid job, because experience is what employers ask for and what they could not get before.”',
@@ -27,20 +28,26 @@ const m=adapt(base,{
   fields:{
    logic:{label:'Our founding change argument',hint:'Include the objective code, the people you want to reach, the change and why you expect it. A first draft is fine; you will test it.'}
   },
-  anatomy:{
-   title:'The parts of a pathway',
-   intro:'Each part sits in a sphere; your claims get more modest as you move down the table. The example is our bakery’s training pathway during the pilot.',
-   cols:['Part','Sphere and meaning','Example: our bakery, ESO2'],
-   rows:[
-    ['Inputs','Control: the resources you will put in','Two founders’ time, a rented slot in a shared kitchen, a market stall, trainee pay, a US$6,000 youth-fund grant'],
-    ['Activities','Control: what you will do','Recruit trainees with the youth centre, bake and sell together, give each trainee a mentor, prepare them for the hygiene certificate'],
-    ['Outputs','Control: what you will deliver, counted','4 six-month paid traineeships in year 1, 4 food-hygiene certificate courses'],
-    ['Outcomes','Influence: changes in the people you work with','Trainees gain baking skills and work habits; 3 of 4 finish and 2 find a job within three months'],
-    ['Impact','Interest: wider change many actors shape','More young people in the neighbourhood who left school early in stable, decent work']
-   ]
+  anatomy:null,
+  // The whole pathway at once, so learners see where they are heading before 2.2–2.7 build it step by step.
+  tocExample:{
+   after:2,
+   title:'A whole Theory of Change: our bakery, ESO2',
+   intro:'Read it from top to bottom. Each step leads to the next, and the “because” lines explain why we expect it to. Your claims get more modest as you move down: you control the first steps, influence the outcomes and only contribute to the impact.',
+   steps:[
+    {label:'The problem',sphere:'What we want to change',text:'Young people in our neighbourhood who left school early struggle to find a first job: employers ask for experience and certificates they cannot get, and unpaid courses do not pay the rent.'},
+    {label:'Inputs',sphere:'Control',text:'Two founders’ time, a rented slot in a shared kitchen, a Saturday market stall, ingredients, trainee pay and a US$6,000 youth-fund grant.',because:'so we put in what a real bakery and a paid traineeship need'},
+    {label:'Activities',sphere:'Control',because:'so the team can put these resources to work every week',text:'Recruit trainees with the youth centre, bake and sell together every week, give each trainee a mentor and prepare them for the food-hygiene certificate.'},
+    {label:'Outputs',sphere:'Control',because:'which delivers something we can count',text:'In year 1: four six-month paid traineeships, each with a mentor and a food-hygiene course; 300 loaves a week at the stall.'},
+    {label:'Outcomes',sphere:'Influence',text:'Trainees gain baking skills and the habits of a working day and earn the certificate; 3 of 4 finish and 2 find a job within three months.',because:'because real work, a wage and a mentor build skills and confidence'},
+    {label:'Long-term impact',sphere:'Contribute',text:'More young people in our neighbourhood who left school early have stable, decent work.',because:'because they now have the experience employers ask for'}
+   ],
+   assumptions:['Trainees can stay for six months on the wage we pay.','Local cafés and food businesses trust a bakery traineeship as real experience.','Sales at the stall and to the cafés keep the kitchen running.'],
+   summary:'If young people who left school early bake in a real bakery for six months and earn a food-hygiene certificate, and local food businesses trust that experience, then more of them will get a first paid job, because experience is what employers ask for and what they could not get before.'
   }
  },
  problem:{
+  connects:{after:0,step:'problem',why:'Everything else in your Theory of Change answers this problem. If it is vague or wrong, you could deliver every activity well and still change nothing that matters.',from:"Your purpose, your context analysis and the external objective (ESO) you set in Module 1. They say what you care about; this step says precisely what is wrong and why it persists.",to:"Your inputs and activities. The causes you name here decide what you will need and what you will do. For our bakery, “no work experience” is a cause, so the answer is real paid work in a bakery, not another classroom course."},
   learn:[
    'Describe the current situation, who experiences it and what keeps it in place. Separate symptoms from causes, and keep the problem separate from the solution you have in mind. Many founders start with a solution they love. “There is no service like ours” or “not enough workshops” may be what you notice, but it is rarely the underlying problem.',
    'A problem tree keeps this practical. Write the core problem on the trunk, its causes as roots and its consequences as branches. Keep asking “why does this happen?” until you reach causes that a small, new initiative could realistically influence.',
@@ -69,6 +76,7 @@ const m=adapt(base,{
   }
  },
  impact:{
+  connects:{after:0,step:'impact',why:'Impact is the reason the whole pathway exists. It keeps your early decisions pointed at the change that matters and links your daily work back to your vision.',from:"Your outcomes, added up over years and together with the work of others: trainees who gain skills and a first job contribute to more young people in stable work.",to:"Back to the problem. Read your pathway from impact down to the problem: does this impact really answer the problem you defined in 2.2? Then test each link in the next lesson, on assumptions."},
   learn:[
    'Impact is the longer-term change in people’s lives or in environmental conditions that the work you are starting aims to contribute to. It may take years, often longer than your first plans cover, and it depends on many actors beyond your founding team.',
    'Start from your vision and from the external strategic objective (ESO) this pathway serves. Name whose lives or which conditions should improve, and make the statement narrow enough to guide your early decisions without claiming the whole future as yours.',
@@ -86,6 +94,7 @@ const m=adapt(base,{
   }
  },
  outcomes:{
+  connects:{after:0,step:'outcomes',why:'Outcomes are the change you are really after for the people you work with. They show whether your idea works, not just whether you were busy.',from:"Your outputs. Once trainees finish a traineeship with a mentor and a certificate (outputs), they can gain skills and confidence (outcomes). Each link needs a “because” that explains it.",to:"The long-term impact. Outcomes add up over time: trainees who find a first job and keep it are the start of the wider change in your neighbourhood."},
   learn:[
    'Outcomes are the changes your work will help bring about in people, relationships, institutions or conditions: a new skill, a different choice, a changed rule. They sit between what you deliver and the long-term impact. A count of trainees enrolled is an output; a trainee who can now run the morning bake without help is showing an outcome.',
    'Build forwards from your outputs. What changes first for the people you work with once they use what you deliver? What does that early change make possible next? Arrange the answers as short-term, medium-term and long-term outcomes, leading towards the long-term impact in the next lesson. Keep a few strong links rather than filling a diagram with every possibility; a small new team can only follow a few.',
@@ -104,6 +113,7 @@ const m=adapt(base,{
   }
  },
  outputs:{
+  connects:{after:0,step:'outputs',why:'Outputs show that what you planned was actually delivered, to the right people and at the right quality. Without them, you cannot tell whether a missing result came from a weak idea or from work that never happened.',from:"Your activities. Outputs are what they deliver: running six-month paid traineeships delivers four completed traineeships and four food-hygiene courses.",to:"Your outcomes. Outputs are the bridge to change: four traineeships only matter if the trainees gain skills and find work, which is the next step."},
   learn:[
    'Outputs are the immediate products and services your activities will deliver: loaves baked and sold, traineeships completed, certificates gained, wholesale orders delivered. They will be mostly within your control, and they show whether delivery happened, not whether anyone’s life improved.',
    'Describe quality and reach as well as quantity. Ten sessions the intended people cannot reach are not the same as ten accessible, relevant ones. For each output, say who it is for and how you will check it was good enough. Set first-year numbers you can realistically deliver, and raise them as you grow.',
@@ -132,6 +142,7 @@ const m=adapt(base,{
   }
  },
  activities:{
+  connects:{after:0,step:'activities',why:'Activities turn your resources into action, and they are where you will spend most of your days. Each one should tackle a cause of the problem you defined.',from:"Your inputs and the problem. The kitchen slot and the trainee pay make the training shifts possible; the lack of experience is what those shifts answer.",to:"Your outputs. Each activity should deliver something you can count: recruiting with the youth centre leads to four traineeships, and baking together leads to 300 loaves a week."},
   learn:[
    'Activities are the actions you, your co-founders and any partners will take to produce your outputs. Start each one with a verb and give enough detail to estimate the work and assign it: agree referrals with the youth centre, book kitchen time, recruit trainees, run training shifts, follow up.',
    'Check every activity against an output. If an activity supports no output, either add the missing output or drop the activity. Then add the work that is easy to forget when you are starting: preparation, permissions, registration steps, coordination, safeguarding and follow-up.',
@@ -148,8 +159,27 @@ const m=adapt(base,{
   }
  },
  inputs:{
+  connects:{after:0,step:'inputs',why:'Before you plan the work, you need to know what you have to work with. Inputs show whether your idea is realistic with the people, money and space you will have at the start.',from:"The problem. The causes you chose decide which resources matter. Our bakery’s problem is a lack of experience, so the key inputs are a real kitchen, a market stall and pay for the trainees.",to:"Your activities. Every input should be used by at least one activity, and every activity needs inputs behind it. An activity with no inputs is a wish, not a plan."},
+  anatomy:{
+   after:0,
+   title:'Kinds of inputs',
+   intro:'Go through each kind and ask: do our activities need this, do we have it, and if not, how will we get it? The examples are our bakery’s inputs for the pilot.',
+   cols:['Kind of input','What it covers','Example: our bakery'],
+   rows:[
+    ['People (human resources)','Founders, staff, trainees, volunteers, mentors: who will do the work, and for how many hours','Two co-founders, about 30 hours a week each; four paid trainees; one volunteer mentor per trainee'],
+    ['Skills and knowledge','What the team knows how to do, and what you will need to learn or bring in','Ten years of baking; six years of youth work; no bookkeeping skills yet'],
+    ['Money','Your own savings, sales income, grants, loans or investment','US$4,000 of savings, a US$6,000 youth-fund grant, sales at the stall and to the cafés'],
+    ['Space and premises','Where the work happens: an office, a kitchen, a workshop, a stall, a room you borrow','A rented slot in a shared kitchen, a pitch at the Saturday market'],
+    ['Equipment and materials','Tools, machines, supplies and anything you use up','Mixer, trays, scales, a market gazebo; flour, butter, packaging'],
+    ['IT and technology','Devices, software, a website, payment and booking systems','A laptop, a card reader for the stall, a simple order spreadsheet, a social media account'],
+    ['Transport and logistics','How people, goods and materials get where they need to be','A borrowed van on Saturdays; bike deliveries to the two cafés'],
+    ['Partners and relationships','Organisations and people whose support you rely on','The youth centre refers trainees; the cafés and the canteen buy wholesale'],
+    ['Permissions and legal','Registrations, licences, insurance, certificates, contracts','Food business registration, public liability insurance, hygiene certificates'],
+    ['Information and data','What you need to know, and the records you will keep','Local job data from the youth centre, allergen information, a hygiene log']
+   ]
+  },
   learn:[
-   'Inputs are the resources your activities need: people’s time and skills, money, equipment, space, information, relationships and permissions. Your own time, your co-founders’ time, volunteer time and members’ labour are inputs even when no one is paid for them.',
+   'Inputs are the resources your activities need: people and their skills, money, space, equipment and materials, IT and technology, transport, partners, permissions and information. Your own time, your co-founders’ time, volunteer time and members’ labour are inputs even when no one is paid for them. The table below shows the kinds of inputs most new initiatives need; not every kind will apply to you, but checking each one helps you spot what you would otherwise forget.',
    'Separate what you already have from what you still need to secure, and note limits such as time, permissions or rules. At the start most inputs are gaps, and that is normal. Your internal strategic objectives (ISO1, ISO2 and so on) often describe how you will build the inputs that are missing.',
    'Match resources to activities. If one founder holds several specialist roles, you may need a smaller first scope or extra support. You will cost these inputs properly in Module 9; here, aim for a clear list and honest gaps.'
   ],

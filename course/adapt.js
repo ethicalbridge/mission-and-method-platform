@@ -6,7 +6,7 @@
 // Lesson overrides: title, part, learn, weak, strong, why, reflect, exercise, check,
 //   fields:{key:{label,hint}}, anatomy:{title,intro,cols,rows} (or null to drop the table).
 import {splits} from './founder-splits.js';
-const TEXT=['title','part','learn','weak','strong','why','reflect','exercise','check','exampleBox'];
+const TEXT=['title','part','learn','weak','strong','why','reflect','exercise','check','exampleBox','tocExample','connects'];
 export const FOUNDER_OFFSET=100;
 // A hint written as "Column | column (examples) | …" becomes an entry table with those columns, so each answer goes in
 // its own box; a sentence after the columns stays as the hint.
