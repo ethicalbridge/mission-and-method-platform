@@ -25,7 +25,10 @@ export default adapt(base,{
   exercise:'Write the need before drafting your purpose. Name one evidence gap and a realistic way to investigate it in the next few weeks, before you invest more time or money.',
   fields:{
    need:{label:'The need we want to address',hint:'Who experiences the problem, where, and what happens as a result?'},
-   evidence:{label:'Evidence and open questions',hint:'Separate what you know from what you are assuming and still need to learn.'},
+   evidence:{label:'Evidence and open questions',hint:'Keep three lists apart, so a guess never passes for a fact.',type:'parts',parts:[
+    {label:'What we know',placeholder:'Facts you have seen or heard from the people affected.'},
+    {label:'What we assume',placeholder:'What you believe but have not checked yet.'},
+    {label:'What we need to learn',placeholder:'The questions to answer next, and how you will find out.'}]},
    purpose:{label:'Our purpose',hint:'We exist so that…'}
   },
   check:'Could someone understand why your initiative should exist without knowing your planned activities?'

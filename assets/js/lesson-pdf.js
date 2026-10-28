@@ -177,6 +177,23 @@ function fieldTable(L, f, inner) {
   });
   L.y += 12;
 }
+// f.parts = [{label, text}]: one answer in labelled parts (e.g. what we know / assume / need to learn), side by side.
+function fieldParts(L, f, inner) {
+  fieldLabel(L, f, inner);
+  const k = f.parts.length, gap = 8, w = (inner - gap * (k - 1)) / k, pad = 10, lead = 13.5, size = 9.5;
+  const cols = f.parts.map(p => ({ head: L.wrap(p.label.toUpperCase(), 'extrabold', 7.5, w - 2 * pad), body: L.wrap(clean(p.text || '').trim() ? p.text : 'Not yet drafted.', 'regular', size, w - 2 * pad), empty: !clean(p.text || '').trim() }));
+  const h = Math.max(...cols.map(c => c.head.length * 10 + 8 + c.body.length * lead)) + 2 * pad;
+  L.ensure(h + 8);
+  cols.forEach((c, i) => {
+    const x = M + i * (w + gap);
+    L.rect(x, L.y, w, h, C.white, C.line, 8);
+    L.rect(x, L.y + 8, 3, h - 16, i === 0 ? C.teal : i === 1 ? C.coral : C.lightteal, null, 1.5);
+    c.head.forEach((t, j) => L.text(x + pad, L.y + pad + 7 + j * 10, t, 'extrabold', 7.5, C.teal, 0.6));
+    const top = L.y + pad + c.head.length * 10 + 8;
+    c.body.forEach((t, j) => L.text(x + pad, top + 9 + j * lead, t, 'regular', size, c.empty ? C.muted : C.ink));
+  });
+  L.y += h + 12;
+}
 // f.items = ['…','…','…']: numbered boxes, one per line.
 function fieldItems(L, f, inner) {
   fieldLabel(L, f, inner);
@@ -215,6 +232,7 @@ function compose(L, doc) {
     for (const f of sec.fields) {
       if (f.table) { fieldTable(L, f, inner); continue; }
       if (f.items) { fieldItems(L, f, inner); continue; }
+      if (f.parts) { fieldParts(L, f, inner); continue; }
       const empty = !clean(f.value).trim();
       const lines = L.wrap(empty ? 'Not yet drafted.' : f.value, 'regular', SIZE, inner - 2 * PAD);
       const labelLines = L.wrap(f.label, 'extrabold', 11, inner - 2 * PAD);

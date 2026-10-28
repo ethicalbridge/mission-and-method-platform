@@ -166,3 +166,11 @@
 .recap-list .button{white-space:nowrap;flex:0 0 auto}
 .rating-output td.rating-dot{text-align:center;color:#c9d3cd;font-size:16px}.rating-output td.rating-dot.is-on{color:#16746e}
 .rating-output thead th{text-align:center}.rating-output thead th:first-child,.rating-output thead th:last-child{text-align:left}
+/* Three-part answers (learning.js type 'parts') */
+.field-parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0 18px}
+.field-part label{display:block;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#16746e;margin:0 0 6px}
+.field-part:nth-child(2) label{color:#b44a26}
+.field-part textarea{width:100%;min-height:140px}
+.output-parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0 14px}
+.output-parts dt{grid-row:1;font-size:12px;font-weight:800;text-transform:uppercase;color:#16746e}.output-parts dd{grid-row:2;margin:0;white-space:pre-line}
+@media(max-width:760px){.field-parts{grid-template-columns:1fr}.output-parts{grid-template-columns:1fr}.output-parts dt,.output-parts dd{grid-row:auto}}
