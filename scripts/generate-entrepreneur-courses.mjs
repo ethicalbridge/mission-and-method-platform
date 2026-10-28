@@ -23,8 +23,9 @@ for(const [i,p] of founderPhases.entries()){
  const base=readFileSync(org,'utf8');
  const head=base.slice(0,base.indexOf('<main')),tail=base.slice(base.indexOf('</main>')+'</main>'.length).replace(/<script src="assets\/js\/course-video\.js[^"]*" defer><\/script>\n?/,'');
  const mods=courseModules(p),st=stats(p),next=founderPhases[i+1];
- const main=`<main id="main"><div class="catalog"><nav class="breadcrumbs"><a href="courses-entrepreneurs.html">Courses for entrepreneurs</a><span>› Course ${p.number} · ${e(p.name)}</span></nav>${courseBand(p)}<p class="lead">${e(p.summary)}. ${mods.map(m=>e(m.short)).join('. ')}.</p><div class="course-offer"><p><b>Coming soon</b> · ${st.lessons} lessons and reviews · about ${st.hours} hours.</p><p>Every lesson has a short video, the written explanation and a guided exercise that saves into Your Organisation, so your foundations build up as you go.</p><div class="toolbar"><a class="button" href="${first(p)}">Preview the first lesson</a><a class="button ghost" href="work-with-julieta.html#path-idea">Prefer to build it with Julieta?</a></div><p class="subtle">One of four courses for entrepreneurs: Clarify, Organise, Prove &amp; Show and Protect. <a href="courses-entrepreneurs.html">See all four →</a></p></div>${courseModulesSection(p)}${next?`<p>Next: <a href="course-${next.id}.html">Course ${next.number} · ${e(next.name)} →</a></p>`:`<p>Already running an organisation? <a href="courses.html">See the courses for organisations →</a></p>`}</div></main>`;
- writeFileSync(`course-${p.id}.html`,setTitle(head,`Course ${p.number} · ${p.name} for entrepreneurs | Method into Impact`,`${p.title}, for entrepreneurs: ${p.summary.toLowerCase()}. ${st.modules} modules, ${st.lessons} lessons.`)+main+tail);
+ const main=`<main id="main"><div class="catalog"><nav class="breadcrumbs"><a href="courses-entrepreneurs.html">Courses for entrepreneurs</a><span>› Course ${p.number} · ${e(p.name)}</span></nav>${courseBand(p)}<p class="lead">${e(p.summary)}. ${mods.map(m=>e(m.short)).join('. ')}.</p><div class="course-offer"><p><b>Coming soon</b> · ${st.lessons} lessons and reviews · about ${st.hours} hours.</p><p>Every lesson has a short video, the written explanation and a guided exercise that saves into Your Organisation, so your foundations build up as you go.</p><div class="toolbar"><button type="button" class="button" data-founder-buy="${p.id}" data-name="Course ${p.number} · ${e(p.name)}" data-start="${first(p)}" data-owned-text="Go to Course ${p.number} →">Get Course ${p.number} →</button><button type="button" class="button ghost" data-founder-buy="entrepreneurs-all" data-name="All four courses" data-start="${first(p)}">Get all four courses</button><a class="button ghost" href="work-with-julieta.html#path-idea">Prefer to build it with Julieta?</a></div><p class="subtle">One of four courses for entrepreneurs: Clarify, Organise, Prove &amp; Show and Protect. <a href="courses-entrepreneurs.html">See all four →</a></p></div>${courseModulesSection(p)}${next?`<p>Next: <a href="course-${next.id}.html">Course ${next.number} · ${e(next.name)} →</a></p>`:`<p>Already running an organisation? <a href="courses.html">See the courses for organisations →</a></p>`}</div></main>`;
+ const BUY='<script type="module">import {bindFounderButtons} from \'./founder-checkout.js?v=1\';bindFounderButtons();</script>';
+ writeFileSync(`course-${p.id}.html`,setTitle(head,`Course ${p.number} · ${p.name} for entrepreneurs | Method into Impact`,`${p.title}, for entrepreneurs: ${p.summary.toLowerCase()}. ${st.modules} modules, ${st.lessons} lessons.`)+main+tail.replace('</body>',BUY+'</body>'));
  console.log(`wrote course-${p.id}.html`);
 }
 
@@ -51,6 +52,7 @@ const card=(p,i)=>{const st=all[i],n=p.number;return `
             <li><b>~${st.hours}h</b>${t('ec.selfpaced')}</li>
           </ul>
           <a class="hm-btn hm-btn-primary cc-cta" href="course-${p.id}.html"><span data-i18n="ec.about">${s('ec.about')}</span> ${n}</a>
+          <button type="button" class="hm-btn hm-btn-ghost-light cc-cta" data-founder-buy="${p.id}" data-name="Course ${n} · ${e(p.name)}" data-start="${first(p)}" data-owned-text="Go to Course ${n} →">Get Course ${n} →</button>
         </aside>
         <div class="cc-course-body">
           <p class="cc-course-lead"><em data-i18n="ec.c${n}.q">${s(`ec.c${n}.q`)}</em></p>
@@ -151,5 +153,5 @@ const cmain=`<main id="main">
 </main>`;
 let chtml=setTitle(chead,'Courses for entrepreneurs | Method into Impact','Four courses for people building something new: Clarify, Organise, Prove & Show and Protect. The same method as the courses for organisations, written for founders.');
 if(!/audiences\.css/.test(chtml))chtml=chtml.replace('</head>','<link rel="stylesheet" href="audiences.css?v=3">\n</head>');
-writeFileSync('courses-entrepreneurs.html',chtml+cmain+ctail);
+writeFileSync('courses-entrepreneurs.html',chtml+cmain+ctail.replace('</body>','<script type="module">import {bindFounderButtons} from \'./founder-checkout.js?v=1\';bindFounderButtons();</script></body>'));
 console.log('wrote courses-entrepreneurs.html');

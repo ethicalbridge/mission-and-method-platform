@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800;6..12,900&display=swap">
 <link rel="stylesheet" href="styles.css?v=consent-1">
 <link rel="stylesheet" href="mission.css?v=nav-courses-1">
-<link rel="stylesheet" href="learning.css?v=course38">
+<link rel="stylesheet" href="learning.css?v=course39">
 <link rel="stylesheet" href="pricing.css">
 <link rel="stylesheet" href="planning-system.css?v=crm-backend-1">
 <link rel="stylesheet" href="courses.css?v=courses-redesign-1">
@@ -96,6 +96,7 @@
             <li><b>~7h</b><span data-i18n="ec.selfpaced">self-paced</span></li>
           </ul>
           <a class="hm-btn hm-btn-primary cc-cta" href="course-entrepreneurs-clarify.html"><span data-i18n="ec.about">About Course</span> 1</a>
+          <button type="button" class="hm-btn hm-btn-ghost-light cc-cta" data-founder-buy="entrepreneurs-clarify" data-name="Course 1 · Clarify" data-start="/entrepreneurs-clarify/how-this-course-works" data-owned-text="Go to Course 1 →">Get Course 1 →</button>
         </aside>
         <div class="cc-course-body">
           <p class="cc-course-lead"><em data-i18n="ec.c1.q">Why should this exist, and what change do you want to make?</em></p>
@@ -125,6 +126,7 @@
             <li><b>~10h</b><span data-i18n="ec.selfpaced">self-paced</span></li>
           </ul>
           <a class="hm-btn hm-btn-primary cc-cta" href="course-entrepreneurs-organise.html"><span data-i18n="ec.about">About Course</span> 2</a>
+          <button type="button" class="hm-btn hm-btn-ghost-light cc-cta" data-founder-buy="entrepreneurs-organise" data-name="Course 2 · Organise" data-start="/entrepreneurs-organise/from-work-to-structure" data-owned-text="Go to Course 2 →">Get Course 2 →</button>
         </aside>
         <div class="cc-course-body">
           <p class="cc-course-lead"><em data-i18n="ec.c2.q">Who will decide, who will do the work, and how will it run?</em></p>
@@ -154,6 +156,7 @@
             <li><b>~11h</b><span data-i18n="ec.selfpaced">self-paced</span></li>
           </ul>
           <a class="hm-btn hm-btn-primary cc-cta" href="course-entrepreneurs-prove-show.html"><span data-i18n="ec.about">About Course</span> 3</a>
+          <button type="button" class="hm-btn hm-btn-ghost-light cc-cta" data-founder-buy="entrepreneurs-prove-show" data-name="Course 3 · Prove &amp; Show" data-start="/entrepreneurs-prove-show/meal-principles-and-a-proportionate-system" data-owned-text="Go to Course 3 →">Get Course 3 →</button>
         </aside>
         <div class="cc-course-body">
           <p class="cc-course-lead"><em data-i18n="ec.c3.q">How will you know it works, and how will people hear about it?</em></p>
@@ -183,6 +186,7 @@
             <li><b>~8h</b><span data-i18n="ec.selfpaced">self-paced</span></li>
           </ul>
           <a class="hm-btn hm-btn-primary cc-cta" href="course-entrepreneurs-protect.html"><span data-i18n="ec.about">About Course</span> 4</a>
+          <button type="button" class="hm-btn hm-btn-ghost-light cc-cta" data-founder-buy="entrepreneurs-protect" data-name="Course 4 · Protect" data-start="/entrepreneurs-protect/finance-roles-and-the-finance-cycle" data-owned-text="Go to Course 4 →">Get Course 4 →</button>
         </aside>
         <div class="cc-course-body">
           <p class="cc-course-lead"><em data-i18n="ec.c4.q">What keeps what you are building safe?</em></p>
@@ -264,5 +268,5 @@
 <script src="app.js?v=audiences-3"></script>
 <script type="module" src="overview.js"></script>
 <script src="home.js?v=home-redesign-4"></script>
-</body>
+<script type="module">import {bindFounderButtons} from './founder-checkout.js?v=1';bindFounderButtons();</script></body>
 </html>

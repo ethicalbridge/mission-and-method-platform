@@ -44,3 +44,13 @@ Course access requires `kind=course`, the exact course product, `status=purchase
 6. Production implementations of software features beyond the explicitly labelled local record demos (cloud saving, collaboration, reminders, advanced reporting, automation and history).
 
 Before going live, test the purchase/refund/renewal matrix, anonymous access, wrong-user access, direct resource URLs, signed-link expiry, cross-product isolation and recovery of saved work. Only then remove the development-preview banners and enable purchase buttons.
+
+## Entrepreneurs' courses (test mode, Oct 2026)
+- Each entrepreneur course is sold on its own (`entrepreneurs-clarify`, `entrepreneurs-organise`, `entrepreneurs-prove-show`,
+  `entrepreneurs-protect`) or all four together (`entrepreneurs-all`). Module 00 (Start Here) stays free.
+- `founder-checkout.js` holds ownership and a simulated checkout: the "payment" is the test code 1234, and access is
+  stored in this browser under `mm.course-access.v1`. Nothing is charged; this is not secure access control.
+- Learners see only the courses they have in the course contents; the others appear as "Previous course" /
+  "Next course" invitations, and their lessons show a locked page with the buy options. All four → every course shown.
+- To connect payments: replace the test-code form in `openFounderCheckout()` with the provider's checkout, and read
+  ownership from the server instead of localStorage. `?reset-purchases` on a page clears the test purchases.

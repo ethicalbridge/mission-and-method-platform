@@ -1,0 +1,68 @@
+// Entrepreneurs' courses: which ones this learner has, and a simulated checkout until payments are connected.
+// Each course is bought on its own, or all four together ('entrepreneurs-all'). Ownership is kept in the same browser
+// store as the organisation courses (course-access.js). TEST MODE: the "payment" is the test code below; nothing is
+// charged and nothing leaves the browser. When the payment provider is connected, replace confirmPurchase() with
+// the real checkout and read ownership from the server (docs/production-access.md).
+import {COURSE_ACCESS_KEY,ownedCourseIds} from './course-access.js?v=ev5';
+export const FOUNDER_ALL='entrepreneurs-all';
+const TEST_CODE='1234';
+const store=()=>{try{return globalThis.localStorage;}catch{return null;}};
+export const ownsFounderCourse=id=>{const owned=ownedCourseIds(store());return owned.includes(FOUNDER_ALL)||owned.includes(id);};
+export const ownsAllFounderCourses=()=>ownedCourseIds(store()).includes(FOUNDER_ALL);
+export function grantFounder(id){const s=store();if(!s)return false;const owned=new Set(ownedCourseIds(s));owned.add(id);try{s.setItem(COURSE_ACCESS_KEY,JSON.stringify([...owned]));return true;}catch{return false;}}
+export function resetFounderPurchases(){const s=store();if(!s)return;try{s.setItem(COURSE_ACCESS_KEY,JSON.stringify(ownedCourseIds(s).filter(x=>!x.startsWith('entrepreneurs-'))));}catch{}}
+
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CSS=`.fc-backdrop{position:fixed;inset:0;background:rgba(10,22,28,.55);z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px}
+.fc-card{background:#fff;border-radius:16px;max-width:460px;width:100%;padding:28px 26px 24px;box-shadow:0 24px 60px rgba(10,22,28,.25);font-family:inherit;color:#14304a;max-height:calc(100vh - 32px);overflow:auto}
+.fc-card h2{margin:.1rem 0 .5rem;font-size:1.45rem;line-height:1.2}
+.fc-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#16746e}
+.fc-options{display:grid;gap:.6rem;margin:1rem 0}
+.fc-option{display:flex;gap:.7rem;align-items:flex-start;padding:.8rem .9rem;border:1.5px solid #d9e6e3;border-radius:10px;cursor:pointer}
+.fc-option:has(input:checked){border-color:#16746e;background:#f4f9f8}
+.fc-option input{margin-top:.25rem;accent-color:#16746e}
+.fc-option b{display:block}.fc-option small{color:#546974;line-height:1.4}
+.fc-test{margin:.6rem 0 0;padding:.75rem .9rem;border-radius:10px;background:#faf7ef;border:1px dashed #d8cfb6;font-size:.9rem;line-height:1.45}
+.fc-test label{display:block;font-weight:700;margin-bottom:.35rem}
+.fc-test input{width:100%;box-sizing:border-box;font:inherit;font-size:1.1rem;letter-spacing:.3em;text-align:center;padding:.6rem;border:1.5px solid #d4c9b1;border-radius:8px}
+.fc-error{color:#c53b1a;font-size:.88rem;min-height:1.2em;margin:.35rem 0 0}
+.fc-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap}
+.fc-actions button{font:inherit;font-weight:800;border-radius:999px;padding:.7rem 1.2rem;cursor:pointer;border:1.5px solid #16746e}
+.fc-pay{background:#e56f4a;border-color:#e56f4a!important;color:#fff}.fc-cancel{background:#fff;color:#16746e}`;
+function ensureCSS(){if(document.getElementById('fc-style'))return;const s=document.createElement('style');s.id='fc-style';s.textContent=CSS;document.head.append(s);}
+
+// course = {id, name ('Course 2 · Organise'), start (first lesson URL)}; opens the checkout for that course.
+export function openFounderCheckout(course,{onDone}={}){
+ ensureCSS();
+ const wrap=document.createElement('div');wrap.className='fc-backdrop';
+ wrap.innerHTML=`<div class="fc-card" role="dialog" aria-modal="true" aria-labelledby="fc-title"><span class="fc-eyebrow">Get access</span><h2 id="fc-title">${esc(course.name)}</h2><p>Choose what you would like to unlock.</p>
+ <div class="fc-options" role="radiogroup" aria-label="What to unlock">
+  ${course.id===FOUNDER_ALL?'':`<label class="fc-option"><input type="radio" name="fc-what" value="${esc(course.id)}" checked><span><b>${esc(course.name)}</b><small>All lessons, videos, exercises and PDFs in this course.</small></span></label>`}
+  <label class="fc-option"><input type="radio" name="fc-what" value="${FOUNDER_ALL}"${course.id===FOUNDER_ALL?' checked':''}><span><b>All four courses</b><small>Clarify, Organise, Prove &amp; Show and Protect, with every course shown in one place.</small></span></label>
+ </div>
+ <form class="fc-test"><label for="fc-code">Test payment</label><p style="margin:0 0 .5rem">Payments are not connected yet. Enter the test code to simulate a purchase; nothing is charged.</p><input id="fc-code" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="fc-error"><p class="fc-error" id="fc-error" role="alert"></p>
+ <div class="fc-actions"><button type="button" class="fc-cancel">Cancel</button><button type="submit" class="fc-pay">Confirm test purchase</button></div></form></div>`;
+ const close=()=>{wrap.remove();document.removeEventListener('keydown',onKey);};
+ const onKey=ev=>{if(ev.key==='Escape')close();};
+ document.addEventListener('keydown',onKey);
+ wrap.addEventListener('click',ev=>{if(ev.target===wrap)close();});
+ wrap.querySelector('.fc-cancel').onclick=close;
+ wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();const code=wrap.querySelector('#fc-code').value.trim();
+  if(code!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
+  const what=wrap.querySelector('input[name=fc-what]:checked').value;
+  if(!grantFounder(what)){wrap.querySelector('#fc-error').textContent='This browser is blocking storage, so access could not be saved.';return;}
+  close();(onDone||(()=>{location.href=course.start||location.href;}))(what);});
+ document.body.append(wrap);wrap.querySelector('#fc-code').focus();
+}
+
+// Static pages: <a|button data-founder-buy="entrepreneurs-organise" data-name="Course 2 · Organise" data-start="…">.
+// Owned courses turn into a "Go to the course" link; data-owned-text sets its label.
+export function bindFounderButtons(root=document){
+ if(new URLSearchParams(location.search).has('reset-purchases')){resetFounderPurchases();}
+ root.querySelectorAll('[data-founder-buy]').forEach(btn=>{
+  const id=btn.dataset.founderBuy;
+  if(id!==FOUNDER_ALL&&ownsFounderCourse(id)&&btn.dataset.start){const a=document.createElement('a');a.className=btn.className;a.href=btn.dataset.start;a.textContent=btn.dataset.ownedText||'Go to the course →';btn.replaceWith(a);return;}
+  if(id===FOUNDER_ALL&&ownsAllFounderCourses()){btn.hidden=true;return;}
+  btn.addEventListener('click',ev=>{ev.preventDefault();openFounderCheckout({id,name:btn.dataset.name||'All four courses',start:btn.dataset.start});});
+ });
+}

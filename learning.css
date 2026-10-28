@@ -295,3 +295,13 @@
 .support-box .eyebrow{color:#9fd3c7}
 .support-box>div,.course-consult>div{flex:1 1 320px}
 .support-box .button,.course-consult .button{background:#e56f4a;border-color:#e56f4a;color:#fff;white-space:nowrap}
+/* Entrepreneurs: courses the learner does not have yet (sidebar invitation and locked lesson page) */
+.locked-course{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;width:100%;margin:.3rem 0 .9rem;padding:.7rem .85rem;border:1.5px dashed #cfd6d8;border-radius:10px;background:#f7f9f9;font:inherit;color:#14304a;text-align:left;cursor:pointer}
+.locked-course span{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b787c}
+.locked-course b{font-size:.92rem;color:#16746e}
+.locked-course:hover,.locked-course:focus-visible{border-color:#16746e;background:#f4f9f8}
+.locked-course.all{border-style:solid;border-color:#e56f4a;background:#fff6f2}.locked-course.all b{color:#c0563b}
+.locked-panel{margin:1.4rem 0;padding:1.6rem 1.6rem 1.4rem;border:1px solid #d9e6e3;border-radius:16px;background:#fff}
+.locked-panel h2{margin:.4rem 0 .5rem}
+.locked-panel>p{text-align:left!important}
+.locked-icon{font-size:1.6rem}
