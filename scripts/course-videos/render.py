@@ -93,11 +93,11 @@ def write_manifest():
         stem = f.name[:-len('-es.mp4')]
         if (OUT / 'lessons' / f'{stem}.mp4').exists():
             mid, lid = stem.split('-', 1)
-            lessons[f'{mid}.{lid}'] = f'assets/videos/lessons/{stem}'
+            lessons[f'{mid}.{lid}'] = f'assets/videos/lessons/{stem}?v={int(f.stat().st_mtime)}'
     for f in sorted((OUT / 'modules').glob('*-es.mp4')):
         stem = f.name[:-len('-es.mp4')]
         if (OUT / 'modules' / f'{stem}.mp4').exists():
-            mods[int(stem.split('-')[1])] = f'assets/videos/modules/{stem}'
+            mods[int(stem.split('-')[1])] = f'assets/videos/modules/{stem}?v={int(f.stat().st_mtime)}'
     js = ('// Which lessons and modules have a video. Written by scripts/course-videos/render.py (lesson and module videos);\n'
           '// each entry is the file base under assets/videos (+ .mp4, -es.mp4, .jpg, -es.jpg, .en.vtt, .es.vtt).\n'
           'export const lessonVideos=' + json_dumps(lessons) + ';\nexport const moduleVideos=' + json_dumps(mods) + ';\n')

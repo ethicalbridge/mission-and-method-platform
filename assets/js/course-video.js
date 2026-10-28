@@ -16,14 +16,15 @@
     var box = video.closest('[data-video-box]') || video.closest('.course-intro-video');
     var buttons = box ? box.querySelectorAll('[data-video-lang]') : [];
     var label = video.getAttribute('aria-label') || '';
+    var q = video.dataset.videoVer ? '?v=' + video.dataset.videoVer : ''; // new renders get a new version so browsers fetch them
     var current = null;
     function use(lang) {
       if (lang === current) return;
       current = lang;
       var sfx = lang === 'es' ? '-es' : '';
       var wasPlaying = !video.paused;
-      video.poster = base + sfx + '.jpg';
-      video.querySelector('source').src = base + sfx + '.mp4';
+      video.poster = base + sfx + '.jpg' + q;
+      video.querySelector('source').src = base + sfx + '.mp4' + q;
       video.load();
       if (wasPlaying) video.play().catch(function () {});
       for (var i = 0; i < buttons.length; i++) buttons[i].setAttribute('aria-pressed', buttons[i].dataset.videoLang === lang ? 'true' : 'false');
