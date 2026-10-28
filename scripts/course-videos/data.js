@@ -1171,7 +1171,7 @@ window.COURSE_DATA={
      {
       "key": "100.start-pack",
       "number": "0.4",
-      "title": "Your starting point",
+      "title": "Recap: Start Here",
       "review": true
      }
     ]
@@ -1240,7 +1240,7 @@ window.COURSE_DATA={
      {
       "key": "101.foundation",
       "number": "1.10",
-      "title": "Your Strategic Foundation",
+      "title": "Recap: Strategic Foundations",
       "review": true
      }
     ]
@@ -1309,7 +1309,7 @@ window.COURSE_DATA={
      {
       "key": "102.pathway",
       "number": "2.10",
-      "title": "Your Theory of Change",
+      "title": "Recap: Theory of Change",
       "review": true
      }
     ]
@@ -1388,7 +1388,7 @@ window.COURSE_DATA={
      {
       "key": "103.team-pack",
       "number": "3.10",
-      "title": "Your Structure & Accountability Pack",
+      "title": "Recap: Structure, Governance & Accountability",
       "review": true
      }
     ]
@@ -1457,7 +1457,7 @@ window.COURSE_DATA={
      {
       "key": "104.people-plan",
       "number": "4.10",
-      "title": "Your People Plan",
+      "title": "Recap: People, Culture & Volunteers",
       "review": true
      }
     ]
@@ -1532,7 +1532,7 @@ window.COURSE_DATA={
      {
       "key": "105.blueprint",
       "number": "5.11",
-      "title": "Your Internal Systems Blueprint",
+      "title": "Recap: Internal Systems & Operations",
       "review": true
      }
     ]
@@ -1623,7 +1623,7 @@ window.COURSE_DATA={
      {
       "key": "106.meal-framework",
       "number": "6.12",
-      "title": "Your MEAL Framework",
+      "title": "Recap: MEAL",
       "review": true
      }
     ]
@@ -1686,7 +1686,7 @@ window.COURSE_DATA={
      {
       "key": "107.brand-platform",
       "number": "7.9",
-      "title": "Your Brand Platform and Guidelines",
+      "title": "Recap: Brand, Identity & Image",
       "review": true
      }
     ]
@@ -1779,7 +1779,7 @@ window.COURSE_DATA={
      {
       "key": "108.comms-plan",
       "number": "8.14",
-      "title": "Your Communications Plan",
+      "title": "Recap: Marketing & Communications",
       "review": true
      }
     ]
@@ -1864,7 +1864,7 @@ window.COURSE_DATA={
      {
       "key": "109.finance-pack",
       "number": "9.11",
-      "title": "Your Financial Management Pack",
+      "title": "Recap: Financial Management",
       "review": true
      }
     ]
@@ -1957,7 +1957,7 @@ window.COURSE_DATA={
      {
       "key": "110.compliance-pack",
       "number": "10.14",
-      "title": "Your Compliance & Risk Pack",
+      "title": "Recap: Legal, Compliance, Policies & Risk",
       "review": true
      }
     ]

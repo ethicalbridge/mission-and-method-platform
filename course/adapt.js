@@ -21,6 +21,7 @@ export function adapt(base,mod,lessons){
   if(!o)throw new Error(`adapt: lesson ${base.id}.${l.id} has no entrepreneurs' text`);
   if(!l.review&&!o.learn)throw new Error(`adapt: lesson ${base.id}.${l.id} needs learn`);
   for(const k of TEXT)if(o[k]!==undefined)l[k]=o[k];
+  if(l.review)l.title=`Recap: ${m.title.split(':')[0]}`; // every module ends with a recap of its exercises and their PDFs
   if(o.anatomy===null)delete l.anatomy;else if(o.anatomy)l.anatomy={...(l.anatomy||{}),...o.anatomy};
   for(const [key,v] of Object.entries(o.fields||{})){
    const f=(l.fields||[]).find(f=>f.key===key);
