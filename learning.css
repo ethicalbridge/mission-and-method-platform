@@ -319,3 +319,5 @@
 .invite-all{display:flex;gap:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:1rem 1.2rem;border-radius:14px;background:#14304a;color:#fff}
 .invite-all p{margin:.2rem 0 0;color:#e6eef0;text-align:left!important}
 .invite-all .button{background:#e56f4a;border-color:#e56f4a;color:#fff}
+.pager-buy{font:inherit;font-weight:800;color:#fff;background:#e56f4a;border:0;border-radius:999px;padding:.65rem 1.2rem;cursor:pointer}
+.pager-buy:hover{background:#c9583a}
