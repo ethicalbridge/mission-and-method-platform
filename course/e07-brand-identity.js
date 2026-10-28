@@ -1,5 +1,5 @@
-import base from './m07-brand-identity.js?v=c1687a22e';
-import {adapt} from './adapt.js?v=c1687a22e';
+import base from './m07-brand-identity.js?v=c831b856d';
+import {adapt} from './adapt.js?v=c831b856d';
 // Entrepreneurs' version of m07: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'Brand, Identity & Image',

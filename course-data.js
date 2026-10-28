@@ -4,38 +4,38 @@
 // an Excel sheet (lesson.sheet, in the module workbook) and a video slot (lesson.video).
 export {readingsFor,sources,resources,resourcePlan,resourceAnchor,primaryFor,ROLES} from './resource-library.js?v=ev6';
 import {readingsFor as allReadings} from './resource-library.js?v=ev6';
-import m0 from './course/m00-start-here.js?v=c1687a22e';
-import m1 from './course/m01-strategic-foundations.js?v=c1687a22e';
-import m2 from './course/m02-theory-of-change.js?v=c1687a22e';
-import m3 from './course/m03-structure-governance.js?v=c1687a22e';
-import m4 from './course/m04-people-culture.js?v=c1687a22e';
-import m5 from './course/m05-internal-systems.js?v=c1687a22e';
-import m6 from './course/m06-meal.js?v=c1687a22e';
-import m7 from './course/m07-brand-identity.js?v=c1687a22e';
-import m8 from './course/m08-marketing-communications.js?v=c1687a22e';
-import m9 from './course/m09-financial-management.js?v=c1687a22e';
-import m10 from './course/m10-legal-compliance-risk.js?v=c1687a22e';
-import m11 from './course/m11-fundraising-revenue.js?v=c1687a22e';
-import m12 from './course/m12-partnerships.js?v=c1687a22e';
-import m13 from './course/m13-strategy-to-action.js?v=c1687a22e';
+import m0 from './course/m00-start-here.js?v=c831b856d';
+import m1 from './course/m01-strategic-foundations.js?v=c831b856d';
+import m2 from './course/m02-theory-of-change.js?v=c831b856d';
+import m3 from './course/m03-structure-governance.js?v=c831b856d';
+import m4 from './course/m04-people-culture.js?v=c831b856d';
+import m5 from './course/m05-internal-systems.js?v=c831b856d';
+import m6 from './course/m06-meal.js?v=c831b856d';
+import m7 from './course/m07-brand-identity.js?v=c831b856d';
+import m8 from './course/m08-marketing-communications.js?v=c831b856d';
+import m9 from './course/m09-financial-management.js?v=c831b856d';
+import m10 from './course/m10-legal-compliance-risk.js?v=c831b856d';
+import m11 from './course/m11-fundraising-revenue.js?v=c831b856d';
+import m12 from './course/m12-partnerships.js?v=c831b856d';
+import m13 from './course/m13-strategy-to-action.js?v=c831b856d';
 // Entrepreneurs track: courses 1–4 (modules 00–10) copied from the organisation courses and reworded for people
 // building something new. Each course/eNN-*.js adapts course/mNN-*.js (see course/adapt.js); ids are 100 + NN.
-import e0 from './course/e00-start-here.js?v=c1687a22e';
-import e1 from './course/e01-strategic-foundations.js?v=c1687a22e';
-import e2 from './course/e02-theory-of-change.js?v=c1687a22e';
-import e3 from './course/e03-structure-governance.js?v=c1687a22e';
-import e4 from './course/e04-people-culture.js?v=c1687a22e';
-import e5 from './course/e05-internal-systems.js?v=c1687a22e';
-import e6 from './course/e06-meal.js?v=c1687a22e';
-import e7 from './course/e07-brand-identity.js?v=c1687a22e';
-import e8 from './course/e08-marketing-communications.js?v=c1687a22e';
-import e9 from './course/e09-financial-management.js?v=c1687a22e';
-import e10 from './course/e10-legal-compliance-risk.js?v=c1687a22e';
-export {FOUNDER_OFFSET} from './course/adapt.js?v=c1687a22e';
-export {recaps} from './course/founder-recaps.js?v=c1687a22e';
-export {STAGES} from './course/kit.js?v=c1687a22e';
-export {exampleOrgs,exampleOrg} from './course/examples.js?v=c1687a22e';
-export {lessonVideos,moduleVideos} from './course/videos.js?v=c1687a22e';
+import e0 from './course/e00-start-here.js?v=c831b856d';
+import e1 from './course/e01-strategic-foundations.js?v=c831b856d';
+import e2 from './course/e02-theory-of-change.js?v=c831b856d';
+import e3 from './course/e03-structure-governance.js?v=c831b856d';
+import e4 from './course/e04-people-culture.js?v=c831b856d';
+import e5 from './course/e05-internal-systems.js?v=c831b856d';
+import e6 from './course/e06-meal.js?v=c831b856d';
+import e7 from './course/e07-brand-identity.js?v=c831b856d';
+import e8 from './course/e08-marketing-communications.js?v=c831b856d';
+import e9 from './course/e09-financial-management.js?v=c831b856d';
+import e10 from './course/e10-legal-compliance-risk.js?v=c831b856d';
+export {FOUNDER_OFFSET} from './course/adapt.js?v=c831b856d';
+export {recaps} from './course/founder-recaps.js?v=c831b856d';
+export {STAGES} from './course/kit.js?v=c831b856d';
+export {exampleOrgs,exampleOrg} from './course/examples.js?v=c831b856d';
+export {lessonVideos,moduleVideos} from './course/videos.js?v=c831b856d';
 
 // The Planning System is sold as five courses, one per phase. Each module's `phase` names its course.
 // Prices and product IDs live in pricing-config.js (courses[].id matches courses here).

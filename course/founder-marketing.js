@@ -44,7 +44,12 @@ export const lessons={
     "kind": "ahead",
     "text": "The form you lean towards here decides who will govern you. In Course 2 · Organise you will design that governance: an advisory group like the bakery's, a board later on, and the decisions co-founders must always take together."
    }
-  ]
+  ],
+  "support": {
+   "title": "Choosing your legal form?",
+   "body": "Julieta has a legal background and helps founders compare the options for their idea and prepare the right questions for local legal advice. Book a consultation to work through it together.",
+   "button": "Book a consultation"
+  }
  },
  "103.capabilities": {
   "templates": {
@@ -88,6 +93,11 @@ export const lessons={
      ]
     }
    ]
+  },
+  "support": {
+   "title": "Setting up your governance?",
+   "body": "Julieta helps small founding teams decide who decides what, from an advisory group to a future board. Book a consultation to design yours together.",
+   "button": "Book a consultation"
   }
  },
  "104.contracts": {
@@ -267,7 +277,7 @@ export const lessons={
   },
   "support": {
    "title": "Support with your website",
-   "body": "This lesson gives you the structure and the steps, and your website plan is saved as a PDF. I have experience in website development, as well as branding and design. If you would like support to build your brand and a website that presents it clearly, along with your documents and presentations, book a consultation and we can decide together how to work.",
+   "body": "Julieta has experience in website development, as well as branding and design. If you want a website that presents your brand clearly, along with your documents and presentations, book a consultation and decide together how to work.",
    "button": "Book a consultation"
   }
  },
@@ -327,20 +337,6 @@ export const lessons={
    }
   ]
  },
- "107.visual": {
-  "support": {
-   "title": "Want help building your brand?",
-   "body": "This course gives you all the information you need to shape your visual identity, and everything you write here is saved as a PDF. I have experience in branding, design and website development. If you would like support to build your own brand, so that your documents, presentations and website are all presented in it, book a consultation. I can build it for you or with you.",
-   "button": "Book a consultation"
-  }
- },
- "107.brand-platform": {
-  "support": {
-   "title": "Bring your brand to life",
-   "body": "You now have your brand platform, your voice and the first rules of your visual identity, and your work is ready to download as a PDF. Turning it into a finished brand is design work, and it is work I know well: I have experience in branding, design and website development. If you want your documents, presentations and website to carry your brand from the start, send me a consult request.",
-   "button": "Send me a consult request"
-  }
- },
  "102.inputs": {
   "bridges": [
    {
@@ -393,7 +389,12 @@ export const lessons={
     "kind": "ahead",
     "text": "In Course 4 · Protect you will give MEAL its own line in your first-year budget, so the time spent counting loaves, following up trainees and running reviews is paid for and visible, not squeezed in around everything else."
    }
-  ]
+  ],
+  "support": {
+   "title": "A MEAL plan your team can keep up",
+   "body": "Julieta helps founders build monitoring and evaluation that a small team can actually run. If you want help with your indicators and plan, book a consultation.",
+   "button": "Book a consultation"
+  }
  },
  "107.consistency": {
   "bridges": [
@@ -411,7 +412,12 @@ export const lessons={
     "kind": "back",
     "text": "If you took Course 1 · Clarify, the inputs in your Theory of Change are your first list of costs, and your objective codes let you set the budget out by objective. If not, list the resources your first year needs before you cost them."
    }
-  ]
+  ],
+  "support": {
+   "title": "Want help with your first budget?",
+   "body": "Julieta works with founders on budgets, cash flow and simple financial controls they can manage. If you want to build yours together, book a consultation.",
+   "button": "Book a consultation"
+  }
  },
  "110.whistleblowing": {
   "bridges": [
@@ -421,5 +427,40 @@ export const lessons={
     "text": "If you took Course 3 · Prove & Show, you designed a feedback and complaints mechanism for the people you serve. This lesson adds what sits behind it: an independent route for serious concerns such as abuse or fraud, and a record of every incident."
    }
   ]
+ },
+ "101.objectives": {
+  "support": {
+   "title": "Want a second pair of eyes on your strategy?",
+   "body": "Julieta helps founders turn their purpose, vision and objectives into a strategy they can act on. If you want to shape yours together, book a consultation.",
+   "button": "Book a consultation"
+  }
+ },
+ "102.assumptions": {
+  "support": {
+   "title": "Check your Theory of Change with Julieta",
+   "body": "Julieta works with founders on their Theory of Change: the logic, the assumptions and how to test them before launch. If you want help with yours, book a consultation.",
+   "button": "Book a consultation"
+  }
+ },
+ "105.stack": {
+  "support": {
+   "title": "Help choosing and setting up your tools",
+   "body": "Julieta also builds the everyday systems small teams need: shared folders, forms, simple databases and websites. If you want yours set up, book a consultation.",
+   "button": "Book a consultation"
+  }
+ },
+ "107.visual": {
+  "support": {
+   "title": "Want help building your brand?",
+   "body": "This course gives you all the information you need, and your work as PDFs. Julieta has experience in branding, design and website development: if you want your own brand built, so your documents, presentations and website all carry it, she can do it for you or with you.",
+   "button": "Book a consultation"
+  }
+ },
+ "110.policy-needs": {
+  "support": {
+   "title": "Help adapting your policies",
+   "body": "Julieta has a legal background and helps founders work out which policies they need and adapt the templates to their work. Final documents should still be reviewed by a qualified lawyer where you operate.",
+   "button": "Book a consultation"
+  }
  }
 };

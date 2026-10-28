@@ -1,5 +1,5 @@
-import base from './m01-strategic-foundations.js?v=c1687a22e';
-import {adapt} from './adapt.js?v=c1687a22e';
+import base from './m01-strategic-foundations.js?v=c831b856d';
+import {adapt} from './adapt.js?v=c831b856d';
 // Entrepreneurs' version of m01: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:'Strategic Foundations',
