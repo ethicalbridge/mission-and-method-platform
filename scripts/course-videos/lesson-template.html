@@ -79,6 +79,7 @@ html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font
 <script src="founder-entrepreneurs-protect.js"></script>
 <script src="founder-long-pilot.js"></script>
 <script src="founder-recaps-data.js"></script>
+<script src="founder-module-long.js"></script>
 <script src="founder-long-entrepreneurs-clarify.js"></script>
 <script src="founder-long-entrepreneurs-organise.js"></script>
 <script src="founder-long-entrepreneurs-prove-show.js"></script>
@@ -107,13 +108,23 @@ const mark=(body,path,t0=0.2)=>`<svg viewBox="5 5 178 189" aria-hidden="true">
 const logo=[ 'deep s-l',4.6,`${mark('#FFFAF3','#7CC2AD',0.2)}<div class="wm a" data-t="1.5">Method <em>into</em> Impact</div><div class="tagline a" data-t="2.0">${T.logo.toUpperCase()}</div>`,[[1.5,`Method into Impact\n${T.logo}`]]];
 let scenes;
 if(KIND==='module'){
- const V=window.MODULE_VIDEOS[mod.id][LANG];const ls=mod.lessons;
+ const V=window.MODULE_VIDEOS[mod.id][LANG];const ls=mod.lessons;const ML=V.long;
  scenes=[
   ['deep s-title',6,`${mark('#FFFAF3','#7CC2AD')}<div class="eyebrow a" data-t="1.6">${T.module} ${pad(mod.no??mod.id)} · ${esc(T.course)}</div><h1 class="serif a" data-t="1.9">${esc(modTitle)}</h1><div class="rule a" data-t="2.5"></div>`,[[1.6,`${T.module} ${pad(mod.no??mod.id)} · ${T.course}\n${modTitle}`]]],
   ['cream s-idea',8,`<div class="eyebrow a" data-t="0.3">${T.idea}</div><div class="q serif a" data-t="0.6">${esc(V.idea)}</div>`,[[0.6,V.idea]]],
   ['white s-list',3+ls.length*0.45+3.2,`<div class="eyebrow a" data-t="0.2">${T.lessons(ls.length)}</div><h2 class="serif a" data-t="0.4">${T.lessonsH}</h2><div class="list">${ls.map((l,i)=>`<div class="li a" data-t="${1.4+i*0.45}"><span>${l.number}</span>${esc(titleOf(l))}</div>`).join('')}</div>`,[[0.4,`${T.lessonsH}: ${ls.map(l=>`${l.number} ${titleOf(l)}`).join(' · ')}`]]],
   ['deep s-create',8,`<div class="eyebrow a" data-t="0.3">${T.create}</div><div class="big serif a" data-t="0.6">${esc(V.create)}</div><div class="then a" data-t="2.6">${esc(T.then)}</div>${V.note?`<div class="pill a" data-t="3.6">${esc(V.note)}</div>`:''}`,[[0.6,`${T.create}: ${V.create}`],[2.6,`${T.then}${V.note?' '+V.note:''}`]]],
   logo];
+ if(ML){const words=t=>String(t).split(/\s+/).length, read=t=>1.2+words(t)/2.7;
+  const list=(eyebrow,title,items)=>{let t=1.0;const rows=items.map((p,i)=>{const at=t;t+=read(p)+0.4;return [at,p,i];});return ['white s-list2',t+1.6,`<div class="eyebrow a" data-t="0.2">${esc(eyebrow)}</div><h2 class="serif a" data-t="0.4">${esc(title)}</h2>${rows.map(([at,p,i])=>`<div class="row a" data-t="${at}"><div class="c">${i+1}</div><b>${esc(p)}</b></div>`).join('')}`,[[0.4,title],...rows.map(([at,p,i])=>[at,`${i+1}. ${p}`])]];};
+  const extra=[];
+  if(ML.what)extra.push(['cream s-def',read(ML.what)+2.4,`<div class="eyebrow a" data-t="0.3">${esc(LANG==='es'?'De qué trata':'What this module covers')}</div><div class="q serif a" data-t="0.6">${esc(ML.what)}</div>`,[[0.6,ML.what]]]);
+  if(ML.why)extra.push(list(LANG==='es'?'Por qué importa':'Why it matters',ML.why.title,ML.why.points));
+  const after=[];
+  if(ML.outcomes)after.push(list(LANG==='es'?'Al terminar':'By the end',ML.outcomes.title,ML.outcomes.points));
+  if(ML.tips)after.push(list(LANG==='es'?'Consejos':'Tips',ML.tips.title,ML.tips.points));
+  scenes=[scenes[0],scenes[1],...extra,scenes[2],...after,...scenes.slice(3)];
+ }
 }else{
  const V=(KIND==='review'?window.REVIEW_VIDEOS:window.LESSON_VIDEOS)[KEY][LANG];
  const head=['deep s-title',5.6,`${mark('#FFFAF3','#7CC2AD')}<div class="eyebrow a" data-t="1.5">${lesson.review?T.review:T.lesson+' '+lesson.number} · ${esc(modTitle)}</div><h1 class="serif a" data-t="1.8">${esc(titleOf(lesson))}</h1><div class="sub a" data-t="2.3">${esc(T.course)}</div><div class="rule a" data-t="2.7"></div>`,[[1.5,`${lesson.review?T.review:T.lesson+' '+lesson.number} · ${modTitle}\n${titleOf(lesson)}`]]];
