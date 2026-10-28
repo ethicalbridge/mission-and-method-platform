@@ -206,3 +206,11 @@
 @media(max-width:760px){.field-parts:not(.swot) .field-part{grid-row:auto;grid-template-rows:auto auto}}
 .example-grid .example p{white-space:pre-line}
 .anatomy tbody th{white-space:normal;width:24%;min-width:120px}
+/* Worked example below a lesson table (lesson.exampleBox) */
+.example-box{margin:-8px 0 22px;padding:20px 22px;background:#fdf6ee;border:1px solid #f3dccf;border-left:6px solid #e56f4a;border-radius:12px}
+.example-box h3{margin:0 0 12px;font-size:19px}
+.example-box-groups{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.example-box b{display:block;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#16746e;margin-bottom:6px}
+.example-box-groups div:nth-child(2) b{color:#b44a26}
+.example-box ul{margin:0;padding-left:18px}.example-box li{margin:6px 0;line-height:1.5}
+@media(max-width:760px){.example-box-groups{grid-template-columns:1fr}}

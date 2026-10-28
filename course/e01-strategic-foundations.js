@@ -221,8 +221,8 @@ const m=adapt(base,{
    'Check each objective against your time, money and assumptions, and write down what you will postpone to make room. An objective without resources is a wish, and many new initiatives struggle because they try to do too much too soon.'
   ],
   weak:'Raise awareness and grow quickly.',
-  strong:'ESO1: More residents of our neighbourhood, especially low-income households, repair and reuse items instead of throwing them away. ISO1: A legal entity registered after local advice. ISO3: Volunteers trained and working safely, including electrical safety.',
-  why:'It separates the change for residents from the internal capabilities that make it possible and safe to deliver, and each can later carry indicators, a budget and risks.',
+  strong:'ESO1: Children in our area improve their reading and maths by the end of each school year.\nESO2: Position ourselves as the tutoring service parents and schools trust most in our area.\nISO1: Register as a nonprofit and agree how the founders take decisions.\nISO2: Cover our core costs from fees and two local funders.\nISO3: Recruit and train ten volunteer tutors, with safeguarding checks.\nISO4: Set up simple systems for bookings, progress records and payments.',
+  why:'It separates the change for children and families from what the founders must build to deliver it, and each can later carry indicators, a budget and risks.',
   reflect:'Which internal capability, if you do not build it early, would most limit your external objectives?',
   exercise:'Draft your external and internal objectives with codes, a picture of success and an owner. Record what you will postpone until you have the people and money to do it well.',
   fields:{
@@ -237,10 +237,19 @@ const m=adapt(base,{
    rows:[
     ['Describes','The change for the people, community or environment you will serve','The capabilities you need to build to deliver that change'],
     ['Typical areas','Skills, income, behaviour, living or environmental conditions','Registration, governance, first team, systems, finance, brand, partnerships'],
-    ['Example (a girls’ science club idea)','ESO1 Girls gain science confidence and skills and keep science subjects','ISO1 A legal entity registered and funding secured from at least two sources'],
     ['Where it goes next','Gets its own Theory of Change pathway in Module 2','Appears as inputs and conditions in those pathways']
    ]
-  }
+  },
+  exampleBox:{title:'Example: a neighbourhood bakery that trains young people',groups:[
+   {label:'External objectives (ESO)',items:[
+    'ESO1 Position ourselves as the neighbourhood’s trusted bakery for fresh, affordable bread.',
+    'ESO2 Young people who left school early gain baking skills and a first paid job.',
+    'ESO3 Local families buy good bread at a fair price, and less food is wasted.']},
+   {label:'Internal objectives (ISO)',items:[
+    'ISO1 Governance and legal: the business is registered and the founders agree how decisions are made.',
+    'ISO2 Financial sustainability: sales cover our core costs within 18 months.',
+    'ISO3 People and skills: a small trained team and a safe, structured training programme.',
+    'ISO4 Systems and visibility: simple systems for orders, money and stock, and a brand people recognise.']}]}
  },
  foundation:{title:'Your Strategic Foundation'}
 });

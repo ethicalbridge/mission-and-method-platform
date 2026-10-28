@@ -47,6 +47,20 @@ html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font
 .wm{font-weight:900;font-size:72px;letter-spacing:-.01em;color:var(--cream);margin-top:24px}
 .wm em{font-style:normal;color:var(--sun)}
 .tagline{font-weight:700;font-size:21px;letter-spacing:.26em;color:var(--mint);margin-top:18px}
+/* longer lesson videos (entrepreneurs): definition, cards, lists */
+.s-def .q{font-size:56px;line-height:1.14;color:var(--deep);max-width:1120px}
+.s-cards h2,.s-list2 h2{font-size:50px;line-height:1.1;color:var(--deep);margin-bottom:30px}
+.cards{display:grid;gap:22px}
+.card{background:var(--white);border-radius:18px;padding:26px 28px;border-top:8px solid var(--teal);box-shadow:0 10px 30px rgba(16,46,59,.08)}
+.card:nth-child(2){border-top-color:var(--coral)}.card:nth-child(3){border-top-color:var(--lightteal)}.card:nth-child(4){border-top-color:var(--sun)}
+.card .lbl{font-weight:900;font-size:26px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.card:nth-child(2) .lbl{color:var(--deepcoral)}
+.card p{font-size:30px;line-height:1.3;color:var(--ink)}
+.card .ex{margin-top:14px;font-size:25px;line-height:1.3;color:var(--muted);font-style:italic}
+.s-list2 .row b{font-size:33px}
+.s-list2 .row .c{flex-basis:64px;height:64px;font-size:28px}
+.mist .row .c{background:var(--deepcoral)}
+.exs .row .c{background:var(--teal)}
 </style></head>
 <body>
 <div id="stage"></div>
@@ -58,6 +72,7 @@ html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font
 <script src="founder-entrepreneurs-organise.js"></script>
 <script src="founder-entrepreneurs-prove-show.js"></script>
 <script src="founder-entrepreneurs-protect.js"></script>
+<script src="founder-long-pilot.js"></script>
 <script>
 const P=new URLSearchParams(location.search),KIND=P.get('kind')||'lesson',KEY=P.get('key'),LANG=P.get('lang')==='es'?'es':'en';
 document.documentElement.lang=LANG==='es'?'es':'en-GB';
@@ -69,6 +84,7 @@ const lesson=KIND==='module'?null:mod.lessons.find(l=>l.key===KEY);
 const ES=window.MODULES_ES||{};
 const T={en:{lesson:'Lesson',module:'Module',course:`Course ${course.number} · ${course.name}${course.track==='entrepreneurs'?' · For entrepreneurs':''}`,idea:'The idea',how:'How to do it well',howH:'Three things to get right',example:'An example',fictional:'A fictional example organisation, for learning.',turn:'Your turn',then:'Then save it, and download it as a PDF.',lessons:n=>`${n} lessons`,lessonsH:'What you will work through',create:'You create',logo:'Better foundations. Stronger organisations.',review:'Module review'},
  es:{lesson:'Lección',module:'Módulo',course:`Curso ${course.number} · ${course.name}${course.track==='entrepreneurs'?' · Para emprendedores':''}`,idea:'La idea',how:'Cómo hacerlo bien',howH:'Tres cosas para hacerlo bien',example:'Un ejemplo',fictional:'Una organización de ejemplo ficticia, para aprender.',turn:'Te toca',then:'Luego guárdalo y descárgalo en PDF.',lessons:n=>`${n} lecciones`,lessonsH:'Lo que vas a trabajar',create:'Creas',logo:'Mejores bases. Organizaciones más fuertes.',review:'Revisión del módulo'}}[LANG];
+const T2={en:{what:'What it is',parts:'The parts',eg:'For example:',examples:'Examples',why:'Why it matters',use:'How you will use it',avoid:'What to avoid'},es:{what:'Qué es',parts:'Las partes',eg:'Por ejemplo:',examples:'Ejemplos',why:'Por qué importa',use:'Cómo lo usarás',avoid:'Qué evitar'}}[LANG];
 const modTitle=LANG==='es'?ES[mod.id][0]:mod.title, modOutput=LANG==='es'?ES[mod.id][1]:mod.output;
 const titleOf=l=>{if(l.review&&course.track==='entrepreneurs')return (LANG==='es'?'Resumen: ':'Recap: ')+(LANG==='es'?ES[mod.id][0]:mod.title).split(':')[0];return LANG==='es'?(window.TITLES_ES[l.key]||l.title):l.title;};
 const ORGS={idea:['Tide Line Youth Collective','Community group · idea stage','Grupo comunitario · etapa de idea','Indonesia'],ngo:['Imara Girls in Science','Registered nonprofit · delivering','ONG registrada · en marcha','Kenia'],social:['Pan del Barrio','Social enterprise · company','Empresa social · sociedad','Perú'],coop:['Vanita Weavers Cooperative','Cooperative · member-owned','Cooperativa · de sus socias','India'],hybrid:['Riverside Repair Hub','Hybrid · charity with a trading company','Híbrida · ONG con empresa comercial','Reino Unido']};
@@ -95,7 +111,20 @@ if(KIND==='module'){
  const pts=['white s-points',11,`<div class="eyebrow a" data-t="0.2">${T.how}</div><h2 class="serif a" data-t="0.4">${T.howH}</h2>${V.points.map((p,i)=>`<div class="row a" data-t="${1.2+i*2.6}"><div class="c">${i+1}</div><b>${esc(p)}</b></div>`).join('')}`,V.points.map((p,i)=>[1.2+i*2.6,`${i+1}. ${p}`])];
  const ex=V.example?['mintbg s-ex',9.4,`<div class="eyebrow a" data-t="0.3">${T.example}</div><div class="org a" data-t="0.6">${esc(ORGS[V.example.org][0])}</div><div class="lab a" data-t="0.8">${esc(ORGS[V.example.org][LANG==='es'?2:1])} · ${esc(orgPlace(V.example.org))}</div><div class="quote a" data-t="1.6"><p class="serif">${esc(V.example.text)}</p></div><div class="foot a" data-t="2.6">${T.fictional}</div>`,[[0.6,`${T.example}: ${ORGS[V.example.org][0]} (${ORGS[V.example.org][LANG==='es'?2:1]}, ${orgPlace(V.example.org)})`],[1.6,`“${V.example.text}”`]]]:null;
  const turn=KIND==='review'?['deep s-create',6,`<div class="eyebrow a" data-t="0.3">${T.turn}</div><div class="big serif a" data-t="0.6">${esc(V.create)}</div>`,[[0.6,V.create]]]:['deep s-create',7,`<div class="eyebrow a" data-t="0.3">${T.turn}</div><div class="big serif a" data-t="0.6">${esc(V.create)}</div><div class="then a" data-t="2.4">${esc(T.then)}</div>`,[[0.6,V.create],[2.4,T.then]]];
- scenes=[head,idea,pts,...(ex?[ex]:[]),turn,logo];
+ const L=V.long;
+ if(L){ // longer, fuller video: what it is, its kinds with examples, why it matters, how you use it, what to avoid
+  const words=t=>String(t).split(/\s+/).length, read=t=>1.2+words(t)/2.7;
+  const list=(cls,eyebrow,title,items,mark)=>{let t=1.0;const rows=items.map((p,i)=>{const at=t;t+=read(p)+0.4;return [at,p,i];});return [`white s-list2 ${cls}`,t+1.6,`<div class="eyebrow a" data-t="0.2">${esc(eyebrow)}</div><h2 class="serif a" data-t="0.4">${esc(title)}</h2>${rows.map(([at,p,i])=>`<div class="row a" data-t="${at}"><div class="c">${mark?mark:i+1}</div><b>${esc(p)}</b></div>`).join('')}`,[[0.4,title],...rows.map(([at,p,i])=>[at,`${mark?'':(i+1)+'. '}${p}`])]];};
+  const out=[head,idea];
+  if(L.what)out.push(['cream s-def',read(L.what)+2.4,`<div class="eyebrow a" data-t="0.3">${esc(T2.what)}</div><div class="q serif a" data-t="0.6">${esc(L.what)}</div>`,[[0.6,L.what]]]);
+  if(L.parts){let t=1.0;const cs=L.parts.items.map(c=>{const at=t;t+=read(c.text+' '+(c.example||''))+0.5;return [at,c];});const n=L.parts.items.length;
+   out.push([`cream s-cards`,t+1.8,`<div class="eyebrow a" data-t="0.2">${esc(T2.parts)}</div><h2 class="serif a" data-t="0.4">${esc(L.parts.title)}</h2><div class="cards" style="grid-template-columns:repeat(${n},1fr)">${cs.map(([at,c])=>`<div class="card a" data-t="${at}"><div class="lbl">${esc(c.label)}</div><p>${esc(c.text)}</p>${c.example?`<div class="ex">${esc(T2.eg)} ${esc(c.example)}</div>`:''}</div>`).join('')}</div>`,[[0.4,L.parts.title],...cs.map(([at,c])=>[at,`${c.label}: ${c.text}${c.example?` ${T2.eg} ${c.example}`:''}`])]]);}
+  if(L.examples)out.push(list('exs',T2.examples,L.examples.title,L.examples.items,'✓'));
+  if(L.why)out.push(list('',T2.why,L.why.title,L.why.points));
+  if(L.use)out.push(list('',T2.use,L.use.title,L.use.points));
+  if(L.mistakes)out.push(list('mist',T2.avoid,L.mistakes.title,L.mistakes.points,'✕'));
+  scenes=[...out,turn,logo];
+ }else scenes=[head,idea,pts,...(ex?[ex]:[]),turn,logo];
 }
 const stage=document.getElementById('stage');let t0=0;const FADE=0.6;const CUES=[];
 const els=scenes.map(([cls,dur,html,cues],i)=>{const s=document.createElement('section');s.className='scene '+cls;s.innerHTML=html;s.dataset.start=t0;s.dataset.end=t0+dur;stage.appendChild(s);
@@ -105,7 +134,7 @@ window.DURATION=t0;
 const ts=x=>{const h=Math.floor(x/3600),m=Math.floor(x%3600/60),sec=(x%60).toFixed(3).padStart(6,'0');return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${sec}`;};
 window.VTT='WEBVTT\n\n'+CUES.map((c,i)=>`${i+1}\n${ts(c.start)} --> ${ts(Math.min(c.end,t0))}\n${c.text}`).join('\n\n')+'\n';
 // Fit long text: shrink a block until it fits its scene
-document.fonts.ready.then(()=>{for(const [sel,min] of [['.s-title h1',60],['.s-idea .q',46],['.quote p',30],['.s-create .big',42],['.row b',28]])document.querySelectorAll(sel).forEach(el=>{let size=parseFloat(getComputedStyle(el).fontSize);const sc=el.closest('.scene');while(size>min&&sc.scrollHeight>720){size-=2;el.style.fontSize=size+'px';}});window.FIT_DONE=true;});
+document.fonts.ready.then(()=>{for(const [sel,min] of [['.s-title h1',60],['.s-idea .q',46],['.quote p',30],['.s-create .big',42],['.row b',26],['.card p',22],['.s-def .q',38]])document.querySelectorAll(sel).forEach(el=>{let size=parseFloat(getComputedStyle(el).fontSize);const sc=el.closest('.scene');while(size>min&&sc.scrollHeight>720){size-=2;el.style.fontSize=size+'px';}});window.FIT_DONE=true;});
 const clamp=x=>Math.max(0,Math.min(1,x));
 const ease=x=>1-Math.pow(1-x,3);
 const back=x=>{const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
