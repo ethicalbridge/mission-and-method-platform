@@ -305,3 +305,17 @@
 .locked-panel h2{margin:.4rem 0 .5rem}
 .locked-panel>p{text-align:left!important}
 .locked-icon{font-size:1.6rem}
+/* Entrepreneurs, end of a course: invitation to the other courses */
+.course-invite{margin:2.2rem 0 1rem;padding:1.6rem 1.5rem;border-radius:18px;background:#f4f9f8;border:1px solid #d9e6e3}
+.course-invite h2{margin:.3rem 0 .4rem}
+.course-invite>p{text-align:left!important;max-width:65ch}
+.invite-cards{display:grid;gap:1rem;margin:1.2rem 0}
+.invite-card{display:grid;grid-template-columns:auto 1fr;gap:1rem;padding:1.1rem 1.2rem;border-radius:14px;background:#fff;border:1px solid #d9e6e3}
+.invite-card.is-owned{opacity:.85}
+.invite-card h3{margin:.2rem 0 .3rem;font-size:1.15rem}
+.invite-card p{margin:0 0 .4rem;text-align:left!important;font-size:.95rem}
+.invite-card ul{margin:0 0 .6rem;padding-left:1.1rem;font-size:.9rem;color:#3c5560}
+.invite-card li{text-align:left!important}
+.invite-all{display:flex;gap:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:1rem 1.2rem;border-radius:14px;background:#14304a;color:#fff}
+.invite-all p{margin:.2rem 0 0;color:#e6eef0;text-align:left!important}
+.invite-all .button{background:#e56f4a;border-color:#e56f4a;color:#fff}
