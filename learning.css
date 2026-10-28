@@ -205,3 +205,4 @@
 @supports not (grid-template-rows:subgrid){.field-parts:not(.swot) .field-part label{min-height:2.8em;display:flex;align-items:flex-end}}
 @media(max-width:760px){.field-parts:not(.swot) .field-part{grid-row:auto;grid-template-rows:auto auto}}
 .example-grid .example p{white-space:pre-line}
+.anatomy tbody th{white-space:normal;width:24%;min-width:120px}
