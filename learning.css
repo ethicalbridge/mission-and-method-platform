@@ -196,3 +196,11 @@
 .field-section{margin:26px 0 6px;padding-top:14px;border-top:2px solid #f3dccf;color:#b44a26;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 .field-section:first-child{margin-top:4px}
 #lesson-form h3.field-section,.review-item h4.field-section{font-family:inherit;font-size:13px;line-height:1.4;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#b44a26}
+/* Boxes in a row line up: labels share one row height, so every box starts and ends at the same height */
+.field-parts:not(.swot){align-items:stretch}
+.field-parts:not(.swot) .field-part{display:grid;grid-template-rows:subgrid;grid-row:span 2;row-gap:6px}
+.field-parts:not(.swot) .field-part label{margin:0;align-self:end}
+.field-parts:not(.swot) .field-part textarea{height:100%;min-height:140px}
+.output-parts:not(.swot) .output-part{display:flex;flex-direction:column}
+@supports not (grid-template-rows:subgrid){.field-parts:not(.swot) .field-part label{min-height:2.8em;display:flex;align-items:flex-end}}
+@media(max-width:760px){.field-parts:not(.swot) .field-part{grid-row:auto;grid-template-rows:auto auto}}
