@@ -214,3 +214,8 @@
 .example-box-groups div:nth-child(2) b{color:#b44a26}
 .example-box ul{margin:0;padding-left:18px}.example-box li{margin:6px 0;line-height:1.5}
 @media(max-width:760px){.example-box-groups{grid-template-columns:1fr}}
+.example-list{list-style:none;margin:6px 0 0;padding:0}
+.example-list li{padding:8px 0;border-bottom:1px solid #eef1ee;line-height:1.5}
+.example-list li:last-child{border-bottom:0}
+.example-list li.gap{margin-top:14px;border-top:2px solid #d8eee2}
+.example-list b{color:#16746e;margin-right:4px}
