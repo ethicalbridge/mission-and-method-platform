@@ -54,6 +54,10 @@ html,body{width:1280px;height:720px;overflow:hidden;background:var(--cream);font
 <script src="scripts.js"></script>
 <script src="course1-extra.js"></script>
 <script src="lesson-videos.js"></script>
+<script src="founder-entrepreneurs-clarify.js"></script>
+<script src="founder-entrepreneurs-organise.js"></script>
+<script src="founder-entrepreneurs-prove-show.js"></script>
+<script src="founder-entrepreneurs-protect.js"></script>
 <script>
 const P=new URLSearchParams(location.search),KIND=P.get('kind')||'lesson',KEY=P.get('key'),LANG=P.get('lang')==='es'?'es':'en';
 document.documentElement.lang=LANG==='es'?'es':'en-GB';
@@ -63,8 +67,8 @@ const course=Object.values(window.COURSE_DATA).find(c=>c.modules.some(m=>KIND===
 const mod=course.modules.find(m=>KIND==='module'?String(m.id)===KEY:m.lessons.some(l=>l.key===KEY));
 const lesson=KIND==='module'?null:mod.lessons.find(l=>l.key===KEY);
 const ES=window.MODULES_ES||{};
-const T={en:{lesson:'Lesson',module:'Module',course:`Course ${course.number} · ${course.name}`,idea:'The idea',how:'How to do it well',howH:'Three things to get right',example:'An example',fictional:'A fictional example organisation, for learning.',turn:'Your turn',then:'Then save it, and download it as a PDF.',lessons:n=>`${n} lessons`,lessonsH:'What you will work through',create:'You create',logo:'Better foundations. Stronger organisations.',review:'Module review'},
- es:{lesson:'Lección',module:'Módulo',course:`Curso ${course.number} · ${course.name}`,idea:'La idea',how:'Cómo hacerlo bien',howH:'Tres cosas para hacerlo bien',example:'Un ejemplo',fictional:'Una organización de ejemplo ficticia, para aprender.',turn:'Te toca',then:'Luego guárdalo y descárgalo en PDF.',lessons:n=>`${n} lecciones`,lessonsH:'Lo que vas a trabajar',create:'Creas',logo:'Mejores bases. Organizaciones más fuertes.',review:'Revisión del módulo'}}[LANG];
+const T={en:{lesson:'Lesson',module:'Module',course:`Course ${course.number} · ${course.name}${course.track==='entrepreneurs'?' · For entrepreneurs':''}`,idea:'The idea',how:'How to do it well',howH:'Three things to get right',example:'An example',fictional:'A fictional example organisation, for learning.',turn:'Your turn',then:'Then save it, and download it as a PDF.',lessons:n=>`${n} lessons`,lessonsH:'What you will work through',create:'You create',logo:'Better foundations. Stronger organisations.',review:'Module review'},
+ es:{lesson:'Lección',module:'Módulo',course:`Curso ${course.number} · ${course.name}${course.track==='entrepreneurs'?' · Para emprendedores':''}`,idea:'La idea',how:'Cómo hacerlo bien',howH:'Tres cosas para hacerlo bien',example:'Un ejemplo',fictional:'Una organización de ejemplo ficticia, para aprender.',turn:'Te toca',then:'Luego guárdalo y descárgalo en PDF.',lessons:n=>`${n} lecciones`,lessonsH:'Lo que vas a trabajar',create:'Creas',logo:'Mejores bases. Organizaciones más fuertes.',review:'Revisión del módulo'}}[LANG];
 const modTitle=LANG==='es'?ES[mod.id][0]:mod.title, modOutput=LANG==='es'?ES[mod.id][1]:mod.output;
 const titleOf=l=>LANG==='es'?(window.TITLES_ES[l.key]||l.title):l.title;
 const ORGS={idea:['Tide Line Youth Collective','Community group · idea stage','Grupo comunitario · etapa de idea','Indonesia'],ngo:['Imara Girls in Science','Registered nonprofit · delivering','ONG registrada · en marcha','Kenia'],social:['Pan del Barrio','Social enterprise · company','Empresa social · sociedad','Perú'],coop:['Vanita Weavers Cooperative','Cooperative · member-owned','Cooperativa · de sus socias','India'],hybrid:['Riverside Repair Hub','Hybrid · charity with a trading company','Híbrida · ONG con empresa comercial','Reino Unido']};
@@ -79,7 +83,7 @@ let scenes;
 if(KIND==='module'){
  const V=window.MODULE_VIDEOS[mod.id][LANG];const ls=mod.lessons;
  scenes=[
-  ['deep s-title',6,`${mark('#FFFAF3','#7CC2AD')}<div class="eyebrow a" data-t="1.6">${T.module} ${pad(mod.id)} · ${esc(T.course)}</div><h1 class="serif a" data-t="1.9">${esc(modTitle)}</h1><div class="rule a" data-t="2.5"></div>`,[[1.6,`${T.module} ${pad(mod.id)} · ${T.course}\n${modTitle}`]]],
+  ['deep s-title',6,`${mark('#FFFAF3','#7CC2AD')}<div class="eyebrow a" data-t="1.6">${T.module} ${pad(mod.no??mod.id)} · ${esc(T.course)}</div><h1 class="serif a" data-t="1.9">${esc(modTitle)}</h1><div class="rule a" data-t="2.5"></div>`,[[1.6,`${T.module} ${pad(mod.no??mod.id)} · ${T.course}\n${modTitle}`]]],
   ['cream s-idea',8,`<div class="eyebrow a" data-t="0.3">${T.idea}</div><div class="q serif a" data-t="0.6">${esc(V.idea)}</div>`,[[0.6,V.idea]]],
   ['white s-list',3+ls.length*0.45+3.2,`<div class="eyebrow a" data-t="0.2">${T.lessons(ls.length)}</div><h2 class="serif a" data-t="0.4">${T.lessonsH}</h2><div class="list">${ls.map((l,i)=>`<div class="li a" data-t="${1.4+i*0.45}"><span>${l.number}</span>${esc(titleOf(l))}</div>`).join('')}</div>`,[[0.4,`${T.lessonsH}: ${ls.map(l=>`${l.number} ${titleOf(l)}`).join(' · ')}`]]],
   ['deep s-create',8,`<div class="eyebrow a" data-t="0.3">${T.create}</div><div class="big serif a" data-t="0.6">${esc(V.create)}</div><div class="then a" data-t="2.6">${esc(T.then)}</div>${V.note?`<div class="pill a" data-t="3.6">${esc(V.note)}</div>`:''}`,[[0.6,`${T.create}: ${V.create}`],[2.6,`${T.then}${V.note?' '+V.note:''}`]]],
