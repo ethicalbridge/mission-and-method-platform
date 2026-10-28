@@ -14,7 +14,7 @@ const pages=[
  ['pricing.html','pricing','org','courses-entrepreneurs.html','hero'],
  ['planning-system.html','courses','org','courses-entrepreneurs.html','hero'],
  ['start-here.html','starthere','org','courses-entrepreneurs.html','main'],
- ['software.html','software','both','courses-entrepreneurs.html','main'],
+ ['software.html','software','org','courses-entrepreneurs.html','main'],
 ];
 const css='<link rel="stylesheet" href="audiences.css?v=3">';
 for(const [file,key,track,href,where] of pages){
