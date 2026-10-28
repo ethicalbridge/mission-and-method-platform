@@ -14,10 +14,10 @@ walk({title:e.title,short:e.short,intro:e.intro,output:e.output,promo:e.promo},'
 e.lessons.forEach(l=>walk(l,`lesson ${l.id}`));
 const banned=[/Imara/,/Pan del Barrio/,/Vanita/,/Riverside/,/Tide Line/,/Huerta/,/Next Step Mentors/,/\blawyers?\b/i,/\bModules? 1[123]\b/,/\bCourse 5\b/,/Sustain (&|and) Run/,/\bNGOs?\b/,/thirteen modules/i,/five courses/i];
 for(const [p,s] of all)for(const re of banned)if(re.test(s))problems.push(`${p}: contains ${re}`);
-if(e.lessons.length!==base.lessons.length)problems.push('lesson count differs');
+if(e.lessons.length!==base.lessons.length)console.log(` note: ${base.lessons.length-e.lessons.length} lesson(s) merged`);
 e.lessons.forEach((l,i)=>{
- const b=base.lessons[i];
- if(l.id!==b.id)problems.push(`lesson ${i} id ${l.id} ≠ ${b.id}`);
+ const b=base.lessons.find(x=>x.id===l.id);
+ if(!b){problems.push(`lesson ${l.id} not in the original`);return;}
  if(l.gallery)problems.push(`${l.id}: gallery left in`);
  if(l.review)return;
  if(JSON.stringify(l.learn)===JSON.stringify(b.learn))problems.push(`${l.id}: learn unchanged`);

@@ -5,8 +5,20 @@
 //   export default adapt(base, {title, short, intro, output, promo:{headline,pitch}}, {lessonId:{...}, ...})
 // Lesson overrides: title, part, learn, weak, strong, why, reflect, exercise, check,
 //   fields:{key:{label,hint}}, anatomy:{title,intro,cols,rows} (or null to drop the table).
+import {splits} from './founder-splits.js';
 const TEXT=['title','part','learn','weak','strong','why','reflect','exercise','check'];
 export const FOUNDER_OFFSET=100;
+// A hint written as "Column | column (examples) | …" becomes an entry table with those columns, so each answer goes in
+// its own box; a sentence after the columns stays as the hint.
+function asTable(f){
+ if(f.type||!/\s\|\s/.test(f.hint||''))return f;
+ let h=f.hint.trim();const pre=h.match(/^([^|]*?):\s+(?=[^|]*\|)/);if(pre&&!/\|/.test(pre[1]))h=h.slice(pre[0].length);
+ const parts=h.split(/\s\|\s/);let last=parts.pop();const cut=last.search(/\.(\s|$)/);let note='';
+ if(cut>=0){note=last.slice(cut+1).trim();last=last.slice(0,cut);}parts.push(last);
+ const columns=parts.map(c=>{c=c.trim().replace(/\.$/,'');const m=c.match(/^(.*?)\s*\((.*)\)\s*(.*)$/);const label=(m?(m[1]+(m[3]?' '+m[3]:'')):c).trim();return {label:label.charAt(0).toUpperCase()+label.slice(1),placeholder:m?m[2]:''};});
+ return {...f,type:'table',columns,rows:4,hint:note||'One row per item. Add rows as you need.'};
+}
+
 export function adapt(base,mod,lessons){
  const m=structuredClone(base);
  Object.assign(m,{id:FOUNDER_OFFSET+base.id,no:base.id,mirror:base.id,track:'entrepreneurs'});
@@ -29,5 +41,6 @@ export function adapt(base,mod,lessons){
    Object.assign(f,v);
   }
  }
+ for(const l of m.lessons)if(l.fields)l.fields=l.fields.map(f=>{const sp=splits[`${m.id}.${l.id}.${f.key}`];if(sp&&!f.type)return {...f,type:'parts',hint:sp.hint||'One answer per box.',parts:sp.parts.map(([label,placeholder])=>({label,placeholder}))};return asTable(f);});
  return m;
 }

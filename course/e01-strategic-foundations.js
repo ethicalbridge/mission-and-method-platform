@@ -1,7 +1,7 @@
 import base from './m01-strategic-foundations.js';
 import {adapt} from './adapt.js';
 // Entrepreneurs' version of m01: same lessons, fields, workbook and tools; wording for people building something new.
-export default adapt(base,{
+const m=adapt(base,{
  title:'Strategic Foundations',
  short:'Purpose, context, stakeholders, vision, mission, values, form, positioning and objectives for what you are building',
  intro:'Make the connected decisions everything you build will depend on: why your initiative should exist, the context it will enter, who matters, the future you want, the work you will do, how you will behave, what kind of organisation to create, where you can add unique value and what you will prioritise first.',
@@ -244,3 +244,31 @@ export default adapt(base,{
  },
  foundation:{title:'Your Strategic Foundation'}
 });
+
+// Purpose, vision and mission are taught together in lesson 1.1: people starting out often mix them up, and seeing
+// the three side by side, answering different questions, makes the difference clear. Their exercises stay the same.
+const [purpose,vision,mission]=['purpose','vision','mission'].map(id=>m.lessons.find(l=>l.id===id));
+Object.assign(purpose,{
+ title:'Purpose, vision and mission',minutes:45,
+ learn:[
+  'Purpose, vision and mission are three short statements that answer three different questions. Purpose: why should this exist? Vision: what future are we working towards? Mission: what will we do, for whom and how? People starting out often mix them up, so this lesson builds all three together, in that order.',
+  'Purpose explains why what you are building needs to exist. Start with a specific unmet need and the people or environment affected by it, not with your favourite solution. “We need an app” names a solution; “rural families cannot find reliable information about local services” names a problem. A personal motivation often starts the journey, but others will only join, fund or buy if the reason matters beyond you. Talk with the people affected first, and keep what you know apart from what you assume.',
+  'Vision describes the future you want to help create: what will be different for people, communities or the environment if things go well. It is not a list of services, a revenue target or a picture of how big you will grow. Many people and organisations contribute to the same future, so be ambitious and honest about your part. Read it to someone affected by the issue and ask what they picture; if their answer is vague, make it more concrete.',
+  'Mission says what you will actually do, for whom and how. A useful structure is: “We help [people] achieve [change] through [approach].” Name your main approach without listing every activity, and include a place when it limits your scope. Starting narrow is a strength. At the start much of your approach is untested, so say what is still a proposal.',
+  'Use the three together as a filter from day one. Purpose stays steady even if your first idea changes; vision keeps you pointed at the same future; mission tells you which opportunities fit now and which to turn down, even when they bring money. Write the need first, then the purpose, then the future, then the work.'
+ ],
+ anatomy:{...vision.anatomy,after:0,intro:'Three statements, three questions, shown for a community repair project at the planning stage.'},
+ weak:'We want to make a difference, help communities and offer innovative solutions for everyone.',
+ strong:'Purpose: “We exist so that people in our city can repair, reuse and share instead of throwing away.” Vision: “A city where repairing and sharing are normal, affordable and open to everyone.” Mission: “We help residents keep things in use through monthly repair cafés and a small tool library, starting at one site.”',
+ why:'Each statement answers its own question: why it exists, the future it works towards and the work it will do now. Together they tell a reader which projects fit and which do not.',
+ reflect:'If what you are building succeeded, what would people be able to do that they cannot do now, and which attractive opportunity would fall outside your mission?',
+ exercise:'Work in order: describe the need and your evidence, write your purpose, describe the future and your vision, then write your mission and one boundary. Test the vision and mission with someone affected before you put them on a website or a registration form.',
+ check:'Does each statement answer its own question: why you exist, the future you want and the work you will do?',
+ fields:[
+  ...purpose.fields.map((f,i)=>i===0?{...f,section:'Purpose · why should this exist?'}:f),
+  ...vision.fields.map((f,i)=>i===0?{...f,section:'Vision · what future are we working towards?'}:f),
+  ...mission.fields.map((f,i)=>i===0?{...f,section:'Mission · what will we do, for whom and how?'}:f)
+ ]
+});
+m.lessons=m.lessons.filter(l=>l!==vision&&l!==mission);
+export default m;

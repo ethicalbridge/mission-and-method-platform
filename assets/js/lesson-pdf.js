@@ -180,6 +180,17 @@ function fieldTable(L, f, inner) {
 // f.grid = {cols:[…], rows:[[…]], labelled}: an entry table, one row per line; column widths follow the column count.
 function fieldGrid(L, f, inner) {
   fieldLabel(L, f, inner);
+  if (f.grid.cols.length > 6) { // too many columns for the page: one card per row, column names as labels
+    f.grid.rows.forEach(row => {
+      const lines = row.flatMap((c, i) => L.wrap(`${f.grid.cols[i]}: ${c || '—'}`, 'regular', 9, inner - 28).map((t, j) => ({ t, bold: j === 0, label: f.grid.cols[i] })));
+      const h = lines.length * 12.5 + 18;
+      L.ensure(h + 6);
+      L.rect(M, L.y, inner, h, C.white, C.line, 8); L.rect(M, L.y + 8, 3, h - 16, C.teal, null, 1.5);
+      lines.forEach((x, j) => { const y = L.y + 14 + j * 12.5; if (x.bold && x.t.startsWith(x.label + ':')) { L.text(M + 14, y, x.label + ':', 'bold', 9, C.deep); L.text(M + 14 + L.width(x.label + ': ', 'bold', 9), y, x.t.slice(x.label.length + 1).trim(), 'regular', 9, C.ink); } else L.text(M + 14, y, x.t, 'regular', 9, C.ink); });
+      L.y += h + 6;
+    });
+    L.y += 8; return;
+  }
   const n = f.grid.cols.length, pad = 6, lead = 11.5, size = 8.8;
   const first = n === 4 ? 0.2 : 1 / n, rest = (1 - first) / (n - 1);
   const widths = f.grid.cols.map((_, i) => inner * (i ? rest : first));
@@ -210,6 +221,7 @@ function fieldParts(L, f, inner) {
     const top = { ...f, layout: '', parts: f.parts.slice(0, 2), label: '' }, bottom = { ...f, layout: '', parts: f.parts.slice(2), label: '' };
     partsRow(L, top, inner, [C.teal, C.coral]); partsRow(L, bottom, inner, [C.lightteal, '#E8A23B']); L.y += 6; return;
   }
+  if (f.parts.length > 3) { for (let i = 0; i < f.parts.length; i += 2) partsRow(L, { ...f, parts: f.parts.slice(i, i + 2) }, inner, i ? [C.lightteal, '#E8A23B'] : [C.teal, C.coral]); L.y += 4; return; }
   partsRow(L, f, inner, [C.teal, C.coral, C.lightteal]);
 }
 function partsRow(L, f, inner, colours) {
@@ -263,6 +275,7 @@ function compose(L, doc) {
       L.y += 8;
     }
     for (const f of sec.fields) {
+      if (f.section) { L.ensure(90); L.y += 4; L.text(M, L.y + 10, f.section.toUpperCase(), 'extrabold', 8.5, C.coral, 1.1); L.y += 20; }
       if (f.table) { fieldTable(L, f, inner); continue; }
       if (f.items) { fieldItems(L, f, inner); continue; }
       if (f.grid) { fieldGrid(L, f, inner); continue; }

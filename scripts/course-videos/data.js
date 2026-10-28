@@ -1140,8 +1140,8 @@ window.COURSE_DATA={
   "name": "Clarify",
   "title": "Clarify: Purpose, Strategy & Theory of Change",
   "track": "entrepreneurs",
-  "lessons": 24,
-  "hours": 8,
+  "lessons": 22,
+  "hours": 7,
   "modules": [
    {
     "id": 100,
@@ -1186,7 +1186,7 @@ window.COURSE_DATA={
      {
       "key": "101.purpose",
       "number": "1.1",
-      "title": "Purpose",
+      "title": "Purpose, vision and mission",
       "review": false
      },
      {
@@ -1202,44 +1202,32 @@ window.COURSE_DATA={
       "review": false
      },
      {
-      "key": "101.vision",
-      "number": "1.4",
-      "title": "Vision",
-      "review": false
-     },
-     {
-      "key": "101.mission",
-      "number": "1.5",
-      "title": "Mission",
-      "review": false
-     },
-     {
       "key": "101.values",
-      "number": "1.6",
+      "number": "1.4",
       "title": "Values in practice",
       "review": false
      },
      {
       "key": "101.form",
-      "number": "1.7",
+      "number": "1.5",
       "title": "Organisational form and identity",
       "review": false
      },
      {
       "key": "101.positioning",
-      "number": "1.8",
+      "number": "1.6",
       "title": "Positioning and comparative advantage",
       "review": false
      },
      {
       "key": "101.objectives",
-      "number": "1.9",
+      "number": "1.7",
       "title": "Strategic objectives: external and internal",
       "review": false
      },
      {
       "key": "101.foundation",
-      "number": "1.10",
+      "number": "1.8",
       "title": "Recap: Strategic Foundations",
       "review": true
      }

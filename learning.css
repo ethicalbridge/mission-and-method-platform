@@ -186,3 +186,13 @@
 .field-parts.swot .field-part:nth-child(3) label{color:#16746e}.field-parts.swot .field-part:nth-child(4) label{color:#9a6512}
 .output-parts.swot dt,.output-parts.swot dd{grid-row:auto}
 @media(max-width:760px){.field-parts.swot,.output-parts.swot{grid-template-columns:1fr}}
+.add-row{margin:-8px 0 18px;font-weight:800}
+.field-parts:not(.swot),.output-parts:not(.swot){grid-template-columns:repeat(var(--cols,3),minmax(0,1fr))}
+.output-parts:not(.swot) dt,.output-parts:not(.swot) dd{grid-row:auto}
+.output-parts:not(.swot){grid-auto-flow:row}
+@media(max-width:760px){.field-parts:not(.swot),.output-parts:not(.swot){grid-template-columns:1fr}}
+.output-parts{display:grid!important;gap:10px}.output-part{padding:10px 12px;border:1px solid #e3e8e4;border-radius:10px;background:#fff}
+.output-part b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#16746e}.output-part p{margin:4px 0 0;white-space:pre-line}
+.field-section{margin:26px 0 6px;padding-top:14px;border-top:2px solid #f3dccf;color:#b44a26;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.field-section:first-child{margin-top:4px}
+#lesson-form h3.field-section,.review-item h4.field-section{font-family:inherit;font-size:13px;line-height:1.4;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#b44a26}

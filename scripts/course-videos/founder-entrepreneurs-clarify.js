@@ -13,8 +13,8 @@ Object.assign(window.LESSON_VIDEOS, {
   "es": {"idea": "Califica hoy cada base con honestidad; casi todas estarán sin iniciar, y está bien.", "points": ["Califica: no iniciado, informal, documentado, practicado, revisado.", "Respalda cada calificación con una evidencia concreta.", "Pide a un cofundador o mentor que califique y compara."], "create": "Calificas cada área, das evidencia y nombras tres prioridades."}
  },
  "101.purpose": {
-  "en": {"idea": "Start from a real need that matters beyond you, not from the solution you love.", "points": ["Name who is affected, where, and what happens.", "Talk to them before you build anything.", "Separate what you know from what you assume."], "create": "You write the need, one evidence gap and your purpose."},
-  "es": {"idea": "Parte de una necesidad real que importe más allá de ti, no de la solución que te gusta.", "points": ["Nombra quién está afectado, dónde y qué le sucede.", "Habla con esas personas antes de construir nada.", "Separa lo que sabes de lo que supones."], "create": "Escribes la necesidad, un vacío de evidencia y tu propósito."}
+  "en": {"idea": "Three statements, three questions: why it should exist, the future you want, the work you will do.", "points": ["Purpose: start from a real need, not your solution.", "Vision: describe the future, not your services.", "Mission: who you help, the change and how."], "create": "You write your purpose, vision and mission, in that order."},
+  "es": {"idea": "Tres frases, tres preguntas: por qué debe existir, el futuro que buscas y el trabajo que harás.", "points": ["Propósito: parte de una necesidad real, no de tu solución.", "Visión: describe el futuro, no tus servicios.", "Misión: a quién ayudas, qué cambia y cómo."], "create": "Escribes tu propósito, tu visión y tu misión, en ese orden."}
  },
  "101.context": {
   "en": {"idea": "Look outward at the landscape before you commit time, savings or a legal form.", "points": ["Scan political, economic, social and legal trends.", "Map who already works here and how well.", "Consider joining or partnering instead of starting."], "create": "You write a context scan and a list of the main actors."},
@@ -118,7 +118,7 @@ Object.assign(window.TITLES_ES, {
  "100.profile": "Tu perfil fundacional",
  "100.health-check": "Diagnóstico inicial de tus bases",
  "100.start-pack": "Tu punto de partida",
- "101.purpose": "Propósito",
+ "101.purpose": "Propósito, visión y misión",
  "101.context": "Análisis del contexto y del entorno",
  "101.stakeholders": "Mapa de actores",
  "101.vision": "Visión",
