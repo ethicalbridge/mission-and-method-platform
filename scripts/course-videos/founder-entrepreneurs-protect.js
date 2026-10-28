@@ -58,7 +58,7 @@ Object.assign(window.LESSON_VIDEOS, {
  },
  "110.safeguarding": {
   "en": {"idea": "Safeguarding starts with your very first activity, including pilots, even in a team of two.", "points": ["Name a lead, a deputy and someone outside the founders.", "Design safe activities: supervision, two adults, online rules.", "Get local expert advice before your first activity."], "create": "You outline your safeguarding framework, without case details."},
-  "es": {"idea": "La salvaguarda empieza con tu primera actividad, incluidos los pilotos, aunque sean solo dos.", "points": ["Nombra responsable, suplente y alguien ajeno a los fundadores.", "Diseña actividades seguras: supervisión, dos adultos, reglas en línea.", "Busca asesoría experta local antes de tu primera actividad."], "create": "Esbozas tu marco de salvaguarda, sin detalles de casos."}
+  "es": {"idea": "La salvaguarda empieza con tu primera actividad, incluidos los pilotos, aunque sean solo dos.", "points": ["Nombra responsable, suplente y alguien ajeno a los fundadores.", "Diseña actividades seguras: supervisión, dos adultos, normas web.", "Busca asesoría experta local antes de tu primera actividad."], "create": "Esbozas tu marco de salvaguarda, sin detalles de casos."}
  },
  "110.data-protection": {
   "en": {"idea": "Build data protection in from the first sign-up: it is far easier than fixing it later.", "points": ["List what data you will collect, why and where it lives.", "Keep only what you need, and only as long as needed.", "Give children’s and sensitive data extra protection."], "create": "You build your data inventory and list your privacy actions."},
