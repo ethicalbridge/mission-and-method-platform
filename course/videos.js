@@ -110,7 +110,7 @@ export const lessonVideos={
  "108.content": "assets/videos/lessons/108-content?v=1793163749",
  "108.email": "assets/videos/lessons/108-email?v=1793163545",
  "108.measurement": "assets/videos/lessons/108-measurement?v=1793150465",
- "108.media": "assets/videos/lessons/108-media?v=1793150398",
+ "108.media": "assets/videos/lessons/108-media?v=1793164349",
  "108.messaging": "assets/videos/lessons/108-messaging?v=1793162487",
  "108.reputation": "assets/videos/lessons/108-reputation?v=1793150432",
  "108.social": "assets/videos/lessons/108-social?v=1793163342",
@@ -298,7 +298,7 @@ export const moduleVideos={
  "108": "assets/videos/modules/module-108?v=1793163958",
  "109": "assets/videos/modules/module-109?v=1793164185",
  "11": "assets/videos/modules/module-11?v=1793095486",
- "110": "assets/videos/modules/module-110?v=1793148702",
+ "110": "assets/videos/modules/module-110?v=1793164356",
  "12": "assets/videos/modules/module-12?v=1793095486",
  "13": "assets/videos/modules/module-13?v=1793095486"
 };
