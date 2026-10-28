@@ -18,14 +18,14 @@ export default adapt(base,{
    'For each function, decide whether you will do it yourselves, share it with a partner or contract it out, for example bookkeeping, legal advice or IT support. Contracting a task out does not hand over accountability: someone in the founding team still checks the work.',
    'Then look at who will hold what. When one founder holds most functions, everything stops when they are ill, away or overloaded. Spotting this now, before you launch, is cheaper than discovering it in a crisis.'
   ],
-  weak:'We will need a director, a programme manager and a fundraiser.',
-  strong:'“Workshop delivery: core, in-house, held by one co-founder. Mentoring: shared with a local college. Bookkeeping: contracted, checked monthly by the other co-founder. Fundraising and sales: second co-founder, about a third of her time. MEAL: first co-founder, with volunteers.”',
-  why:'It starts from the work and shows how each function will be resourced, which reveals overload before any job titles are created.',
+  weak:'We will need a head baker, a shop manager and a trainer.',
+  strong:'Baking and production: core, in-house, held by the baker co-founder.\nTraining programme: in-house, led by the youth-work co-founder; referrals shared with the youth centre.\nSales: the baker co-founder at the Saturday stall; the youth-work co-founder for the two cafés and the canteen, about a day a week.\nBookkeeping: contracted, checked monthly by the youth-work co-founder.\nFood hygiene and safety: the baker co-founder, following the shared kitchen’s rules.',
+  why:'It starts from the work and shows how each function will be resourced, which reveals, before any job titles exist, that the baker co-founder is carrying baking, the stall and food safety at once.',
   reflect:'Which essential function does no one in your founding team clearly own yet?',
   exercise:'List the functions your strategy requires and how each will be resourced at the start.',
   check:'Does every objective have the functions it needs to be delivered, even if one person holds several?',
   fields:{
-   functions:{label:'Functions we will need',hint:'Function | why the strategy needs it | in-house, shared or contracted | who will hold it at the start.'},
+   functions:{label:'Functions we will need',hint:'Function (baking, training programme, wholesale sales) | why the strategy needs it (ESO2, trainees learn on the job) | in-house, shared or contracted | who will hold it at the start (the baker co-founder).'},
    concentration:{label:'Where work is concentrated',hint:'Which founder or person will hold too many functions, and what is the risk?'}
   }
  },
@@ -34,16 +34,16 @@ export default adapt(base,{
    'An organigram (organisation chart) shows roles and reporting lines. Common shapes are functional (grouped by expertise), programme or product based, geographic, matrix (people report to two lines) and network or hub (a small core coordinating partners or volunteers). Most new organisations start functional, or as a small hub, with the founders coordinating.',
    'Structure changes with stage. At the start you are usually flat, with everyone working alongside, or reporting to, the founders. As the team grows, lead roles become necessary so that one founder is not the bottleneck for every decision. Draw the structure you will start with and the one you expect in two or three years, and change it on purpose, not by accident.',
    'A chart shows who reports to whom. It does not show who approves spending or how decisions are made; the later lessons in this module cover that. Show governance (the board, committee, shareholders or members you will have) separately from day-to-day management, even when the same founders sit in both.',
-   'Use role names rather than personal details. Show contracted specialists, partners and key volunteers with dotted lines. Do not invent a large hierarchy just to look established: a clear chart of two founders and three volunteers is more convincing than ten empty boxes.'
+   'Use role names rather than personal details. Show contracted specialists, partners and key volunteers with dotted lines. Do not invent a large hierarchy just to look established: a clear chart of two founders, a contracted bookkeeper and four trainees is more convincing than ten empty boxes.'
   ],
   weak:'Founder → everyone else.',
-  strong:'“The board we will form oversees the two co-founders. One co-founder leads delivery, with volunteer facilitators reporting to her; the other leads partnerships and money, with the contracted bookkeeper on a dotted line. Concerns about either co-founder go to the board chair.”',
-  why:'It separates oversight from management, shows where volunteers and contractors sit and gives a route for concerns about the founders.',
+  strong:'Advice: an advisory group of three (an accountant, a youth-centre manager, a local shop owner) advises both co-founders; a board follows once we register.\nProduction: the baker co-founder leads baking and the stall; the four trainees report to the baker day to day.\nTraining and money: the youth-work co-founder leads the training programme, wholesale customers and money, with the contracted bookkeeper on a dotted line.\nConcerns: anything about either co-founder goes to the accountant on the advisory group; trainees can also go to the youth centre.',
+  why:'It separates advice and oversight from day-to-day management, shows where the trainees and the contractor sit and gives a route for concerns about the founders, which matters when some trainees are 17.',
   reflect:'Where would a concern go if it involved one of the founders?',
   exercise:'Map the roles and reporting lines you will start with, and the ones you expect as you grow. Use role names rather than private personal details.',
   check:'Does the structure fit the work you actually plan to deliver in your first year?',
   fields:{
-   structure:{label:'Reporting lines',hint:'One per line: role | reports to | main responsibility. Mark roles that do not exist yet as “planned”.'},
+   structure:{label:'Reporting lines',hint:'One per line: role (baker co-founder, trainee, bookkeeper) | reports to (the other co-founder, the advisory group) | main responsibility (production and the Saturday stall). Mark roles that do not exist yet as “planned”, such as a year-2 shop assistant.'},
    gaps:{label:'Capacity gaps',hint:'Which work is uncovered, or concentrated in one founder?'}
   }
  },
@@ -55,26 +55,26 @@ export default adapt(base,{
    'Good governance needs a mix of skills, some independence from the founders, clear terms of office, managed conflicts of interest and a record of decisions. You can start with a few people and a simple calendar, then grow. Rules differ by country; check the rules where you are and ask someone with a legal background before you register.'
   ],
   weak:'We will ask some friends to be on the board.',
-  strong:'“Once we register, a board of five with skills in finance, law, education and community work, including one person from the community we serve. The founders do not hold the majority. Three-year terms; meets quarterly. Until then, an advisory group of three that advises but does not decide.”',
-  why:'It shows skills, independence, terms, rhythm and the difference between deciding and advising, and it plans the step from today to registration.',
+  strong:'Now: an advisory group of three (an accountant, a youth-centre manager and a local shop owner) meets every two months; it advises, the two co-founders decide.\nOnce registered: a company with a social purpose; the two co-founders as directors plus one independent director with finance skills; the social purpose and reinvesting profits written into the articles.\nTerms: advisers serve two years, the independent director three.\nRhythm: board meetings every quarter and a yearly general meeting.',
+  why:'It shows skills, some independence from the founders, terms and rhythm, keeps deciding and advising apart, and plans the step from today’s informal pilot to a registered company.',
   reflect:'Who, outside the founding team, could hold you to account today?',
   exercise:'Describe the governance structure your chosen form will require and the one you want to build.',
   check:'Is it clear which body will decide and which will only advise?',
   fields:{
    body:{label:'Governing body',hint:'What exists now and what you plan: name, legal role, size, skills needed, independence from the founders and terms of office.'},
-   other:{label:'Advisory bodies and member voice',hint:'Advisory groups, committees or member structures you will set up, and whether they decide or advise.'},
+   other:{label:'Advisory bodies and member voice',hint:'Advisory groups, committees or member structures you will set up, and whether they decide or advise, e.g. an advisory group of an accountant, a youth-centre manager and a local shop owner that advises only.'},
    documents:{label:'Founding document checks',hint:'What the constitution, articles or statutes for your form require, and what to confirm with advice before you register.'}
   },
   anatomy:{
    title:'Governance and management',
-   intro:'Two different jobs. In a new organisation the same founders usually do both, so be clear which hat you are wearing each time you decide.',
+   intro:'Two different jobs. In our example bakery, the two co-founders do both for now, so they need to be clear which hat they are wearing each time they decide.',
    cols:['Aspect','Governance','Management'],
    rows:[
     ['Main question','Are we doing the right things, well and lawfully?','Are we doing things right, day to day?'],
-    ['Who','The founders for now; later a board, trustees, elected committee, shareholders or members','The founders as managers, then the first staff and volunteers'],
-    ['Typical decisions','Strategy, budget, choice of legal form, appointing the lead, key policies','Plans, schedules, first hires within budget, delivery'],
+    ['Who','The two co-founders, with the advisory group advising; once registered, the company’s directors and shareholders','The co-founders running the kitchen and the stall, then the first staff'],
+    ['Typical decisions','Strategy, budget, choice of legal form, the year-2 shop lease, key policies such as safeguarding','The weekly baking plan, the stall rota, buying flour within budget, trainee shifts'],
     ['Rhythm','A set founders’ meeting monthly or quarterly; a yearly general meeting once registered','Daily and weekly'],
-    ['Answers to','Members, regulators, funders, customers and the purpose','The governing body (or the founders, acting together)']
+    ['Answers to','Shareholders, regulators, the youth fund, customers and the purpose','The governing body (for now, the two co-founders acting together)']
    ]
   }
  },
@@ -86,30 +86,30 @@ export default adapt(base,{
    'In a new organisation, the founder very often also sits on the board. Manage this openly from the start: record whether the founder is acting as a manager or a board member, and make sure someone else can raise concerns about the founder’s work. Agree now how the founder’s role, and any pay, will be decided by others.'
   ],
   weak:'The founders will decide everything important together.',
-  strong:'“Reserved to the board once we register, and to both co-founders until then: strategy, the annual budget, appointing the lead, contracts or leases over a set amount, any borrowing, key policies. Delegated to the lead: everything else within budget and policy.”',
-  why:'It defines “important” precisely and makes everything else clearly delegated, now and after registration.',
+  strong:'Reserved: to both co-founders until we register, then to the board: strategy, the annual budget, the year-2 shop lease, any loan, contracts over US$2,000 and the safeguarding policy.\nDelegated: everything else within budget and policy, such as the weekly baking plan, flour orders and the stall rota, to the co-founder who owns that area.',
+  why:'It defines “important” precisely, names the bakery’s real big decisions (the lease, a loan, safeguarding) and makes everything else clearly delegated, now and after registration.',
   reflect:'Which decision would currently be made by the wrong person or body?',
   exercise:'List your reserved matters, now and after registration, and build a simple governance calendar for your first year.',
   check:'Could the founders, and the board you will have, each say which decisions belong to them?',
   fields:{
    reserved:{label:'Reserved matters',hint:'Decisions only the governing body (or shareholders or members) can take, and which ones all founders must agree until it exists.'},
-   calendar:{label:'Governance calendar',hint:'Month or quarter | what is reviewed or approved | papers needed | who prepares them.'}
+   calendar:{label:'Governance calendar',hint:'Month or quarter (January) | what is reviewed or approved (the annual budget) | papers needed (last year’s sales and costs) | who prepares them (the youth-work co-founder).'}
   }
  },
  roles:{
   learn:[
    'A role describes a contribution, expected results and authority. A task list alone does not tell someone what success looks like or what they can decide. A useful role card covers purpose, key responsibilities, expected results, decisions the role can take, who it works with and the support it needs. Write one for each founder too: co-founder roles are the first to blur.',
    'Apply one owner per area: every function, process and objective has one accountable role, even when many people contribute. Shared ownership usually means no ownership, and between co-founders it is a common source of friction.',
-   'Write down the boundaries: spending limits, decisions that need approval and where to escalate. Agree them with the people who will do the work, and review role cards when the strategy or structure changes. Volunteers and board officers need role cards too. Role cards become the basis of your first job adverts and contracts in Module 4.'
+   'Write down the boundaries: spending limits, decisions that need approval and where to escalate. Agree them with the people who will do the work, and review role cards when the strategy or structure changes. Trainees, advisers and, later, board members need role cards too. Role cards become the basis of your first job adverts and contracts in Module 4.'
   ],
-  weak:'We will all own partnerships.',
-  strong:'“One co-founder prepares partnership proposals and agrees terms within the pricing rules we set together; any partnership that commits us for more than a year needs both co-founders; the advisory group is told at its next meeting.”',
-  why:'People can see who prepares, who decides and who is told.',
+  weak:'We will both look after the wholesale customers.',
+  strong:'“The youth-work co-founder finds and looks after wholesale customers and agrees prices within the price list we set together; any standing order longer than three months, or below the price list, needs both co-founders; the advisory group hears about new customers at its next meeting.”',
+  why:'Anyone can see who prepares, who decides and who is told, so the two cafés and the canteen always know whom to call.',
   reflect:'Which recurring decision is most likely to be delayed or duplicated between founders?',
   exercise:'Create role cards for the founders and for your first essential roles.',
   check:'Could someone use the role card to decide when to act and when to ask?',
   fields:{
-   roles:{label:'Role framework',hint:'Role (founders first) | purpose | expected results | decisions allowed | approval needed | support required.'}
+   roles:{label:'Role framework',hint:'Role, founders first (baker co-founder, trainee) | purpose (bake and sell good bread every week) | expected results (300 loaves a week at the stall) | decisions allowed (recipes, the baking plan) | approval needed (equipment over budget) | support required (a trained helper on Saturdays).'}
   }
  },
  delegation:{
@@ -120,42 +120,42 @@ export default adapt(base,{
    'Delegation is not abdication. The person delegating stays accountable for checking that authority is used well. Review the matrix as you grow and new people join, and use the same thresholds in your finance procedures (Module 9).'
   ],
   weak:'The founder approves spending.',
-  strong:'“Either co-founder approves small items up to a set amount within the budget; both co-founders above that; the board, once formed, above a larger amount or for any unbudgeted item. Two quotes above a set amount; a second signature on every larger payment.”',
-  why:'Clear thresholds tell everyone who can say yes, and add a second check where risk rises.',
+  strong:'Small items: either co-founder approves flour, ingredients and anything up to US$300 within the weekly budget.\nLarger items: both co-founders approve anything from US$300 to US$2,000, and any new wholesale customer on credit.\nBig decisions: anything over US$2,000 or unbudgeted, such as a second oven, goes to both co-founders after hearing the advisory group, and to the board once it exists.\nChecks: two quotes above US$500; a second signature on every payment over US$1,000; no one approves their own expenses.',
+  why:'Clear thresholds tell both co-founders who can say yes to a flour order or an oven, and add a second check where the money at risk rises.',
   reflect:'Which decision is likely to wait for one founder, even though it carries little risk?',
   exercise:'Draft your first delegation of authority matrix.',
   check:'Does every approval limit match the level of risk involved?',
   fields:{
-   matrix:{label:'Delegation matrix',hint:'Decision type | limit or condition | who prepares | who approves | who must be informed.'},
+   matrix:{label:'Delegation matrix',hint:'Decision type (buying ingredients, a new oven) | limit or condition (up to US$300 within budget) | who prepares | who approves (either co-founder) | who must be informed (the bookkeeper).'},
    absence:{label:'Absence and conflicts',hint:'Who approves when a founder is away or has a conflict of interest? Who checks payments to the founders themselves?'}
   },
   anatomy:{
    title:'Levels of decision rights',
-   intro:'A simple ladder. A new organisation may use only two or three levels at first, and your limits will differ. What matters is that the level rises with the risk.',
+   intro:'A simple ladder, with examples from our bakery. It uses only the first two levels in its pilot year, and your limits will differ. What matters is that the level rises with the risk.',
    cols:['Level','Typical decisions','Checks'],
    rows:[
-    ['Founder, team member or budget holder','Small purchases within the budget; daily delivery choices','Receipts kept; within the agreed budget'],
-    ['All co-founders together, or the lead once appointed','Larger purchases, first hires or contracts, routine partner agreements','Quotes above a set amount; second signatory on larger payments'],
+    ['Founder, team member or budget holder','Flour and ingredients within the weekly budget; the day’s baking plan','Receipts kept; within the agreed budget'],
+    ['All co-founders together, or the lead once appointed','A new mixer, taking on a trainee, a supply agreement with a café','Quotes above a set amount; second signatory on larger payments'],
     ['Committee of the board (as you grow)','Items prepared for the board, urgent decisions between meetings','Reports to the next full meeting'],
-    ['Governing body','Reserved matters: budget, strategy, major contracts, borrowing, key policies','Recorded in minutes; conflicts declared'],
-    ['Members or shareholders','Founding document, electing the board, sharing surplus or dividends','General meeting or shareholders’ agreement']
+    ['Governing body','Reserved matters: budget, strategy, the shop lease, a loan, the safeguarding policy','Recorded in minutes; conflicts declared'],
+    ['Members or shareholders','Changing the articles, appointing directors, whether any profit is paid out or reinvested','General meeting or shareholders’ agreement']
    ]
   }
  },
  raci:{
   learn:[
    'RACI is a simple way to show who does what in a process or decision. Each letter stands for one kind of involvement, as the table below shows. It is useful even for two co-founders, because small teams tend to assume rather than ask.',
-   'Use it for recurring processes and decisions that cross roles: the annual plan, choosing a partner, a funding application or sales pitch, publishing a story, recruiting a volunteer, responding to a complaint. Keep exactly one Accountable per row, and be sparing with Consulted, which slows things down.',
+   'Use it for recurring processes and decisions that cross roles: the annual plan, taking on a wholesale customer, a funding application or sales pitch, publishing a story, selecting a trainee, responding to a complaint. Keep exactly one Accountable per row, and be sparing with Consulted, which slows things down.',
    'A simpler variant is an ownership table: for each process, one owner and named helpers. Whichever you use, share it with everyone who joins, refer to it in meetings and update it when roles change. Many coordination problems never appear once ownership is written down from the start.'
   ],
   weak:'The founders decide together.',
-  strong:'“Selecting participants: Responsible: first co-founder. Accountable: first co-founder. Consulted: second co-founder, the referral partner. Informed: volunteers, advisory group.”',
-  why:'It shows who does the work, who owns the result, who gives input and who needs to know.',
+  strong:'Process: selecting trainees for the next intake.\nResponsible: the youth-work co-founder.\nAccountable: the youth-work co-founder.\nConsulted: the baker co-founder and the youth centre that refers the young people.\nInformed: the advisory group.',
+  why:'It shows who does the work, who owns the result, who gives input (including the youth centre) and who needs to know.',
   reflect:'Where might two founders both believe they are accountable for the same result?',
   exercise:'Build a RACI for the five most important recurring processes or decisions in your first year.',
   check:'Does every row have exactly one Accountable role?',
   fields:{
-   raci:{label:'RACI table',hint:'Process or decision | Responsible | Accountable (one) | Consulted | Informed. Use roles, including planned ones.'},
+   raci:{label:'RACI table',hint:'Process or decision (selecting trainees) | Responsible (the youth-work co-founder) | Accountable (one only) | Consulted (the baker co-founder, the youth centre) | Informed (the advisory group). Use roles, including planned ones.'},
    conflicts:{label:'Ownership conflicts found',hint:'Where did you find gaps or two founders as owners, and how will you resolve them?'}
   },
   anatomy:{
@@ -172,18 +172,18 @@ export default adapt(base,{
  },
  accountability:{
   learn:[
-   'Accountability means being answerable for what you do and what results from it. In purpose-led organisations it runs in several directions: upward to the board, funders, investors and regulators; sideways to partners and peers; and downward to the people and communities you serve. Before you have a board or funders, accountability starts with the people you serve and your first supporters.',
+   'Accountability means being answerable for what you do and what results from it. In purpose-led organisations it runs in several directions: upward to the board, funders, investors and regulators; sideways to partners and peers; and downward to the people and communities you serve. Before you have a board or funders, accountability starts with the people you serve, such as your customers and the young people you train, and your first supporters.',
    'For each direction, decide what you will report, how often and in what format. Upward reports usually cover results, finance and risk. Downward accountability means sharing information in ways people can use, inviting feedback and explaining decisions; Module 6 develops it further. Building these habits now is easier than adding them once you are busy.',
    'Inside the founding team, accountability depends on clear expectations, regular review and fair consequences, including between co-founders. Pair it with support: people should be able to raise problems early without fear. When things go wrong, separate learning from blame.'
   ],
-  weak:'We will report to our funders once a year.',
-  strong:'“A monthly check between the co-founders on plans and money; a short update to the advisory group each quarter; results and spending shared with participants and supporters twice a year; customers and partners told of any delay within a week; a yearly report to members once we register.”',
-  why:'It covers accountability in several directions, each with a rhythm and a format.',
+  weak:'We will tell the youth fund how it went at the end of the year.',
+  strong:'Founders: a monthly check on sales, costs and the training plan.\nAdvisory group: a one-page update every quarter.\nTrainees: progress reviewed with each trainee every month; results shared with the youth centre each quarter.\nCustomers: wholesale customers told of any delay the same day; a notice at the stall before prices change.\nYouth fund: a short report at six and twelve months.',
+  why:'It covers accountability upward (the youth fund, the advisers), sideways (the youth centre) and downward (trainees and customers), each with a rhythm and a format.',
   reflect:'As you start, to whom might you feel least accountable, and why?',
   exercise:'Map your accountability lines and reporting rhythm for your first year.',
   check:'Does your map include the people you serve, not only those who fund, invest in or govern you?',
   fields:{
-   lines:{label:'Accountability map',hint:'To whom | what we will report | format | frequency | owner.'},
+   lines:{label:'Accountability map',hint:'To whom (trainees, the youth fund, wholesale customers) | what we will report (progress, spending, delays) | format (a short conversation, a one-page report) | frequency | owner.'},
    internal:{label:'Internal accountability',hint:'How expectations will be set, reviewed and supported among the founders and the first people who join.'}
   }
  },
@@ -194,15 +194,15 @@ export default adapt(base,{
    'Agree your internal channels now: what goes in chat, what goes by email, where documents live and where decisions are recorded. Keep one decision log from the start, so people who join later can see what was decided and why. Add a route for flagging overload and conflicting priorities, which founders often ignore in themselves.'
   ],
   weak:'We will meet when we need to.',
-  strong:'“Every Monday, the co-founders and the volunteer lead spend 30 minutes on blocked work and the week’s priorities; one co-founder records decisions and next owners in a shared decision log.”',
-  why:'The routine has a purpose, named roles and a visible record.',
+  strong:'Monday: the two co-founders spend 30 minutes on the week’s wholesale orders, the trainees’ shifts and anything blocked; the youth-work co-founder records decisions and next owners in a shared decision log.\nFriday: the baker co-founder hands the Saturday stall list (loaves, cakes, cash float) to the trainee on stall duty, and they check it together before 5pm.',
+  why:'The routine has a purpose, named roles and a visible record, and the stall hand-off has a recipient, an agreed output and a time.',
   reflect:'Which hand-off is most likely to fail?',
   exercise:'Define your first operating rhythm, communication channels and one critical hand-off.',
   check:'Does each routine help someone make a decision or complete work?',
   fields:{
-   rhythm:{label:'Coordination rhythm',hint:'Meeting or update | purpose | people | frequency | record.'},
+   rhythm:{label:'Coordination rhythm',hint:'Meeting or update (Monday check-in) | purpose (orders, shifts, blockers) | people (both co-founders) | frequency (weekly) | record (the decision log).'},
    channels:{label:'Internal communication rules',hint:'What goes where: chat, email, shared folders, decision log. Set this up before more people join.'},
-   handoff:{label:'Critical hand-off',hint:'From role → to role | deliverable | acceptance check | date.'}
+   handoff:{label:'Critical hand-off',hint:'From role → to role (baker co-founder → trainee on stall duty) | deliverable (Saturday stall list and cash float) | acceptance check (counted together) | date (every Friday).'}
   }
  },
  'team-pack':{title:'Your Structure & Accountability Pack'}

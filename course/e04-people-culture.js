@@ -14,17 +14,17 @@ export default adapt(base,{
  workforce:{
   learn:[
    'Workforce planning matches the people you will need to the work your strategy requires, over time. Start from the functions and roles you set out in Module 3 and ask, for each one: how much time does it need, what skills, and from when? At the start, many roles will sit with you or your co-founders. Write that down too, so you can see what you are carrying.',
-   'Purpose-led initiatives combine different contributors: co-founders, employees, part-time staff, contractors, interns, volunteers, secondees and, later, board members. Each brings different costs, commitment, management needs and legal implications. Volunteers are not free: they need recruiting, training, supervision and expenses.',
+   'Purpose-led initiatives combine different contributors: co-founders, employees, part-time staff, contractors, paid trainees or interns, volunteers, secondees and, later, board members. Each brings different costs, commitment, management needs and legal implications. Volunteers are not free: they need recruiting, training, supervision and expenses.',
    'Take care with the line between employees and contractors, and between volunteers and unpaid workers. The rules differ by country, so check the rules where you are before your first person starts. Do not build your model on unpaid people doing core, ongoing work without weighing fairness and legal risk.',
    'Plan for growth and for gaps. Which roles must be filled first, and what income or milestone will pay for them? Which could be shared with partners? Who would cover if you or a co-founder were suddenly unable to work?'
   ],
-  weak:'We will hire when we get funding.',
-  strong:'“For the first year the two co-founders cover delivery and finance between them, and one contractor handles bookkeeping four hours a month. Two trained volunteers help on event days. When monthly income reaches the agreed level, we take on a part-time coordinator (0.5) rather than asking volunteers to run core sessions. Each co-founder writes down how the other could cover their work for a month.”',
-  why:'It states the type, time and timing of each role, links growth to income and deals with a single point of failure from the start.',
+  weak:'We will hire when sales pick up.',
+  strong:'Year 1: the baker co-founder leads baking and the stall; the youth-work co-founder leads the training programme and wholesale customers.\nTrainees: four paid trainees on six-month traineeships, each with a mentor.\nContractor: a bookkeeper, four hours a month.\nYear 2: when the shop opens, a part-time shop assistant (0.5), paid for by shop sales, rather than leaving trainees to run the counter.\nCover: each co-founder writes down how the other could cover for a month; the youth centre could support the trainees if the youth-work co-founder were away.',
+  why:'It states the type, time and timing of each role, links the next hire to the shop’s income and deals with a single point of failure from the start.',
   reflect:'Which role, if no one could do it for three months, would stop your work before it has properly started?',
   exercise:'Draft a workforce plan for your first one to two years.',
   fields:{
-   plan:{label:'Workforce plan',hint:'Role | type (co-founder, employee, contractor, volunteer, intern) | time | when needed | cost or support needed.'},
+   plan:{label:'Workforce plan',hint:'Role (trainee baker, bookkeeper) | type (co-founder, employee, paid trainee, contractor, volunteer) | time (four days a week) | when needed (from month 4) | cost or support needed (trainee pay, a mentor).'},
    continuity:{label:'Continuity risks',hint:'Single points of failure (often you or a co-founder) and how you would cover them.'}
   },
   check:'Does your plan include the support costs of volunteers and contractors, and the time you and your co-founders give, not only future salaries?',
@@ -35,7 +35,7 @@ export default adapt(base,{
    rows:[
     ['Employee','Steady time and commitment to core, ongoing work','A contract, pay, management and development'],
     ['Contractor or freelancer','Specialist skills for a defined task, often the first paid help','A services agreement with deliverables and fees'],
-    ['Intern or placement student','Fresh skills while they learn','A learning plan, supervision and clear terms'],
+    ['Paid trainee or intern (like the bakery’s trainees)','Energy and fresh skills while they learn a trade','A learning plan, pay, a mentor, supervision and clear terms'],
     ['Volunteer','Time, local knowledge and trust','A role description, training, supervision and expenses'],
     ['Board member (as you form one)','Oversight, judgement and networks','An induction, good papers and a clear role']
    ]
@@ -48,14 +48,14 @@ export default adapt(base,{
    'Assess fairly, even when you are a team of one or two. Agree the criteria and a simple scoring guide before you read applications, ask every candidate the same questions, involve at least two people (a co-founder, an adviser or a trusted peer) and note the reasons for each decision. A short practical task often shows more than an interview alone.',
    'If the role will involve children or vulnerable adults, add safer recruitment steps from the very first person: identity checks, references, background checks where they are available and lawful, and safeguarding questions at interview. Make offers in writing and keep records in line with the data protection rules you set up.'
   ],
-  weak:'We will bring in a friend because we trust them.',
-  strong:'“First paid role, part-time sessions coordinator: advert shared through six community groups and two local job boards; shortlist scored against five criteria by both co-founders and an external adviser; candidates run a 15-minute activity with the panel playing participants; references and a background check completed before they meet any young person.”',
-  why:'It is consistent, documented and matched to the safeguarding risk of the role, from the first hire.',
+  weak:'We will take on the young people we get on with best.',
+  strong:'“Four trainee places: a plain-language advert (no qualifications needed, pay stated) shared through the youth centre and posted at the stall; each applicant spends a paid trial morning in the kitchen, scored against four criteria by both co-founders and the youth-centre manager; reasons noted for every decision. Any adult who will supervise trainees gives two references and has a background check before the first shift, because some trainees are 17.”',
+  why:'It is consistent and documented: every young person is judged on the same task by more than one person, and the adults around them are checked in proportion to the risk.',
   reflect:'Who might be well suited to your first roles but would never see your adverts?',
   exercise:'Design the recruitment process for your first (or next) role.',
   fields:{
-   role:{label:'Role and criteria',hint:'Role title, essential criteria, desirable criteria, pay range or expenses offered.'},
-   process:{label:'Selection process',hint:'Where you will advertise, stages, who sits on the panel (co-founder, adviser), scoring, practical task and checks.'},
+   role:{label:'Role and criteria',hint:'Role title, essential criteria, desirable criteria, pay range or expenses offered, e.g. trainee baker: reliable, keen to learn, able to start at 6am; hourly pay stated.'},
+   process:{label:'Selection process',hint:'Where you will advertise, stages, who sits on the panel (co-founder, adviser), scoring, practical task and checks, e.g. a paid trial morning in the kitchen.'},
    safer:{label:'Safer recruitment steps',hint:'Which checks will apply to this role, and who will complete them?'}
   },
   check:'Would every candidate be assessed against the same criteria by more than one person, even though your team is small?'
@@ -67,12 +67,12 @@ export default adapt(base,{
    'Employment law is national and sometimes regional, so check the rules where you are before anyone starts. Use templates only as a starting point and ask someone with a legal background to check them. Keep signed copies securely, track probation and renewal dates, and update terms when a role changes. Module 10 covers your wider legal framework.'
   ],
   weak:'We will agree everything verbally.',
-  strong:'“Before launch, the two co-founders sign a one-page agreement on roles, hours, decision-making and what happens if one steps back. The first contractor signs a services agreement with deliverables, fees and ownership of materials. Our volunteer agreement was checked by a local adviser. Every end and review date sits in one shared calendar, owned by one co-founder.”',
-  why:'Each relationship has written terms that suit its type, checked locally before it starts, and the key dates are tracked by a named person.',
+  strong:'Founders: before the pilot, a one-page agreement on roles, hours, decisions, who owns the recipes and what happens if one steps back.\nTrainees: a six-month paid traineeship agreement covering hours, pay, the food-hygiene certificate and the mentor’s role, checked by someone with a legal background.\nBookkeeper: a services agreement with tasks and fees.\nDates: every traineeship end and review date sits in one shared calendar, owned by the youth-work co-founder.',
+  why:'Each relationship has written terms that suit its type, including who owns the recipes, checked locally before it starts, and the key dates are tracked by a named person.',
   reflect:'Which working relationship you already have, perhaps with a co-founder, has the least clear terms?',
   exercise:'List each type of working relationship you have or will have soon, and the terms it needs.',
   fields:{
-   types:{label:'Relationships and terms',hint:'Type (co-founder, employee, contractor, intern, volunteer) | agreement to use | key clauses | checked by an adviser?'},
+   types:{label:'Relationships and terms',hint:'Type (co-founder, paid trainee, contractor) | agreement to use (traineeship agreement) | key clauses (hours, pay, hygiene training, end date) | checked by an adviser?'},
    dates:{label:'Dates to track',hint:'Probation, renewals, contract end dates and who will track them.'}
   },
   check:'Will every working relationship, including between co-founders, have written terms suited to its type before it starts?',
@@ -81,12 +81,12 @@ export default adapt(base,{
    intro:'Different relationships need different documents. Getting the type wrong from the start is a common risk.',
    cols:['Relationship','Usual document','Watch for'],
    rows:[
-    ['Co-founder','Founders’ agreement','Roles, time, decisions, ownership of work, what happens if one leaves'],
+    ['Co-founder','Founders’ agreement','Roles, time, decisions, ownership of work (such as recipes), what happens if one leaves'],
     ['Employee','Employment contract or written statement','Local minimum terms, probation, notice; check with a local adviser'],
     ['Contractor or freelancer','Services agreement','Real independence; deliverables, fees, ownership of work'],
-    ['Intern or placement','Placement or learning agreement','Learning focus; whether pay is required locally'],
+    ['Paid trainee or intern','Traineeship or learning agreement','Learning plan, pay, hours and rules for under-18s; check locally'],
     ['Volunteer','Volunteer agreement or role description','No obligation or pay language; expenses only'],
-    ['Member paid per piece (in a cooperative)','Rules or a supply agreement','Piece rates, payment terms, quality standards']
+    ['Adviser (on an advisory group)','A short letter of appointment','Role, time, confidentiality, conflicts of interest; no pay, or expenses only']
    ]
   }
  },
@@ -98,12 +98,12 @@ export default adapt(base,{
    'Culture is set from the first day by everyday behaviour: how concerns are heard, how mistakes are discussed and how workloads are agreed. Link these habits to your values while the team is small enough for everyone to see them.'
   ],
   weak:'Read all our documents.',
-  strong:'“In week one, a new facilitator shadows two sessions with a co-founder and practises what to do if a participant discloses a concern, before ever leading a group on their own.”',
-  why:'It tests the capability that matters most, with support, before the person works alone.',
+  strong:'“In week one, a new trainee works every shift alongside the baker co-founder, learns the kitchen’s hygiene and allergen rules and practises what to do after a burn or a spill, before working at the ovens or the stall without someone beside them. The youth-work co-founder checks in with the trainee at the end of each day.”',
+  why:'It tests what matters most in a kitchen, safety and hygiene, with support, before the trainee works alone.',
   reflect:'What would the first person who joins you be afraid to ask?',
   exercise:'Create a proportionate 30-day onboarding plan for the first person who will join you.',
   fields:{
-   onboarding:{label:'Onboarding plan',hint:'When | action | supporting role (often a co-founder) | evidence of readiness.'},
+   onboarding:{label:'Onboarding plan',hint:'When (day 1, week 1, month 1) | action (hygiene and allergen briefing) | supporting role (often a co-founder) | evidence of readiness (runs the morning bake without prompts).'},
    culture:{label:'Working agreements',hint:'How people will raise concerns, get support and discuss mistakes, from the first day.'}
   },
   check:'Will a new person know where to get help before working alone, even if the team is only two or three people?'
@@ -112,17 +112,17 @@ export default adapt(base,{
   learn:[
    'Short, regular check-ins do more for performance than an annual appraisal on its own. Start them now, between co-founders, and keep them as the first people join. Cover wins, blockers, priorities, feedback in both directions and next steps, and note what each of you agreed to do.',
    'Link each person’s objectives to your objectives and first annual plan, so they can see how their work contributes. Keep personal objectives few and clear, and separate from organisational KPIs and programme indicators.',
-   'Development is part of performance, including your own as a founder. Agree one or two development goals per person: a skill, an experience or a course. In a new and small initiative, stretch tasks, peer learning, mentors and exchanges with partners are often more realistic than formal training.',
+   'Development is part of performance, including your own as a founder. Agree one or two development goals per person: a skill, an experience or a course. In a new and small initiative, stretch tasks, peer learning, mentoring and a day in a partner’s kitchen or shop are often more realistic than formal training.',
    'Keep wellbeing conversations apart from performance judgements and pay decisions. If performance is a concern, raise it early, privately and fairly, with clear expectations, support and a timescale, following a written procedure you agree before you need it.'
   ],
   weak:'An annual review, once we have staff.',
-  strong:'“The two co-founders hold a 30-minute check-in every fortnight, with notes kept in a shared document; each has objectives reviewed every quarter against the first-year plan, and one development goal; an external mentor holds a review with each founder twice a year. The same rhythm will apply to our first hire.”',
-  why:'It is regular, linked to strategy, includes development and makes clear who reviews the founders.',
+  strong:'Founders: a 30-minute check-in every fortnight after the Saturday market, with notes in a shared document.\nObjectives: reviewed each quarter against the first-year plan (for the baker co-founder, 300 loaves a week at the stall and food waste measured weekly), plus one development goal each.\nReview: the accountant on the advisory group holds a review with each founder twice a year.\nTrainees: a weekly check-in with their mentor and reviews at three and six months, the rhythm our first hire will also follow.',
+  why:'It is regular, linked to the plan’s real numbers, includes development and makes clear who reviews the founders.',
   reflect:'When did you, or each person working with you, last receive useful feedback?',
   exercise:'Design your check-in rhythm and draft objectives and a development goal for one role (it can be your own).',
   fields:{
    rhythm:{label:'Check-in and review rhythm',hint:'Frequency, format, what is covered and how it is recorded, starting with the founding team.'},
-   objectives:{label:'Example objectives and development goal',hint:'For one role (yours, a co-founder’s or a first hire’s): two or three objectives linked to your objectives, and one development goal.'},
+   objectives:{label:'Example objectives and development goal',hint:'For one role (yours, a co-founder’s or a first hire’s): two or three objectives linked to your objectives, and one development goal, e.g. a trainee bakes the morning loaves unaided by month three (ESO2) and passes the food-hygiene certificate.'},
    concerns:{label:'Handling performance concerns',hint:'Steps, support and who will decide, including between co-founders.'}
   },
   check:'Are individual objectives linked to your priorities and kept separate from wellbeing conversations?',
@@ -145,14 +145,14 @@ export default adapt(base,{
    'Recognition costs little and matters a lot, especially when you cannot yet pay much: specific thanks, celebrating milestones, sharing credit in public and acting on suggestions. Benefits such as flexible hours, learning time and wellbeing support can be valued as much as salary. Be honest about what you can offer now and what you aim to offer later.'
   ],
   weak:'We will pay whatever we can afford for each person.',
-  strong:'“Three pay bands set before the first hire, compared with similar local organisations each year; nobody, founders included, is paid below an agreed floor once salaries start; increases decided each January against the budget, the same percentage for everyone; the highest salary will be no more than four times the lowest.”',
-  why:'It is open, values-based and will be applied the same way to everyone from the start.',
+  strong:'Trainees: paid by the hour from the first day, at least the local minimum for their age, compared with local bakeries each year.\nBands: two for now (trainee, baker) and a third for the year-2 shop assistant.\nFounders: no pay during the pilot, then an equal salary for both once sales cover core costs.\nIncreases: decided each January against the budget, the same percentage for everyone; the highest pay no more than three times the lowest.',
+  why:'It is open, values-based and applied the same way to trainees, future staff and the founders, before the first wage is paid.',
   reflect:'Could you explain to every future team member, and to yourself, why they are paid what they are paid?',
   exercise:'Write your pay principles and a simple band structure, before you set the first salary.',
   fields:{
    principles:{label:'Pay principles',hint:'How you will set and review pay, how founders are paid, and the commitments you make.'},
-   bands:{label:'Bands and progression',hint:'Band | roles (now and planned) | range | how people progress.'},
-   recognition:{label:'Recognition and benefits',hint:'Non-salary ways you will value people, including while pay is low.'}
+   bands:{label:'Bands and progression',hint:'Band (1, 2, 3) | roles, now and planned (trainee now; shop assistant planned) | range (per hour) | how people progress (trainee to junior baker after six months).'},
+   recognition:{label:'Recognition and benefits',hint:'Non-salary ways you will value people, including while pay is low, e.g. bread to take home, a reference for every trainee who finishes, shifts that fit around college.'}
   },
   check:'Would two people doing similar work be paid within the same range for the same reasons, once you start paying people?'
  },
@@ -164,12 +164,12 @@ export default adapt(base,{
    'Ask people regularly how things are, through check-ins and, as you grow, a short anonymous survey, and act on what you hear.'
   ],
   weak:'We will be like a family.',
-  strong:'“Work planned a week ahead, with no messages expected after 7pm; swaps allowed for caring duties; at every team meeting the newest person speaks first; a short feedback form after each project, with the changes it led to shared at the next meeting.”',
-  why:'It turns care into specific practices that anyone can see and check.',
+  strong:'“Shifts planned a week ahead, with no messages expected after 7pm because the bakery starts early; swaps allowed for caring duties or college; at every team meeting the newest trainee speaks first; any mistake in the kitchen is talked through the same day without blame, and what we changed is written on the kitchen board.”',
+  why:'It turns care into specific practices that anyone in the kitchen can see and check.',
   reflect:'What behaviour are you, as a founder, already rewarding that could contradict your stated values?',
   exercise:'Describe three culture practices you will start now and how you will check whether they work.',
   fields:{
-   practices:{label:'Culture practices',hint:'Practice | value it reflects | how we will check it works.'},
+   practices:{label:'Culture practices',hint:'Practice (the newest trainee speaks first) | value it reflects (respect) | how we will check it works (trainees say in their review that they feel heard).'},
    wellbeing:{label:'Wellbeing and inclusion measures',hint:'Workload limits (including for founders), support, accessibility and inclusion actions.'}
   },
   check:'Could the first person who joins you observe your culture practices within their first month?'
@@ -182,12 +182,12 @@ export default adapt(base,{
    'Keep records of who volunteers, in which role, with which checks and training, in line with the data protection rules you set up. Ask volunteers for feedback and thank them in ways they value.'
   ],
   weak:'Anyone who wants to help can turn up.',
-  strong:'“Event day helper: about one Saturday morning a month, never alone with a young person; ID and two references; a safeguarding session before the first shift; a co-founder present at every event; transport and a meal covered.”',
-  why:'It makes the role clear, safe and fair to the volunteer.',
+  strong:'“Market-day helper: one Saturday morning a month, setting up the stall and serving alongside a co-founder; never alone with a trainee under 18; ID and two references; a short hygiene and safeguarding briefing before the first shift; never covering work a paid trainee should do; breakfast and a loaf to take home.”',
+  why:'It makes the role clear, safe and fair to the volunteer, and stops it from quietly replacing a paid traineeship.',
   reflect:'Why would someone volunteer with something new like yours rather than with an established organisation?',
   exercise:'Design one volunteer role you will need in your first year, and its support.',
   fields:{
-   role:{label:'Volunteer role',hint:'Purpose, tasks, time commitment and boundaries.'},
+   role:{label:'Volunteer role',hint:'Purpose, tasks, time commitment and boundaries, e.g. a market-day helper at the Saturday stall.'},
    journey:{label:'Volunteer journey',hint:'Recruitment, screening, induction, supervision, expenses, recognition and leaving.'}
   },
   check:'Will the role offer volunteers clear support and value, not only tasks?',
@@ -196,10 +196,10 @@ export default adapt(base,{
    intro:'Not everyone who gives time is a volunteer. Each needs a different kind of support, so decide early which ones you are inviting.',
    cols:['Contributor','Example','What they need'],
    rows:[
-    ['Volunteer','An event helper; a session mentor','A role, checks, induction, supervision, expenses'],
-    ['Community adviser','A group of future participants who shape the design','A real say, feedback on what changed, thanks'],
-    ['Participant giving feedback','People answering a short survey about your idea','A short ask, consent, results shared back'],
-    ['Member','A member of the cooperative you are forming','Rights set by the rules, not a volunteer role']
+    ['Volunteer','A market-day helper at the Saturday stall','A role, checks, induction, supervision, expenses'],
+    ['Community adviser','Young people from the youth centre who help shape the traineeship before it starts','A real say, feedback on what changed, thanks'],
+    ['Customer giving feedback','Market shoppers answering three questions about taste and price','A short ask, consent, results shared back'],
+    ['Member or shareholder','A co-founder holding shares in the company you are forming','Rights set by the articles, not a volunteer role']
    ]
   }
  },
@@ -211,13 +211,13 @@ export default adapt(base,{
    'Use exit conversations to learn. Ask what worked, what did not and what would have made the person stay, and look for patterns over time.'
   ],
   weak:'If someone leaves, we will figure it out.',
-  strong:'“An offboarding checklist with system and bank access removed on the last day; each co-founder updates a one-page handover note every quarter; a named adviser could cover the main partner contacts for up to three months; exit conversations held by someone other than the person’s day-to-day contact.”',
-  why:'It protects access, knowledge and continuity, and will turn each exit into learning.',
+  strong:'Checklist: kitchen keys and the shared-kitchen access card returned, bank and order-app access removed on the last day.\nHandover: each co-founder updates a one-page note every quarter (recipes, suppliers, the cafés’ and canteen’s standing orders, the kitchen booking).\nSuccession: the youth-centre manager on our advisory group could look after the trainees for up to three months.\nExit: conversations with trainees held by someone other than their mentor.',
+  why:'It protects access, the recipes and customer knowledge, keeps the trainees supported if a founder steps away, and turns each exit into learning.',
   reflect:'If you or your co-founder could not work next month, what would be lost?',
   exercise:'Draft an offboarding checklist and a succession note for one critical role (it can be your own).',
   fields:{
-   checklist:{label:'Offboarding checklist',hint:'Step | owner | timing.'},
-   succession:{label:'Succession for a critical role',hint:'Role (often a founder’s) | who could cover | what they would need | where knowledge is kept.'}
+   checklist:{label:'Offboarding checklist',hint:'Step (kitchen keys returned) | owner (the baker co-founder) | timing (last day).'},
+   succession:{label:'Succession for a critical role',hint:'Role (often a founder’s, such as the baker co-founder) | who could cover (a baker from the shared kitchen) | what they would need (recipes, supplier list) | where knowledge is kept (handover note in the shared drive).'}
   },
   check:'Would access be removed and knowledge retained if someone, including a founder, left?'
  },
