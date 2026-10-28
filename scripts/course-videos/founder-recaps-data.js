@@ -906,7 +906,7 @@
  },
  "110.compliance-pack": {
   "en": {
-   "what": "You built your legal and compliance framework before launch: a map of your duties, the policies you actually need, contract checks, usable procedures, safe reporting channels and a risk register with clear owners.",
+   "what": "You learned what your legal duties are, which policies and procedures a new initiative actually needs and what each one is for, with templates to adapt to your local laws and have reviewed by a qualified lawyer. Then you built a risk register with owners, actions and escalation.",
    "recap": {
     "title": "One lesson at a time",
     "items": [
@@ -939,27 +939,23 @@
       "text": "In a small team, a safe route to raise concerns with someone outside the founders is especially important."
      },
      {
-      "label": "10.8 HR and workplace policies",
-      "text": "As soon as you engage anyone, even one volunteer, you need some workplace policies."
-     },
-     {
-      "label": "10.9 Writing usable procedures",
+      "label": "10.8 Writing usable procedures",
       "text": "Every important policy needs a usable procedure, even if only you carry out the task today."
      },
      {
-      "label": "10.10 Policy management and review",
+      "label": "10.9 Policy management and review",
       "text": "Policies only protect people when they are approved, known, followed and reviewed through a simple cycle."
      },
      {
-      "label": "10.11 Identifying and assessing risk",
+      "label": "10.10 Identifying and assessing risk",
       "text": "Describing each risk as cause, event and consequence lets your response target the cause or soften the impact."
      },
      {
-      "label": "10.12 Risk registers, ownership, mitigation and escalation",
+      "label": "10.11 Risk registers, ownership, mitigation and escalation",
       "text": "A short risk register with owners, actions and escalation rules is one you will actually use."
      },
      {
-      "label": "10.13 Monitoring and reviewing risk",
+      "label": "10.12 Monitoring and reviewing risk",
       "text": "Early risks change quickly, so regular reviews and early warning signs keep the register alive."
      }
     ]
@@ -967,7 +963,7 @@
    "next": "Every foundation is now in place. Bring it all together, retake your health check against your starting point and review your foundations regularly as your initiative grows."
   },
   "es": {
-   "what": "Construiste tu marco legal y de cumplimiento antes de lanzar: un mapa de tus deberes, las políticas que realmente necesitas, revisión de contratos, procedimientos útiles, canales seguros para alertar y un registro de riesgos con responsables.",
+   "what": "Aprendiste cuáles son tus deberes legales, qué políticas y procedimientos necesita de verdad una iniciativa nueva y para qué sirve cada uno, con plantillas para adaptar a tus leyes locales y hacer revisar por un abogado. Luego armaste un registro de riesgos con responsables, acciones y escalamiento.",
    "recap": {
     "title": "Una lección a la vez",
     "items": [
@@ -1000,27 +996,23 @@
       "text": "En un equipo pequeño, una vía segura para alertar a alguien ajeno a los fundadores es especialmente importante."
      },
      {
-      "label": "10.8 Políticas laborales y de recursos humanos",
-      "text": "En cuanto sumas a alguien, aunque sea un voluntario, necesitas algunas políticas laborales."
-     },
-     {
-      "label": "10.9 Procedimientos que se pueden usar",
+      "label": "10.8 Procedimientos que se pueden usar",
       "text": "Toda política importante necesita un procedimiento útil, aunque hoy solo tú realices la tarea."
      },
      {
-      "label": "10.10 Gestión y revisión de políticas",
+      "label": "10.9 Gestión y revisión de políticas",
       "text": "Las políticas solo protegen si se aprueban, se conocen, se cumplen y se revisan en un ciclo simple."
      },
      {
-      "label": "10.11 Identificar y evaluar riesgos",
+      "label": "10.10 Identificar y evaluar riesgos",
       "text": "Describir cada riesgo como causa, evento y consecuencia permite actuar sobre la causa o reducir el efecto."
      },
      {
-      "label": "10.12 Registro de riesgos, responsables, mitigación y escalamiento",
+      "label": "10.11 Registro de riesgos, responsables, mitigación y escalamiento",
       "text": "Un registro de riesgos breve, con responsables, acciones y reglas de escalamiento, es uno que realmente usarás."
      },
      {
-      "label": "10.13 Seguimiento y revisión de riesgos",
+      "label": "10.12 Seguimiento y revisión de riesgos",
       "text": "Los riesgos iniciales cambian rápido; revisiones periódicas y señales de alerta temprana mantienen vivo el registro."
      }
     ]

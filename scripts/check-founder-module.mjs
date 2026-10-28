@@ -12,7 +12,7 @@ const all=[];
 const walk=(v,path)=>{if(typeof v==='string')all.push([path,v]);else if(Array.isArray(v))v.forEach((x,i)=>walk(x,`${path}[${i}]`));else if(v&&typeof v==='object')for(const [k,x] of Object.entries(v))walk(x,`${path}.${k}`);};
 walk({title:e.title,short:e.short,intro:e.intro,output:e.output,promo:e.promo},'module');
 e.lessons.forEach(l=>walk(l,`lesson ${l.id}`));
-const banned=[/Imara/,/Pan del Barrio/,/Vanita/,/Riverside/,/Tide Line/,/Huerta/,/Next Step Mentors/,/\blawyers?\b/i,/\bModules? 1[123]\b/,/\bCourse 5\b/,/Sustain (&|and) Run/,/\bNGOs?\b/,/thirteen modules/i,/five courses/i];
+const banned=[/Imara/,/Pan del Barrio/,/Vanita/,/Riverside/,/Tide Line/,/Huerta/,/Next Step Mentors/,/(?<!qualified )\blawyers?\b/i,/\bModules? 1[123]\b/,/\bCourse 5\b/,/Sustain (&|and) Run/,/\bNGOs?\b/,/thirteen modules/i,/five courses/i];
 for(const [p,s] of all)for(const re of banned)if(re.test(s))problems.push(`${p}: contains ${re}`);
 if(e.lessons.length!==base.lessons.length)console.log(` note: ${base.lessons.length-e.lessons.length} lesson(s) merged`);
 e.lessons.forEach((l,i)=>{

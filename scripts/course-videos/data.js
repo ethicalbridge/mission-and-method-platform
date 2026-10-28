@@ -1773,7 +1773,7 @@ window.COURSE_DATA={
   "name": "Protect",
   "title": "Protect: Finance, Legal, Compliance & Risk",
   "track": "entrepreneurs",
-  "lessons": 25,
+  "lessons": 24,
   "hours": 8,
   "modules": [
    {
@@ -1855,7 +1855,7 @@ window.COURSE_DATA={
     "id": 110,
     "no": 10,
     "title": "Legal, Compliance, Policies & Risk",
-    "output": "Compliance & Risk Pack",
+    "output": "Risk register, and a clear view of the policies you need",
     "free": false,
     "lessons": [
      {
@@ -1901,44 +1901,38 @@ window.COURSE_DATA={
       "review": false
      },
      {
-      "key": "110.hr-policies",
-      "number": "10.8",
-      "title": "HR and workplace policies",
-      "review": false
-     },
-     {
       "key": "110.procedures",
-      "number": "10.9",
+      "number": "10.8",
       "title": "Writing usable procedures",
       "review": false
      },
      {
       "key": "110.lifecycle",
-      "number": "10.10",
+      "number": "10.9",
       "title": "Policy management and review",
       "review": false
      },
      {
       "key": "110.risk-assess",
-      "number": "10.11",
+      "number": "10.10",
       "title": "Identifying and assessing risk",
       "review": false
      },
      {
       "key": "110.risk-register",
-      "number": "10.12",
+      "number": "10.11",
       "title": "Risk registers, ownership, mitigation and escalation",
       "review": false
      },
      {
       "key": "110.risk-monitor",
-      "number": "10.13",
+      "number": "10.12",
       "title": "Monitoring and reviewing risk",
       "review": false
      },
      {
       "key": "110.compliance-pack",
-      "number": "10.14",
+      "number": "10.13",
       "title": "Recap: Legal, Compliance, Policies & Risk",
       "review": true
      }

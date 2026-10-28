@@ -270,3 +270,16 @@
 .staged-empty{padding:1rem 1.2rem;border:1px dashed #cfd6d8;border-radius:10px;background:#f3f5f5}
 .staged-table td.cell-edit textarea{min-height:6.2rem}
 .staged-table td.cell-done div,.staged-table td.cell-locked div{min-height:3.2rem}
+/* Legal lessons (entrepreneurs): templates to adapt, with a clear review note */
+.templates-box{margin:1.8rem 0 .4rem;padding:1.3rem 1.4rem;border:1px solid #d9e6e3;border-radius:14px;background:#f4f9f8}
+.templates-box h3{margin:.2rem 0 .4rem}
+.templates-box>p{text-align:left!important}
+.templates-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.8rem;margin:1rem 0}
+.templates-link{display:flex;flex-direction:column;gap:.4rem;padding:.9rem 1rem;border:1px solid #d9e6e3;border-radius:10px;background:#fff;color:#14304a;text-decoration:none}
+.templates-link:hover,.templates-link:focus-visible{border-color:#1f6f66;box-shadow:0 2px 8px rgba(20,48,74,.08)}
+.templates-link ul{margin:0;padding-left:1.1rem;font-size:.9rem;line-height:1.45}
+.templates-link li{text-align:left!important}
+.templates-link span{margin-top:auto;font-weight:700;color:#1f6f66;font-size:.9rem}
+.templates-note{margin:0;padding:.8rem 1rem;border-left:4px solid #e56f4a;background:#fff;border-radius:6px;font-size:.93rem;line-height:1.55}
+.templates-link,.templates-link *{text-decoration:none!important}
+.templates-link:hover b{text-decoration:underline!important}
