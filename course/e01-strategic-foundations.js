@@ -221,8 +221,8 @@ const m=adapt(base,{
    'Check each objective against your time, money and assumptions, and write down what you will postpone to make room. An objective without resources is a wish, and many new initiatives struggle because they try to do too much too soon.'
   ],
   weak:'Raise awareness and grow quickly.',
-  strong:'ESO1: Position ourselves as the tutoring service families in our area trust most.\nESO2: Children we tutor improve their reading and maths by at least one level each school year.\nESO3: Families on low incomes can afford tutoring, through a sliding fee.\nISO1: Governance and legal: registered, with clear rules for how the founders decide.\nISO2: Financial sustainability: fees and two local funders cover our core costs.\nISO3: People and skills: ten trained volunteer tutors, all with safeguarding checks.\nISO4: Systems and visibility: simple bookings, progress records and payments, and a name parents recognise.',
-  why:'It separates the change for children and families from what the founders must build to deliver it, and each can later carry indicators, a budget and risks.',
+  strong:'ESO1: Position ourselves as the neighbourhood’s trusted bakery for fresh, affordable bread.\nESO2: Young people who left school early gain baking skills and a first paid job.\nESO3: Local families buy good bread at a fair price, and less food is wasted.\nISO1: Governance and legal: the business is registered and the founders agree how decisions are made.\nISO2: Financial sustainability: sales cover our core costs within 18 months.\nISO3: People and skills: a small trained team and a safe, structured training programme.\nISO4: Systems and visibility: simple systems for orders, money and stock, and a brand people recognise.',
+  why:'It separates the change for customers and young people from what the founders must build to deliver it, and each can later carry indicators, a budget and risks.',
   reflect:'Which internal capability, if you do not build it early, would most limit your external objectives?',
   exercise:'Draft your external and internal objectives with codes, a picture of success and an owner. Record what you will postpone until you have the people and money to do it well.',
   fields:{
@@ -239,17 +239,7 @@ const m=adapt(base,{
     ['Typical areas','Skills, income, behaviour, living or environmental conditions','Registration, governance, first team, systems, finance, brand, partnerships'],
     ['Where it goes next','Gets its own Theory of Change pathway in Module 2','Appears as inputs and conditions in those pathways']
    ]
-  },
-  exampleBox:{title:'Example: a neighbourhood bakery that trains young people',groups:[
-   {label:'External objectives (ESO)',items:[
-    'ESO1 Position ourselves as the neighbourhood’s trusted bakery for fresh, affordable bread.',
-    'ESO2 Young people who left school early gain baking skills and a first paid job.',
-    'ESO3 Local families buy good bread at a fair price, and less food is wasted.']},
-   {label:'Internal objectives (ISO)',items:[
-    'ISO1 Governance and legal: the business is registered and the founders agree how decisions are made.',
-    'ISO2 Financial sustainability: sales cover our core costs within 18 months.',
-    'ISO3 People and skills: a small trained team and a safe, structured training programme.',
-    'ISO4 Systems and visibility: simple systems for orders, money and stock, and a brand people recognise.']}]}
+  }
  },
  foundation:{title:'Your Strategic Foundation'}
 });
