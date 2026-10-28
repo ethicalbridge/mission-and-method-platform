@@ -227,3 +227,4 @@
 .recap-text small{margin:0!important}
 .recap-next{margin:6px 0 18px;padding:16px 18px;border-radius:12px;background:#d8eee2}
 .recap-next b{display:block;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#0f5a55;margin-bottom:4px}.recap-next p{margin:0}
+.module-opening{grid-template-columns:1fr}
