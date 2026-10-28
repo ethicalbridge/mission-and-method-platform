@@ -221,3 +221,5 @@
 .example-list b{color:#16746e;margin-right:4px}
 /* Reading text: lines end at the same edge */
 #read p,.learning-step.exercise > p,.reflection p{text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
+/* Every lesson: all running text justified the same way (short labels and notes stay left-aligned) */
+.lesson-content p:not(.subtle):not(.saved-status):not(.course-tag):not(.field-hint),.module-opening p,.recap-text p,.example p,.example-list li{text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
