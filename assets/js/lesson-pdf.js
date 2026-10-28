@@ -143,15 +143,15 @@ function summary(L, doc, inner) {
 // ---------- structured fields ----------
 // f.table = {scale:[…], rows:[{area, pick, evidence}]}: the rating table as filled in (one column per rating, the chosen one
 // marked), repeating its header on new pages.
-function fieldLabel(L, f, inner) { L.ensure(60); for (const t of L.wrap(f.label, 'extrabold', 11, inner)) { L.text(M, L.y + 11, t, 'extrabold', 11, C.deep); L.y += 15; } L.y += 6; }
+function fieldLabel(L, f, inner) { L.ensure(60); for (const t of L.wrap(f.label, 'extrabold', 11, inner)) { L.text(M, L.y + 11, t, 'extrabold', 11, C.deep); L.y += 15; } L.y += 4; }
 function fieldTable(L, f, inner) {
   fieldLabel(L, f, inner);
-  const sc = f.table.scale, k = sc.length, pad = 7, lead = 12.5, size = 9;
+  const sc = f.table.scale, k = sc.length, pad = 5, lead = 11.5, size = 9;
   const wArea = inner * 0.22, wScale = inner * 0.1, wEv = inner - wArea - k * wScale;
   const xs = [M, ...sc.map((_, i) => M + wArea + i * wScale), M + wArea + k * wScale];
   const header = () => {
     const heads = sc.map(c => L.wrap(c.toUpperCase(), 'extrabold', 6, wScale - 4));
-    const h = Math.max(28, Math.max(...heads.map(x => x.length)) * 8.5 + 16);
+    const h = Math.max(24, Math.max(...heads.map(x => x.length)) * 8.5 + 12);
     L.rect(M, L.y, inner, h, C.deep, null, 6);
     L.text(xs[0] + pad, L.y + h / 2 + 3, 'AREA', 'extrabold', 7, C.cream, 0.8);
     heads.forEach((lines, i) => lines.forEach((t, j) => { const w = L.width(t, 'extrabold', 6); L.text(xs[i + 1] + (wScale - w) / 2, L.y + (h - lines.length * 8.5) / 2 + 7 + j * 8.5, t, 'extrabold', 6, C.cream); }));
@@ -166,16 +166,16 @@ function fieldTable(L, f, inner) {
     if (L.ensure(h)) header();
     L.rect(M, L.y, inner, h, r % 2 ? C.cream : C.white, null);
     L.rect(M, L.y + h - 0.75, inner, 0.75, C.line);
-    area.forEach((t, j) => L.text(xs[0] + pad, L.y + pad + 9 + j * lead, t, 'bold', size, C.ink));
+    area.forEach((t, j) => L.text(xs[0] + pad + 2, L.y + pad + 8.5 + j * lead, t, 'bold', size, C.ink));
     sc.forEach((_, i) => {
       const cx = xs[i + 1] + wScale / 2, cy = L.y + h / 2, d = 10;
       if (i === row.pick) { L.rect(cx - d / 2, cy - d / 2, d, d, C.white, C.teal, d / 2); L.rect(cx - 3, cy - 3, 6, 6, C.teal, null, 3); }
       else L.rect(cx - d / 2, cy - d / 2, d, d, C.white, C.line, d / 2);
     });
-    ev.forEach((t, j) => L.text(xs[k + 1] + pad, L.y + pad + 9 + j * lead, t, 'regular', size, row.evidence ? C.ink : C.muted));
+    ev.forEach((t, j) => L.text(xs[k + 1] + pad, L.y + pad + 8.5 + j * lead, t, 'regular', size, row.evidence ? C.ink : C.muted));
     L.y += h;
   });
-  L.y += 18;
+  L.y += 12;
 }
 // f.items = ['…','…','…']: numbered boxes, one per line.
 function fieldItems(L, f, inner) {
@@ -183,15 +183,15 @@ function fieldItems(L, f, inner) {
   f.items.forEach((item, i) => {
     const empty = !clean(item).trim();
     const lines = L.wrap(empty ? 'Not yet drafted.' : item, 'regular', 10.5, inner - 60);
-    const h = Math.max(40, lines.length * 15 + 22);
-    L.ensure(h + 8);
+    const h = Math.max(32, lines.length * 15 + 16);
+    L.ensure(h + 6);
     L.rect(M, L.y, inner, h, C.white, C.line, 8);
-    L.rect(M + 12, L.y + h / 2 - 11, 22, 22, C.coral, null, 11);
-    const num = String(i + 1); L.text(M + 23 - L.width(num, 'black', 11) / 2, L.y + h / 2 + 4, num, 'black', 11, C.white);
-    lines.forEach((t, j) => L.text(M + 46, L.y + (h - lines.length * 15) / 2 + 11 + j * 15, t, 'regular', 10.5, empty ? C.muted : C.ink));
-    L.y += h + 8;
+    L.rect(M + 10, L.y + h / 2 - 10, 20, 20, C.coral, null, 10);
+    const num = String(i + 1); L.text(M + 20 - L.width(num, 'black', 10.5) / 2, L.y + h / 2 + 3.8, num, 'black', 10.5, C.white);
+    lines.forEach((t, j) => L.text(M + 42, L.y + (h - lines.length * 15) / 2 + 11 + j * 15, t, 'regular', 10.5, empty ? C.muted : C.ink));
+    L.y += h + 6;
   });
-  L.y += 10;
+  L.y += 4;
 }
 
 // ---------- document ----------
@@ -239,8 +239,9 @@ function compose(L, doc) {
     L.y += 6;
   }
   // Closing note: where this was made. Kept together on one page.
-  L.ensure(96); L.y += 14;
-  L.rect(M, L.y, inner, 0.75, C.line); L.y += 20;
+  // it may use the bottom margin (it stays above the page footer), so a short document ends on one page
+  if (L.y + 76 > H - 44) L.newPage(); L.y += 6;
+  L.rect(M, L.y, inner, 0.75, C.line); L.y += 14;
   L.mark(M, L.y, 30);
   const wx = M + 42;
   L.text(wx, L.y + 11, 'Method ', 'black', 12, C.deep);
