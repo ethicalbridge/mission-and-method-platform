@@ -213,21 +213,23 @@
 
  // 2.1 Understanding Theory of Change
  add('102.understanding','en',{
-  what:'A Theory of Change makes your reasoning explicit: if we do this work, why might a particular change follow? It sets out the steps from your work to the change, and the assumptions that connect them.',
+  what:'A Theory of Change makes your reasoning explicit: if we do this work, why might a particular change follow? It runs from the problem to inputs, activities, outputs, outcomes and long-term impact. In the next lessons we build it one step at a time.',
   parts:{title:'Three spheres, one pathway',items:[
    {label:'Control',text:'Inputs, activities and outputs: what you put in, what you do and what you deliver.',example:'Two founders’ time and a shared-kitchen slot; a weekly stall and four trainees in year one.'},
    {label:'Influence',text:'Outcomes: changes in the people and institutions you work with directly.',example:'Trainees gain baking skills and confidence; neighbours buy good local bread.'},
    {label:'Contribute',text:'Impact: wider change that many actors shape, so your claims get more modest.',example:'More young people in the neighbourhood in good, lasting work.'}]},
+  examples:{title:'Our bakery’s pathway, in order',items:['Problem: young people who left school early cannot get a first job without experience.','Inputs and activities: a shared kitchen, trainee pay and a mentor; six-month paid traineeships.','Outputs, outcomes, impact: four traineeships; skills and a first job; more young people in decent work.']},
   why:{title:'Why it matters',points:['You test your idea on paper before you spend money.','It shows partners and funders why your work should lead to change.','Modest claims build trust while your idea is untested.']},
   use:{title:'How you will use it',points:['One pathway for each external strategic objective.','Internal objectives appear as inputs and conditions.','Your indicators and reviews, later in the course.']},
   mistakes:{title:'What to avoid',points:['A diagram of arrows with no explanation of each link.','Claiming the wider impact as yours alone.','Treating it as fixed instead of revising it when evidence disagrees.']}
  });
  add('102.understanding','es',{
-  what:'Una Teoría de Cambio hace explícito tu razonamiento: si hacemos este trabajo, ¿por qué podría darse cierto cambio? Muestra los pasos del trabajo al cambio y los supuestos que los conectan.',
+  what:'Una Teoría de Cambio hace explícito tu razonamiento: si hacemos este trabajo, ¿por qué podría darse cierto cambio? Va del problema a los insumos, actividades, productos, resultados e impacto a largo plazo. En las próximas lecciones la construimos paso a paso.',
   parts:{title:'Tres esferas, una ruta',items:[
    {label:'Control',text:'Insumos, actividades y productos: lo que aportas, lo que haces y lo que entregas.',example:'El tiempo de dos fundadores y un turno en una cocina compartida; un puesto semanal y cuatro aprendices.'},
    {label:'Influencia',text:'Resultados: cambios en las personas e instituciones con las que trabajas directamente.',example:'Los aprendices ganan oficio y confianza; los vecinos compran buen pan local.'},
    {label:'Contribución',text:'Impacto: un cambio amplio que moldean muchos actores, así que tus afirmaciones son más modestas.',example:'Más jóvenes del barrio con un trabajo bueno y estable.'}]},
+  examples:{title:'La ruta de nuestra panadería, en orden',items:['Problema: jóvenes que dejaron la escuela no consiguen un primer empleo sin experiencia.','Insumos y actividades: una cocina compartida, el pago de aprendices y un mentor; aprendizajes pagados de seis meses.','Productos, resultados, impacto: cuatro aprendizajes; habilidades y un primer empleo; más jóvenes con trabajo digno.']},
   why:{title:'Por qué importa',points:['Pruebas tu idea en papel antes de gastar dinero.','Muestra a aliados y financiadores por qué tu trabajo llevaría al cambio.','Las afirmaciones modestas generan confianza mientras tu idea no está probada.']},
   use:{title:'Cómo la usarás',points:['Una ruta por cada objetivo estratégico externo.','Los objetivos internos aparecen como insumos y condiciones.','Tus indicadores y revisiones, más adelante en el curso.']},
   mistakes:{title:'Qué evitar',points:['Un diagrama de flechas sin explicar cada conexión.','Atribuirte solo a ti el impacto amplio.','Tratarla como fija en lugar de revisarla cuando la evidencia la contradice.']}
@@ -347,21 +349,23 @@
 
  // 2.7 Inputs
  add('102.inputs','en',{
-  what:'Inputs are the resources your activities need: people’s time and skills, money, equipment, space, information, relationships and permissions. Unpaid time, including your own, counts too.',
+  what:'Inputs are the resources your activities need: people and their skills, money, space, equipment, IT and technology, transport, partners, permissions and information. Unpaid time, including your own, counts too.',
   parts:{title:'Have, need and limits',items:[
    {label:'What you have',text:'Resources already in hand, including your own and volunteers’ time.',example:'Two founders’ time, ten years of baking skill and a friend’s van on Saturdays.'},
    {label:'What you still need',text:'Gaps you must still secure; at the start, most inputs are gaps.',example:'A shared-kitchen slot, insurance and four trainees still to recruit.'},
    {label:'Limits',text:'Constraints such as time, permissions or rules on how a resource can be used.',example:'The kitchen is free only in the mornings, and the youth fund cannot pay for equipment.'}]},
+  examples:{title:'Kinds of inputs to check',items:['People and skills: founders, trainees, mentors, volunteers, and what they know how to do.','Space, equipment, IT and transport: a kitchen, a mixer, a card reader, a van on Saturdays.','Money, partners and permissions: savings and a grant, the youth centre, insurance and registration.']},
   why:{title:'Why they matter',points:['Honest gaps show what you must build before you launch.','Unpaid time is real; leaving it out hides the true cost.','Matching resources to activities shows whether your scope is realistic.']},
   use:{title:'What they guide',points:['Your internal objectives: how you will build the missing inputs.','Your budget, where you will cost them properly in Module 9.','A smaller first scope if one founder holds too many roles.']},
   mistakes:{title:'What to avoid',points:['Leaving out unpaid time from founders, volunteers or members.','Mixing what you have with what you hope to get.','Planning activities nobody has the time or skills to run.']}
  });
  add('102.inputs','es',{
-  what:'Los insumos son los recursos que tus actividades necesitan: tiempo y habilidades, dinero, equipos, espacio, información, relaciones y permisos. El tiempo no pagado, incluido el tuyo, también cuenta.',
+  what:'Los insumos son los recursos que tus actividades necesitan: personas y sus habilidades, dinero, espacio, equipos, tecnología, transporte, aliados, permisos e información. El tiempo no pagado, incluido el tuyo, también cuenta.',
   parts:{title:'Lo que tienes, falta y limita',items:[
    {label:'Lo que tienes',text:'Recursos ya disponibles, incluido tu tiempo y el de los voluntarios.',example:'El tiempo de dos fundadores, diez años de oficio panadero y la camioneta de un amigo los sábados.'},
    {label:'Lo que falta',text:'Vacíos que aún debes cubrir; al inicio, casi todos los insumos lo son.',example:'Un turno en una cocina compartida, un seguro y cuatro aprendices por reclutar.'},
    {label:'Límites',text:'Restricciones de tiempo, permisos o reglas sobre cómo usar un recurso.',example:'La cocina solo está libre por las mañanas y el fondo juvenil no cubre equipos.'}]},
+  examples:{title:'Tipos de insumos a revisar',items:['Personas y habilidades: fundadores, aprendices, mentores, voluntarios y lo que saben hacer.','Espacio, equipos, tecnología y transporte: una cocina, una amasadora, un lector de tarjetas, una furgoneta los sábados.','Dinero, aliados y permisos: ahorros y una subvención, el centro juvenil, el seguro y el registro.']},
   why:{title:'Por qué importan',points:['Los vacíos honestos muestran qué debes construir antes de lanzar.','El tiempo no pagado es real; omitirlo oculta el costo verdadero.','Ajustar recursos y actividades muestra si tu alcance es realista.']},
   use:{title:'Qué guían',points:['Tus objetivos internos: cómo conseguirás los insumos que faltan.','Tu presupuesto, donde los costearás bien en el Módulo 9.','Un primer alcance menor si un fundador cubre demasiados roles.']},
   mistakes:{title:'Qué evitar',points:['Omitir el tiempo no pagado de fundadores, voluntarios o socios.','Mezclar lo que tienes con lo que esperas conseguir.','Planificar actividades que nadie tiene tiempo o habilidad para hacer.']}
