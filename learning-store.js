@@ -1,4 +1,4 @@
-import {modules,allModules,legacyLessonKeys} from './course-data.js?v=ev35';
+import {modules,allModules,legacyLessonKeys} from './course-data.js?v=ev36';
 export const STORAGE_KEY='mm.course.planning-system.v1';
 export const STATE_VERSION=2;
 export const FIRST_LESSON='0.journey';
@@ -23,7 +23,12 @@ export function validateState(value){
  return clean;
 }
 export function validDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;const d=new Date(`${value}T00:00:00Z`);return Number.isFinite(+d)&&d.toISOString().slice(0,10)===value;}
-export function isFilled(state,m,l){return (l.fields||[]).every(f=>typeof state.answers[lessonKey(m,l)]?.[f.key]==='string'&&state.answers[lessonKey(m,l)][f.key].trim())&&(l.id!=='timeline'||state.tasks.length>0&&state.tasks.every(t=>t.title.trim()&&t.owner.trim()&&validDate(t.start)&&validDate(t.end)&&t.end>=t.start));}
+// A field with `store` is saved once, under another lesson of the same module (a table built over several lessons).
+export const storeKey=(m,l,f)=>f.store?`${m.id}.${f.store}`:lessonKey(m,l);
+export const valueOf=(state,m,l,f)=>state.answers[storeKey(m,l,f)]?.[f.key]||'';
+// A staged table (`edit` = the columns this lesson fills) is done when it has rows and each row has those columns.
+function fieldDone(state,m,l,f){const v=valueOf(state,m,l,f);if(typeof v!=='string'||!v.trim())return false;if(!f.edit)return true;const rows=v.split('\n').filter(x=>x.trim()).map(x=>x.split('|').map(t=>t.trim())).filter(r=>r[0]);return rows.length>0&&rows.every(r=>f.edit.every(j=>r[j]));}
+export function isFilled(state,m,l){return (l.fields||[]).every(f=>fieldDone(state,m,l,f))&&(l.id!=='timeline'||state.tasks.length>0&&state.tasks.every(t=>t.title.trim()&&t.owner.trim()&&validDate(t.start)&&validDate(t.end)&&t.end>=t.start));}
 export function readState(){const raw=localStorage.getItem(STORAGE_KEY);return raw?validateState(JSON.parse(raw)):emptyState();}
 export function mutateState(change){const next=readState();change(next);next.updatedAt=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(next));return next;}
 // Editing an answer re-opens that lesson and the review that assembles it (the module's own review, or for the entrepreneurs' course the final Launch Plan).

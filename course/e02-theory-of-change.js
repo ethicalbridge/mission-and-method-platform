@@ -86,8 +86,8 @@ const m=adapt(base,{
   strong:'“ESO2: contribute, over ten years or more, to more young people in our neighbourhood who left school early having stable, decent work.”',
   why:'It names the people and the condition, links to the vision and claims contribution rather than sole credit.',
   reflect:'What wider change would still matter after a participant leaves your programme or a customer stops using your service?',
-  exercise:'Draft your impact statement and identify the other actors who already influence it.',
-  check:'Does the statement acknowledge the limits of what a new initiative can control?',
+  exercise:'Complete the last column of your pathway: for each row, write the long-term impact it contributes to. Several rows can share the same impact. Then name the other actors who already influence it.',
+  check:'Does each row now read as a chain from activity to impact, and does your impact acknowledge the limits of what a new initiative can control?',
   fields:{
    impact:{label:'Long-term impact',hint:'Use your vision and objective as a starting point; name the population and the condition you want to see.'},
    actors:{label:'Other influences',hint:'Which organisations, policies, markets or wider conditions already shape this change? For example: the youth centre, local employers, public job schemes, the cost of living.'}
@@ -105,8 +105,8 @@ const m=adapt(base,{
   strong:'“Trainees gain baking skills and the habits of a working day, then earn a food-hygiene certificate, then at least 2 of 4 find a job within three months of finishing.”',
   why:'It describes changes in the trainees, in a sequence, rather than counting who turned up.',
   reflect:'Whose behaviour or circumstances would need to change first?',
-  exercise:'List the early and later outcomes you expect, with the kind of evidence that would show each one.',
-  check:'Are your outcomes changes rather than a list of planned activities?',
+  exercise:'Your activities and outputs are already in the table. For each output, write the change you expect it to lead to for the people you work with, from the first change to the later ones, and the evidence that would show it. Then note any effects you did not intend.',
+  check:'Are your outcomes changes in people, rather than more activities or outputs?',
   fields:{
    outcomes:{label:'Expected outcome sequence',hint:'Short-term → medium-term → long-term change (e.g. trainees bake to standard → earn the certificate → find a job) | evidence a small team could collect (a weekly skills checklist; job offers at three months).'},
    unintended:{label:'Possible unintended effects',hint:'Who might be excluded, burdened or affected differently once you start? For example: young people who cannot reach an early shift, or who care for a child.'}
@@ -123,8 +123,8 @@ const m=adapt(base,{
   strong:'“In our first year: four six-month paid traineeships for young people referred by the youth centre, each with a mentor and a food-hygiene course; 300 loaves a week at the Saturday stall, every batch checked against our recipe and hygiene log.”',
   why:'It gives a deliverable, a quantity, the intended reach and a quality check that can all be verified.',
   reflect:'What evidence would show that you delivered the service you promised?',
-  exercise:'List the outputs your activities will deliver in your first year, including quality and reach.',
-  check:'Can you verify each output without assuming it caused an outcome?',
+  exercise:'Your activities from 2.4 are already in the table. For each one, write the output it will deliver in your first year: what, how many, for whom and how you will check the quality.',
+  check:'Can you count each output, and verify it without assuming it caused an outcome?',
   fields:{
    outputs:{label:'Planned outputs',hint:'Product or service (e.g. paid traineeships) | first-year quantity (e.g. 4) | intended reach (e.g. young people who left school early, referred by the youth centre) | quality check (each trainee has a mentor and a hygiene course).'}
   },
@@ -152,8 +152,8 @@ const m=adapt(base,{
   strong:'“Recruit four trainees for the first six-month cohort with the youth centre, agree start dates and sign paid traineeship contracts before the first shift.”',
   why:'The action is specific enough to assign, schedule and link to an output: traineeship places filled.',
   reflect:'What preparation is easy to overlook before your first activity?',
-  exercise:'List the main activities you plan and the output each supports.',
-  check:'Does every activity have a clear purpose in the pathway?',
+  exercise:'Start your pathway table. List the main activities you plan and who will be responsible for each. The other columns stay locked for now: you will fill in outputs, outcomes and long-term impact in the next lessons, one step at a time.',
+  check:'Does every activity answer a cause of the problem, and does each one have someone responsible?',
   fields:{
    activities:{label:'Planned activities and outputs',hint:'Action (e.g. agree referrals with the youth centre) | output supported (e.g. 4 traineeships filled) | partner or who will be responsible (founder, partner, future hire).'}
   }
@@ -248,4 +248,21 @@ Object.assign(understanding,{weak:'',strong:'',why:'',reflect:'',exercise:'',che
 // Built forwards, the way founders think about it: problem → inputs → activities → outputs → outcomes → long-term impact.
 const order=['understanding','problem','inputs','activities','outputs','outcomes','impact','assumptions','use','pathway'];
 m.lessons.sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
+// One pathway table, built a column at a time: 2.4 adds the activities (and who is responsible), then 2.5, 2.6 and
+// 2.7 each unlock one more column. The table is saved once, with 2.4 (store), so every stage sees the same rows.
+const PATHWAY_COLUMNS=[
+ {label:'Activity',placeholder:'e.g. run six-month paid traineeships in the bakery'},
+ {label:'Who is responsible',placeholder:'e.g. the baker, with a mentor for each trainee'},
+ {label:'Output',placeholder:'e.g. 4 traineeships in year 1, each with a mentor and a hygiene course'},
+ {label:'Outcome',placeholder:'e.g. trainees gain baking skills → earn the certificate → 2 of 4 find a job; seen in job offers at three months'},
+ {label:'Long-term impact',placeholder:'e.g. more young people in our neighbourhood who left school early have stable, decent work'}
+];
+const STAGES={activities:[0,1],outputs:[2],outcomes:[3],impact:[4]};
+const UNLOCKS=['2.4 Activities','2.4 Activities','2.5 Outputs','2.6 Outcomes','2.7 Long-term impact'];
+for(const [id,edit] of Object.entries(STAGES)){
+ const l=m.lessons.find(x=>x.id===id);
+ const pathway={key:'pathway',label:'Your pathway',type:'table',columns:PATHWAY_COLUMNS,rows:4,store:'activities',edit,unlocks:UNLOCKS,full:id==='impact',
+  hint:id==='activities'?'One row per activity. Add rows as you need. The greyed columns unlock in the next lessons.':'Fill in the highlighted column for each row. Earlier steps show what you wrote; to change one, go back to its lesson.'};
+ l.fields=[pathway,...(l.fields||[]).filter(f=>!(id==='activities'&&f.key==='activities')&&!(id==='outputs'&&f.key==='outputs')&&!(id==='outcomes'&&f.key==='outcomes')&&!(id==='impact'&&f.key==='impact'))];
+}
 export default m;
