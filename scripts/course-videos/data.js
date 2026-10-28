@@ -1253,15 +1253,15 @@ window.COURSE_DATA={
       "review": false
      },
      {
-      "key": "102.impact",
+      "key": "102.inputs",
       "number": "2.3",
-      "title": "Long-term impact",
+      "title": "Inputs",
       "review": false
      },
      {
-      "key": "102.outcomes",
+      "key": "102.activities",
       "number": "2.4",
-      "title": "Outcomes",
+      "title": "Activities",
       "review": false
      },
      {
@@ -1271,15 +1271,15 @@ window.COURSE_DATA={
       "review": false
      },
      {
-      "key": "102.activities",
+      "key": "102.outcomes",
       "number": "2.6",
-      "title": "Activities",
+      "title": "Outcomes",
       "review": false
      },
      {
-      "key": "102.inputs",
+      "key": "102.impact",
       "number": "2.7",
-      "title": "Inputs",
+      "title": "Long-term impact",
       "review": false
      },
      {

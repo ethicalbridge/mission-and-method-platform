@@ -263,7 +263,7 @@
    {label:'Narrow enough',text:'Specific enough to guide early decisions, without claiming the whole future as yours.',example:'First jobs for young people in our neighbourhood, rather than “ending youth unemployment”.'},
    {label:'Others involved',text:'The other actors who already influence the same change.',example:'The youth centre, local employers, the public job service and evening classes.'}]},
   why:{title:'Why it matters',points:['It links your everyday work to your vision.','It keeps early decisions pointed at the same change.','Funders and partners trust founders who name others’ part.']},
-  use:{title:'How you will use it',points:['As the top of each Theory of Change pathway.','To work backwards to the outcomes that lead to it.','To explain your idea honestly to partners and funders.']},
+  use:{title:'How you will use it',points:['As the end point each Theory of Change pathway leads to.','To check that your outcomes really point towards it.','To explain your idea honestly to partners and funders.']},
   mistakes:{title:'What to avoid',points:['Claiming an improvement proves your work caused it.','A statement so broad it guides no decision.','Forgetting the others who shape the same change.']}
  });
  add('102.impact','es',{
@@ -273,7 +273,7 @@
    {label:'Bien acotada',text:'Lo bastante concreta para guiar decisiones tempranas, sin adueñarte de todo el futuro.',example:'Primeros empleos para jóvenes de nuestro barrio, no «acabar con el desempleo juvenil».'},
    {label:'Otros actores',text:'Quienes ya influyen en ese mismo cambio.',example:'El centro juvenil, los empleadores locales, el servicio público de empleo y las clases nocturnas.'}]},
   why:{title:'Por qué importa',points:['Conecta tu trabajo diario con tu visión.','Mantiene tus primeras decisiones apuntando al mismo cambio.','Financiadores y aliados confían en quien reconoce el aporte de otros.']},
-  use:{title:'Cómo la usarás',points:['Como la cima de cada ruta de tu Teoría de Cambio.','Para trabajar hacia atrás hasta los resultados que llevan a él.','Para explicar tu idea con honestidad a aliados y financiadores.']},
+  use:{title:'Cómo la usarás',points:['Como el punto de llegada de cada ruta de tu Teoría de Cambio.','Para comprobar que tus resultados apuntan de verdad hacia él.','Para explicar tu idea con honestidad a aliados y financiadores.']},
   mistakes:{title:'Qué evitar',points:['Afirmar que una mejora prueba que tu trabajo la causó.','Una declaración tan amplia que no guía ninguna decisión.','Olvidar a los demás que moldean el mismo cambio.']}
  });
 
@@ -284,7 +284,7 @@
    {label:'Short-term',text:'Early changes in knowledge, skills or confidence.',example:'Trainees can bake three basic breads on their own and hold a food-hygiene certificate.'},
    {label:'Medium-term',text:'Changes in choices, behaviour or practice that follow.',example:'Trainees finish the six months and apply for jobs in kitchens and bakeries.'},
    {label:'Longer-term',text:'Lasting changes that make the impact more likely.',example:'Former trainees are still in work a year after finishing.'}]},
-  why:{title:'Why they matter',points:['They show whether lives change, not just whether you delivered.','Working backwards from impact shows which changes matter most.','Naming side effects early lets you design them out.']},
+  why:{title:'Why they matter',points:['They show whether lives change, not just whether you delivered.','Building forwards from your outputs shows which changes come first.','Naming side effects early lets you design them out.']},
   use:{title:'What they guide',points:['The outputs and activities you need to reach them.','Your indicators, baselines and targets in Module 6.','Your first reviews: is the change actually happening?']},
   mistakes:{title:'What to avoid',points:['Counting attendance as an outcome.','Filling a diagram with every possible link.','Ignoring unintended effects, such as who is left out.']}
  });
@@ -294,7 +294,7 @@
    {label:'Corto plazo',text:'Primeros cambios en conocimientos, habilidades o confianza.',example:'Los aprendices hornean solos tres panes básicos y tienen un certificado de higiene alimentaria.'},
    {label:'Mediano plazo',text:'Cambios posteriores en decisiones, conductas o prácticas.',example:'Los aprendices terminan los seis meses y postulan a empleos en cocinas y panaderías.'},
    {label:'Largo plazo',text:'Cambios duraderos que hacen más probable el impacto.',example:'Quienes fueron aprendices siguen trabajando un año después de terminar.'}]},
-  why:{title:'Por qué importan',points:['Muestran si cambian vidas, no solo si entregaste algo.','Trabajar hacia atrás desde el impacto muestra qué cambios importan.','Nombrar efectos no deseados a tiempo te permite evitarlos.']},
+  why:{title:'Por qué importan',points:['Muestran si cambian vidas, no solo si entregaste algo.','Construir desde tus productos muestra qué cambios llegan primero.','Nombrar efectos no deseados a tiempo te permite evitarlos.']},
   use:{title:'Qué guían',points:['Los productos y actividades que necesitas para lograrlos.','Tus indicadores, líneas de base y metas en el Módulo 6.','Tus primeras revisiones: ¿está ocurriendo el cambio?']},
   mistakes:{title:'Qué evitar',points:['Contar la asistencia como un resultado.','Llenar un diagrama con todas las conexiones posibles.','Ignorar efectos no deseados, como quién queda fuera.']}
  });

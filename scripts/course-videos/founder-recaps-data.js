@@ -135,24 +135,24 @@
       "text": "The problem is the situation and its causes, not the absence of the solution you have in mind."
      },
      {
-      "label": "2.3 Long-term impact",
-      "text": "Impact is long-term change in lives or conditions that you contribute to alongside many other actors."
+      "label": "2.3 Inputs",
+      "text": "Inputs are every resource your activities need, including your own and volunteers’ unpaid time."
      },
      {
-      "label": "2.4 Outcomes",
-      "text": "Outcomes are the changes in people, relationships or conditions between what you deliver and long-term impact."
+      "label": "2.4 Activities",
+      "text": "Activities are the actions, each starting with a verb, that you and partners take to produce outputs."
      },
      {
       "label": "2.5 Outputs",
       "text": "Outputs show that delivery happened and are mostly within your control, but not that lives improved."
      },
      {
-      "label": "2.6 Activities",
-      "text": "Activities are the actions, each starting with a verb, that you and partners take to produce outputs."
+      "label": "2.6 Outcomes",
+      "text": "Outcomes are the changes in people, relationships or conditions between what you deliver and long-term impact."
      },
      {
-      "label": "2.7 Inputs",
-      "text": "Inputs are every resource your activities need, including your own and volunteers’ unpaid time."
+      "label": "2.7 Long-term impact",
+      "text": "Impact is long-term change in lives or conditions that you contribute to alongside many other actors."
      },
      {
       "label": "2.8 Assumptions, risks and evidence",
@@ -180,24 +180,24 @@
       "text": "El problema es la situación y sus causas, no la falta de la solución que tienes en mente."
      },
      {
-      "label": "2.3 Impacto a largo plazo",
-      "text": "El impacto es el cambio duradero en vidas o condiciones al que contribuyes junto con muchos otros actores."
+      "label": "2.3 Insumos",
+      "text": "Los insumos son todos los recursos de tus actividades, incluido tu tiempo y el del voluntariado sin pago."
      },
      {
-      "label": "2.4 Resultados",
-      "text": "Los resultados son los cambios en personas, relaciones o condiciones entre lo que entregas y el impacto duradero."
+      "label": "2.4 Actividades",
+      "text": "Las actividades son las acciones, cada una con un verbo, con que tú y tus aliados generan productos."
      },
      {
       "label": "2.5 Productos",
       "text": "Los productos muestran que hubo entrega y dependen sobre todo de ti, pero no prueban que mejoraran vidas."
      },
      {
-      "label": "2.6 Actividades",
-      "text": "Las actividades son las acciones, cada una con un verbo, con que tú y tus aliados generan productos."
+      "label": "2.6 Resultados",
+      "text": "Los resultados son los cambios en personas, relaciones o condiciones entre lo que entregas y el impacto duradero."
      },
      {
-      "label": "2.7 Insumos",
-      "text": "Los insumos son todos los recursos de tus actividades, incluido tu tiempo y el del voluntariado sin pago."
+      "label": "2.7 Impacto a largo plazo",
+      "text": "El impacto es el cambio duradero en vidas o condiciones al que contribuyes junto con muchos otros actores."
      },
      {
       "label": "2.8 Supuestos, riesgos y evidencia",

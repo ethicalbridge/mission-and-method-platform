@@ -1,10 +1,10 @@
 import base from './m02-theory-of-change.js';
 import {adapt} from './adapt.js';
 // Entrepreneurs' version of m02: same lessons, fields, workbook and tools; wording for people building something new.
-export default adapt(base,{
+const m=adapt(base,{
  title:'Theory of Change',
  short:'From the problem you want to solve to long-term impact, with the assumptions that connect them',
- intro:'Explain how the work you are planning could contribute to change. Work backwards from the future you seek, then check the pathway forwards. Build one pathway for each external objective. Before you launch, your map is a reasoned hypothesis to test with the people affected, not proof that your idea works.',
+ intro:'Explain how the work you are planning could contribute to change. Build it step by step, the way the work will happen: start from the problem, then the inputs, activities and outputs you will deliver, the outcomes they lead to and the long-term impact. Then read it back from the impact to check every link. Build one pathway for each external objective. Before you launch, your map is a reasoned hypothesis to test with the people affected, not proof that your idea works.',
  output:'Theory of Change',
  promo:{
   headline:'See your whole pathway on one living map before you launch',
@@ -14,7 +14,7 @@ export default adapt(base,{
  understanding:{
   learn:[
    'A Theory of Change makes your reasoning explicit: if we do this work, why might a particular change follow? It covers the context, the people involved, the sequence of changes and the assumptions that connect them. Writing it before you launch lets you test your idea on paper first. Social enterprises and startups sometimes call the same thing an impact thesis or impact logic.',
-   'A pathway runs from inputs to activities, outputs, outcomes and impact. A diagram helps people see it, but arrows alone do not explain it. Add a short sentence on each important connection, and test your reasoning against what future participants or customers tell you and what others working on the issue have already learned.',
+   'A pathway runs from the problem to inputs, activities, outputs, outcomes and long-term impact, and in this module you build it in that order. A diagram helps people see it, but arrows alone do not explain it. Add a short sentence on each important connection, and test your reasoning against what future participants or customers tell you and what others working on the issue have already learned.',
    'Separate three spheres. You will control your activities and outputs. You will influence the changes in the people and institutions you work with directly. You can only contribute to the wider impact, which many actors shape. Make your claims more modest as you move outwards, especially while your idea is still untested.',
    'Build one pathway for each external strategic objective (ESO) you set in Module 1. Internal objectives do not need their own pathway; they appear as inputs and conditions, such as the team, money and skills you still have to build. Expect your theory to change once you start, and revisit it when evidence contradicts it.'
   ],
@@ -88,7 +88,7 @@ export default adapt(base,{
  outcomes:{
   learn:[
    'Outcomes are the changes your work will help bring about in people, relationships, institutions or conditions: a new skill, a different choice, a changed rule. They sit between what you deliver and the long-term impact. A count of trainees enrolled is an output; a trainee who can now run the morning bake without help is showing an outcome.',
-   'Work backwards from your impact. What has to change just before it becomes more likely? What earlier change makes that possible? Arrange the answers as short-term, medium-term and long-term outcomes. Keep a few strong links rather than filling a diagram with every possibility; a small new team can only follow a few.',
+   'Build forwards from your outputs. What changes first for the people you work with once they use what you deliver? What does that early change make possible next? Arrange the answers as short-term, medium-term and long-term outcomes, leading towards the long-term impact in the next lesson. Keep a few strong links rather than filling a diagram with every possibility; a small new team can only follow a few.',
    'For each outcome, note the evidence that would show it is happening, such as an observed skill, a job offer or a new local rule. Think now about what a small team could realistically collect from the first day. You do not need indicators yet; you will turn these signals into indicators, baselines and targets in Module 6.',
    'Look for effects you did not intend, including unequal ones. Who might be left out, take on extra work or be affected differently? Naming these before you launch lets you design them out rather than fix them later.'
   ],
@@ -113,7 +113,7 @@ export default adapt(base,{
   strong:'“In our first year: four six-month paid traineeships for young people referred by the youth centre, each with a mentor and a food-hygiene course; 300 loaves a week at the Saturday stall, every batch checked against our recipe and hygiene log.”',
   why:'It gives a deliverable, a quantity, the intended reach and a quality check that can all be verified.',
   reflect:'What evidence would show that you delivered the service you promised?',
-  exercise:'List the outputs your outcomes will need in your first year, including quality and reach.',
+  exercise:'List the outputs your activities will deliver in your first year, including quality and reach.',
   check:'Can you verify each output without assuming it caused an outcome?',
   fields:{
    outputs:{label:'Planned outputs',hint:'Product or service (e.g. paid traineeships) | first-year quantity (e.g. 4) | intended reach (e.g. young people who left school early, referred by the youth centre) | quality check (each trainee has a mentor and a hygiene course).'}
@@ -211,3 +211,11 @@ export default adapt(base,{
  },
  pathway:{title:'Your Theory of Change'}
 });
+
+// 2.1 is reading only: it explains what a Theory of Change is; the pathway itself is built in 2.2–2.9.
+const understanding=m.lessons.find(l=>l.id==='understanding');
+Object.assign(understanding,{weak:'',strong:'',why:'',reflect:'',exercise:'',check:'',fields:[]});
+// Built forwards, the way founders think about it: problem → inputs → activities → outputs → outcomes → long-term impact.
+const order=['understanding','problem','inputs','activities','outputs','outcomes','impact','assumptions','use','pathway'];
+m.lessons.sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
+export default m;

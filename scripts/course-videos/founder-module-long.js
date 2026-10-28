@@ -35,13 +35,13 @@
   what:'This module turns your external objectives into a Theory of Change: a reasoned explanation of how your planned work could lead to lasting change, and which assumptions must hold. It answers: if we do this, why would that change follow?',
   why:{title:'Why test your logic first',points:['Before launch, almost every link between your work and change is an assumption.','Naming the critical assumptions shows what to test before you spend money.','Funders and partners trust ideas whose reasoning they can follow and question.']},
   outcomes:{title:'What you will learn to do',points:['Describe the problem and its causes, not just the missing solution.','Draw one pathway per external objective, from inputs to long-term impact.','List the assumptions to test with the people affected, before and after launch.']},
-  tips:{title:'Practical tips',points:['Start from the impact and work backwards; then read it forwards to check.','Show a draft to people affected by the problem and ask what is missing.','See how our example bakery links paid traineeships to young people’s first jobs.']}
+  tips:{title:'Practical tips',points:['Build it in order, from the problem to impact; then read it back to check.','Show a draft to people affected by the problem and ask what is missing.','See how our example bakery links paid traineeships to young people’s first jobs.']}
  });
  add('102','es',{
   what:'Este módulo convierte tus objetivos externos en una Teoría de Cambio: una explicación razonada de cómo tu trabajo previsto podría generar un cambio duradero y qué supuestos deben cumplirse. Responde: si hacemos esto, ¿por qué seguiría ese cambio?',
   why:{title:'Por qué probar tu lógica primero',points:['Antes de lanzar, casi cada vínculo entre tu trabajo y el cambio es un supuesto.','Nombrar los supuestos críticos muestra qué probar antes de gastar dinero.','Financiadores y aliados confían en ideas cuyo razonamiento pueden seguir y cuestionar.']},
   outcomes:{title:'Lo que podrás hacer',points:['Describir el problema y sus causas, no solo la falta de una solución.','Trazar una ruta por cada objetivo externo, de los insumos al impacto duradero.','Listar los supuestos que probarás con las personas afectadas, antes y después de lanzar.']},
-  tips:{title:'Consejos prácticos',points:['Empieza por el impacto y trabaja hacia atrás; luego léelo hacia adelante para revisar.','Muestra un borrador a personas afectadas por el problema y pregunta qué falta.','Mira cómo nuestra panadería de ejemplo vincula la formación de aprendices con su primer empleo.']}
+  tips:{title:'Consejos prácticos',points:['Constrúyela en orden, del problema al impacto; luego léela al revés para revisar.','Muestra un borrador a personas afectadas por el problema y pregunta qué falta.','Mira cómo nuestra panadería de ejemplo vincula la formación de aprendices con su primer empleo.']}
  });
 
  // Module 03 · Structure, governance and accountability
