@@ -175,11 +175,11 @@ const m=adapt(base,{
   strong:'Most of our income will come from selling bread, so a company fits. We are considering a legal status that locks in our social purpose, and may add a partner nonprofit later for training grants. We will check both with someone with a legal background before we register.',
   why:'It reasons from where the money will come from and how the purpose will be protected, and names what still needs advice.',
   reflect:'Where will most of your resources come from in three years, and would your intended form allow that?',
-  exercise:'Compare the forms you are considering, including staying informal for now, against control, surplus, funding and reporting. Then state your current preference and what you must confirm before you register.',
+  exercise:'Use the table above to pick two or three forms that could suit you, including staying informal for now. Note why each could fit and what worries you, then choose your current preference and list what you still need to check before you register.',
   fields:{
-   options:{label:'Forms considered',hint:'Form | who controls | what happens to surplus | funding it allows | reporting duties. Include staying informal for now.'},
+   options:{label:'Options you are considering',hint:'Form (e.g. informal group, nonprofit, company, cooperative) | why it could fit you | what worries you about it. Two or three options are enough, and staying informal for now counts as one.'},
    choice:{label:'Current preference and reasons',hint:'Which form fits best for your start, and what would make you change it later?'},
-   advice:{label:'Questions for qualified advice',hint:'What must you confirm locally before you register?'}
+   advice:{label:'Questions to ask before you register',hint:'What do you still need to check with someone who knows the rules where you are?'}
   },
   check:'Does your preference follow from how the work will be resourced and governed, rather than from what sounds most credible?',
   anatomy:{
