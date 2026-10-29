@@ -353,3 +353,14 @@ nav.nav .nav-links a.nav-coming-soon em {
 @media (max-width:760px){.footer-news-form{grid-template-columns:1fr}.footer-news-row{flex-direction:column}.footer-news-row button{width:100%}}
 /* Mobile menu: Contact lines up with the other links */
 @media (max-width:900px){nav.nav .nav-links .contact-link{text-align:left !important;justify-content:flex-start !important}}
+/* Newsletter box above the footer bar (moved out of the dark footer) */
+.pre-footer-news{padding:40px 0 48px;background:transparent}
+.pre-footer-news .footer-news{padding:0}
+.pre-footer-news .footer-news-form{background:#fff;border:1px solid #e6dfcf;box-shadow:0 10px 30px rgba(16,46,59,.06);padding:26px 28px}
+.pre-footer-news .footer-news-text b{color:#102e3b}
+.pre-footer-news .footer-news-text span{color:#41525c}
+.pre-footer-news .footer-news-row input{border:1px solid #cfd8d6}
+.pre-footer-news .footer-news-note{color:#16746e}
+.pre-footer-news .footer-news-privacy{color:#6a7a83}
+.pre-footer-news .footer-news-privacy a{color:#16746e}
+body[data-page="newsletter"] .pre-footer-news{display:none}

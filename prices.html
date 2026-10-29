@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="pricing.css">
 <link rel="stylesheet" href="planning-system.css?v=fade3">
 <link rel="stylesheet" href="courses.css?v=courses-redesign-1">
-<link rel="stylesheet" href="pricing-redesign.css?v=pricing-redesign-3">
+<link rel="stylesheet" href="pricing-redesign.css?v=pricing-redesign-4">
 <link rel="stylesheet" href="audiences.css?v=4">
 <script src="assets/js/passcode-gate.js?v=2"></script>
 <style>
@@ -400,15 +400,14 @@
         </div>
       </div>
 
-      <div class="px-pair" style="margin-top:24px;grid-template-columns:1fr;max-width:560px">
-                <article class="pr-plan reveal">
-          <div class="pr-plan-eyebrow">FREE TO TRY</div>
-          <h3>Three templates, free.</h3>
-          <div class="pr-price px-price-text"><b>Free</b><span>with your email</span></div>
-          <p class="pr-plan-desc">See the quality before you buy: the Legal Review Checklist, the Conflict of Interest Policy and the Mutual Confidentiality Agreement.</p>
-          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="legal-templates.html#free-templates">Get the free templates →</a>
-        </article>
-      </div>
+      <section class="px-free reveal" aria-labelledby="px-free-title">
+        <span class="px-free-pill">FREE</span>
+        <h3 id="px-free-title">Start with three templates, free.</h3>
+        <p class="px-free-lead">Full, editable Word files in English and Spanish, the same quality as the library. Yours to keep, no card needed.</p>
+        <ul class="px-free-list"><li>Legal Review Checklist</li><li>Conflict of Interest Policy</li><li>Mutual Confidentiality Agreement</li></ul>
+        <a class="hm-btn hm-btn-primary px-free-cta" href="legal-templates.html#free-templates">Get the 3 free templates →</a>
+        <small class="px-free-fine">Sent to your email too, so you can find them again.</small>
+      </section>
     </div>
   </section>
 
@@ -642,7 +641,7 @@
 </script>
 <script type="module" src="i18n.js?v=acct7"></script>
 <script type="module">import {bindPriceButtons,bindFounderButtons} from './founder-checkout.js?v=12';bindPriceButtons();bindFounderButtons();</script>
-<script src="app.js?v=acct4"></script>
+<script src="app.js?v=acct5"></script>
 <script type="module" src="overview.js"></script>
 <script src="home.js?v=home-redesign-4"></script>
 </body>
