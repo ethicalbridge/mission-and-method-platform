@@ -44,7 +44,7 @@ function card(t) {
   const meta = [t.pages ? `about ${t.pages} pages` : null, 'Word (.docx)'].filter(Boolean).join(' · ');
   const isFree = FREE.includes(t.slug);
   const isNew = isFree ? '<span class="small-tag legal-free">Free</span>' : (t.status === 'new' ? '<span class="small-tag legal-new">New</span>' : '');
-  return `<article class="suite-tool-card legal-card"><span class="legal-kind ${kindClass(t.label)}">${esc(t.label || t.type)}</span><h3>${esc(t.title)}</h3><p>${esc(t.description)}</p><p class="legal-meta"><span class="small-tag">${esc(meta)}</span>${isNew}</p><p class="tool-card-actions">${isFree ? `<a class="button" href="legal-templates.html#free-templates">Get it free →</a>` : `<button class="button ghost" type="button" data-template-file="assets/legal-templates/${esc(t.slug)}.docx" data-template-title="${esc(t.title)}">Download Word template ↓</button>`}</p></article>`;
+  return `<article class="suite-tool-card legal-card" id="${esc(t.slug)}"><span class="legal-kind ${kindClass(t.label)}">${esc(t.label || t.type)}</span><h3>${esc(t.title)}</h3><p>${esc(t.description)}</p><p class="legal-meta"><span class="small-tag">${esc(meta)}</span>${isNew}</p><p class="tool-card-actions">${isFree ? `<a class="button" href="legal-templates.html#free-templates">Get it free →</a>` : `<button class="button ghost" type="button" data-template-file="assets/legal-templates/${esc(t.slug)}.docx" data-template-title="${esc(t.title)}">Download Word template ↓</button>`}</p></article>`;
 }
 
 const legend = cat => cat.legend ? `<dl class="legal-legend">${cat.legend.map(([k, v]) => `<div><dt><span class="legal-kind ${kindClass(k)}">${esc(k)}</span></dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : '';
