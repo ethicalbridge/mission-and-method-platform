@@ -557,7 +557,7 @@ root.addEventListener('submit', async e => {
   const btn = form.querySelector('button[type=submit]'); if (btn) btn.disabled = true;
   try {
     if (kind === 'signin') {
-      const code = String(d.code || '').trim().toLowerCase();
+      const code = String(d.code || '').toLowerCase().replace(/[‐-―−]/g, '-').replace(/[^a-z0-9-]/g, ''); // ignore quotes, spaces, full stops pasted with the code
       try { await api('verify', {}, code); }
       catch (err) { S.message = err.status === 401 ? 'That code is not valid. Check it and try again.' : err.message; return renderSignIn(); }
       S.code = code; lsSet(LS.code, code); S.message = '';
