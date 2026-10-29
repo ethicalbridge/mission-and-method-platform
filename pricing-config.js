@@ -68,3 +68,54 @@ export function getOffer(id, interval='monthly') {
   if(id === 'bundle') return {id, name:pricing.bundle.name, amount:pricing.bundle.launch, billing:'Bundle · all five courses + 12 months of software', includes:pricing.bundle.includes};
   return null;
 }
+
+// ---------------------------------------------------------------------------
+// CURRENT PRICE LIST (Prices page, course buttons, checkout). Single source since 29 Oct 2026.
+// Whole US dollars per World Bank income band, in this order: high, upper-middle, lower-middle, low.
+// The band comes from the country that issued the buyer's card (see country-bands.js).
+// After changing anything here run:  node scripts/sync-prices.mjs   (rewrites prices.html)
+// ---------------------------------------------------------------------------
+export const BANDS = [
+  {id:'high', name:'High income', short:'High', level:1},
+  {id:'upper-middle', name:'Upper-middle income', short:'Upper-mid', level:0.6},
+  {id:'lower-middle', name:'Lower-middle income', short:'Lower-mid', level:0.3},
+  {id:'low', name:'Low income', short:'Low', level:0.15},
+];
+export const PRICE_FLOOR = 9;             // no paid item costs less than US$9 in any band
+export const LAUNCH_PRICE_ENDS = null;    // set a date such as '2027-03-31' when decided
+
+// regular = list price; launch = price until LAUNCH_PRICE_ENDS (omit if none)
+export const catalog = {
+  'course':          {name:'One course (entrepreneurs or organisations)', regular:[39,23,12,9],   launch:[29,17,9,9]},
+  'founder-pathway': {name:'Founder Pathway · all four courses',         regular:[119,71,36,18], launch:[89,53,27,13], courses:4},
+  'org-pathway':     {name:'Organisation Pathway · all five courses',    regular:[149,89,45,22], launch:[109,65,33,16], courses:5},
+  'library-upgrade': {name:'Full Template Library upgrade (pathway owners)', regular:[79,47,24,12]},
+  'single-template': {name:'Any single template',                        regular:[9,9,9,9]},
+  'essentials':      {name:'Start-up Legal Essentials (12 templates)',   regular:[49,29,15,9],   launch:[39,23,12,9]},
+  'full-library':    {name:'Full Template Library',                      regular:[149,89,45,22], launch:[119,71,36,18]},
+  'pack-policies':   {name:'Policies & procedures pack',   category:'Policies & procedures',   regular:[99,59,30,15], launch:[75,45,23,11]},
+  'pack-contracts':  {name:'Contracts & agreements pack',  category:'Contracts & agreements',  regular:[59,35,18,9],  launch:[45,27,14,9]},
+  'pack-consent':    {name:'Consent forms pack',           category:'Consent forms',           regular:[19,11,9,9],   launch:[15,9,9,9]},
+  'pack-governance': {name:'Governance & compliance pack', category:'Governance & compliance', regular:[39,23,12,9],  launch:[29,17,9,9]},
+  'launch-ready':    {name:'Launch Ready: Founder Pathway + Full Template Library + review call', regular:[279,169,109,89]},
+  'review-call':     {name:'Pack review call (60 minutes)', regular:[149,79,79,79]},
+};
+export const PACKS = ['pack-policies','pack-contracts','pack-consent','pack-governance'];
+
+const bandIndex = b => typeof b === 'number' ? b : Math.max(0, BANDS.findIndex(x => x.id === b));
+/** Price of a catalogue item in a band (index or id). kind: 'regular' | 'launch' (falls back to regular). */
+export function priceOf(id, band = 0, kind = 'regular') {
+  const item = catalog[id]; if (!item) return null;
+  const list = (kind === 'launch' && item.launch) || item.regular;
+  return Math.max(PRICE_FLOOR, list[bandIndex(band)]);
+}
+const per = fn => BANDS.map((_, i) => fn(i));
+/** Savings, per band, worked out from the list above (never typed by hand). counts = templates per pack. */
+export const savings = {
+  'founder-pathway': () => per(i => catalog['founder-pathway'].courses * priceOf('course', i) - priceOf('founder-pathway', i)),
+  'org-pathway':     () => per(i => catalog['org-pathway'].courses * priceOf('course', i) - priceOf('org-pathway', i)),
+  'packs-total':     () => per(i => PACKS.reduce((n, p) => n + priceOf(p, i), 0)),
+  'full-library':    () => per(i => PACKS.reduce((n, p) => n + priceOf(p, i), 0) - priceOf('full-library', i)),
+  'launch-ready':    () => per(i => priceOf('founder-pathway', i) + priceOf('full-library', i) + priceOf('review-call', i) - priceOf('launch-ready', i)),
+  pack: (id, count) => per(i => count * priceOf('single-template', i) - priceOf(id, i)),
+};
