@@ -871,7 +871,9 @@ export const translations = {
     "acc.why.3t": "Your orders",
     "acc.why.3": "Everything you bought, in one place.",
     "acc.why.free": "New here? Module 0 is free and needs no account.",
-    "acc.why.free_link": "Start Module 0 →"
+    "acc.why.free_link": "Start Module 0 →",
+    "acc.tab.signin": "Sign in",
+    "acc.tab.signup": "Create account"
   },
 
   es: {
@@ -1742,6 +1744,8 @@ export const translations = {
     "acc.why.3t": "Tus pedidos",
     "acc.why.3": "Todo lo que compraste, en un solo lugar.",
     "acc.why.free": "¿Eres nuevo/a? El Módulo 0 es gratis y no necesita cuenta.",
-    "acc.why.free_link": "Empieza el Módulo 0 →"
+    "acc.why.free_link": "Empieza el Módulo 0 →",
+    "acc.tab.signin": "Entrar",
+    "acc.tab.signup": "Crear cuenta"
   }
 };

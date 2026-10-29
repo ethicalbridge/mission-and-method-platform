@@ -11,22 +11,47 @@ const show = which => { $('acc-loading').hidden = true; $('acc-signed-out').hidd
 const fmtDate = d => new Date(d).toLocaleDateString(document.documentElement.lang === 'es' ? 'es' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 const url = (m, l) => '/' + lessonPath(m, l);
 
-// ---------- signed out: email link or code ----------
+// ---------- signed out: two tabs (Sign in / Create account), both by emailed link or code ----------
 let email = '';
+let mode = 'signin';
+const es = () => (document.documentElement.lang || '').startsWith('es');
+const TXT = {
+  signin: { en: ['Welcome back', 'Enter the email you used before and we\'ll send you a sign-in link. No password needed.', 'Email me a sign-in link'],
+            es: ['Hola de nuevo', 'Escribe el correo que usaste y te enviaremos un enlace para entrar. Sin contraseña.', 'Envíame un enlace para entrar'] },
+  signup: { en: ['Create your account', 'Enter your email and we\'ll send you a link to confirm it. That creates your account and signs you in. No password needed.', 'Create my account'],
+            es: ['Crea tu cuenta', 'Escribe tu correo y te enviaremos un enlace para confirmarlo. Así se crea tu cuenta y entras. Sin contraseña.', 'Crear mi cuenta'] },
+};
+function setMode(m) {
+  mode = m;
+  const t = TXT[m][es() ? 'es' : 'en'];
+  $('acc-auth-title').textContent = t[0]; $('acc-auth-lead').textContent = t[1]; $('acc-send').textContent = t[2];
+  document.querySelectorAll('.acc-tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === m)));
+  $('acc-news-row').hidden = m !== 'signup';
+  $('acc-signin-note').textContent = ''; $('acc-code-form').hidden = true;
+}
+document.querySelectorAll('.acc-tabs [data-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+if (new URLSearchParams(location.search).get('new') === '1') setMode('signup'); else setMode('signin');
 $('acc-signin-form').addEventListener('submit', async e => {
   e.preventDefault();
   email = $('acc-email').value.trim();
-  const note = $('acc-signin-note'), btn = e.target.querySelector('button');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { note.textContent = 'Please enter a valid email address.'; return; }
-  btn.disabled = true; note.textContent = 'Sending…';
-  const { error } = await mip.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/account.html', shouldCreateUser: true } });
+  const note = $('acc-signin-note'), btn = $('acc-send');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { note.textContent = es() ? 'Escribe un correo válido.' : 'Please enter a valid email address.'; return; }
+  btn.disabled = true; note.textContent = es() ? 'Enviando…' : 'Sending…';
+  const { error } = await mip.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/account.html', shouldCreateUser: mode === 'signup' } });
   btn.disabled = false;
-  if (error) { note.textContent = /rate|seconds/i.test(error.message) ? 'Please wait a minute before asking for another email.' : 'We could not send the email: ' + error.message; return; }
-  note.innerHTML = `Check your inbox for <b>${esc(email)}</b> and open the link. It works for one hour.`;
-  // Optional newsletter box (unticked by default): double opt-in email via assets/js/newsletter.js.
-  const news = $('acc-news');
-  if (news?.checked && window.MIPNewsletter) window.MIPNewsletter.send('subscribe', { email, source: 'sign-in', consentText: news.parentElement.textContent.replace(/\s+/g, ' ').trim() }).catch(() => {});
+  if (error) {
+    if (mode === 'signin' && /signups not allowed|not found|otp_disabled/i.test(error.message + ' ' + (error.code || ''))) {
+      note.innerHTML = es() ? 'No hay ninguna cuenta con este correo. <button type="button" class="acc-link" id="acc-go-signup">Crear una cuenta</button>' : 'There is no account with this email yet. <button type="button" class="acc-link" id="acc-go-signup">Create an account</button>';
+      $('acc-go-signup').onclick = () => { setMode('signup'); $('acc-email').value = email; };
+      return;
+    }
+    note.textContent = /rate|seconds/i.test(error.message) ? (es() ? 'Espera un minuto antes de pedir otro correo.' : 'Please wait a minute before asking for another email.') : (es() ? 'No pudimos enviar el correo: ' : 'We could not send the email: ') + error.message; return;
+  }
+  note.innerHTML = es() ? `Revisa el correo de <b>${esc(email)}</b> y abre el enlace. Funciona durante una hora.` : `Check your inbox for <b>${esc(email)}</b> and open the link. It works for one hour.`;
   $('acc-code-form').hidden = false;
+  // Optional newsletter box (Create account only, unticked by default): double opt-in email via assets/js/newsletter.js.
+  const news = $('acc-news');
+  if (mode === 'signup' && news?.checked && window.MIPNewsletter) window.MIPNewsletter.send('subscribe', { email, source: 'sign-up', consentText: news.parentElement.textContent.replace(/\s+/g, ' ').trim() }).catch(() => {});
 });
 $('acc-code-form').addEventListener('submit', async e => {
   e.preventDefault();
@@ -119,3 +144,5 @@ $('acc-reset').onclick = async () => { $('acc-reset-note').textContent = 'Removi
 
 mip.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') render(); });
 render();
+// Re-word the sign-in card when the language switch changes the page language.
+new MutationObserver(() => setMode(mode)).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });

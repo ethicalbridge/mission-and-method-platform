@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="mission.css?v=nav-courses-1">
 <link rel="stylesheet" href="learning.css?v=course42">
 <link rel="stylesheet" href="planning-system.css?v=fade3">
-<link rel="stylesheet" href="account.css?v=3">
+<link rel="stylesheet" href="account.css?v=4">
 </head>
 <body data-page="account">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -35,14 +35,17 @@
     <!-- Signed out -->
     <section class="acc-auth" id="acc-signed-out" hidden>
       <div class="acc-auth-card">
-        <span class="acc-auth-eyebrow" data-i18n="acc.signin.eyebrow">Sign in · No password</span>
-        <h2 data-i18n="acc.signin.title">Sign in or create your account</h2>
-        <p class="acc-auth-lead" data-i18n="acc.signin.body">Enter your email and we'll send you a sign-in link. The first time, the same link creates your account.</p>
+        <div class="acc-tabs" role="tablist" aria-label="Sign in or create an account">
+          <button type="button" role="tab" id="acc-tab-signin" aria-selected="true" data-mode="signin" data-i18n="acc.tab.signin">Sign in</button>
+          <button type="button" role="tab" id="acc-tab-signup" aria-selected="false" data-mode="signup" data-i18n="acc.tab.signup">Create account</button>
+        </div>
+        <h2 id="acc-auth-title">Welcome back</h2>
+        <p class="acc-auth-lead" id="acc-auth-lead">Enter the email you used before and we'll send you a sign-in link. No password needed.</p>
         <form id="acc-signin-form" novalidate>
           <label class="acc-field-label" for="acc-email" data-i18n="acc.signin.email">Your email</label>
           <input class="acc-input" id="acc-email" type="email" autocomplete="email" required placeholder="you@organisation.org">
-          <label class="acc-check"><input type="checkbox" id="acc-news"> <span data-i18n="acc.signin.news">Also send me occasional emails about new courses and templates. I can unsubscribe anytime.</span></label>
-          <button class="acc-btn acc-btn-wide" type="submit" data-i18n="acc.signin.send">Email me a sign-in link</button>
+          <label class="acc-check" id="acc-news-row" hidden><input type="checkbox" id="acc-news"> <span data-i18n="acc.signin.news">Also send me occasional emails about new courses and templates. I can unsubscribe anytime.</span></label>
+          <button class="acc-btn acc-btn-wide" type="submit" id="acc-send">Email me a sign-in link</button>
           <p class="acc-note" id="acc-signin-note" role="status"></p>
         </form>
         <form id="acc-code-form" class="acc-code-box" hidden novalidate>
@@ -104,8 +107,8 @@
 </main>
 
 <footer></footer>
-<script type="module" src="i18n.js?v=acct4"></script>
+<script type="module" src="i18n.js?v=acct5"></script>
 <script src="app.js?v=acct2"></script>
-<script type="module" src="assets/js/account-page.js?v=3"></script>
+<script type="module" src="assets/js/account-page.js?v=4"></script>
 </body>
 </html>
