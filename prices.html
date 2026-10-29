@@ -142,6 +142,29 @@
   .px-short{display:inline}
   .px-bands-inner{gap:6px;padding:8px 0}
 }
+
+/* Consulting packages under Work with Julieta */
+.px-consult{margin-top:36px}
+.px-steps{background:#f6f1e6;border:1px dashed #d8c9a8;border-radius:16px;padding:20px 22px;text-align:center}
+.px-steps-label{font-size:11.5px;font-weight:900;letter-spacing:.14em;color:var(--teal);margin-bottom:12px}
+.px-steps-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.px-steps-row span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:700;font-size:14.5px;color:var(--ink)}
+.px-steps-row b{color:var(--teal);font-weight:900;margin-right:4px}
+.px-steps p{margin:12px 0 0;font-size:14px;color:var(--muted)}
+.px-consult-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start}
+.px-consult-path{display:flex;flex-direction:column;gap:12px}
+.px-consult-path-head{font-weight:800;font-size:15px;color:var(--ink);margin-bottom:2px}
+.px-consult-path-head span{display:inline-block;background:var(--deep);color:#fff;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:4px 10px;margin-right:8px}
+.px-pkg{display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;text-decoration:none!important;color:var(--ink);transition:border-color .15s,transform .15s}
+.px-pkg:hover{border-color:var(--teal);transform:translateY(-1px)}
+.px-pkg-tag{grid-column:1/-1;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+.px-pkg-star .px-pkg-tag{color:#c4512c}
+.px-pkg b{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:19px;line-height:1.25}
+.px-pkg small{grid-column:1;font-size:13.5px;color:var(--muted)}
+.px-pkg em{grid-column:2;grid-row:2/4;align-self:center;font-style:normal;font-weight:800;font-size:13.5px;color:var(--teal);white-space:nowrap}
+.px-consult-cta{text-align:center;margin-top:28px}
+.px-consult-cta p{margin:14px auto 0;max-width:640px;font-size:14px;color:var(--muted)}
+@media (max-width:760px){.px-consult-grid{grid-template-columns:1fr}.px-pkg{grid-template-columns:1fr}.px-pkg em{grid-column:1;grid-row:auto}}
 </style>
 </head>
 <body data-page="pricing" data-product="planning-system">
@@ -431,11 +454,35 @@
           <div class="pr-plan-eyebrow">TAILORED ENGAGEMENT</div>
           <h3>Built for you, or built with you.</h3>
           <div class="pr-price px-price-text"><b>By proposal</b><span>scope · timeline · price</span></div>
-          <p class="pr-plan-desc">Choose how many of the five foundation steps you need support with, and how: built for you, built with you, or built with you plus two months of coaching.</p>
+          <p class="pr-plan-desc">Choose how many of the five foundation steps you need support with, and how: built for you, or built with your team trained to run it. The packages are below.</p>
           <a class="hm-btn hm-btn-primary pr-plan-cta" href="work-with-julieta.html#packages">See the options →</a>
           <small class="pr-fine">Your last course or bundle purchase is credited against an engagement started within 90 days.</small>
         </article>
       </div>
+<div class="px-consult reveal">
+  <div class="px-steps">
+    <div class="px-steps-label">THE FIVE FOUNDATION STEPS</div>
+    <div class="px-steps-row"><span><b>01</b> Clarify</span><span><b>02</b> Organise</span><span><b>03</b> Prove &amp; Show</span><span><b>04</b> Protect</span><span><b>05</b> Sustain &amp; Run</span></div>
+    <p>The same five steps as the courses. In the discovery call we agree which ones you need, and the price scales with that choice.</p>
+  </div>
+  <div class="px-consult-grid">
+    <div class="px-consult-path">
+      <div class="px-consult-path-head"><span>Path A</span>For entrepreneurs · starting from an idea</div>
+      <a class="px-pkg" href="work-with-julieta.html#path-idea"><span class="px-pkg-tag">A1 · Built for you</span><b>I build the documents, you review.</b><small>Scope depends on the steps chosen</small><em>By proposal</em></a>
+      <a class="px-pkg px-pkg-star" href="work-with-julieta.html#path-idea"><span class="px-pkg-tag">A2 · Most chosen</span><b>I build, train your team, and leave them running.</b><small>Scope + role training + 3-month runway</small><em>By proposal</em></a>
+    </div>
+    <div class="px-consult-path">
+      <div class="px-consult-path-head"><span>Path B</span>For organisations · already running</div>
+      <a class="px-pkg" href="work-with-julieta.html#path-org"><span class="px-pkg-tag">B1 · Built for you</span><b>I build the systems for your organisation.</b><small>Scope depends on the steps chosen</small><em>By proposal</em></a>
+      <a class="px-pkg px-pkg-star" href="work-with-julieta.html#path-org"><span class="px-pkg-tag">B2 · Most chosen</span><b>I build the systems, then train the team to run them.</b><small>Scope + role training + 3-month runway</small><em>By proposal</em></a>
+      <a class="px-pkg" href="work-with-julieta.html#path-org"><span class="px-pkg-tag">B3 · Deep</span><b>Organisational therapy.</b><small>Change management, behavioural change, leadership · about 5–6 months, phased</small><em>By proposal</em></a>
+    </div>
+  </div>
+  <div class="px-consult-cta">
+    <a class="hm-btn hm-btn-primary" href="work-with-julieta.html#start">Start a conversation</a>
+    <p>Works for either path. Send a short brief and we'll set up a free discovery call. The proposal is free and non-binding.</p>
+  </div>
+</div>
     </div>
   </section>
 
