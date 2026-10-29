@@ -258,7 +258,7 @@ Sé proporcional. La mayoría de las personas consultoras que trabajan en contra
 6. Si surge una controversia, los contactos designados intentarán resolverla en un plazo de [[14 días]]. Si no lo consiguen, se someterá a [[mediación a cargo de la persona mediadora o el servicio designado]] y, después, a [[los tribunales de país / arbitraje conforme al reglamento de la institución designada, con sede en ciudad, en idioma]].
 
 ::: adapt Ley aplicable y contratistas en otros países
-Elige la ley del país donde estás registrada, salvo que la ley local del contratista vaya a aplicarse de todos modos. Las normas de protección laboral, fiscales y de protección de datos del país del contratista pueden aplicarse sea cual sea la ley que elijas. Con contratistas en otro país, un laudo arbitral puede ser más fácil de ejecutar que una sentencia judicial, porque muchos países ejecutan los laudos arbitrales conforme a la Convención de Nueva York de 1958; comprueba si ambos países son parte. Para contrataciones pequeñas, simplifica: mediación y, después, los tribunales de tu propio país.
+Elige la ley del país donde está registrada tu organización, salvo que la ley local del contratista vaya a aplicarse de todos modos. Las normas de protección laboral, fiscales y de protección de datos del país del contratista pueden aplicarse sea cual sea la ley que elijas. Con contratistas en otro país, un laudo arbitral puede ser más fácil de ejecutar que una sentencia judicial, porque muchos países ejecutan los laudos arbitrales conforme a la Convención de Nueva York de 1958; comprueba si ambos países son parte. Para contrataciones pequeñas, simplifica: mediación y, después, los tribunales de tu propio país.
 :::
 
 ---pagebreak---

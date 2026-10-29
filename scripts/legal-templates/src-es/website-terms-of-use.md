@@ -177,7 +177,7 @@ Las leyes de protección del consumidor suelen impedir que las empresas y las or
 4. Si estos términos se traducen, prevalece la versión en [[español]], salvo que la ley exija otra cosa.
 
 ::: adapt Ley aplicable a visitantes de otros países
-Tu sitio web está abierto al mundo, pero tus términos no pueden prevalecer sobre las leyes imperativas de protección del consumidor de los países donde viven tus visitantes. Por ejemplo, según el Reglamento Roma I de la UE (593/2008, artículo 6), los consumidores de la UE que compran a una entidad que dirige sus actividades a su país conservan la protección de las leyes imperativas de protección del consumidor de su propio país, sea cual sea la ley que elijan los términos. Indica la ley del país donde estás registrada y, si vendes o recaudas fondos activamente en otros países, revisa sus normas.
+Tu sitio web está abierto al mundo, pero tus términos no pueden prevalecer sobre las leyes imperativas de protección del consumidor de los países donde viven tus visitantes. Por ejemplo, según el Reglamento Roma I de la UE (593/2008, artículo 6), los consumidores de la UE que compran a una entidad que dirige sus actividades a su país conservan la protección de las leyes imperativas de protección del consumidor de su propio país, sea cual sea la ley que elijan los términos. Indica la ley del país donde está registrada tu organización y, si vendes o recaudas fondos activamente en otros países, revisa sus normas.
 :::
 
 Estos términos se actualizaron por última vez el [[fecha]].

@@ -47,7 +47,7 @@ Se aplica en nuestras oficinas y lugares de proyecto, en eventos, durante los vi
 **Ley.** [[Nombre de la organización]] está registrada en [[país]] y cumple sus leyes. Cuando trabajamos en otros países, también cumplimos la ley que se aplica allí. Cuando esta política, la política de un socio o de un financiador y la ley difieren, seguimos la norma que ofrece más protección a las personas.
 
 ::: adapt Ley y países
-Indica el país donde estás registrada y cada país donde realizas actividades. Para cada uno, consulta con un abogado local o con el organismo de protección de la infancia: la definición legal de niño o niña y cualquier norma especial para jóvenes de 16 y 17 años; si alguien está obligado a denunciar una sospecha de abuso infantil (consulta el recuadro sobre notificación obligatoria); y si existen certificados de antecedentes penales y si se pueden solicitar legalmente para tus roles. Si trabajas en un solo país, elimina la segunda frase.
+Indica el país donde está registrada tu organización y cada país donde realizas actividades. Para cada uno, consulta con un abogado local o con el organismo de protección de la infancia: la definición legal de niño o niña y cualquier norma especial para jóvenes de 16 y 17 años; si alguien está obligado a denunciar una sospecha de abuso infantil (consulta el recuadro sobre notificación obligatoria); y si existen certificados de antecedentes penales y si se pueden solicitar legalmente para tus roles. Si trabajas en un solo país, elimina la segunda frase.
 :::
 
 # Qué entendemos por
