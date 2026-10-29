@@ -23,13 +23,17 @@
 /* Country band switcher */
 .px-bands{position:sticky;top:0;z-index:40;background:rgba(255,250,243,.96);backdrop-filter:saturate(1.2) blur(6px);border-bottom:1px solid var(--line)}
 .px-bands-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding:14px 0}
-.px-bands-label{display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:560px}
-.px-bands-title{font-size:15px;font-weight:800;color:var(--ink)}
-.px-bands-help{font-size:13.5px;font-weight:600;line-height:1.4;color:var(--ink)}
-.px-find{display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:6px 14px;border-radius:999px;background:#e3f1ef;border:1.5px solid var(--teal);color:var(--teal);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap}
+.px-bands-label{display:flex;flex-direction:column;align-items:flex-start;gap:6px;flex:1 1 360px;min-width:0}
+.px-bands-title{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:24px;line-height:1.15;color:var(--ink)}
+.px-bands-help{font-size:16px;font-weight:600;line-height:1.45;color:var(--ink)}
+.px-find{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:10px 20px;border-radius:999px;background:#e3f1ef;border:2px solid var(--teal);color:var(--teal);font-size:15.5px;font-weight:800;text-decoration:none;white-space:nowrap}
 .px-find:hover,.px-find:focus-visible{background:var(--teal);color:#fff}
+.px-bands-sentinel{height:1px}
+.px-bands.is-stuck .px-bands-help,.px-bands.is-stuck .px-find{display:none}
+.px-bands.is-stuck .px-bands-title{font-size:18px}
+.px-bands.is-stuck .px-bands-inner{padding:10px 0}
 .px-seg{display:flex;flex-wrap:wrap;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}
-.px-seg button{appearance:none;border:0;background:transparent;font:inherit;font-size:13px;font-weight:800;color:var(--deep);padding:8px 14px;border-radius:999px;cursor:pointer}
+.px-seg button{appearance:none;border:0;background:transparent;font:inherit;font-size:15px;font-weight:800;color:var(--deep);padding:11px 16px;border-radius:999px;cursor:pointer}
 .px-seg button[aria-pressed="true"]{background:var(--deep);color:#fff}
 .px-seg button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 
@@ -129,9 +133,9 @@
   .px-band-card summary{grid-template-columns:1fr}
   .px-band-toggle{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}
   .px-bands-label{flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 10px;max-width:none}
-  .px-bands-title{font-size:13px}
+  .px-bands-title{font-size:19px;flex-basis:100%}
   .px-bands-help{display:none}
-  .px-find{margin-top:0;padding:4px 10px;font-size:12px}
+  .px-find{margin-top:2px;padding:7px 14px;font-size:14px}
   .px-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border-radius:14px;padding:3px}
   .px-seg button{padding:8px 4px;font-size:12px;border-radius:11px}
   .px-long{display:none}
@@ -166,6 +170,7 @@
   </section>
 
   <!-- ================= BAND SWITCHER ================= -->
+  <div class="px-bands-sentinel" aria-hidden="true"></div>
   <div class="px-bands" role="region" aria-label="Country price band">
     <div class="container px-bands-inner">
       <div class="px-bands-label">
@@ -548,6 +553,7 @@
 /* Country band switcher: each price element lists its four band prices (high, upper-middle, lower-middle, low). */
 (function(){
   var KEY='mii.priceBand';
+  (function(){var sen=document.querySelector('.px-bands-sentinel'),bar=document.querySelector('.px-bands');if(sen&&bar&&'IntersectionObserver' in window){new IntersectionObserver(function(e){bar.classList.toggle('is-stuck',!e[0].isIntersecting&&e[0].boundingClientRect.top<0);}).observe(sen);}})();
   var buttons=[].slice.call(document.querySelectorAll('.px-seg button'));
   function setBand(i){
     [].forEach.call(document.querySelectorAll('[data-prices]'),function(el){
