@@ -1,6 +1,6 @@
 /* Ethical Bridge CRM — Impact Tool (Module 12 · Partnerships & Ecosystem Building).
 
-   Sections: Dashboard · Organisations & contacts · Outreach · Partnership mapping ·
+   Sections: Dashboard · Outreach (organisations, contacts and email campaigns) · Partnership mapping ·
    Partnership assessment (PAT) · Partnership tracking.
 
    Access: a private team code, checked on the server by the `ebcrm-api` Edge Function (only its
@@ -20,7 +20,7 @@ import { PAT_SECTIONS } from './Ethical-Bridge-CRM-PAT.js';
 const API = 'https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/ebcrm-api';
 
 // ---------- constants ----------
-const SECTIONS = ['Dashboard', 'Organisations & contacts', 'Outreach', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
+const SECTIONS = ['Dashboard', 'Outreach', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
 const CONTINENTS = ['Africa', 'Asia', 'Europe', 'Oceania', 'The Americas'];
 const INTERVIEW = ['Not interviewed', 'Scheduled', 'Interviewed'];
 const EMAIL = ['Not sent', 'Sent'];
@@ -189,12 +189,12 @@ function filteredOrgs() {
 function render() {
   if (!S.code) return renderSignIn();
   if (!S.ws) { root.innerHTML = `<div class="shell crm"><p class="muted crm-loading">${S.loadError ? esc(S.loadError) + ' <button class="link" data-action="reload">Try again</button>' : 'Loading organisations and your outreach records…'}</p></div>`; return; }
-  const continentBar = ['Dashboard', 'Organisations & contacts', 'Outreach'].includes(S.view) ? renderContinentBar() : '';
+  const continentBar = ['Dashboard', 'Outreach'].includes(S.view) ? renderContinentBar() : '';
   let body = '';
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
   else body = ({
-    'Dashboard': renderDashboard, 'Organisations & contacts': renderOrganisations, 'Outreach': renderOutreach,
+    'Dashboard': renderDashboard, 'Outreach': renderOutreach,
     'Partnership mapping': renderMapping, 'Partnership assessment (PAT)': renderPat, 'Partnership tracking': renderTracking,
   })[S.view]();
   root.innerHTML = `<div class="shell crm">
@@ -225,7 +225,7 @@ function renderDashboard() {
   const list = continentOrgs(); const s = stats(list);
   const rec = S.records;
   const due = rec.partner.filter(p => p.data.next_follow_up && p.data.next_follow_up <= today() && p.data.stage !== 'Closed').length;
-  const steps = [['Research', 'Directory & mapping', 'Partnership mapping'], ['Contact', 'Email & social outreach', 'Organisations & contacts'], ['Engage', 'Replies & interviews', 'Outreach'], ['Assess', 'Partnership assessment', 'Partnership assessment (PAT)'], ['Partner', 'Agree the relationship', 'Partnership tracking'], ['Track', 'Follow-ups & renewals', 'Partnership tracking']];
+  const steps = [['Research', 'Directory & mapping', 'Partnership mapping'], ['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Outreach'], ['Assess', 'Partnership assessment', 'Partnership assessment (PAT)'], ['Partner', 'Agree the relationship', 'Partnership tracking'], ['Track', 'Follow-ups & renewals', 'Partnership tracking']];
   return `<section class="grid four crm-cards">
       ${card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
       ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
@@ -240,7 +240,7 @@ function renderDashboard() {
       <ol class="crm-flow">${steps.map(([t, d, v], i) => `<li><button type="button" data-tab="${esc(v)}"><b>${i + 1}</b><span>${esc(t)}</span><small>${esc(d)}</small></button></li>`).join('')}</ol></section>`;
 }
 
-// ---------- Organisations & contacts ----------
+// ---------- Outreach: organisations & contacts (first part of the Outreach tab) ----------
 function renderOrganisations() {
   const base = continentOrgs(); const s = stats(base);
   const regions = [...new Set(base.map(o => o.region).filter(Boolean))].sort();
@@ -268,7 +268,7 @@ function renderOrganisations() {
       <td>${os('instagram_status', SOCIAL, r.instagram_status)}</td><td>${os('facebook_status', SOCIAL, r.facebook_status)}</td><td>${os('linkedin_status', SOCIAL, r.linkedin_status)}</td>
       <td>${os('reply_status', REPLY, r.reply_status)}</td></tr>`;
   });
-  return `<section class="rowhead section-head"><h2>Organisations &amp; contacts</h2><div class="actions"><button class="button secondary" data-action="add-org">+ Add organisation</button><button class="button" data-action="export-orgs">Export</button></div></section>
+  return `<section class="rowhead section-head"><h2>Outreach</h2><div class="actions"><button class="button secondary" data-action="add-org">+ Add organisation</button><button class="button" data-action="export-orgs">Export</button></div></section>
     <section class="crm-stats">${[
       ['Organisations', s.orgs], ['Scheduled', s.scheduled], ['Interviewed', s.interviewed], ['Instagram', s.ig], ['Facebook', s.fb], ['LinkedIn', s.li],
       ['Emails sent', s.sent], ['Not yet emailed', s.orgs - s.sent], ['Recorded responses', responses], ['Replies', s.replied], ['Automatic replies', s.auto], ['Bounce backs', s.bounce],
@@ -331,13 +331,14 @@ function campaignAudience(c) {
   return { recipients: group.length, replies: group.filter(o => outreachOf(o.id).reply_status === 'Replied').length, bounces: group.filter(o => outreachOf(o.id).reply_status === 'Bounce back').length, exact: onDate.length > 0 };
 }
 function renderOutreach() {
+  const top = renderOrganisations();
   const s = stats(continentOrgs());
   const label = S.continent === 'All' ? 'All continents' : S.continent;
   const camps = [...S.records.campaign].sort((a, b) => String(b.data.date_sent || '').localeCompare(String(a.data.date_sent || '')));
-  return `<section class="grid four crm-cards">${card('Organisations emailed', s.sent, label + ' outreach status')}${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate')}${card('Automatic replies', s.auto, 'Recorded outcome')}${card('Bounce backs', s.bounce, 'Recorded outcome', s.bounce ? 'warn' : '')}</section>
+  return top + `<section class="grid four crm-cards">${card('Organisations emailed', s.sent, label + ' outreach status')}${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate')}${card('Automatic replies', s.auto, 'Recorded outcome')}${card('Bounce backs', s.bounce, 'Recorded outcome', s.bounce ? 'warn' : '')}</section>
   <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email tracking</span><h2>Outbound campaigns</h2></div><button class="button" data-action="add-campaign">Log a sent campaign</button></div>
   <div class="tablewrap"><table><thead><tr><th>Campaign</th><th>Sent</th><th>Recipients</th><th>Replies</th><th>Bounces</th><th>Status</th><th></th></tr></thead><tbody>${camps.map(c => { const d = c.data, a = campaignAudience(d); return `<tr><td><b>${esc(d.name)}</b>${d.subject ? `<br><span class="tiny">${esc(d.subject)}</span>` : ''}</td><td>${esc(fmtDate(d.date_sent)) || '—'}</td><td>${a.recipients} <span class="tiny">${esc(d.recipients || 'All continents')}${a.exact ? '' : ' · all emailed'}</span></td><td>${a.replies}</td><td>${a.bounces}</td><td><span class="pill">${d.date_sent && d.date_sent > today() ? 'Scheduled' : 'Sent'}</span></td><td><button class="link" data-action="edit-campaign" data-id="${c.id}">Edit</button></td></tr>`; }).join('') || '<tr><td colspan="7">No email campaigns have been logged yet.</td></tr>'}</tbody></table></div>
-  <p class="tiny">Recipients, replies and bounces are counted from the outreach marks in Organisations &amp; contacts: organisations on the campaign's continent emailed on the campaign date.</p></section>`;
+  <p class="tiny">Recipients, replies and bounces are counted from the outreach marks in the table above: organisations on the campaign's continent emailed on the campaign date.</p></section>`;
 }
 function campaignModal(id) {
   const c = S.records.campaign.find(x => x.id === id); const d = c?.data || { date_sent: today(), recipients: S.continent === 'All' ? 'All continents' : S.continent };
