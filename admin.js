@@ -28,12 +28,12 @@ const stageLabel = (s) => STAGE_LABEL[s] || s.replace('_', ' ');
 // Proposal package menu — matches the Consult page's A/B package cards.
 // A packages are for Founders (people), B packages are for Organisations.
 const FOUNDER_PACKAGES = [
-  { value: 'A1', label: 'A1 · Built for you (I build the documents, you review)' },
-  { value: 'A2', label: 'A2 · Most chosen (I build + train + 3-month runway)' },
+  { value: 'A1', label: 'A1 · Most chosen (I build the documents, you review)' },
+  { value: 'A2', label: 'A2 · Built with your team (I build + train + 3-month runway)' },
 ];
 const ORG_PACKAGES = [
-  { value: 'B1', label: 'B1 · Built for you (I build the systems for your organisation)' },
-  { value: 'B2', label: 'B2 · Most chosen (I build + train each role)' },
+  { value: 'B1', label: 'B1 · Most chosen (I build the systems for your organisation)' },
+  { value: 'B2', label: 'B2 · Built with your team (I build + train each role)' },
   { value: 'B3', label: 'B3 · Deep (Organisational therapy)' },
 ];
 const CUSTOM_PACKAGE = { value: 'custom', label: 'Custom / Other' };
