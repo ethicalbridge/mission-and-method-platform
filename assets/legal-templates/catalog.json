@@ -55,7 +55,8 @@
      "slugs": [
       "safer-recruitment-procedure",
       "disciplinary-and-grievance-procedure",
-      "equality-diversity-and-inclusion-policy"
+      "equality-diversity-and-inclusion-policy",
+      "health-safety-and-lone-working-policy"
      ]
     },
     {
@@ -169,6 +170,46 @@
    "description": "A declaration each board member completes when they join and every year, so that your organisation can see and manage any interest that could affect, or appear to affect, their judgement.",
    "pages": 8,
    "status": "updated"
+  },
+  {
+   "slug": "board-meeting-agenda-and-minutes",
+   "title": "Board Meeting Agenda and Minutes",
+   "category": "Governance & compliance",
+   "type": "Form",
+   "label": "Form",
+   "description": "A standard agenda and minutes template for meetings of the board of trustees of your organisation, with a decisions and actions log, a written resolution form and guidance on keeping good minutes.",
+   "pages": 12,
+   "status": "new"
+  },
+  {
+   "slug": "board-member-role-description",
+   "title": "Board Member Role Description",
+   "category": "Governance & compliance",
+   "type": "Role note",
+   "label": "Role note",
+   "description": "What your organisation expects of a member of its board of trustees: their legal duties, responsibilities, time, skills and terms, with role descriptions for the chair, treasurer and secretary and a short code of expectations to sign.",
+   "pages": 11,
+   "status": "new"
+  },
+  {
+   "slug": "board-skills-matrix",
+   "title": "Board Skills Matrix",
+   "category": "Governance & compliance",
+   "type": "Register",
+   "label": "Register",
+   "description": "A simple register that shows the skills, experience and perspectives on the board of trustees of your organisation, where the gaps are, and how you will fill them through recruitment and training.",
+   "pages": 12,
+   "status": "new"
+  },
+  {
+   "slug": "business-continuity-and-crisis-plan",
+   "title": "Business Continuity and Crisis Plan",
+   "category": "Governance & compliance",
+   "type": "Plan",
+   "label": "Plan",
+   "description": "How your organisation keeps its most important work going, protects people and makes clear decisions when something serious goes wrong, from a lost office or a cyber attack to a frozen bank account or the sudden loss of the founder.",
+   "pages": 18,
+   "status": "new"
   },
   {
    "slug": "co-founder-agreement",
@@ -388,6 +429,26 @@
    "label": "Terms of reference",
    "description": "How your board of trustees, directors or management committee works: what it decides, who sits on it, how it meets, and how it oversees the people who run the organisation day to day.",
    "pages": 14,
+   "status": "new"
+  },
+  {
+   "slug": "governing-document-guide",
+   "title": "Governing Document Guide and Model Constitution",
+   "category": "Governance & compliance",
+   "type": "Guide and model constitution",
+   "label": "Guide and model constitution",
+   "description": "A plain-language guide to governing documents and legal forms, followed by a model constitution that a small non-profit association or company can adapt, adopt and register.",
+   "pages": 22,
+   "status": "new"
+  },
+  {
+   "slug": "health-safety-and-lone-working-policy",
+   "title": "Health, Safety and Lone Working Policy",
+   "category": "Policies & procedures",
+   "type": "Policy and procedure",
+   "label": "Policy and procedure",
+   "description": "How your organisation keeps people safe and well at work, in the office, at home, in the field and at events, with a simple risk assessment method, clear emergency steps and a check-in system for anyone who works alone.",
+   "pages": 19,
    "status": "new"
   },
   {

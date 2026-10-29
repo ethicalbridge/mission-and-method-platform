@@ -1,6 +1,8 @@
 // Method into Impact template builder: src/<slug>.md -> out/<slug>.docx
 // Usage: node build.js [slug ...]   (no args = all)
 const fs = require('fs');
+// Library edition printed in every footer and on the public change log (legal-templates-changelog.html).
+const EDITION = '2026-10';
 const path = require('path');
 const D = (() => { try { return require('docx'); } catch (e) { return require('/opt/npm-tools/node_modules/docx'); } })();
 const {
@@ -241,7 +243,7 @@ function footer(title) {
     tabStops: [{ type: TabStopType.RIGHT, position: CW }],
     border: { top: { style: BorderStyle.SINGLE, size: 4, color: C.line, space: 6 } },
     children: [new TextRun({ text: `[Organisation name]`, font: SANS, size: 14, color: C.muted, highlight: 'yellow' }),
-      new TextRun({ text: `  |  ${title}  |  Version [1.0]  |  From a Method into Impact template`, font: SANS, size: 14, color: C.muted }),
+      new TextRun({ text: `  |  ${title}  |  Version [1.0]  |  Method into Impact template, edition ${EDITION}`, font: SANS, size: 14, color: C.muted }),
       new TextRun({ children: ['\t', PageNumber.CURRENT], font: SANS, size: 14, color: C.muted })],
   })] });
 }
@@ -254,8 +256,8 @@ function coverSection(meta) {
         verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0 },
         behindDocument: true, allowOverlap: true, wrap: { type: TextWrappingType.NONE } } })] }),
     new Paragraph({ spacing: { before: 0, after: 200 }, children: [new TextRun({ text: (meta.eyebrow || meta.category).toUpperCase(), font: SANS, bold: true, size: 17, color: C.mint, characterSpacing: 40 })] }),
-    new Paragraph({ spacing: { after: 300 }, children: [new TextRun({ text: '[Organisation name]', font: SANS, bold: true, size: 24, color: C.ink, highlight: 'yellow' })] }),
-    new Paragraph({ spacing: { before: 240, after: 280, line: 260 }, children: [new TextRun({ text: meta.title, font: SERIF, size: 76, color: C.cream })] }),
+    new Paragraph({ spacing: { after: 360, line: 360, lineRule: 'atLeast' }, children: [new TextRun({ text: '[Organisation name]', font: SANS, bold: true, size: 24, color: C.ink, highlight: 'yellow' })] }),
+    new Paragraph({ spacing: { before: 120, after: 280, line: 920, lineRule: 'atLeast' }, children: [new TextRun({ text: meta.title, font: SERIF, size: 76, color: C.cream })] }),
     new Paragraph({ spacing: { after: 280 }, children: [new TextRun({ text: '————', font: SANS, size: 20, color: C.coral })] }),
     new Paragraph({ spacing: { after: 0, line: 320 }, indent: { right: 3200 }, children: runs(meta.summary || '', { color: C.mint, size: 21, onDark: true }) }),
   ];

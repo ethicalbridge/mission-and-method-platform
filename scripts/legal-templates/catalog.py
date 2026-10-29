@@ -33,7 +33,7 @@ CATS = [
              ['Notice', 'Information you publish for the people whose data you hold or who visit your website.']],
   'groups': [
    {'id': 'conduct-safeguarding', 'name': 'Conduct and safeguarding', 'slugs': ['code-of-conduct','safeguarding-policy-and-procedure','anti-harassment-intimidation-and-bullying-policy-and-procedure','whistleblowing-policy-and-procedure','incident-reporting-procedure','complaints-and-feedback-procedure']},
-   {'id': 'people', 'name': 'People', 'slugs': ['safer-recruitment-procedure','disciplinary-and-grievance-procedure','equality-diversity-and-inclusion-policy']},
+   {'id': 'people', 'name': 'People', 'slugs': ['safer-recruitment-procedure','disciplinary-and-grievance-procedure','equality-diversity-and-inclusion-policy','health-safety-and-lone-working-policy']},
    {'id': 'integrity-money', 'name': 'Integrity and money', 'slugs': ['fraud-bribery-and-corruption-policy-and-procedure','conflict-of-interest-policy','gift-acceptance-policy','financial-controls-policy','finance-procedures','reserves-policy','procurement-policy','expenses-and-per-diem-policy']},
    {'id': 'partners-operations', 'name': 'Partners and operations', 'slugs': ['partner-due-diligence-and-sanctions-screening-policy','travel-safety-and-duty-of-care-policy','environmental-policy']},
    {'id': 'data-digital', 'name': 'Data and digital', 'slugs': ['data-protection-policy','privacy-notice','cookie-policy','data-rights-request-procedure','data-breach-response-procedure','it-and-information-security-policy','social-media-and-communications-policy']},
