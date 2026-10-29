@@ -102,3 +102,16 @@
   .cc-course-side h3{font-size:26px}
   .cc-stats{gap:12px}
 }
+/* One page of a finished Clarity Pack (courses-entrepreneurs.html) */
+.ec-sample{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:32px;align-items:center;margin:8px 0 32px;padding:28px;background:#f6f1e6;border-radius:20px}
+.ec-sample h3{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.7rem;line-height:1.2;margin:8px 0 10px;color:var(--ink,#102e3b)}
+.ec-sample-copy p{color:#4b6270;line-height:1.6;margin:0}
+.ec-sample-page{background:#fff;border-radius:6px;box-shadow:0 18px 40px rgba(16,46,59,.16);padding:22px 22px 16px;transform:rotate(-.6deg)}
+.ec-sample-doc{font-size:10.5px;font-weight:900;letter-spacing:.14em;color:#16746e;border-bottom:2px solid #e8714b;padding-bottom:8px;margin-bottom:12px}
+.ec-sample-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ec-sample-box{border:1px solid #e4ddce;border-radius:8px;padding:10px 12px}
+.ec-sample-box b{display:block;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#c4512c;margin-bottom:4px}
+.ec-sample-box p{margin:0;font-size:13px;line-height:1.45;color:#102e3b}
+.ec-sample-wide{grid-column:1/-1}
+.ec-sample-foot{margin-top:10px;font-size:11px;color:#7a8893;text-align:right}
+@media(max-width:860px){.ec-sample{grid-template-columns:1fr;padding:20px}.ec-sample-page{transform:none}.ec-sample-grid{grid-template-columns:1fr}}
