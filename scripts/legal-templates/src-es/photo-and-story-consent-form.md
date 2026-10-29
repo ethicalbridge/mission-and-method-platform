@@ -29,7 +29,7 @@ contents: no
 
 [[Nombre de la organización]] desea tomar o usar **[[fotos / video / grabaciones de audio / su historia o citas suyas]]** de usted [[y de su hijo o hija]], tomadas el [[fecha]] en [[lugar o actividad]] por [[nombre de la persona fotógrafa o del miembro del personal]].
 
-Contamos historias para que las personas entiendan y apoyen nuestro trabajo. Queremos contar la suya con veracidad, con dignidad y de una forma con la que usted se sienta cómodo o cómoda.
+Contamos historias para que las personas entiendan y apoyen nuestro trabajo. Queremos contar la suya con veracidad, con dignidad y de una forma con la que usted se sienta a gusto.
 
 **Decir que no está perfectamente bien.** No afectará a ninguna ayuda, servicio o apoyo que reciba de nosotros, ahora ni en el futuro. Puede decir que sí a algunos usos y que no a otros.
 
