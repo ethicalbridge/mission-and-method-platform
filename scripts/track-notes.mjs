@@ -11,7 +11,6 @@ const note=(key,track,href)=>`<!-- track-note --><div class="aud-note aud-note-$
 // page, key, track, link target, where to insert: 'hero' = after the first </section>, 'main' = after <main …>
 const pages=[
  ['courses.html','courses','org','courses-entrepreneurs.html','hero'],
- ['pricing.html','pricing','org','courses-entrepreneurs.html','hero'],
  ['planning-system.html','courses','org','courses-entrepreneurs.html','hero'],
  ['start-here.html','starthere','org','courses-entrepreneurs.html','main'],
  ['software.html','software','org','courses-entrepreneurs.html','main'],

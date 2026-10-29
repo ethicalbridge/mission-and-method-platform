@@ -32,7 +32,7 @@ document.querySelectorAll('.nav-links a').forEach(a=>{const path=a.getAttribute(
 // --- Generic UI wiring ---
 document.querySelectorAll('[data-accordion]').forEach(item=>{const button=item.querySelector('button');button?.addEventListener('click',()=>{const open=item.classList.toggle('open');button.setAttribute('aria-expanded',String(open));const marker=button.querySelector('i');if(marker)marker.textContent=open?'−':'+';});});
 document.querySelectorAll('[data-course-tab]').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('[data-course-tab]').forEach(t=>t.classList.toggle('active',t===tab));document.querySelectorAll('[data-course-panel]').forEach(p=>p.classList.toggle('active',p.dataset.coursePanel===tab.dataset.courseTab));}));
-document.querySelectorAll('[data-subscribe]').forEach(b=>b.addEventListener('click',()=>location.href='subscribe.html'));
+document.querySelectorAll('[data-subscribe]').forEach(b=>b.addEventListener('click',()=>location.href='prices.html'));
 document.querySelectorAll('[data-scroll]').forEach(b=>b.addEventListener('click',()=>document.querySelector(b.dataset.scroll)?.scrollIntoView()));
 function openLinkedReading(){if(!location.hash)return;let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}const target=document.getElementById(id);if(target?.tagName==='DETAILS')target.open=true;}
 openLinkedReading();window.addEventListener('hashchange',openLinkedReading);
