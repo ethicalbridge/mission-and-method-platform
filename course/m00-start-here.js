@@ -1,4 +1,4 @@
-import {module,lesson,review} from './kit.js?v=deeplink1';
+import {module,lesson,review} from './kit.js?v=deeplink2';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
 // organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({
@@ -15,7 +15,7 @@ export default module({
   "learn": [
    "This course follows the order in which most organisations need to make decisions. You start with why you exist and the change you want, then decide how you are organised, how you show your results, how you stay solvent and safe, and finally how you sustain the work and turn it into a plan you run and review.",
    "The thirteen modules after this one form five courses: Clarify, Organise, Prove & Show, Protect, and Sustain & Run. Each course relies on decisions made in the one before it, so the module you need most urgently often depends on earlier work.",
-   "Every lesson has a short video, a written explanation with examples, and an exercise that saves into your organisation pack. Each module also has an Excel workbook. The lesson names its sheet, so you can work offline, share it with colleagues or keep a version history.",
+   "Every lesson has a short video and a written explanation with examples, and most lessons have an exercise that saves into your organisation pack. Each module also has an Excel workbook. The lesson names its sheet, so you can work offline, share it with colleagues or keep a version history.",
    "Within each module, lessons move from understanding a concept to designing, implementing, managing and reviewing it. You do not need to finish in one sitting. Draft honestly, mark what is uncertain and come back: later modules show you where earlier answers need revising."
   ],
   "weak": "Skip to the module I need right now and copy a template.",

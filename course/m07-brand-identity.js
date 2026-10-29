@@ -1,4 +1,4 @@
-import {module,lesson,review} from './kit.js?v=deeplink1';
+import {module,lesson,review} from './kit.js?v=deeplink2';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
 // organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({

@@ -1,5 +1,5 @@
-import base from './m10-legal-compliance-risk.js?v=deeplink1';
-import {adapt} from './adapt.js?v=deeplink1';
+import base from './m10-legal-compliance-risk.js?v=deeplink2';
+import {adapt} from './adapt.js?v=deeplink2';
 // Entrepreneurs' version of m10: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:`Legal, Compliance, Policies & Risk`,
@@ -95,6 +95,8 @@ const m=adapt(base,{
   learn:[
    `Safeguarding means protecting people, especially children and adults at risk, from harm caused by your founders, volunteers, future staff, partners, programmes or operations. It applies from your very first activity, including pilots and trial sessions, wherever your work brings you into contact with people who could be harmed, including online and through the stories and images you share.`,
    `A proportionate framework, even for a team of two, has a policy and code of conduct; a named safeguarding lead and a deputy (with someone outside the founders to receive concerns about you); safer recruitment; training; safe activity design (supervision, two adults present, safe spaces, online rules); a way to report concerns; a procedure to respond, record and refer to the right local authority; and support for the person affected.`,
+   `Name sexual exploitation, abuse and harassment (SEAH) explicitly. Your policy and code of conduct should say plainly that no one who works for or with you, founders included, may exchange money, work, goods, services or help for sex, have sexual activity with anyone under 18, or use their position to harass or abuse, and that everyone must report concerns. The Inter-Agency Standing Committee (IASC) six core principles on protection from sexual exploitation and abuse (PSEA) are the common reference.`,
+   `When a concern is raised, respond in a survivor-centred way: the survivor’s safety comes first; information is shared only with those who need it to act (confidentiality); the survivor’s wishes guide what happens next, within what the law requires (respect); and everyone receives the same care whatever their age, gender, disability, ethnicity or status (non-discrimination). The Safeguarding Policy and Procedure template below covers both.`,
    `Safeguarding procedures must fit local law and local services. Get qualified local expertise before your first activity and check referral contacts every year. Never record confidential case details in this workspace. Review the framework after any concern and at least once a year.`
   ],
   weak:`We all care about our trainees, so we do not need a safeguarding policy yet.`,
@@ -121,7 +123,7 @@ const m=adapt(base,{
  },
  'data-protection':{
   learn:[
-   `Data protection laws differ by country, but many share the same principles, and they apply from the first sign-up: collect personal information for a clear and lawful purpose, keep only what you need, keep it accurate and secure, hold it only as long as necessary, be open about what you do with it, and respect people’s rights to see, correct or delete it.`,
+   `Data protection laws differ by country, but many share the same principles, and they apply from the first sign-up: collect personal information for a clear and lawful purpose, keep only what you need, keep it accurate and secure, hold it only as long as necessary, be open about what you do with it, and respect people’s rights to see, correct or delete it. Examples of such laws are the EU General Data Protection Regulation (GDPR), Kenya’s Data Protection Act 2019, Nigeria’s Data Protection Act 2023, South Africa’s Protection of Personal Information Act (POPIA), Brazil’s General Data Protection Law (LGPD), India’s Digital Personal Data Protection Act 2023 and Indonesia’s Law No. 27 of 2022 on Personal Data Protection. These are examples only: check the law that applies where you work and where the people whose data you hold live.`,
    `Start with a data inventory, even if you hold very little yet: what personal data you hold or plan to collect (participants, supporters, customers, members, volunteers, future staff), why, on what lawful basis, where it is stored, who can see it, who you share it with and how long you keep it. Data about children, health, ethnicity or similar sensitive matters needs extra care.`,
    `Then put in place a privacy notice, consent where that is your basis, access controls, secure tools, a retention schedule, a way to handle requests from people about their data, data-sharing agreements with partners and a plan for a data breach. This is far easier to build in now than to fix later. Train everyone who handles personal data, and confirm local duties, such as registering with an authority, with qualified advice.`
   ],

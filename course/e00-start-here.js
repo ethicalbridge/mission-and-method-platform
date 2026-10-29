@@ -1,5 +1,5 @@
-import base from './m00-start-here.js?v=deeplink1';
-import {adapt} from './adapt.js?v=deeplink1';
+import base from './m00-start-here.js?v=deeplink2';
+import {adapt} from './adapt.js?v=deeplink2';
 // Entrepreneurs' version of m00: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'Start Here: Your Founder Journey',
@@ -15,7 +15,7 @@ export default adapt(base,{
   learn:[
    'This course follows the order in which most founders need to make decisions. You start with why your organisation should exist and the change you want, then decide how it will be organised, how you will show your results, and how you will stay solvent, legal and safe from the start. Each step lays a foundation for the next, so you build on solid ground instead of repairing it later.',
    'The ten modules after this one form four courses: Clarify, Organise, Prove & Show, and Protect. Each course relies on decisions made in the one before it, so the module you need most urgently often depends on earlier work. This is especially true at the start: a question about registration or money usually depends on what you are for and who you serve.',
-   'Every lesson has a short video, a written explanation and an exercise that saves into Your Organisation, your founding pack. At the end of each module you can download what you built as a PDF or a text file to share with a co-founder or adviser, and keep earlier versions as your thinking changes.',
+   'Every lesson has a short video and a written explanation, and most lessons have an exercise that saves into Your Organisation, your founding pack. At the end of each module you can download what you built as a PDF or a text file to share with a co-founder or adviser, and keep earlier versions as your thinking changes.',
    'Within each module, lessons move from understanding a concept to designing, implementing, managing and reviewing it. For now, some of these steps will be plans rather than practice, and that is fine. You do not need to finish in one sitting. Draft honestly, mark what is uncertain and come back: later modules show you where earlier answers need revising.'
   ],
   weak:'Skip straight to registration and copy a template.',

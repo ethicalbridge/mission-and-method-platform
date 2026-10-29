@@ -3,6 +3,56 @@
 const fs = require('fs');
 // Library edition printed in every footer and on the public change log (legal-templates-changelog.html).
 const EDITION = '2026-10';
+// Language: `node build.cjs --lang=es [slug ...]` reads src-es/ and writes assets/legal-templates/es/.
+const LANG = process.argv.includes('--lang=es') ? 'es' : 'en';
+const T = {
+  en: { org: '[Organisation name]', glance: 'At a glance', adapt: 'Adapt this · ', footer: (t, e) => `  |  ${t}  |  Version [1.0]  |  Method into Impact template, edition ${e}`,
+    del: 'DELETE THIS PAGE BEFORE USE', guide: 'Method into Impact · template guide', how: 'How to use this template',
+    see: 'You will see', todo: 'What to do', yellow: '[[Yellow highlight]]',
+    yellowDo: 'Replace with your own details, then remove the highlight (in Word: Home › Text Highlight Colour › No Colour).',
+    orange: 'Orange-bar boxes headed “Adapt this”', orangeDo: 'Guidance for you. Make the decision it describes, edit the text around it, then delete the box.',
+    opts: 'Square brackets with options, e.g. [[24 hours / 48 hours]]', optsDo: 'Choose one option, or write your own, and delete the rest.',
+    boxes: 'Green and cream boxes', boxesDo: 'Part of the finished document. Keep them, and update the wording.',
+    asks: 'Who usually asks for it', time: 'Time to adapt', learn: 'Learn it in', use: 'Use it with', five: 'Five steps to a finished document',
+    steps: ['Fill in every yellow field and work through each “Adapt this” box.',
+      'Cut what does not apply to you, and keep the document proportionate to your size.',
+      'Ask a qualified adviser in your country to check it against local law, your funders’ conditions and your sector’s rules. The legal review checklist template can guide that conversation.',
+      'Approve it formally (for example, a board or founder decision), date it and set a review date.',
+      'Tell people about it, ask them to confirm they have read it, and keep it where everyone can find it.'],
+    important: 'Important',
+    disclaimer: 'This is a template, not legal advice. It is a general starting point written for small purpose-led organisations and entrepreneurs working in different countries. Laws, regulators and funders differ, and they change. Method into Impact does not guarantee that this template is complete, current or suitable for your circumstances, and using it does not create an adviser–client relationship. You are responsible for adapting it, getting local advice and approving the final version. Licensed for use within one organisation; please do not resell or republish it.',
+    control: 'Document control', about: 'About this document', doc: 'Document', type: 'Type', policy: 'Policy', owner: 'Owner', ownerPh: '[[Name and role of the person responsible]]',
+    approved: 'Approved by', approvedPh: '[[Name, role and body, e.g. the board of trustees]]', version: 'Version', date: 'Date of approval', datePh: '[[DD Month YYYY]]',
+    next: 'Next review', nextPh: '[[Month YYYY]], or sooner after a serious incident, a change in the law or a major change in how we work',
+    applies: 'Applies to', appliesPh: '[[Who this covers]]', orgL: 'Organisation', orgPh: '[[Legal name, legal form, country of registration and registration number]]',
+    contact: 'Contact', contactPh: '[[Email address for questions about this document]]', lang: 'Language',
+    langPh: '[[English]]. Translations: [[languages, or “none”]]. If versions differ, the [[English]] version applies.',
+    contents: 'Contents', history: 'Document history', hDate: 'Date', hWhat: 'What changed', hFirst: t => `First version, adapted from the Method into Impact ${t} template (v1.0)`, hName: '[[Name, role]]',
+    closing: 'Adapted from a Method into Impact template · Better foundations. Stronger organisations. · methodintoimpact.com' },
+  es: { org: '[Nombre de la organización]', glance: 'De un vistazo', adapt: 'Adáptalo · ', footer: (t, e) => `  |  ${t}  |  Versión [1.0]  |  Plantilla de Method into Impact, edición ${e}`,
+    del: 'BORRA ESTA PÁGINA ANTES DE USAR EL DOCUMENTO', guide: 'Method into Impact · guía de la plantilla', how: 'Cómo usar esta plantilla',
+    see: 'Verás', todo: 'Qué hacer', yellow: '[[Resaltado amarillo]]',
+    yellowDo: 'Reemplázalo con tus datos y quita el resaltado (en Word: Inicio › Color de resaltado de texto › Sin color).',
+    orange: 'Recuadros con barra naranja titulados “Adáptalo”', orangeDo: 'Indicaciones para ti. Toma la decisión que describen, ajusta el texto y luego borra el recuadro.',
+    opts: 'Corchetes con opciones, p. ej. [[24 horas / 48 horas]]', optsDo: 'Elige una opción, o escribe la tuya, y borra el resto.',
+    boxes: 'Recuadros verdes y crema', boxesDo: 'Forman parte del documento final. Mantenlos y actualiza el texto.',
+    asks: 'Quién suele pedirlo', time: 'Tiempo para adaptarlo', learn: 'Se aprende en', use: 'Úsalo junto con', five: 'Cinco pasos hasta el documento final',
+    steps: ['Completa cada campo amarillo y trabaja cada recuadro “Adáptalo”.',
+      'Elimina lo que no aplique y mantén el documento proporcional a tu tamaño.',
+      'Pide a un asesor cualificado de tu país que lo revise según la ley local, las condiciones de tus financiadores y las normas de tu sector. La plantilla de lista de verificación para revisión legal puede guiar esa conversación.',
+      'Apruébalo formalmente (por ejemplo, por decisión del órgano de gobierno o de las personas fundadoras), ponle fecha y fija una fecha de revisión.',
+      'Comunícalo, pide a las personas que confirmen que lo han leído y guárdalo donde todos puedan encontrarlo.'],
+    important: 'Importante',
+    disclaimer: 'Esto es una plantilla, no asesoramiento legal. Es un punto de partida general escrito para pequeñas organizaciones con propósito y personas emprendedoras de distintos países. Las leyes, los reguladores y los financiadores varían y cambian. Method into Impact no garantiza que esta plantilla sea completa, actual o adecuada para tu situación, y usarla no crea una relación de asesoramiento profesional. Eres responsable de adaptarla, obtener asesoramiento local y aprobar la versión final. Licencia de uso para una sola organización; no la revendas ni la republiques.',
+    control: 'Control del documento', about: 'Sobre este documento', doc: 'Documento', type: 'Tipo', policy: 'Política', owner: 'Responsable', ownerPh: '[[Nombre y cargo de la persona responsable]]',
+    approved: 'Aprobado por', approvedPh: '[[Nombre, cargo y órgano, p. ej. la junta directiva]]', version: 'Versión', date: 'Fecha de aprobación', datePh: '[[DD de mes de AAAA]]',
+    next: 'Próxima revisión', nextPh: '[[Mes AAAA]], o antes tras un incidente grave, un cambio en la ley o un cambio importante en nuestra forma de trabajar',
+    applies: 'Se aplica a', appliesPh: '[[A quién cubre]]', orgL: 'Organización', orgPh: '[[Nombre legal, forma jurídica, país de registro y número de registro]]',
+    contact: 'Contacto', contactPh: '[[Correo electrónico para consultas sobre este documento]]', lang: 'Idioma',
+    langPh: '[[Español]]. Traducciones: [[idiomas, o “ninguna”]]. Si las versiones difieren, prevalece la versión en [[español]].',
+    contents: 'Contenido', history: 'Historial del documento', hDate: 'Fecha', hWhat: 'Qué cambió', hFirst: t => `Primera versión, adaptada de la plantilla ${t} de Method into Impact (v1.0)`, hName: '[[Nombre, cargo]]',
+    closing: 'Adaptado de una plantilla de Method into Impact · Mejores bases. Organizaciones más fuertes. · methodintoimpact.com' },
+}[LANG];
 const path = require('path');
 const D = (() => { try { return require('docx'); } catch (e) { return require('/opt/npm-tools/node_modules/docx'); } })();
 const {
@@ -168,8 +218,8 @@ function table(b, opts = {}) {
 
 const BOX = {
   note: { fill: C.cream, bar: C.teal, label: C.teal },
-  glance: { fill: C.mintTint, bar: C.teal, label: C.teal, defaultTitle: 'At a glance' },
-  adapt: { fill: C.sunTint, bar: C.coral, label: 'B04A2B', prefix: 'Adapt this · ' },
+  glance: { fill: C.mintTint, bar: C.teal, label: C.teal, defaultTitle: T.glance },
+  adapt: { fill: C.sunTint, bar: C.coral, label: 'B04A2B', prefix: T.adapt },
   statement: { fill: C.cream, bar: C.deep, label: C.deep },
   guide: { fill: C.sand, bar: C.muted, label: C.muted },
 };
@@ -227,7 +277,7 @@ function kvTable(pairs, sz = 19) {
 }
 
 // ---------- page furniture ----------
-const coverImg = fs.readFileSync(A('cover.jpg'));
+const coverImg = fs.readFileSync(A(LANG === 'es' ? 'cover-es.jpg' : 'cover.jpg'));
 const headLogo = fs.readFileSync(A('header-logo.png'));
 
 function header(title) {
@@ -242,8 +292,8 @@ function footer(title) {
   return new Footer({ children: [new Paragraph({
     tabStops: [{ type: TabStopType.RIGHT, position: CW }],
     border: { top: { style: BorderStyle.SINGLE, size: 4, color: C.line, space: 6 } },
-    children: [new TextRun({ text: `[Organisation name]`, font: SANS, size: 14, color: C.muted, highlight: 'yellow' }),
-      new TextRun({ text: `  |  ${title}  |  Version [1.0]  |  Method into Impact template, edition ${EDITION}`, font: SANS, size: 14, color: C.muted }),
+    children: [new TextRun({ text: T.org, font: SANS, size: 14, color: C.muted, highlight: 'yellow' }),
+      new TextRun({ text: T.footer(title, EDITION), font: SANS, size: 14, color: C.muted }),
       new TextRun({ children: ['\t', PageNumber.CURRENT], font: SANS, size: 14, color: C.muted })],
   })] });
 }
@@ -256,7 +306,7 @@ function coverSection(meta) {
         verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0 },
         behindDocument: true, allowOverlap: true, wrap: { type: TextWrappingType.NONE } } })] }),
     new Paragraph({ spacing: { before: 0, after: 200 }, children: [new TextRun({ text: (meta.eyebrow || meta.category).toUpperCase(), font: SANS, bold: true, size: 17, color: C.mint, characterSpacing: 40 })] }),
-    new Paragraph({ spacing: { after: 360, line: 360, lineRule: 'atLeast' }, children: [new TextRun({ text: '[Organisation name]', font: SANS, bold: true, size: 24, color: C.ink, highlight: 'yellow' })] }),
+    new Paragraph({ spacing: { after: 360, line: 360, lineRule: 'atLeast' }, children: [new TextRun({ text: T.org, font: SANS, bold: true, size: 24, color: C.ink, highlight: 'yellow' })] }),
     new Paragraph({ spacing: { before: 120, after: 280, line: 920, lineRule: 'atLeast' }, children: [new TextRun({ text: meta.title, font: SERIF, size: 76, color: C.cream })] }),
     new Paragraph({ spacing: { after: 280 }, children: [new TextRun({ text: '————', font: SANS, size: 20, color: C.coral })] }),
     new Paragraph({ spacing: { after: 0, line: 320 }, indent: { right: 3200 }, children: runs(meta.summary || '', { color: C.mint, size: 21, onDark: true }) }),
@@ -268,60 +318,52 @@ function splitList(s) { return (s || '').split(';').map(x => x.trim()).filter(Bo
 
 function guidancePage(meta) {
   const k = [];
-  k.push(new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: 'DELETE THIS PAGE BEFORE USE', font: SANS, bold: true, size: 15, color: 'FFFFFF', characterSpacing: 30, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.coral } })] }));
-  k.push(eyebrow('Method into Impact · template guide'));
-  k.push(new Paragraph({ spacing: { after: 160 }, children: [new TextRun({ text: 'How to use this template', font: SERIF, size: 40, color: C.deep })] }));
+  k.push(new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: T.del, font: SANS, bold: true, size: 15, color: 'FFFFFF', characterSpacing: 30, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.coral } })] }));
+  k.push(eyebrow(T.guide));
+  k.push(new Paragraph({ spacing: { after: 160 }, children: [new TextRun({ text: T.how, font: SERIF, size: 40, color: C.deep })] }));
   if (meta.purpose) k.push(P(meta.purpose, { size: 18, line: 270 }));
   k.push(table({ header: true, widths: [28, 72], rows: [
-    ['You will see', 'What to do'],
-    ['[[Yellow highlight]]', 'Replace with your own details, then remove the highlight (in Word: Home › Text Highlight Colour › No Colour).'],
-    ['Orange-bar boxes headed “Adapt this”', 'Guidance for you. Make the decision it describes, edit the text around it, then delete the box.'],
-    ['Square brackets with options, e.g. [[24 hours / 48 hours]]', 'Choose one option, or write your own, and delete the rest.'],
-    ['Green and cream boxes', 'Part of the finished document. Keep them, and update the wording.'],
+    [T.see, T.todo], [T.yellow, T.yellowDo], [T.orange, T.orangeDo], [T.opts, T.optsDo], [T.boxes, T.boxesDo],
   ] }, { size: 16 }));
   k.push(new Paragraph({ spacing: { after: 80 }, children: [] }));
   const rows = [];
-  if (meta.who_asks) rows.push(['Who usually asks for it', meta.who_asks]);
-  if (meta.time) rows.push(['Time to adapt', meta.time]);
-  if (meta.course) rows.push(['Learn it in', meta.course]);
-  if (meta.related) rows.push(['Use it with', splitList(meta.related).join(' · ')]);
+  if (meta.who_asks) rows.push([T.asks, meta.who_asks]);
+  if (meta.time) rows.push([T.time, meta.time]);
+  if (meta.course) rows.push([T.learn, meta.course]);
+  if (meta.related) rows.push([T.use, splitList(meta.related).join(' · ')]);
   if (rows.length) k.push(kvTable(rows, 17), new Paragraph({ spacing: { after: 40 }, children: [] }));
-  k.push(eyebrow('Five steps to a finished document', C.teal, 80, 120));
+  k.push(eyebrow(T.five, C.teal, 80, 120));
   const inst = ++olInstance;
-  for (const s of ['Fill in every yellow field and work through each “Adapt this” box.',
-    'Cut what does not apply to you, and keep the document proportionate to your size.',
-    'Ask a qualified adviser in your country to check it against local law, your funders’ conditions and your sector’s rules. The legal review checklist template can guide that conversation.',
-    'Approve it formally (for example, a board or founder decision), date it and set a review date.',
-    'Tell people about it, ask them to confirm they have read it, and keep it where everyone can find it.'])
+  for (const s of T.steps)
     k.push(new Paragraph({ numbering: { reference: 'numbers', level: 0, instance: inst }, spacing: { after: 40, line: 260 }, children: runs(s, { size: 17 }) }));
   k.push(new Paragraph({ spacing: { after: 80 }, children: [] }));
-  k.push(...box({ kind: 'guide', title: 'Important', size: 16, blocks: parseBlocks([
-    'This is a template, not legal advice. It is a general starting point written for small purpose-led organisations working in different countries. Laws, regulators and funders differ, and they change. Method into Impact does not guarantee that this template is complete, current or suitable for your circumstances, and using it does not create an adviser–client relationship. You are responsible for adapting it, getting local advice and approving the final version. Licensed for use within one organisation; please do not resell or republish it.'.trim()]) }));
+  k.push(...box({ kind: 'guide', title: T.important, size: 16, blocks: parseBlocks([
+    T.disclaimer]) }));
   k.push(new Paragraph({ children: [new PageBreak()] }));
   return k;
 }
 
 function controlPage(meta, blocks) {
   const k = [];
-  k.push(eyebrow('Document control'));
-  k.push(new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: 'About this document', font: SERIF, size: 40, color: C.deep })] }));
+  k.push(eyebrow(T.control));
+  k.push(new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: T.about, font: SERIF, size: 40, color: C.deep })] }));
   const pairs = [
-    ['Document', `[[Organisation name]] ${meta.title}`],
-    ['Type', meta.type || meta.kind || 'Policy'],
-    ['Owner', meta.owner || '[[Name and role of the person responsible]]'],
-    ['Approved by', meta.approved_by || '[[Name, role and body, e.g. the board of trustees]]'],
-    ['Version', '[[1.0]]'],
-    ['Date of approval', '[[DD Month YYYY]]'],
-    ['Next review', meta.review || '[[Month YYYY]], or sooner after a serious incident, a change in the law or a major change in how we work'],
-    ['Applies to', meta.applies_to || '[[Who this covers]]'],
-    ['Organisation', '[[Legal name, legal form, country of registration and registration number]]'],
-    ['Contact', meta.contact || '[[Email address for questions about this document]]'],
-    ['Language', '[[English]]. Translations: [[languages, or “none”]]. If versions differ, the [[English]] version applies.'],
+    [T.doc, `[${T.org}] ${meta.title}`],
+    [T.type, meta.type || meta.kind || T.policy],
+    [T.owner, meta.owner || T.ownerPh],
+    [T.approved, meta.approved_by || T.approvedPh],
+    [T.version, '[[1.0]]'],
+    [T.date, T.datePh],
+    [T.next, meta.review || T.nextPh],
+    [T.applies, meta.applies_to || T.appliesPh],
+    [T.orgL, T.orgPh],
+    [T.contact, meta.contact || T.contactPh],
+    [T.lang, T.langPh],
   ];
   k.push(kvTable(pairs));
   const heads = blocks.filter(b => b.t === 'h1').map(b => b.text);
   if (heads.length && meta.contents !== 'no') {
-    k.push(eyebrow('Contents', C.teal, 100, 360));
+    k.push(eyebrow(T.contents, C.teal, 100, 360));
     const half = Math.ceil(heads.length / 2); const colW = Math.floor(CW / 2);
     const rows = [];
     for (let i = 0; i < half; i++) rows.push(new TableRow({ children: [heads[i], heads[i + half]].map(h => new TableCell({
@@ -336,15 +378,15 @@ function controlPage(meta, blocks) {
 
 function historyBlock(meta) {
   const k = [];
-  k.push(new Paragraph({ heading: HeadingLevel.HEADING_1, spacing: { before: 360, after: 160 }, keepNext: true, children: [new TextRun({ text: 'Document history', font: SERIF, size: 40, color: C.deep })] }));
-  k.push(table({ header: true, widths: [12, 18, 45, 25], rows: [['Version', 'Date', 'What changed', 'Approved by'],
-    ['[[1.0]]', '[[DD Month YYYY]]', `First version, adapted from the Method into Impact ${meta.title} template (v1.0)`, '[[Name, role]]'], ['', '', '', '']] }));
+  k.push(new Paragraph({ heading: HeadingLevel.HEADING_1, spacing: { before: 360, after: 160 }, keepNext: true, children: [new TextRun({ text: T.history, font: SERIF, size: 40, color: C.deep })] }));
+  k.push(table({ header: true, widths: [12, 18, 45, 25], rows: [[T.version, T.hDate, T.hWhat, T.approved],
+    ['[[1.0]]', T.datePh, T.hFirst(meta.title), T.hName], ['', '', '', '']] }));
   return k;
 }
 
 function closingLine() {
   return new Paragraph({ spacing: { before: 480 }, alignment: AlignmentType.CENTER, children: [
-    new TextRun({ text: 'Adapted from a Method into Impact template · Better foundations. Stronger organisations. · methodintoimpact.com', font: SANS, size: 15, color: C.muted })] });
+    new TextRun({ text: T.closing, font: SANS, size: 15, color: C.muted })] });
 }
 
 // ---------- document ----------
@@ -382,15 +424,17 @@ function buildDoc(meta, blocks) {
 }
 
 async function main() {
-  const want = process.argv.slice(2);
-  const files = fs.readdirSync(path.join(ROOT, 'src')).filter(f => f.endsWith('.md')).filter(f => !want.length || want.includes(f.replace(/\.md$/, '')));
+  const want = process.argv.slice(2).filter(a => !a.startsWith('--'));
+  const SRC = path.join(ROOT, LANG === 'es' ? 'src-es' : 'src'), DEST = LANG === 'es' ? path.join(OUT, 'es') : OUT;
+  fs.mkdirSync(DEST, { recursive: true });
+  const files = fs.readdirSync(SRC).filter(f => f.endsWith('.md')).filter(f => !want.length || want.includes(f.replace(/\.md$/, '')));
   for (const f of files) {
     try {
-      const { meta, blocks } = parseFile(fs.readFileSync(path.join(ROOT, 'src', f), 'utf8'));
+      const { meta, blocks } = parseFile(fs.readFileSync(path.join(SRC, f), 'utf8'));
       for (const k of ['title', 'category', 'summary']) if (!meta[k]) throw new Error('front matter missing ' + k);
       const buf = await Packer.toBuffer(buildDoc(meta, blocks));
       const name = f.replace(/\.md$/, '.docx');
-      fs.writeFileSync(path.join(OUT, name), buf);
+      fs.writeFileSync(path.join(DEST, name), buf);
       const words = blocks.map(function w(b) { return (b.text || '') + ' ' + (b.rows ? b.rows.flat().join(' ') : '') + ' ' + (b.blocks ? b.blocks.map(x => typeof x === 'string' ? x : w(x)).join(' ') : ''); }).join(' ').split(/\s+/).filter(Boolean).length;
       console.log('built', name, words + ' words');
     } catch (e) { console.error('FAILED', f, e.message); process.exitCode = 1; }

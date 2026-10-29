@@ -16,7 +16,7 @@ function refreshLinks(){
     if (!link.dataset.preserveLabel) {
       link.textContent = granted
         ? `Open ${link.dataset.toolName} →`
-        : 'Unlock with access code →';
+        : `Open ${link.dataset.toolName} →`;
     }
     // Neutralize href so we always handle it in JS
     link.setAttribute('href', 'javascript:void(0)');
@@ -29,10 +29,9 @@ document.addEventListener('click', (event) => {
   if (!link) return;
   event.preventDefault();
 
-  if (hasToolAccess()) {
-    openTool(link);
-    return;
-  }
+  // Each tool now asks for the preview code itself (assets/js/tool-gate.js), so open it straight away.
+  openTool(link);
+  return;
 
   const code = window.prompt(`Enter your access code to open ${link.dataset.toolName}:`, '');
   if (code === null) return; // cancelled

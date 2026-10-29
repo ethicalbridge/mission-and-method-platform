@@ -1,5 +1,5 @@
-import base from './m02-theory-of-change.js?v=deeplink1';
-import {adapt} from './adapt.js?v=deeplink1';
+import base from './m02-theory-of-change.js?v=deeplink2';
+import {adapt} from './adapt.js?v=deeplink2';
 // Entrepreneurs' version of m02: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:'Theory of Change',
