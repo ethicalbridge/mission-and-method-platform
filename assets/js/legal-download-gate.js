@@ -47,8 +47,8 @@
     var m = file.match(/assets\/legal-templates\/(es\/)?([a-z0-9-]+\.(docx|xlsx))$/);
     return m ? (m[1] ? 'es/' : 'en/') + m[2] : null;
   }
-  // Switched on once every file is in private storage. Until then files download from the site as before.
-  var USE_STORAGE = false;
+  // Paid files are only in private storage (the 3 free ones stay on the site, see free-templates.js).
+  var USE_STORAGE = true;
   function download(file, code, onError) {
     if (!USE_STORAGE) { var d = document.createElement('a'); d.href = file; d.setAttribute('download', file.split('/').pop()); document.body.appendChild(d); d.click(); d.remove(); return; }
     var key = storageKey(file);

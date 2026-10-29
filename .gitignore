@@ -2,3 +2,11 @@ dist/
 node_modules/
 __pycache__/
 assets/legal-templates/packs/
+# Paid legal templates live only in private storage (Supabase bucket "templates").
+# Build them locally, import them with the template-files function, never commit them.
+assets/legal-templates/*.docx
+!assets/legal-templates/legal-review-checklist.docx
+!assets/legal-templates/conflict-of-interest-policy.docx
+!assets/legal-templates/mutual-confidentiality-agreement.docx
+assets/legal-templates/*.xlsx
+assets/legal-templates/es/

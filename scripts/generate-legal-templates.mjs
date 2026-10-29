@@ -16,7 +16,7 @@ const shellHead = shellSrc.slice(0, headEnd)
   .replace(/<script src="assets\/js\/passcode-gate\.js[^"]*"><\/script>/, '')
   .replace(/<script src="assets\/js\/legal-download-gate\.js[^"]*" defer><\/script>/, '')
   .replace(/<script src="assets\/js\/free-templates\.js[^"]*" defer><\/script>/, '')
-  .replace('</head>', '<script src="assets/js/legal-download-gate.js?v=3" defer></script><script src="assets/js/free-templates.js?v=1" defer></script></head>');
+  .replace('</head>', '<script src="assets/js/legal-download-gate.js?v=4" defer></script><script src="assets/js/free-templates.js?v=1" defer></script></head>');
 const shellTail = shellSrc.slice(tailStart);
 const page = (title, description, main) => shellHead
   .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)} | Method into Impact</title>`)
@@ -38,7 +38,9 @@ const freeBlock = () => {
 const freeBanner = `<p class="ft-banner"><span class="ft-pill">Free</span> Try three templates free before you buy. <a href="legal-templates.html#free-templates">Get them with your email →</a></p>`;
 
 const hasEs = slug => existsSync(new URL(`scripts/legal-templates/src-es/${slug}.md`, root));
-const hasXlsx = slug => existsSync(new URL(`assets/legal-templates/${slug}.xlsx`, root));
+// Excel versions (scripts/legal-templates/excel.py DEFAULT). The files themselves are only in private storage.
+const XLSX = ['risk-register', 'delegation-of-authority-matrix', 'records-retention-schedule', 'board-skills-matrix'];
+const hasXlsx = slug => XLSX.includes(slug);
 const count = n => `${n} editable template${n === 1 ? '' : 's'}`;
 
 const kindClass = l => 'legal-kind-' + String(l || '').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');

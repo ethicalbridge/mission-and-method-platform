@@ -155,7 +155,7 @@ export function openProductCheckout({key,name}){
 }
 // Pack zips in private storage (built by scripts/legal-templates/packs.mjs and the template-files function).
 const ZIPS={'pack-policies':'policies-pack','pack-contracts':'contracts-pack','pack-consent':'consent-pack','pack-governance':'governance-pack','essentials':'start-up-legal-essentials','full-library':'full-template-library'};
-const USE_STORAGE=false; // switched on once the pack zips are in private storage
+const USE_STORAGE=true; // pack zips live in private storage (packs/, built by the template-files function)
 const FILES_FN='https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/template-files',ANON='sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
 function fileLink(file,code){return fetch(FILES_FN,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+ANON,apikey:ANON},body:JSON.stringify({action:'download',file,code})})
  .then(r=>r.json().then(j=>{if(!r.ok||!j.url)throw 'The download is not available right now. Please try again in a minute.';return j.url;}),()=>{throw 'The download could not start. Check your connection.';});}
