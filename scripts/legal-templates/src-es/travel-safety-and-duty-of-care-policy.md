@@ -197,7 +197,7 @@ Si utiliza un mototaxi, debe estar [[permitido en la evaluación de riesgos / no
 
 ## 11. Su derecho a negarse a realizar viajes inseguros
 
-Puede negarse a viajar, o interrumpir un viaje y regresar, si considera que el riesgo para usted o para otras personas no es aceptable. Informe al punto focal en cuanto pueda. No será penalizado, sancionado ni tratado de forma menos favorable por hacerlo de buena fe. Hablaremos de su preocupación y modificaremos el plan o buscaremos otra forma de hacer el trabajo. Las personas con funciones de dirección nunca deben presionar a nadie para que viaje o se quede.
+Puede negarse a viajar, o interrumpir un viaje y regresar, si considera que el riesgo para usted o para otras personas no es aceptable. Informe al punto focal en cuanto pueda. No recibirá ninguna penalización, sanción ni trato menos favorable por hacerlo de buena fe. Hablaremos de su preocupación y modificaremos el plan o buscaremos otra forma de hacer el trabajo. Las personas con funciones de dirección nunca deben presionar a nadie para que viaje o se quede.
 
 ::: adapt Derecho a negarse
 Algunas leyes laborales y de salud y seguridad reconocen expresamente a las personas trabajadoras el derecho a retirarse de un peligro grave e inminente sin penalización. Revisa tu ley local y asegúrate de que tu Contrato de Trabajo y tu Acuerdo de Voluntariado no contradicen esta sección.
