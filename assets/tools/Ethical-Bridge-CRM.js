@@ -175,15 +175,21 @@ function filteredOrgs() {
     if (n && !norm(o.name).includes(n) && !norm(o.registered).includes(n)) return false;
     if (e && !norm(o.email).includes(e)) return false;
     const r = outreachOf(o.id);
+    const is = (want, have, none) => !want || (want === '__contacted' || want === '__any' ? have !== none : have === want);
     if (f.interview && r.interview_status !== f.interview) return false;
     if (f.emailStatus && r.email_status !== f.emailStatus) return false;
-    if (f.reply && r.reply_status !== f.reply) return false;
-    if (f.ig && r.instagram_status !== f.ig) return false;
-    if (f.fb && r.facebook_status !== f.fb) return false;
-    if (f.li && r.linkedin_status !== f.li) return false;
+    if (!is(f.reply, r.reply_status, 'None')) return false;
+    if (!is(f.ig, r.instagram_status, 'Not contacted')) return false;
+    if (!is(f.fb, r.facebook_status, 'Not contacted')) return false;
+    if (!is(f.li, r.linkedin_status, 'Not contacted')) return false;
     return true;
-  });
+  }).sort(byCountry);
 }
+// Table order: country A–Z, then organisation name A–Z (organisations without a country last).
+const byCountry = (a, b) => (!a.country - !b.country) || a.country.localeCompare(b.country, 'en', { sensitivity: 'base' }) || a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
+const FILTER_LABELS = { region: 'Region', country: 'Country', name: 'Name', email: 'Email address', interview: 'Interview', emailStatus: 'Email', reply: 'Reply', ig: 'Instagram', fb: 'Facebook', li: 'LinkedIn' };
+const filterValueLabel = v => v === '__contacted' ? 'Any contact' : v === '__any' ? 'Any response' : v;
+const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' });
 
 // ---------- shell ----------
 function render() {
@@ -250,7 +256,18 @@ function renderOrganisations() {
   const slice = list.slice(S.page * PAGE, S.page * PAGE + PAGE);
   const responses = s.replied + s.auto + s.bounce;
   const f = S.f;
-  const sel = (key, items, all) => `<select data-filter="${key}">${opts(items, f[key], all)}</select>`;
+  const sel = (key, items, all) => `<select data-filter="${key}" class="${f[key] ? 'crm-on' : ''}">${opts(items, f[key], all)}</select>`;
+  const socialItems = [['__contacted', 'Any contact'], ...SOCIAL];
+  const replyItems = [['__any', 'Any response'], ...REPLY];
+  const active = Object.entries(f).filter(([, v]) => v);
+  const only = active.length === 1 ? active[0].join('=') : active.length ? '?' : '';
+  // Counter boxes: click one to show exactly those organisations (every other filter is cleared).
+  const counters = [
+    ['Organisations', s.orgs, ''], ['Scheduled', s.scheduled, 'interview=Scheduled'], ['Interviewed', s.interviewed, 'interview=Interviewed'],
+    ['Instagram', s.ig, 'ig=__contacted'], ['Facebook', s.fb, 'fb=__contacted'], ['LinkedIn', s.li, 'li=__contacted'],
+    ['Emails sent', s.sent, 'emailStatus=Sent'], ['Not yet emailed', s.orgs - s.sent, 'emailStatus=Not sent'], ['Recorded responses', responses, 'reply=__any'],
+    ['Replies', s.replied, 'reply=Replied'], ['Automatic replies', s.auto, 'reply=Automatic reply'], ['Bounce backs', s.bounce, 'reply=Bounce back'],
+  ];
   const rows = slice.map(o => {
     const r = outreachOf(o.id);
     const social = [r.instagram_status, r.facebook_status, r.linkedin_status].some(v => v !== 'Not contacted');
@@ -269,26 +286,25 @@ function renderOrganisations() {
       <td>${os('reply_status', REPLY, r.reply_status)}</td></tr>`;
   });
   return `<section class="rowhead section-head"><h2>Outreach</h2><div class="actions"><button class="button secondary" data-action="add-org">+ Add organisation</button><button class="button" data-action="export-orgs">Export</button></div></section>
-    <section class="crm-stats">${[
-      ['Organisations', s.orgs], ['Scheduled', s.scheduled], ['Interviewed', s.interviewed], ['Instagram', s.ig], ['Facebook', s.fb], ['LinkedIn', s.li],
-      ['Emails sent', s.sent], ['Not yet emailed', s.orgs - s.sent], ['Recorded responses', responses], ['Replies', s.replied], ['Automatic replies', s.auto], ['Bounce backs', s.bounce],
-    ].map(([l, v]) => `<div><b>${v}</b><span>${esc(l)}</span></div>`).join('')}</section>
+    <section class="crm-stats crm-quick">${counters.map(([l, v, q]) => `<button type="button" data-quick="${esc(q)}" class="${q === only ? 'active' : ''}" title="Show ${esc(l.toLowerCase())} in the table"><b>${v}</b><span>${esc(l)}</span></button>`).join('')}</section>
+    <p class="tiny crm-hint">Click a number to list those organisations below.</p>
     <section class="panel crm-filters">
       <div class="crm-frow"><b>General</b>
         <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
         <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
-        <label><span>Organisation name</span><input data-filter="name" value="${esc(f.name)}" placeholder="Search by name"></label>
-        <label><span>Email address</span><input data-filter="email" value="${esc(f.email)}" placeholder="Search by email"></label></div>
+        <label><span>Organisation name</span><input data-filter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Search by name"></label>
+        <label><span>Email address</span><input data-filter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email)}" placeholder="Search by email"></label></div>
       <div class="crm-frow"><b>Outreach</b>
         <label><span>Interview</span>${sel('interview', INTERVIEW, 'All interview statuses')}</label>
         <label><span>Email</span>${sel('emailStatus', EMAIL, 'All emails')}</label>
-        <label><span>Reply</span>${sel('reply', REPLY, 'All')}</label>
-        <label><span>Instagram</span>${sel('ig', SOCIAL, 'All')}</label>
-        <label><span>Facebook</span>${sel('fb', SOCIAL, 'All')}</label>
-        <label><span>LinkedIn</span>${sel('li', SOCIAL, 'All')}</label>
+        <label><span>Reply</span>${sel('reply', replyItems, 'All')}</label>
+        <label><span>Instagram</span>${sel('ig', socialItems, 'All')}</label>
+        <label><span>Facebook</span>${sel('fb', socialItems, 'All')}</label>
+        <label><span>LinkedIn</span>${sel('li', socialItems, 'All')}</label>
         <button class="button secondary small" data-action="clear-filters">Clear filters</button></div>
     </section>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Outreach workspace</span><p class="tiny crm-legend"><i class="g"></i> Contacted on Instagram, Facebook or LinkedIn <i class="o"></i> Email reply received</p></div><span class="tiny"><b>${list.length}</b> organisations${list.length > PAGE ? ` · showing ${S.page * PAGE + 1}–${S.page * PAGE + slice.length}` : ''}</span></div>
+    ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-unfilter="${esc(k)}" title="Remove this filter">${esc(FILTER_LABELS[k])}: ${esc(filterValueLabel(v))} <b aria-hidden="true">✕</b></button>`).join('')}${active.length > 1 ? '<button type="button" class="link" data-action="clear-filters">Clear all</button>' : ''}</div>` : ''}
     <div class="tablewrap crm-table"><table><thead><tr>${['Continent', 'Region', 'Country', 'Organisation', 'Interview', 'Personal contact', 'Public email', 'Public phone', 'Personal phone', 'Email status', 'Date sent', 'Instagram', 'Facebook', 'LinkedIn', 'Reply'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || `<tr><td colspan="15">${S.orgs.length ? 'No organisations match these filters.' : 'No organisations yet. Add your first one.'}</td></tr>`}</tbody></table></div>
     ${pages > 1 ? `<div class="crm-pager"><button class="button secondary small" data-page="${S.page - 1}" ${S.page ? '' : 'disabled'}>← Previous</button><span class="tiny">Page ${S.page + 1} of ${pages}</span><button class="button secondary small" data-page="${S.page + 1}" ${S.page < pages - 1 ? '' : 'disabled'}>Next →</button></div>` : ''}</section>`;
@@ -454,8 +470,10 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
+  if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.tab) { if (S.pat?.dirty && !confirm('Leave this assessment without saving?')) return; S.pat = null; S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
   if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.page = 0; render(); return; }
   if (t.dataset.page != null && t.dataset.page !== undefined && t.hasAttribute('data-page')) { S.page = Number(t.dataset.page); render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start' }); return; }
@@ -468,7 +486,7 @@ root.addEventListener('click', async e => {
     case 'org': return openModal(orgModal(id));
     case 'add-org': return openModal(addOrgModal());
     case 'export-orgs': return exportOrgs();
-    case 'clear-filters': S.f = { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }; S.page = 0; return render();
+    case 'clear-filters': S.f = EMPTY_FILTERS(); S.page = 0; return render();
     case 'add-campaign': return openModal(campaignModal());
     case 'edit-campaign': return openModal(campaignModal(id));
     case 'edit-goal': return openModal(goalModal(Number(t.dataset.goal)));
