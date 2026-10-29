@@ -3,17 +3,21 @@
    Sections: Dashboard · Organisations & contacts · Outreach · Partnership mapping ·
    Partnership assessment (PAT) · Partnership tracking.
 
-   Data:
-   - Organisations come live from the Ethical Bridge directory through the `ebcrm-directory`
-     Edge Function (only for workspaces listed in ebcrm_directory_access). They are never
-     copied into this database, so there is one source of truth.
+   Access: a private team code, checked on the server by the `ebcrm-api` Edge Function (only its
+   SHA-256 digest is stored there; the code never appears in this file). The code is remembered
+   in this browser until "Lock CRM" is pressed.
+
+   Data (all read and written through `ebcrm-api`):
+   - Organisations come live from the Ethical Bridge directory (workspaces listed in
+     ebcrm_directory_access). They are never copied into this database: one source of truth.
    - Organisations a workspace adds itself live in ebcrm_organisations.
    - Outreach marks live in ebcrm_outreach (one row per workspace + organisation).
    - Campaigns, CSP goals, stakeholders, partnership records and PAT assessments live in
-     ebcrm_records (kind + JSON data). Row-level security limits everything to workspace members.
+     ebcrm_records (kind + JSON data).
 */
-import { mip, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from '../js/supabase-client.js';
 import { PAT_SECTIONS } from './Ethical-Bridge-CRM-PAT.js';
+
+const API = 'https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/ebcrm-api';
 
 // ---------- constants ----------
 const SECTIONS = ['Dashboard', 'Organisations & contacts', 'Outreach', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
@@ -39,7 +43,7 @@ const PAT_PROFILE = [
   ['implementation_geography', 'Proposed implementation geography', 'area'],
 ];
 const PAGE = 100;
-const LS = { ws: 'mm.ebcrm.workspace', continent: 'mm.ebcrm.continent', next: 'mip-next' };
+const LS = { code: 'mm.ebcrm.code', continent: 'mm.ebcrm.continent' };
 
 // ---------- helpers ----------
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -66,7 +70,7 @@ const formData = form => Object.fromEntries(new FormData(form).entries());
 
 // ---------- state ----------
 const S = {
-  user: null, workspaces: [], ws: null, hasDirectory: false,
+  code: lsGet(LS.code), ws: null, hasDirectory: false,
   orgs: [], orgById: new Map(), outreach: new Map(), records: { campaign: [], goal: [], stakeholder: [], partner: [], assessment: [] },
   loading: true, loadError: '', directoryError: '', directoryLoadedAt: '',
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
@@ -77,52 +81,23 @@ const S = {
 const root = document.getElementById('app');
 
 // ---------- data access ----------
-async function fetchAll(table, build) {
-  const out = []; const size = 1000;
-  for (let from = 0; ; from += size) {
-    const { data, error } = await build(mip.from(table).select('*')).range(from, from + size - 1);
-    if (error) throw error;
-    out.push(...data); if (data.length < size) break;
-  }
-  return out;
+class ApiError extends Error { constructor(message, status) { super(message); this.status = status; } }
+async function api(action, payload = {}, code = S.code) {
+  let res;
+  try { res = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json', 'x-crm-code': code }, body: JSON.stringify({ action, ...payload }) }); }
+  catch { throw new ApiError('No connection. Check your internet and try again.', 0); }
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new ApiError(body.error || `Request failed (${res.status})`, res.status);
+  return body;
 }
-
-async function loadWorkspaces() {
-  const [{ data: ws, error }, { data: access }] = await Promise.all([
-    mip.from('mip_workspaces').select('id,name,owner_id,created_at').order('created_at'),
-    mip.from('ebcrm_directory_access').select('workspace_id'),
-  ]);
-  if (error) throw error;
-  const withAccess = new Set((access || []).map(a => a.workspace_id));
-  S.workspaces = (ws || []).map(w => ({ ...w, directory: withAccess.has(w.id) }));
-  const saved = lsGet(LS.ws);
-  S.ws = S.workspaces.find(w => w.id === saved) || S.workspaces.find(w => w.directory) || S.workspaces[0] || null;
-  S.hasDirectory = !!S.ws?.directory;
-}
-
-async function loadDirectory() {
-  S.directoryError = '';
-  if (!S.hasDirectory) return [];
-  const { data: { session } } = await mip.auth.getSession();
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/ebcrm-directory?workspace=${encodeURIComponent(S.ws.id)}`, {
-    headers: { Authorization: `Bearer ${session?.access_token || ''}`, apikey: SUPABASE_PUBLISHABLE_KEY },
-  });
-  if (!res.ok) { S.directoryError = (await res.json().catch(() => ({}))).error || `Directory unavailable (${res.status})`; return []; }
-  const body = await res.json();
-  S.directoryLoadedAt = body.loadedAt;
-  return body.organisations.map(o => ({ ...o, own: false }));
-}
+function lockOut(message = '') { S.code = ''; try { localStorage.removeItem(LS.code); } catch { /* */ } S.ws = null; S.message = message; render(); }
 
 async function loadAll() {
   S.loading = true; S.loadError = ''; render();
   try {
-    const wsId = S.ws.id;
-    const [directory, own, outreach, records] = await Promise.all([
-      loadDirectory(),
-      fetchAll('ebcrm_organisations', q => q.eq('workspace_id', wsId).order('name')),
-      fetchAll('ebcrm_outreach', q => q.eq('workspace_id', wsId)),
-      fetchAll('ebcrm_records', q => q.eq('workspace_id', wsId).order('created_at')),
-    ]);
+    const body = await api('load');
+    S.ws = body.workspace; S.hasDirectory = body.hasDirectory; S.directoryError = body.directoryError; S.directoryLoadedAt = body.directoryLoadedAt;
+    const directory = body.directory.map(o => ({ ...o, own: false })), own = body.organisations, outreach = body.outreach, records = body.records;
     S.orgs = [...directory, ...own.map(o => ({ id: 'own:' + o.id, rowId: o.id, name: o.name, continent: o.continent, region: o.region, country: o.country, city: o.city, email: o.email, phone: o.phone, website: o.website, own: true }))]
       .sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }));
     S.orgById = new Map(S.orgs.map(o => [o.id, o]));
@@ -130,7 +105,9 @@ async function loadAll() {
     S.records = { campaign: [], goal: [], stakeholder: [], partner: [], assessment: [] };
     for (const r of records) (S.records[r.kind] ||= []).push(r);
   } catch (e) {
-    console.error(e); S.loadError = e?.message || 'Could not load the CRM.';
+    console.error(e);
+    if (e.status === 401) { S.loading = false; return lockOut('That code is no longer valid. Enter the current team code.'); }
+    S.loadError = e?.message || 'Could not load the CRM.';
   }
   S.loading = false; render();
 }
@@ -142,27 +119,25 @@ async function saveOutreach(orgId, patch) {
   const next = { ...prev, ...patch };
   S.outreach.set(orgId, next);
   setSaving(1);
-  const { error } = await mip.from('ebcrm_outreach').upsert({ workspace_id: S.ws.id, org_id: orgId, ...patch }, { onConflict: 'workspace_id,org_id' });
-  setSaving(-1);
-  if (error) { S.outreach.set(orgId, prev); flash('Could not save: ' + error.message); render(); }
+  try { await api('outreach', { org_id: orgId, patch }); }
+  catch (e) { S.outreach.set(orgId, prev); if (e.status === 401) return lockOut('Your code is no longer valid.'); flash('Could not save: ' + e.message); render(); }
+  finally { setSaving(-1); }
 }
 
 async function saveRecord(kind, id, data) {
   setSaving(1);
-  const q = id
-    ? mip.from('ebcrm_records').update({ data, updated_by: S.user.id }).eq('id', id).select().single()
-    : mip.from('ebcrm_records').insert({ workspace_id: S.ws.id, kind, data }).select().single();
-  const { data: row, error } = await q;
-  setSaving(-1);
-  if (error) { flash('Could not save: ' + error.message); return null; }
-  const list = S.records[kind]; const i = list.findIndex(r => r.id === row.id);
-  if (i >= 0) list[i] = row; else list.push(row);
-  return row;
+  try {
+    const { row } = await api('record.save', { kind, id, data });
+    const list = S.records[kind]; const i = list.findIndex(r => r.id === row.id);
+    if (i >= 0) list[i] = row; else list.push(row);
+    return row;
+  } catch (e) { if (e.status === 401) lockOut('Your code is no longer valid.'); else flash('Could not save: ' + e.message); return null; }
+  finally { setSaving(-1); }
 }
 
 async function deleteRecord(kind, id) {
-  const { error } = await mip.from('ebcrm_records').delete().eq('id', id);
-  if (error) { flash('Could not delete: ' + error.message); return false; }
+  try { await api('record.delete', { id }); }
+  catch (e) { flash('Could not delete: ' + e.message); return false; }
   S.records[kind] = S.records[kind].filter(r => r.id !== id);
   return true;
 }
@@ -212,8 +187,8 @@ function filteredOrgs() {
 
 // ---------- shell ----------
 function render() {
-  if (!S.user) return renderSignIn();
-  if (!S.ws) return renderNoWorkspace();
+  if (!S.code) return renderSignIn();
+  if (!S.ws) { root.innerHTML = `<div class="shell crm"><p class="muted crm-loading">${S.loadError ? esc(S.loadError) + ' <button class="link" data-action="reload">Try again</button>' : 'Loading organisations and your outreach records…'}</p></div>`; return; }
   const continentBar = ['Dashboard', 'Organisations & contacts', 'Outreach'].includes(S.view) ? renderContinentBar() : '';
   let body = '';
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
@@ -222,9 +197,8 @@ function render() {
     'Dashboard': renderDashboard, 'Organisations & contacts': renderOrganisations, 'Outreach': renderOutreach,
     'Partnership mapping': renderMapping, 'Partnership assessment (PAT)': renderPat, 'Partnership tracking': renderTracking,
   })[S.view]();
-  const wsPicker = S.workspaces.length > 1 ? `<label class="crm-ws"><span class="tiny">Workspace</span><select data-action="workspace">${opts(S.workspaces.map(w => [w.id, w.name]), S.ws.id)}</select></label>` : `<span class="tiny">Workspace: <b>${esc(S.ws.name)}</b></span>`;
   root.innerHTML = `<div class="shell crm">
-    <header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="crm-top-right">${wsPicker}<span class="tiny" id="save-state">${S.saving ? 'Saving…' : 'All changes saved'}</span><span class="tiny">${esc(S.user.email)}</span><button class="link" data-action="signout">Sign out</button><a href="../../software.html">← Impact Tools</a></div></header>
+    <header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="crm-top-right"><span class="tiny">Workspace: <b>${esc(S.ws.name)}</b></span><span class="tiny" id="save-state">${S.saving ? 'Saving…' : 'All changes saved'}</span><button class="link" data-action="signout" title="Forget the code on this browser">Lock CRM</button><a href="../../software.html">← Impact Tools</a></div></header>
     <div class="hero crm-hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Partner, outreach &amp; partnerships</h1><p>${S.hasDirectory ? 'Organisations come live from the Ethical Bridge directory. Your outreach, mapping, assessments and partnership records are saved to this workspace.' : 'Add the organisations you work with, then track outreach, mapping, assessments and partnerships in one place.'}</p></div>
     <nav class="nav" aria-label="CRM sections">${SECTIONS.map(t => `<button type="button" data-tab="${esc(t)}" class="${t === S.view ? 'active' : ''}"${t === S.view ? ' aria-current="page"' : ''}>${esc(t)}</button>`).join('')}</nav>
     <main id="main" tabindex="-1">${S.message ? `<div class="notice" role="status">${esc(S.message)}</div>` : ''}${S.directoryError ? `<div class="notice warn" role="alert">Directory: ${esc(S.directoryError)}</div>` : ''}${continentBar}${body}</main>
@@ -238,14 +212,12 @@ function renderContinentBar() {
     <div class="crm-chips">${[['All', total], ...present].map(([c, n]) => `<button type="button" class="crm-chip${S.continent === c ? ' active' : ''}" data-continent="${esc(c)}">${esc(c)} <b>${n}</b></button>`).join('')}</div></section>`;
 }
 
-// ---------- sign in ----------
+// ---------- access code ----------
 function renderSignIn() {
   root.innerHTML = `<div class="shell crm"><header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><a href="../../software.html">← Impact Tools</a></header>
-  <div class="hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Sign in to your CRM</h1><p>The CRM keeps your outreach and partnership records in your Method into Impact workspace, so it needs you signed in. We'll email you a one-time sign-in link.</p></div>
-  <main id="main"><form class="panel form crm-signin" data-form="signin"><label class="field full"><span class="label">Email</span><input type="email" name="email" required autocomplete="email" placeholder="you@organisation.org"></label><div class="actions field full"><button class="button" type="submit">Email me a sign-in link</button></div><p class="tiny" id="signin-note">${esc(S.message || '')}</p></form></main></div>`;
-}
-function renderNoWorkspace() {
-  root.innerHTML = `<div class="shell crm"><header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><button class="link" data-action="signout">Sign out</button></header><main id="main"><div class="notice warn">Your account (${esc(S.user.email)}) is not part of a workspace yet. Ask the workspace owner to add you.</div></main></div>`;
+  <div class="hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Enter your team code</h1><p>The CRM holds organisation contacts and your outreach records, so it opens with your team's private code. This browser remembers it until you press “Lock CRM”.</p></div>
+  <main id="main"><form class="panel form crm-signin" data-form="signin"><label class="field full"><span class="label">Team code</span><input name="code" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="word-word-word-0000"></label><div class="actions field full"><button class="button" type="submit">Open the CRM</button></div><p class="tiny" id="signin-note" role="status">${esc(S.message || '')}</p></form></main></div>`;
+  root.querySelector('input[name=code]')?.focus();
 }
 
 // ---------- Dashboard ----------
@@ -490,7 +462,7 @@ root.addEventListener('click', async e => {
   const a = t.dataset.action, id = t.dataset.id;
   switch (a) {
     case 'reload': return loadAll();
-    case 'signout': await mip.auth.signOut(); location.reload(); return;
+    case 'signout': if (S.pat?.dirty && !confirm('Lock the CRM without saving this assessment?')) return; S.pat = null; S.orgs = []; S.outreach = new Map(); return lockOut('The CRM is locked on this browser.');
     case 'close': return closeModal();
     case 'org': return openModal(orgModal(id));
     case 'add-org': return openModal(addOrgModal());
@@ -512,9 +484,7 @@ root.addEventListener('click', async e => {
     }
     case 'delete-org': {
       if (!confirm('Delete this organisation and its outreach marks?')) return;
-      const { error } = await mip.from('ebcrm_organisations').delete().eq('id', id);
-      if (error) return flash('Could not delete: ' + error.message);
-      await mip.from('ebcrm_outreach').delete().eq('workspace_id', S.ws.id).eq('org_id', 'own:' + id);
+      try { await api('org.delete', { id }); } catch (err) { return flash('Could not delete: ' + err.message); }
       S.orgs = S.orgs.filter(o => o.rowId !== id); S.orgById.delete('own:' + id); S.outreach.delete('own:' + id); S.modal = ''; return flash('Organisation deleted.');
     }
     case 'new-pat': S.pat = { id: null, data: { status: 'Draft', assessment_date: today(), answers: {} }, dirty: true }; S.patSection = 0; return render();
@@ -531,7 +501,6 @@ root.addEventListener('click', async e => {
 
 root.addEventListener('change', async e => {
   const t = e.target;
-  if (t.dataset.action === 'workspace') { const w = S.workspaces.find(x => x.id === t.value); if (!w) return; S.ws = w; S.hasDirectory = w.directory; lsSet(LS.ws, w.id); S.pat = null; return loadAll(); }
   if (t.dataset.action === 'pat-filter') { S.patFilter = t.value; return render(); }
   if (t.dataset.out) {
     const field = t.dataset.out, id = t.dataset.id; let value = t.value;
@@ -569,18 +538,19 @@ root.addEventListener('submit', async e => {
   const btn = form.querySelector('button[type=submit]'); if (btn) btn.disabled = true;
   try {
     if (kind === 'signin') {
-      lsSet(LS.next, location.pathname);
-      const { error } = await mip.auth.signInWithOtp({ email: d.email.trim(), options: { emailRedirectTo: location.origin + '/account.html' } });
-      S.message = error ? 'Could not send the link: ' + error.message : `Check your inbox for ${d.email.trim()}. The link signs you in and brings you back here.`;
-      return renderSignIn();
+      const code = String(d.code || '').trim().toLowerCase();
+      try { await api('verify', {}, code); }
+      catch (err) { S.message = err.status === 401 ? 'That code is not valid. Check it and try again.' : err.message; return renderSignIn(); }
+      S.code = code; lsSet(LS.code, code); S.message = '';
+      return loadAll();
     }
     if (kind === 'org-outreach') {
       const patch = { ...d, date_sent: d.date_sent || null };
       await saveOutreach(id, patch); S.modal = ''; return flash('Saved.');
     }
     if (kind === 'add-org') {
-      const { data: row, error } = await mip.from('ebcrm_organisations').insert({ workspace_id: S.ws.id, ...d }).select().single();
-      if (error) return flash('Could not add: ' + error.message);
+      let row;
+      try { ({ row } = await api('org.add', { org: d })); } catch (err) { return flash('Could not add: ' + err.message); }
       const o = { id: 'own:' + row.id, rowId: row.id, name: row.name, continent: row.continent, region: row.region, country: row.country, city: row.city, email: row.email, phone: row.phone, website: row.website, own: true };
       S.orgs.push(o); S.orgs.sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })); S.orgById.set(o.id, o); S.modal = ''; return flash(`${row.name} added.`);
     }
@@ -595,16 +565,4 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.modal) c
 window.addEventListener('beforeunload', e => { if (S.pat?.dirty || S.saving) { e.preventDefault(); e.returnValue = ''; } });
 
 // ---------- boot ----------
-async function boot() {
-  const { data: { user } } = await mip.auth.getUser();
-  S.user = user;
-  if (!user) return render();
-  try { await loadWorkspaces(); } catch (e) { S.loadError = e.message; }
-  if (!S.ws) return render();
-  await loadAll();
-}
-mip.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_IN' && !S.user) { S.user = session.user; boot(); }
-  if (event === 'SIGNED_OUT') { S.user = null; render(); }
-});
-boot();
+if (S.code) loadAll(); else render();

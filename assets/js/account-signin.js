@@ -96,19 +96,10 @@ function wireSignOut() {
  });
 }
 
-/** A tool that sent the sign-in link (e.g. the Ethical Bridge CRM) stores where to return. */
-function returnToTool() {
- let next = '';
- try { next = localStorage.getItem('mip-next') || ''; localStorage.removeItem('mip-next'); } catch {}
- if (next && next.startsWith('/') && !next.startsWith('//')) { window.location.replace(next); return true; }
- return false;
-}
-
 /** Main — called on load and whenever auth state changes. */
 async function render() {
  const user = await currentUser();
  if (user) {
-  if (returnToTool()) return;
   await renderSignedIn(user);
  } else {
   show('signedOut');
