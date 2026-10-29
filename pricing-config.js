@@ -6,7 +6,7 @@ const courseIncludes=[
  'All lessons, videos and practical exercises in the course',
  'The Excel workbook for each module in the course',
  'Frameworks, checklists and worked examples',
- 'Lifetime access and future updates to the purchased course',
+ 'Access for at least five years, with updates to the purchased course',
  'Access to available free versions of the course tools'
 ];
 export const pricing = {
@@ -29,7 +29,7 @@ export const pricing = {
       'All 14 modules, lessons, videos and practical exercises',
       'An Excel workbook for every module',
       'Frameworks, checklists and worked examples',
-      'Lifetime access and future updates',
+      'Access for at least five years, with updates',
       'Access to available free versions of the course tools'
     ],
     certificate: { enabled: false, note: 'A certificate of completion is under consideration; it is not currently included.' },
@@ -46,7 +46,7 @@ export const pricing = {
   bundle: {
     id: 'bundle', name: 'Full Pathway + 1 Year of Impact Tools', launch: 15900, softwareMonths: 12,
     badge: 'Best value', providerPriceId: null,
-    includes: ['All five courses with lifetime access', 'An Excel workbook for every module', '12 months of the Software Suite'],
+    includes: ['All five courses', 'An Excel workbook for every module', '12 months of the Software Suite'],
     contents: [{productId:'course_planning_system',access:'lifetime'},{productId:'software_suite',months:12}],
     renewalNote: 'Course access continues after the first year. Software renewal terms will be confirmed before checkout opens.'
   },
@@ -62,8 +62,8 @@ export const bundleSaving = () => pricing.course.launch + pricing.suite.annual -
 export const courseOffer = id => pricing.courses.find(c=>c.id===id) || null;
 export function getOffer(id, interval='monthly') {
   const single = courseOffer(id);
-  if(single) return {id, name: single.name, amount: single.price, billing:'One payment · lifetime access to this course', includes:single.includes};
-  if(id === 'course') return {id, name: pricing.course.name, amount: pricing.course.launch, billing:'One payment · lifetime access to all five courses', includes:pricing.course.includes};
+  if(single) return {id, name: single.name, amount: single.price, billing:'One payment · this course', includes:single.includes};
+  if(id === 'course') return {id, name: pricing.course.name, amount: pricing.course.launch, billing:'One payment · all five courses', includes:pricing.course.includes};
   if(id === 'software' && ['monthly','annual'].includes(interval)) return {id, interval, name:pricing.suite.name, amount:pricing.suite[interval], billing:interval==='annual'?'Per year · optional software subscription':'Per month · optional software subscription', includes:pricing.suite.includes};
   if(id === 'bundle') return {id, name:pricing.bundle.name, amount:pricing.bundle.launch, billing:'Bundle · all five courses + 12 months of software', includes:pricing.bundle.includes};
   return null;

@@ -321,3 +321,10 @@
 .invite-all .button{background:#e56f4a;border-color:#e56f4a;color:#fff}
 .pager-buy{font:inherit;font-weight:800;color:#fff;background:#e56f4a;border:0;border-radius:999px;padding:.65rem 1.2rem;cursor:pointer}
 .pager-buy:hover{background:#c9583a}
+/* Reflect opens the exercise with its own answer box; "Not relevant yet" with a trigger; open items in Your Organisation */
+.reflect-field{margin:4px 0 20px}.reflect-field label{margin:6px 0 4px!important;font-size:17px;line-height:1.5}.reflect-field textarea{min-height:80px!important}
+#lesson-form .exercise-text{text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
+.not-yet{margin:22px 0 6px;padding:14px 18px;border:1px dashed #98ada6;border-radius:10px;background:#fbfaf6}.not-yet .check-label{margin:0!important}.not-yet #not-yet-detail label{margin-top:12px}
+.open-item{margin:6px 0 10px;padding:10px 14px;border-left:4px solid #c98f62;background:#fff6ec;border-radius:0 8px 8px 0;font-size:14px;line-height:1.6}
+.open-items{margin:22px 0;padding:18px 22px;border:1px solid #e1c9a6;border-radius:12px;background:#fffaf3}.open-items h2{font-size:22px!important;margin:0 0 6px!important}.open-items ul{margin:10px 0 0;padding-left:20px;line-height:1.7}
+.synthesis-output h4{margin:14px 0 4px}

@@ -24,7 +24,10 @@
     '.ldg-btn:hover{background:#0e4e4a}',
     '.ldg-error{font-size:13px;color:#c53b1a;margin:0;min-height:18px}',
     '.ldg-note{font-size:13px;color:#7a8893;margin:16px 0 0}',
-    '.ldg-note a{color:#16746e}'
+    '.ldg-note a{color:#16746e}',
+    '.ldg-consent{display:flex;gap:8px;align-items:flex-start;text-align:left;font-size:12.5px;line-height:1.4;color:#4b6270}',
+    '.ldg-consent input{margin-top:3px;accent-color:#16746e}',
+    '.ldg-consent a{color:#16746e;font-weight:700}'
   ].join('\n');
 
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
@@ -62,6 +65,7 @@
         '<p class="ldg-body">Any single template is <b>$9</b>, in every country. Payments are not connected yet: enter the test code to simulate the purchase and download it. Nothing is charged.</p>' +
         '<form class="ldg-form" novalidate>' +
           '<input class="ldg-input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Test code" aria-label="Test code">' +
+          '<label class="ldg-consent"><input type="checkbox" class="ldg-check"> I want the file straight away. I understand that once I download it, I lose my 14-day right to cancel (EU and UK buyers). <a href="legal.html#refunds" target="_blank" rel="noopener">Refund policy</a></label>' +
           '<p class="ldg-error" aria-live="polite"></p>' +
           '<button class="ldg-btn" type="submit">Confirm test purchase · $9</button>' +
         '</form>' +
@@ -77,6 +81,7 @@
     document.addEventListener('keydown', overlay._onKey);
     overlay.querySelector('.ldg-form').addEventListener('submit', function (e) {
       e.preventDefault();
+      if (!overlay.querySelector('.ldg-check').checked) { err.textContent = 'Please tick the box to confirm you want the file straight away.'; return; }
       if (input.value.trim() === CODE) { close(overlay); download(file); }
       else {
         input.classList.add('ldg-wrong'); err.textContent = 'That code is not right.';

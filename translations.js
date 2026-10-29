@@ -143,7 +143,7 @@ export const translations = {
     "courses.list.sub": "Each course ends with a Pack, a part of your organisation pack you can share with your board, team or funders.",
 
     // ===== Pricing =====
-    "pricing.hero.eyebrow": "PRICING · ONE PAYMENT · LIFETIME ACCESS",
+    "pricing.hero.eyebrow": "PRICING · ONE PAYMENT · FAIR BY COUNTRY",
     "pricing.hero.title_before": "Fair prices for small teams building",
     "pricing.hero.title_em": "real",
     "pricing.hero.title_after": "organisations.",
@@ -971,7 +971,7 @@ export const translations = {
     "courses.list.sub": "Cada curso termina con un Paquete, una parte de tu paquete organizacional que puedes compartir con tu junta, equipo o financiadores.",
 
     // ===== Precios =====
-    "pricing.hero.eyebrow": "PRECIOS · UN PAGO · ACCESO DE POR VIDA",
+    "pricing.hero.eyebrow": "PRECIOS · UN SOLO PAGO · JUSTOS SEGÚN EL PAÍS",
     "pricing.hero.title_before": "Precios justos para equipos pequeños que construyen organizaciones",
     "pricing.hero.title_em": "reales",
     "pricing.hero.title_after": ".",

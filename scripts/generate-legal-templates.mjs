@@ -16,7 +16,7 @@ const shellHead = shellSrc.slice(0, headEnd)
   .replace(/<script src="assets\/js\/passcode-gate\.js[^"]*"><\/script>/, '')
   .replace(/<script src="assets\/js\/legal-download-gate\.js[^"]*" defer><\/script>/, '')
   .replace(/<script src="assets\/js\/free-templates\.js[^"]*" defer><\/script>/, '')
-  .replace('</head>', '<script src="assets/js/legal-download-gate.js?v=2" defer></script><script src="assets/js/free-templates.js?v=1" defer></script></head>');
+  .replace('</head>', '<script src="assets/js/legal-download-gate.js?v=3" defer></script><script src="assets/js/free-templates.js?v=1" defer></script></head>');
 const shellTail = shellSrc.slice(tailStart);
 const page = (title, description, main) => shellHead
   .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)} | Method into Impact</title>`)

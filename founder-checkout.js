@@ -48,6 +48,7 @@ const CSS=`.fc-backdrop{position:fixed;inset:0;background:rgba(10,22,28,.55);z-i
 .fc-country select{width:100%;font:inherit;padding:.55rem .6rem;border:1.5px solid #d4c9b1;border-radius:8px;background:#fff}
 .fc-band{margin:.5rem 0 0;padding:.6rem .75rem;border-radius:8px;background:#eef6f4;font-size:.86rem;line-height:1.45;color:#14304a}
 .fc-band b{color:#16746e}
+.fc-consent{display:flex;gap:.5rem;align-items:flex-start;font-size:.82rem;line-height:1.4;color:#41525c;margin:.6rem 0 0;font-weight:400}.fc-consent input{margin-top:.2rem;accent-color:#16746e}.fc-consent a{color:#16746e;font-weight:700}
 .fc-price{float:right;font-weight:800;color:#14304a;margin-left:.5rem}.fc-price s{color:#8a99a3;font-weight:600;margin-right:.3rem}`;
 function ensureCSS(){if(document.getElementById('fc-style'))return;const s=document.createElement('style');s.id='fc-style';s.textContent=CSS;document.head.append(s);}
 
@@ -63,7 +64,7 @@ export function openFounderCheckout(course,{onDone}={}){
   <label class="fc-option"><input type="radio" name="fc-what" value="${FOUNDER_ALL}"${course.id===FOUNDER_ALL?' checked':''}><span><span class="fc-price" data-fc-price="${FOUNDER_ALL}"></span><b>All four courses</b><small>Clarify, Organise, Prove &amp; Show and Protect, with every course shown in one place.</small></span></label>
  </div>
  <div class="fc-country"><label for="fc-country">Country where your card was issued</label><select id="fc-country"><option value="">Choose a country…</option>${opts}</select><p class="fc-band" id="fc-band" aria-live="polite"></p></div>
- <form class="fc-test"><label for="fc-code">Test payment</label><p style="margin:0 0 .5rem">Payments are not connected yet. Enter the test code to simulate a purchase; nothing is charged.</p><input id="fc-code" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="fc-error"><p class="fc-error" id="fc-error" role="alert"></p>
+ <form class="fc-test"><label for="fc-code">Test payment</label><p style="margin:0 0 .5rem">Payments are not connected yet. Enter the test code to simulate a purchase; nothing is charged.</p><input id="fc-code" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="fc-error"><label class="fc-consent"><input type="checkbox" id="fc-consent"> I want access straight away. I understand that once I open the course or download a file, I lose my 14-day right to cancel (EU and UK buyers). <a href="legal.html#refunds" target="_blank" rel="noopener">Refund policy</a></label><p class="fc-error" id="fc-error" role="alert"></p>
  <div class="fc-actions"><button type="button" class="fc-cancel">Cancel</button><button type="submit" class="fc-pay">Confirm test purchase</button></div></form></div>`;
  const sel=wrap.querySelector('#fc-country'),bandBox=wrap.querySelector('#fc-band'),pay=wrap.querySelector('.fc-pay');
  const render=()=>{
@@ -85,7 +86,7 @@ export function openFounderCheckout(course,{onDone}={}){
  wrap.querySelector('.fc-cancel').onclick=close;
  wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();const code=wrap.querySelector('#fc-code').value.trim();
   if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
-  if(code!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
+  if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(code!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
   const what=wrap.querySelector('input[name=fc-what]:checked').value;
   if(!grantFounder(what)){wrap.querySelector('#fc-error').textContent='This browser is blocking storage, so access could not be saved.';return;}
   close();(onDone||(()=>{location.href=course.start||location.href;}))(what);});
@@ -124,7 +125,7 @@ export function openProductCheckout({key,name}){
  wrap.innerHTML=`<div class="fc-card" role="dialog" aria-modal="true" aria-labelledby="fc-title"><span class="fc-eyebrow">Buy</span><h2 id="fc-title">${esc(name)}</h2>
  <div class="fc-options"><div class="fc-option" style="cursor:default"><span><span class="fc-price" id="fc-one"></span><b>${esc(name)}</b><small>One payment. Editable Word files for use within one organisation.</small></span></div></div>
  <div class="fc-country"><label for="fc-country">Country where your card was issued</label><select id="fc-country"><option value="">Choose a country…</option>${opts}</select><p class="fc-band" id="fc-band" aria-live="polite"></p></div>
- <form class="fc-test"><label for="fc-code">Test payment</label><p style="margin:0 0 .5rem">Payments are not connected yet. Enter the test code to simulate a purchase; nothing is charged.</p><input id="fc-code" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="fc-error"><p class="fc-error" id="fc-error" role="alert"></p>
+ <form class="fc-test"><label for="fc-code">Test payment</label><p style="margin:0 0 .5rem">Payments are not connected yet. Enter the test code to simulate a purchase; nothing is charged.</p><input id="fc-code" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="fc-error"><label class="fc-consent"><input type="checkbox" id="fc-consent"> I want access straight away. I understand that once I open the course or download a file, I lose my 14-day right to cancel (EU and UK buyers). <a href="legal.html#refunds" target="_blank" rel="noopener">Refund policy</a></label><p class="fc-error" id="fc-error" role="alert"></p>
  <div class="fc-actions"><button type="button" class="fc-cancel">Cancel</button><button type="submit" class="fc-pay">Confirm test purchase</button></div></form></div>`;
  const sel=wrap.querySelector('#fc-country'),bandBox=wrap.querySelector('#fc-band'),pay=wrap.querySelector('.fc-pay');
  const render=()=>{
@@ -145,7 +146,7 @@ export function openProductCheckout({key,name}){
  wrap.querySelector('.fc-cancel').onclick=close;
  wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();
   if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
-  if(wrap.querySelector('#fc-code').value.trim()!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
+  if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(wrap.querySelector('#fc-code').value.trim()!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
   wrap.querySelector('.fc-card').innerHTML=`<span class="fc-eyebrow">Test purchase complete</span><h2>${esc(name)}</h2><p>Nothing was charged. When payments open, buyers receive their files straight away by email and in their account. For now, download templates from the template pages with the test code.</p><div class="fc-actions"><a class="fc-pay" style="text-decoration:none" href="legal-templates.html">Go to the templates</a><button type="button" class="fc-cancel">Close</button></div>`;
   wrap.querySelector('.fc-cancel').onclick=close;});
  document.body.append(wrap);(sel.value?wrap.querySelector('#fc-code'):sel).focus();
