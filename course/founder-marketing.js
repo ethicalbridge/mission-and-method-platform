@@ -180,7 +180,7 @@ export const lessons={
    "why": "Gives your issue log clear routes for the two issues you will meet first: incidents and complaints.",
    "links": [
     {
-     "href": "legal-templates-procedures.html",
+     "href": "legal-templates-policies.html",
      "label": "Procedure templates",
      "items": [
       "Incident Reporting Procedure",
@@ -217,7 +217,7 @@ export const lessons={
    "why": "A ready structure for handling complaints fairly, with timescales and a route to someone independent.",
    "links": [
     {
-     "href": "legal-templates-procedures.html",
+     "href": "legal-templates-policies.html",
      "label": "Procedure templates",
      "items": [
       "Complaints and Feedback Procedure"
@@ -239,7 +239,7 @@ export const lessons={
      ]
     },
     {
-     "href": "legal-templates-procedures.html",
+     "href": "legal-templates-policies.html",
      "label": "Procedure templates",
      "items": [
       "Complaints and Feedback Procedure"
@@ -286,7 +286,7 @@ export const lessons={
    "why": "When a safeguarding incident or data breach happens, a clear reporting route is the first step of your crisis response.",
    "links": [
     {
-     "href": "legal-templates-procedures.html",
+     "href": "legal-templates-policies.html",
      "label": "Procedure templates",
      "items": [
       "Incident Reporting Procedure"

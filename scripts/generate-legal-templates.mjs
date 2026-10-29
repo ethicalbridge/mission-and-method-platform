@@ -1,4 +1,4 @@
-// Builds legal-templates.html and the five category pages from assets/legal-templates/catalog.json.
+// Builds legal-templates.html, the category pages and legacy redirects from assets/legal-templates/catalog.json.
 // Run: node scripts/generate-legal-templates.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
 
@@ -29,12 +29,14 @@ const howTo = `<section class="legal-review"><h2>How each template works</h2><ol
 
 const count = n => `${n} editable template${n === 1 ? '' : 's'}`;
 
+const kindClass = l => 'legal-kind-' + String(l || '').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
 function card(t) {
-  const meta = [t.type, t.pages ? `about ${t.pages} pages` : null, 'Word (.docx)'].filter(Boolean).join(' · ');
+  const meta = [t.pages ? `about ${t.pages} pages` : null, 'Word (.docx)'].filter(Boolean).join(' · ');
   const isNew = t.status === 'new' ? '<span class="small-tag legal-new">New</span>' : '';
-  return `<article class="suite-tool-card legal-card"><h3>${esc(t.title)}</h3><p>${esc(t.description)}</p><p class="legal-meta"><span class="small-tag">${esc(meta)}</span>${isNew}</p><p class="tool-card-actions"><button class="button ghost" type="button" data-template-file="assets/legal-templates/${esc(t.slug)}.docx" data-template-title="${esc(t.title)}">Download Word template ↓</button></p></article>`;
+  return `<article class="suite-tool-card legal-card"><span class="legal-kind ${kindClass(t.label)}">${esc(t.label || t.type)}</span><h3>${esc(t.title)}</h3><p>${esc(t.description)}</p><p class="legal-meta"><span class="small-tag">${esc(meta)}</span>${isNew}</p><p class="tool-card-actions"><button class="button ghost" type="button" data-template-file="assets/legal-templates/${esc(t.slug)}.docx" data-template-title="${esc(t.title)}">Download Word template ↓</button></p></article>`;
 }
 
+const legend = cat => cat.legend ? `<dl class="legal-legend">${cat.legend.map(([k, v]) => `<div><dt><span class="legal-kind ${kindClass(k)}">${esc(k)}</span></dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : '';
 const all = catalog.templates;
 for (const cat of catalog.categories) {
   const items = all.filter(t => t.category === cat.name);
@@ -44,8 +46,14 @@ for (const cat of catalog.categories) {
     const list = g.slugs.map(s => items.find(t => t.slug === s)).filter(Boolean);
     return `<section class="suite-tool-topic legal-topic" id="${esc(g.id || cat.id)}"><h2>${esc(g.name)}</h2><div class="suite-tool-grid">${list.map(card).join('')}</div></section>`;
   }).join('');
-  const main = `<div class="catalog legal-catalog legal-category-page"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="legal-templates.html">Legal Templates</a><span>› ${esc(cat.name)}</span></nav><span class="eyebrow">${count(items.length)}</span><h1>${esc(cat.name)}</h1><p class="lead">${esc(cat.lead)}</p><p class="legal-category-intro">${esc(cat.intro)}</p>${notice}${jump}${sections}${howTo}<p class="legal-back"><a href="legal-templates.html">← All legal template categories</a></p></div>`;
+  const main = `<div class="catalog legal-catalog legal-category-page"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="legal-templates.html">Legal Templates</a><span>› ${esc(cat.name)}</span></nav><span class="eyebrow">${count(items.length)}</span><h1>${esc(cat.name)}</h1><p class="lead">${esc(cat.lead)}</p><p class="legal-category-intro">${esc(cat.intro)}</p>${legend(cat)}${notice}${jump}${sections}${howTo}<p class="legal-back"><a href="legal-templates.html">← All legal template categories</a></p></div>`;
   writeFileSync(new URL(cat.file, root), page(cat.name, cat.lead, main));
+}
+
+for (const r of catalog.redirects || []) {
+  const main = `<div class="catalog legal-catalog"><h1>${esc(r.title)} have moved</h1><p class="lead">Policies and procedures are now on one page. <a href="${esc(r.to)}">Go to Policies &amp; procedures →</a></p></div>`;
+  writeFileSync(new URL(r.file, root), page(r.title, 'Policies and procedures are now on one page.', main)
+    .replace('</head>', `<meta http-equiv="refresh" content="0; url=${esc(r.to)}"><link rel="canonical" href="${esc(r.to)}"></head>`));
 }
 
 const cards = catalog.categories.map(cat => {

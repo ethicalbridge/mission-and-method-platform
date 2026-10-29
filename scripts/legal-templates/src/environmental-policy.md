@@ -204,7 +204,7 @@ The environment lead keeps the annual figures, the action plan and the programme
 
 # If this policy is not followed
 
-Most problems are best solved by a conversation and a better way of working. Repeated or deliberate disregard of this policy, or any action that causes serious environmental harm or breaks environmental law, will be dealt with under our Code of Conduct and disciplinary procedures, or the terms of a contract or partnership agreement.
+Most problems are best solved by a conversation and a better way of working. Repeated or deliberate disregard of this policy, or any action that causes serious environmental harm or breaks environmental law, will be dealt with under our Code of Conduct and Disciplinary and Grievance Procedure, or the terms of a contract or partnership agreement.
 
 # Monitoring and review
 

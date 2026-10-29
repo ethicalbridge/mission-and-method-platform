@@ -11,7 +11,7 @@ purpose: Templates and good intentions are not enough: each organisation must fi
 who_asks: Your board; auditors; funders in due diligence (many ask whether your policies have had legal review); lawyers and pro bono advisers, who need a clear brief
 time: 2–3 hours to complete; then 1–2 hours with an adviser
 course: Course 4 · Protect, Module 10 (Legal, compliance, policies and risk)
-related: Governing Body Terms of Reference; Delegation of Authority Matrix; Risk Register; Records Retention Schedule; Data Protection Policy; Data Protection Impact Assessment; Partner Due Diligence and Sanctions Screening Policy; Partner Due Diligence Questionnaire; Employment Contract; Independent Contractor Agreement
+related: Governing Body Terms of Reference; Delegation of Authority Matrix; Risk Register; Records Retention Schedule; Data Protection Policy; Data Protection Impact Assessment; Partner Due Diligence and Sanctions Screening Policy; Partner Due Diligence Questionnaire; Employment Contract; Independent Contractor Agreement; Policy Approval and Review Procedure
 ---
 
 ::: note Proportionate to our size

@@ -11,7 +11,7 @@ purpose: A code of conduct turns your values into behaviour people can see and c
 who_asks: Institutional and foundation funders in due diligence; UN agencies and international NGOs before partnering; new staff and volunteers; your board
 time: 2–3 hours to adapt; 30 minutes for a board to approve
 course: Course 4 · Protect, lesson 10.4 (core policies) and 10.5 (safeguarding)
-related: Safeguarding Policy and Procedure; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Whistleblowing Policy and Procedure; Fraud, Bribery and Corruption Policy and Procedure; Conflict of Interest Policy; Data Protection Policy
+related: Safeguarding Policy and Procedure; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Whistleblowing Policy and Procedure; Fraud, Bribery and Corruption Policy and Procedure; Conflict of Interest Policy; Data Protection Policy; Disciplinary and Grievance Procedure
 ---
 
 ::: note Proportionate to our size
@@ -178,7 +178,7 @@ Report breaches as described in section 3. We take every report seriously and ac
 
 - give guidance, a reminder or a written warning;
 - suspend someone from their role while we look into a concern (this is not a finding of wrongdoing);
-- end a contract, volunteer role or board membership, or dismiss an employee, following our disciplinary procedure and the law;
+- end a contract, volunteer role or board membership, or dismiss an employee, following our Disciplinary and Grievance Procedure and the law;
 - report to the police or other authorities where the law requires it, or where someone is in immediate danger;
 - inform funders, regulators or partners where our agreements or the law require it.
 
@@ -187,7 +187,7 @@ For serious concerns, including sexual exploitation, abuse or harassment, we may
 Anyone affected by a decision under this code can ask for it to be reviewed within [[30 days]], unless the policy that applies sets a different limit, by writing to [[Name, role]], who was not involved in the original decision.
 
 ::: adapt Disciplinary procedure
-Check that these steps match your employment contracts, volunteer agreements and local employment law. In many countries an employer must follow a set disciplinary process before dismissal. If you have no disciplinary procedure yet, note that as an action.
+Check that these steps match your employment contracts, volunteer agreements and local employment law. In many countries an employer must follow a set disciplinary process before dismissal. If you do not have one yet, adapt the Disciplinary and Grievance Procedure template.
 :::
 
 # Related documents
@@ -200,6 +200,7 @@ Check that these steps match your employment contracts, volunteer agreements and
 - Data Protection Policy
 - [[Employment contracts, volunteer agreements and contractor agreements]]
 - [[Any other policies you have]]
+- Disciplinary and Grievance Procedure
 
 # Acknowledgement
 

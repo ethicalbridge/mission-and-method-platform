@@ -11,7 +11,7 @@ purpose: An equality, diversity and inclusion policy sets out how you prevent di
 who_asks: Institutional and foundation funders; UN agencies and international NGOs before partnering; job applicants; your board
 time: 2–3 hours to adapt; 30 minutes for a board to approve
 course: Course 2 · Organise, Module 4 (people and culture)
-related: Code of Conduct; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Safeguarding Policy and Procedure; Complaints and Feedback Procedure; Whistleblowing Policy and Procedure; Data Protection Policy; Employment Contract; Volunteer Agreement; Governing Body Terms of Reference
+related: Code of Conduct; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Safeguarding Policy and Procedure; Complaints and Feedback Procedure; Whistleblowing Policy and Procedure; Data Protection Policy; Employment Contract; Volunteer Agreement; Governing Body Terms of Reference; Safer Recruitment Procedure
 ---
 
 ::: note Proportionate to our size
@@ -231,6 +231,7 @@ The board agrees up to [[three]] actions for the coming year. We review this pol
 - Social Media and Communications Policy
 - Governing Body Terms of Reference
 - [[Employment contracts, volunteer agreements and recruitment procedures]]
+- Safer Recruitment Procedure
 
 # Acknowledgement
 

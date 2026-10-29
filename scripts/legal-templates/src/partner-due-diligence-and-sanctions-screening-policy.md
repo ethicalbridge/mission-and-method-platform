@@ -262,7 +262,7 @@ Screening individuals is processing of personal data, and information about alle
 
 If someone enters a relationship without the required checks, or pays a partner before screening, they tell the due diligence lead at once. The lead completes the checks straight away and records what happened. If funds may have reached a listed person, follow the steps in section 7 immediately and tell [[Name, role]] the same day.
 
-Deliberately skipping checks, hiding a possible match or a conflict of interest, or giving false information in an assessment is serious misconduct. We deal with it under our disciplinary procedure and the law. Concerns can be raised through our Whistleblowing Policy and Procedure.
+Deliberately skipping checks, hiding a possible match or a conflict of interest, or giving false information in an assessment is serious misconduct. We deal with it under our Disciplinary and Grievance Procedure and the law. Concerns can be raised through our Whistleblowing Policy and Procedure.
 
 # Monitoring and review
 

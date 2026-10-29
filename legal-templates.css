@@ -7,3 +7,6 @@
 
 /* Intro paragraph uses the full page width */
 .legal-catalog > .lead, .legal-catalog .lead{max-width:none}
+.legal-kind{display:inline-block;align-self:flex-start;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:10px;background:#eaf3ef;color:#16746e;border:1px solid #cfe5dc}
+.legal-kind-procedure{background:#fdf2d8;color:#8a4b16;border-color:#f0c98a}.legal-kind-policy-and-procedure{background:#123c48;color:#fffaf3;border-color:#123c48}.legal-kind-policy-with-procedure-steps{background:#e3f0f4;color:#123c48;border-color:#c3dbe3}.legal-kind-notice,.legal-kind-code-of-conduct{background:#f3f1ec;color:#5b6f78;border-color:#e0dbcd}
+.legal-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:22px 0 8px;padding:0}.legal-legend>div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}.legal-legend dt{margin:0}.legal-legend dd{margin:4px 0 0;font-size:.92rem;line-height:1.5;color:var(--muted,#5b6f78)}

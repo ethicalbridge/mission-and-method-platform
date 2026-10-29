@@ -11,7 +11,7 @@ purpose: In a small team, one person's behaviour can shape everyone's working li
 who_asks: Institutional funders and international NGO partners in due diligence; employment and labour authorities in some countries; new staff and volunteers; your board
 time: 3–4 hours to adapt; a further hour if you must align it with a local legal requirement such as a harassment committee
 course: Course 4 · Protect, Module 10 (legal, compliance, policies and risk), lesson 10.4 (core policies); Course 2 · Organise, Module 4 (people and culture)
-related: Code of Conduct; Safeguarding Policy and Procedure; Whistleblowing Policy and Procedure; Independent Contact Role Note; Equality, Diversity and Inclusion Policy; Social Media and Communications Policy; Data Protection Policy; Employment Contract; Volunteer Agreement
+related: Code of Conduct; Safeguarding Policy and Procedure; Whistleblowing Policy and Procedure; Independent Contact Role Note; Equality, Diversity and Inclusion Policy; Social Media and Communications Policy; Data Protection Policy; Employment Contract; Volunteer Agreement; Disciplinary and Grievance Procedure
 ---
 
 ::: note Proportionate to our size
@@ -208,8 +208,8 @@ The investigator is someone with no involvement in the matter and no close relat
 
 No one is presumed to have done wrong until the facts are established. Everyone involved keeps the matter confidential.
 
-::: adapt Investigations and your disciplinary procedure
-Check your employment law. In many countries, an employer must follow a set process before a warning or dismissal: written notice of the allegation, a hearing, the right to be accompanied, and a written decision. In the United Kingdom, for example, workers have a legal right to be accompanied at disciplinary and grievance hearings. Make sure this section matches your employment contracts and disciplinary procedure. Budget for an external investigator: ask a local employment lawyer, HR consultancy or a peer organisation for names before you need one.
+::: adapt Investigations and your Disciplinary and Grievance Procedure
+Check your employment law. In many countries, an employer must follow a set process before a warning or dismissal: written notice of the allegation, a hearing, the right to be accompanied, and a written decision. In the United Kingdom, for example, workers have a legal right to be accompanied at disciplinary and grievance hearings. Make sure this section matches your employment contracts and Disciplinary and Grievance Procedure. Budget for an external investigator: ask a local employment lawyer, HR consultancy or a peer organisation for names before you need one.
 :::
 
 ## 14. Outcomes
@@ -219,7 +219,7 @@ The decision is "upheld", "partly upheld" or "not upheld". Both sides receive it
 - no further action, or guidance, training or a facilitated conversation;
 - a written warning, or a final written warning;
 - changes to roles, reporting lines or working arrangements, which should not disadvantage the person affected;
-- dismissal, or ending a volunteer role, board membership, contract or partnership, following our disciplinary procedure and the law;
+- dismissal, or ending a volunteer role, board membership, contract or partnership, following our Disciplinary and Grievance Procedure and the law;
 - referral to the police or other authorities where the law requires it or someone's safety demands it.
 
 Where the law allows, we may share confirmed findings of sexual harassment with future employers who ask, following the principles of the Misconduct Disclosure Scheme. We also ask what we could change to prevent it happening again.
@@ -293,6 +293,7 @@ This policy follows ILO Conventions 111 (1958) and 190 (2019), the Universal Dec
 - Employment Contract
 - Volunteer Agreement
 - [[Your disciplinary and grievance procedure]]
+- Disciplinary and Grievance Procedure
 
 # Acknowledgement
 

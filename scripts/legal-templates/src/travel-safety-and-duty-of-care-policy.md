@@ -257,7 +257,7 @@ Travel records include personal data such as emergency contacts and locations, a
 
 # If this policy is breached
 
-If someone travels without the required approval, ignores a briefing or misses check-ins without reason, the focal point discusses it with them and their manager. Serious or repeated breaches that put people at risk may be dealt with under our disciplinary procedure. A manager who pressures someone to undertake unsafe travel is also in breach. Concerns can be raised through our Whistleblowing Policy and Procedure.
+If someone travels without the required approval, ignores a briefing or misses check-ins without reason, the focal point discusses it with them and their manager. Serious or repeated breaches that put people at risk may be dealt with under our Disciplinary and Grievance Procedure. A manager who pressures someone to undertake unsafe travel is also in breach. Concerns can be raised through our Whistleblowing Policy and Procedure.
 
 # Monitoring and review
 

@@ -206,7 +206,7 @@ Many funders set their own rules on travel class, per diem rates, receipts and w
 
 ## 13. Honest claims
 
-Expense claims rely on trust. Claiming for costs you did not incur, inflating amounts, claiming the same cost twice, altering receipts, claiming a per diem when meals were provided, or recording participants who did not attend are all fraud. We treat them under our Fraud, Bribery and Corruption Policy and Procedure and our disciplinary procedure, and we may report them to the authorities and recover the money. If you make a genuine mistake, tell [[Name, role]] as soon as you notice, and we will correct it.
+Expense claims rely on trust. Claiming for costs you did not incur, inflating amounts, claiming the same cost twice, altering receipts, claiming a per diem when meals were provided, or recording participants who did not attend are all fraud. We treat them under our Fraud, Bribery and Corruption Policy and Procedure and our Disciplinary and Grievance Procedure, and we may report them to the authorities and recover the money. If you make a genuine mistake, tell [[Name, role]] as soon as you notice, and we will correct it.
 
 # Procedure: how to claim
 
@@ -236,7 +236,7 @@ We keep claims, receipts, travel requests, advance reconciliations and participa
 
 # If this policy is breached
 
-Costs that do not follow this policy may not be reimbursed, or may have to be repaid. Repeated or deliberate breaches are dealt with under our disciplinary procedure. Suspected fraud is handled under our Fraud, Bribery and Corruption Policy and Procedure. Anyone can raise a concern through our Whistleblowing Policy and Procedure.
+Costs that do not follow this policy may not be reimbursed, or may have to be repaid. Repeated or deliberate breaches are dealt with under our Disciplinary and Grievance Procedure. Suspected fraud is handled under our Fraud, Bribery and Corruption Policy and Procedure. Anyone can raise a concern through our Whistleblowing Policy and Procedure.
 
 # Monitoring and review
 

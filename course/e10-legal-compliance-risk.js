@@ -1,5 +1,5 @@
-import base from './m10-legal-compliance-risk.js?v=c8bd65a76';
-import {adapt} from './adapt.js?v=c8bd65a76';
+import base from './m10-legal-compliance-risk.js?v=c324e2a2c';
+import {adapt} from './adapt.js?v=c324e2a2c';
 // Entrepreneurs' version of m10: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:`Legal, Compliance, Policies & Risk`,
@@ -292,8 +292,8 @@ const m=adapt(base,{
 
 // Legal and policy lessons (10.1–10.9) are reading only: what each duty, policy or procedure is, with examples, and
 // the templates to adapt. Risk lessons (10.10–10.12) keep their exercises. HR and workplace policies is left out.
-const T={all:'legal-templates.html',policies:'legal-templates-policies.html',procedures:'legal-templates-procedures.html',contracts:'legal-templates-contracts-and-agreements.html',consent:'legal-templates-consent-forms.html',governance:'legal-templates-governance-and-compliance.html'};
-const NAMES={all:'All legal templates',policies:'Policy templates',procedures:'Procedure templates',contracts:'Contract and agreement templates',consent:'Consent form templates',governance:'Governance and compliance templates'};
+const T={all:'legal-templates.html',policies:'legal-templates-policies.html',procedures:'legal-templates-policies.html',contracts:'legal-templates-contracts-and-agreements.html',consent:'legal-templates-consent-forms.html',governance:'legal-templates-governance-and-compliance.html'};
+const NAMES={all:'All legal templates',policies:'Policy and procedure templates',procedures:'Policy and procedure templates',contracts:'Contract and agreement templates',consent:'Consent form templates',governance:'Governance and compliance templates'};
 const tpl=(...groups)=>({links:groups.map(([k,items])=>({href:T[k],label:NAMES[k],items:items||[]}))});
 const READING={
  'legal-map':{templates:tpl(['governance',['Legal Review Checklist','Records Retention Schedule']],['all']),

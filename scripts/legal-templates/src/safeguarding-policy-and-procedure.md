@@ -11,7 +11,7 @@ purpose: A safeguarding policy shows that you have thought about how your work c
 who_asks: Institutional and foundation funders in due diligence; UN agencies and international NGOs before partnering; government regulators and registration bodies; schools, health facilities and community partners; your board
 time: 4–6 hours to adapt, plus 2–3 hours to map local referral services; 30–45 minutes for a board to approve
 course: Course 4 · Protect, Module 10 (legal, compliance, policies and risk), lesson 10.5 (safeguarding)
-related: Code of Conduct; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Whistleblowing Policy and Procedure; Independent Contact Role Note; Incident Reporting Procedure; Complaints and Feedback Procedure; Photo and Story Consent Form; Data Protection Policy; Partner Due Diligence and Sanctions Screening Policy
+related: Code of Conduct; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Whistleblowing Policy and Procedure; Independent Contact Role Note; Incident Reporting Procedure; Complaints and Feedback Procedure; Photo and Story Consent Form; Data Protection Policy; Partner Due Diligence and Sanctions Screening Policy; Safer Recruitment Procedure; Disciplinary and Grievance Procedure
 ---
 
 ::: note Proportionate to our size
@@ -109,7 +109,7 @@ For every role, paid or unpaid, with contact with children or adults at risk or 
 5. request a police or criminal record check where one is available, lawful and reasonably reliable;
 6. make sure the person signs this policy and the Code of Conduct and completes induction before starting contact work.
 
-We follow the principles of the Misconduct Disclosure Scheme: when asked for a reference, we share confirmed findings of sexual exploitation, abuse or harassment where the law allows. No check is a guarantee. Supervision and a culture of speaking up matter as much.
+We follow the principles of the Misconduct Disclosure Scheme: when asked for a reference, we share confirmed findings of sexual exploitation, abuse or harassment where the law allows. No check is a guarantee. Supervision and a culture of speaking up matter as much. Our Safer Recruitment Procedure sets out each step, with checklists, a reference request and a self-declaration form.
 
 ::: adapt Police checks by country
 Decide which roles need a check and from which country. Notes to confirm locally:
@@ -206,7 +206,7 @@ The safeguarding lead, or the deputy if the lead is involved:
 4. **Talks to the survivor,** where safe, about their options and wishes, and offers referral to support (Annex B).
 5. **Refers** to child protection services, the police or others where the law requires it, a child is at risk, or an adult survivor agrees (section 13).
 6. **Looks into it.** We never investigate crimes ourselves. For serious or complex internal cases we appoint a trained external investigator. If the authorities investigate, we cooperate and pause our own work if asked.
-7. **Decides** on the balance of probabilities (whether the concern is more likely true than not) and acts under our disciplinary procedure or agreements.
+7. **Decides** on the balance of probabilities (whether the concern is more likely true than not) and acts under our Disciplinary and Grievance Procedure or agreements.
 8. **Closes and learns:** tells the survivor and reporter as much as confidentiality allows, records the outcome and what we will change.
 
 The person concerned is told the substance of the allegation when it is safe, and can respond. Nobody is presumed to have done wrong.
@@ -274,7 +274,7 @@ Check your local data protection law and add these periods to your Records Reten
 
 # If this policy is breached
 
-A breach of this policy, including failing to report a concern, is serious. Depending on the case, we may give a warning; suspend someone while we look into it; dismiss an employee or end a role, contract or partnership, following our disciplinary procedure and the law; refer the matter to the authorities; and share confirmed findings with future employers who ask, where the law allows.
+A breach of this policy, including failing to report a concern, is serious. Depending on the case, we may give a warning; suspend someone while we look into it; dismiss an employee or end a role, contract or partnership, following our Disciplinary and Grievance Procedure and the law; refer the matter to the authorities; and share confirmed findings with future employers who ask, where the law allows.
 
 Retaliation against anyone who reports or helps with a review is a separate, serious breach. So is knowingly making a false report: we decide this only after a review, never just because a concern was not upheld. Anyone affected by a decision can ask for a review within [[30 days]] by writing to [[Name, role]], who was not involved in the original decision.
 
@@ -296,6 +296,8 @@ This policy follows the UN Convention on the Rights of the Child (1989), the UN 
 - Data Protection Policy
 - Partner Due Diligence and Sanctions Screening Policy
 - [[Employment contracts, volunteer agreements and sub-grant agreements]]
+- Safer Recruitment Procedure
+- Disciplinary and Grievance Procedure
 
 # Acknowledgement
 

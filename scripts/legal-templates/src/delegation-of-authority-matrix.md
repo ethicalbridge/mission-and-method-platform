@@ -11,7 +11,7 @@ purpose: The board is responsible for everything the organisation does, but it c
 who_asks: Funders in due diligence and pre-award assessments; auditors; banks when you change signatories; new board members and managers
 time: 2–3 hours to adapt with your treasurer or accountant; 30 minutes for a board to approve
 course: Course 2 · Organise, Module 3 (Structure and governance); Course 4 · Protect, Module 9 (Financial management)
-related: Financial Controls Policy; Governing Body Terms of Reference; Procurement Policy; Conflict of Interest Policy; Reserves Policy; Gift Acceptance Policy; Fraud, Bribery and Corruption Policy and Procedure; Social Media and Communications Policy
+related: Financial Controls Policy; Governing Body Terms of Reference; Procurement Policy; Conflict of Interest Policy; Reserves Policy; Gift Acceptance Policy; Fraud, Bribery and Corruption Policy and Procedure; Social Media and Communications Policy; Finance Procedures; Policy Approval and Review Procedure
 ---
 
 ::: adapt Setting your limits
@@ -70,7 +70,7 @@ Roles used: **Board** [[trustees / directors / committee]] acting as a body at a
 | Appoint, set pay for, appraise or dismiss the director | Board | Not applicable | Director leaves the meeting for these items |
 | Pay changes within the agreed pay scale | Director | Treasurer | Nobody approves their own pay |
 | Pay changes outside the pay scale, bonuses, or a new pay scale | Board | Not applicable | |
-| Dismissal of staff | Director | Chair consulted | Follow the disciplinary procedure and local law |
+| Dismissal of staff | Director | Chair consulted | Follow the Disciplinary and Grievance Procedure and local law |
 | Settlement agreements with departing staff | Board, or chair and treasurer up to [[USD 2,000]] | Not applicable | Legal advice recommended |
 | Engage volunteers and interns | Budget holder | Not applicable | Volunteer Agreement |
 | Engage consultants | As in section 1 by value | As in section 1 | Independent Contractor Agreement |

@@ -1,6 +1,6 @@
 # Legal template library
 
-Sources for the 47 Word templates published on legal-templates*.html.
+Sources for the 51 Word templates published on legal-templates*.html.
 
 - `src/<slug>.md`: one template each, in the markup described in `WRITING-GUIDE.md`
   (`[[placeholder]]` = yellow field, `::: adapt` = orange guidance box, `::: note` / `::: glance` = boxes kept in the document).

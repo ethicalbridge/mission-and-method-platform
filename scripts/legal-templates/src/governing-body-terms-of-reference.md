@@ -11,7 +11,7 @@ purpose: Terms of reference turn the legal duties in your constitution into a pr
 who_asks: Institutional and foundation funders in due diligence; registrars and regulators of non-profits; banks opening accounts; auditors; new board members
 time: 3–4 hours to adapt; one board meeting to discuss and approve
 course: Course 2 · Organise, Module 3 (structure and governance)
-related: Delegation of Authority Matrix; Board Interest Declaration; Conflict of Interest Policy; Risk Register; Financial Controls Policy; Reserves Policy; Safeguarding Policy and Procedure; Whistleblowing Policy and Procedure; Independent Contact Role Note; Code of Conduct
+related: Delegation of Authority Matrix; Board Interest Declaration; Conflict of Interest Policy; Risk Register; Financial Controls Policy; Reserves Policy; Safeguarding Policy and Procedure; Whistleblowing Policy and Procedure; Independent Contact Role Note; Code of Conduct; Policy Approval and Review Procedure
 ---
 
 ::: note Proportionate to our size
@@ -273,9 +273,9 @@ Record the board's diversity in broad terms only, with members' consent (for exa
 {widths: 22 78}
 | Meeting | Main items, besides standing items |
 |---|---|
-| [[Quarter 1]] | Approve the annual plan and budget; review the Risk Register; agree board training |
+| [[Quarter 1]] | Review the Risk Register; agree board training; check progress against the annual plan |
 | [[Quarter 2]] | Approve the annual accounts and audit or examination report; annual report; registrations and filings due |
 | [[Quarter 3]] | Strategy review; review the Delegation of Authority Matrix and policies due for review |
-| [[Quarter 4]] | [[Executive Director / founder]] appraisal and pay; board evaluation; skills matrix and recruitment; annual Board Interest Declarations |
+| [[Quarter 4]] | Approve the annual plan and budget for the coming financial year, before it starts; [[Executive Director / founder]] appraisal and pay; board evaluation; skills matrix and recruitment; annual Board Interest Declarations |
 
 **Standing items at every meeting:** declarations of interest; minutes and actions; [[Executive Director / founder]]'s report; management accounts and cash forecast; safeguarding and serious incidents; top risks; decisions needed.

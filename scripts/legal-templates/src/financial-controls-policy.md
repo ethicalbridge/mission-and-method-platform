@@ -11,7 +11,7 @@ purpose: Funders and banks want to see that money is safe in your hands, and aud
 who_asks: Institutional and foundation funders in due diligence and pre-award assessments; banks; auditors and independent examiners; regulators; your board
 time: 4–6 hours to adapt, ideally with your accountant or treasurer; 45 minutes for a board to approve
 course: Course 4 · Protect, Module 9 (Financial management)
-related: Delegation of Authority Matrix; Fraud, Bribery and Corruption Policy and Procedure; Procurement Policy; Expenses and Per Diem Policy; Reserves Policy; Gift Acceptance Policy; Conflict of Interest Policy; Records Retention Schedule; Risk Register
+related: Delegation of Authority Matrix; Fraud, Bribery and Corruption Policy and Procedure; Procurement Policy; Expenses and Per Diem Policy; Reserves Policy; Gift Acceptance Policy; Conflict of Interest Policy; Records Retention Schedule; Risk Register; Finance Procedures
 ---
 
 ::: note Proportionate to our size
@@ -191,7 +191,7 @@ Choose one method and use it consistently. Funders often say which rate to use, 
 - The register shows the description, serial number, date bought, cost, funder, location and who uses it.
 - Each asset is labelled with our name and a reference number.
 - We check the register against the physical assets at least [[once a year]].
-- Assets bought with grant funds are used and disposed of as the funder requires. Disposals and write-offs are approved by [[the director / the board above a set value]] and recorded.
+- Assets bought with grant funds are used and disposed of as the funder requires. Disposals and write-offs are approved as the Delegation of Authority Matrix sets (the director with the treasurer up to [[USD 500]]; the board above that) and recorded.
 
 ## 14. Management accounts and reporting
 
@@ -255,6 +255,7 @@ The treasurer reports to the board [[every quarter]] on whether these controls a
 - Records Retention Schedule
 - Risk Register
 - [[Grant agreements and funder financial rules]]
+- Finance Procedures
 
 # Acknowledgement
 

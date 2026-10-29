@@ -1,4 +1,4 @@
-import {module,lesson,review} from './kit.js?v=c8bd65a76';
+import {module,lesson,review} from './kit.js?v=c324e2a2c';
 // Reviewed October 2026: plain explanation, optional table (anatomy), and a gallery showing how the five example
 // organisations (course/examples.js; story in docs/example-organisations.md) complete each exercise.
 export default module({

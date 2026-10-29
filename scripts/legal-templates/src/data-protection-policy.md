@@ -313,7 +313,7 @@ The data protection lead keeps the data inventory, processor list, legitimate in
 
 # If this policy is breached
 
-Misusing personal information, ignoring security rules or failing to report a breach can cause real harm. We may give guidance or training, remove access, or act under our disciplinary procedure, up to dismissal or ending a contract or volunteer role. Deliberate misuse can also be a criminal offence in some countries.
+Misusing personal information, ignoring security rules or failing to report a breach can cause real harm. We may give guidance or training, remove access, or act under our Disciplinary and Grievance Procedure, up to dismissal or ending a contract or volunteer role. Deliberate misuse can also be a criminal offence in some countries.
 
 You can raise concerns about how personal information is handled with the data protection lead, the deputy, or through our Whistleblowing Policy and Procedure. Nobody is penalised for raising a genuine concern.
 

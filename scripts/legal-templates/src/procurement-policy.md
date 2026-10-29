@@ -229,7 +229,7 @@ Supplier files may hold personal data, such as a consultant's bank details. We h
 
 If a purchase was made without following this policy, the person involved tells the procurement lead straight away. The procurement lead records what happened, the reasons and any risk to the grant, and reports it to [[Name, role]]. Where a funder's rules were broken, we may need to tell the funder and may have to repay the cost from unrestricted funds.
 
-Deliberate breaches, such as splitting purchases, inventing quotes, hiding a conflict of interest or accepting a bribe, are serious misconduct. We deal with them under our disciplinary procedure, our Fraud, Bribery and Corruption Policy and Procedure and the law. We may end contracts with suppliers who offer bribes, collude with other bidders or give false information, and exclude them from future work.
+Deliberate breaches, such as splitting purchases, inventing quotes, hiding a conflict of interest or accepting a bribe, are serious misconduct. We deal with them under our Disciplinary and Grievance Procedure, our Fraud, Bribery and Corruption Policy and Procedure and the law. We may end contracts with suppliers who offer bribes, collude with other bidders or give false information, and exclude them from future work.
 
 # Monitoring and review
 

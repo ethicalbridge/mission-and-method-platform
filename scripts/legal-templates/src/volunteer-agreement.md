@@ -11,7 +11,7 @@ purpose: Volunteers give their time freely, and they deserve clear information, 
 who_asks: Funders and partners checking safeguarding; insurers; volunteer centres and universities placing interns; immigration authorities for international volunteers; your volunteers themselves
 time: 1–2 hours to adapt; 20 minutes to complete for each volunteer
 course: Course 2 · Organise, Module 4 (people and culture)
-related: Code of Conduct; Safeguarding Policy and Procedure; Data Protection Policy; Expenses and Per Diem Policy; Complaints and Feedback Procedure; Photo and Story Consent Form; Mutual Confidentiality Agreement; Travel Safety and Duty of Care Policy
+related: Code of Conduct; Safeguarding Policy and Procedure; Data Protection Policy; Expenses and Per Diem Policy; Complaints and Feedback Procedure; Photo and Story Consent Form; Mutual Confidentiality Agreement; Travel Safety and Duty of Care Policy; Safer Recruitment Procedure
 control: none
 history: no
 ---

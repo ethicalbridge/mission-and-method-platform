@@ -268,7 +268,7 @@ This policy follows international good practice, including the principles in the
 - Complaints and Feedback Procedure
 - Data Protection Policy
 - Governing Body Terms of Reference
-- [[Your grievance and disciplinary procedures]]
+- Disciplinary and Grievance Procedure
 
 # Acknowledgement
 

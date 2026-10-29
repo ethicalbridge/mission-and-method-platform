@@ -1,12 +1,41 @@
 {
+ "redirects": [
+  {
+   "file": "legal-templates-procedures.html",
+   "to": "legal-templates-policies.html",
+   "title": "Procedures"
+  }
+ ],
  "lead": "Editable Word templates for policies, procedures, contracts, consent forms and governance. Each one has model wording, highlighted fields to fill in and guidance boxes to help you adapt it to your organisation and country.",
  "categories": [
   {
    "id": "policies",
-   "name": "Policies",
+   "name": "Policies & procedures",
    "file": "legal-templates-policies.html",
-   "lead": "Policies state the principles and rules your organisation follows. They set expectations for decisions, behaviour and accountability across a topic.",
-   "intro": "Each policy comes with model wording, the commitments funders and partners look for, and clear steps for reporting and responding. Adapt it, have it approved, and review it every year.",
+   "lead": "Policies set out the rules and commitments your organisation follows. Procedures set out the steps people take to put them into practice: who does what, by when, and what is recorded.",
+   "intro": "Each card says what you get. A policy gives the rules. A policy and procedure gives the rules and the steps in one document. A procedure gives the steps for a policy, or for a situation that keeps coming up, with forms, logs and letters in the annexes.",
+   "legend": [
+    [
+     "Policy",
+     "The rules and commitments, with roles and what happens if they are broken."
+    ],
+    [
+     "Policy with procedure steps",
+     "A policy that also includes the key steps to follow."
+    ],
+    [
+     "Policy and procedure",
+     "The rules and the full step-by-step procedure in one document."
+    ],
+    [
+     "Procedure",
+     "The steps, owners, timescales and records, with templates in the annexes."
+    ],
+    [
+     "Notice",
+     "Information you publish for the people whose data you hold or who visit your website."
+    ]
+   ],
    "groups": [
     {
      "id": "conduct-safeguarding",
@@ -16,6 +45,16 @@
       "safeguarding-policy-and-procedure",
       "anti-harassment-intimidation-and-bullying-policy-and-procedure",
       "whistleblowing-policy-and-procedure",
+      "incident-reporting-procedure",
+      "complaints-and-feedback-procedure"
+     ]
+    },
+    {
+     "id": "people",
+     "name": "People",
+     "slugs": [
+      "safer-recruitment-procedure",
+      "disciplinary-and-grievance-procedure",
       "equality-diversity-and-inclusion-policy"
      ]
     },
@@ -27,6 +66,7 @@
       "conflict-of-interest-policy",
       "gift-acceptance-policy",
       "financial-controls-policy",
+      "finance-procedures",
       "reserves-policy",
       "procurement-policy",
       "expenses-and-per-diem-policy"
@@ -48,18 +88,20 @@
       "data-protection-policy",
       "privacy-notice",
       "cookie-policy",
+      "data-rights-request-procedure",
+      "data-breach-response-procedure",
       "it-and-information-security-policy",
       "social-media-and-communications-policy"
      ]
+    },
+    {
+     "id": "managing-policies",
+     "name": "Managing your policies",
+     "slugs": [
+      "policy-approval-and-review-procedure"
+     ]
     }
    ]
-  },
-  {
-   "id": "procedures",
-   "name": "Procedures",
-   "file": "legal-templates-procedures.html",
-   "lead": "Procedures explain the steps people take to carry out a policy or handle a recurring situation. They make responsibilities, handoffs and records clear.",
-   "intro": "Each procedure sets out who does what and by when, with logs, forms and letter wording in the annexes, so your team can act quickly when it matters."
   },
   {
    "id": "contracts",
@@ -111,8 +153,9 @@
   {
    "slug": "anti-harassment-intimidation-and-bullying-policy-and-procedure",
    "title": "Anti-Harassment, Intimidation and Bullying Policy and Procedure",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "How your organisation prevents harassment, sexual harassment, bullying, intimidation and discrimination, and how anyone can raise a concern and get a fair, timely and confidential response.",
    "pages": 14,
    "status": "new"
@@ -122,6 +165,7 @@
    "title": "Board Interest Declaration",
    "category": "Governance & compliance",
    "type": "Form",
+   "label": "Form",
    "description": "A declaration each board member completes when they join and every year, so that your organisation can see and manage any interest that could affect, or appear to affect, their judgement.",
    "pages": 8,
    "status": "updated"
@@ -131,6 +175,7 @@
    "title": "Co-founder Agreement",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "What the co-founders of your organisation agree about purpose, roles, decisions, ownership or governance seats, money and what happens if someone leaves, written down while everyone still gets on.",
    "pages": 14,
    "status": "new"
@@ -138,8 +183,9 @@
   {
    "slug": "code-of-conduct",
    "title": "Code of Conduct",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Code",
+   "label": "Code of conduct",
    "description": "The standards everyone who works with or for your organisation agrees to: respect, honesty, care for the people you serve, and safety for everyone.",
    "pages": 10,
    "status": "new"
@@ -147,8 +193,9 @@
   {
    "slug": "complaints-and-feedback-procedure",
    "title": "Complaints and Feedback Procedure",
-   "category": "Procedures",
+   "category": "Policies & procedures",
    "type": "Procedure",
+   "label": "Procedure",
    "description": "How anyone can tell your organisation what you are doing well and what you are getting wrong, safely and in a way that suits them, and how you respond, put things right and learn.",
    "pages": 12,
    "status": "updated"
@@ -156,8 +203,9 @@
   {
    "slug": "conflict-of-interest-policy",
    "title": "Conflict of Interest Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy with procedure steps",
    "description": "How your organisation identifies, declares, records and manages conflicts of interest, so that decisions are made fairly and in the organisation's best interests.",
    "pages": 14,
    "status": "updated"
@@ -165,8 +213,9 @@
   {
    "slug": "cookie-policy",
    "title": "Cookie Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Notice",
+   "label": "Notice",
    "description": "Explains to visitors which cookies and similar technologies your website uses, why, and how to accept, refuse or change them.",
    "pages": 8,
    "status": "new"
@@ -174,8 +223,9 @@
   {
    "slug": "data-breach-response-procedure",
    "title": "Data Breach Response Procedure",
-   "category": "Procedures",
+   "category": "Policies & procedures",
    "type": "Procedure",
+   "label": "Procedure",
    "description": "What your organisation does in the first hour, the first day and the first three days after personal information is lost, stolen, exposed or sent to the wrong person.",
    "pages": 12,
    "status": "new"
@@ -185,6 +235,7 @@
    "title": "Data Protection Impact Assessment",
    "category": "Governance & compliance",
    "type": "Assessment",
+   "label": "Assessment",
    "description": "A short, step-by-step form your organisation uses to spot and reduce privacy risks before starting a new project, system or data sharing arrangement.",
    "pages": 10,
    "status": "new"
@@ -192,8 +243,9 @@
   {
    "slug": "data-protection-policy",
    "title": "Data Protection Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy",
    "description": "How your organisation collects, uses, shares, protects and deletes personal information about the people you serve, your team and your supporters.",
    "pages": 18,
    "status": "new"
@@ -201,8 +253,9 @@
   {
    "slug": "data-rights-request-procedure",
    "title": "Data Rights Request Procedure",
-   "category": "Procedures",
+   "category": "Policies & procedures",
    "type": "Procedure",
+   "label": "Procedure",
    "description": "How your organisation recognises, logs and answers requests from people who want to see, correct, delete or control the personal information you hold about them.",
    "pages": 13,
    "status": "updated"
@@ -212,6 +265,7 @@
    "title": "Data Sharing Agreement",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "An agreement for your organisation and another organisation that share personal data, each deciding for itself how it uses that data. It sets out what is shared, why, how it is protected, and what each side does when something goes wrong.",
    "pages": 12,
    "status": "new"
@@ -221,8 +275,19 @@
    "title": "Delegation of Authority Matrix",
    "category": "Governance & compliance",
    "type": "Register",
+   "label": "Register",
    "description": "A single table of who at your organisation can approve which decisions, and up to what amount: spending, contracts, people, funding, banking, policies, legal matters and public statements.",
    "pages": 10,
+   "status": "new"
+  },
+  {
+   "slug": "disciplinary-and-grievance-procedure",
+   "title": "Disciplinary and Grievance Procedure",
+   "category": "Policies & procedures",
+   "type": "Procedure",
+   "label": "Procedure",
+   "description": "How your organisation deals fairly with concerns about an employee's conduct, and how employees can raise a problem about their own work and get a fair, timely answer.",
+   "pages": 17,
    "status": "new"
   },
   {
@@ -230,6 +295,7 @@
    "title": "Employment Contract",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "A clear written contract of employment for your organisation: the job, pay, hours, leave, conduct standards and how the employment can end, ready to adapt to the law where the employee works.",
    "pages": 15,
    "status": "new"
@@ -237,8 +303,9 @@
   {
    "slug": "environmental-policy",
    "title": "Environmental Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy",
    "description": "The practical steps your organisation takes to measure and reduce its environmental impact, to avoid harming the environment through its programmes, and to help the communities it serves cope with a changing climate.",
    "pages": 12,
    "status": "new"
@@ -246,8 +313,9 @@
   {
    "slug": "equality-diversity-and-inclusion-policy",
    "title": "Equality, Diversity and Inclusion Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy",
    "description": "How your organisation treats people fairly, welcomes difference and removes barriers, in the way you recruit and pay your team, run your programmes and involve the people you serve.",
    "pages": 12,
    "status": "new"
@@ -255,17 +323,29 @@
   {
    "slug": "expenses-and-per-diem-policy",
    "title": "Expenses and Per Diem Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "Clear, fair rules for what your organisation pays when people spend money or travel for its work, including per diems for staff, volunteers and the community members who take part in your activities.",
    "pages": 14,
    "status": "new"
   },
   {
+   "slug": "finance-procedures",
+   "title": "Finance Procedures",
+   "category": "Policies & procedures",
+   "type": "Procedure",
+   "label": "Procedure",
+   "description": "The step-by-step finance manual for your organisation: how you budget, approve and make payments, handle cash and mobile money, receive income, run payroll, close each month and prepare for audit, putting your Financial Controls Policy into practice.",
+   "pages": 20,
+   "status": "new"
+  },
+  {
    "slug": "financial-controls-policy",
    "title": "Financial Controls Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy",
    "description": "The rules your organisation follows to plan, approve, pay, record and report every unit of money, so that funds are safe, used as agreed and easy to account for.",
    "pages": 14,
    "status": "new"
@@ -273,8 +353,9 @@
   {
    "slug": "fraud-bribery-and-corruption-policy-and-procedure",
    "title": "Fraud, Bribery and Corruption Policy and Procedure",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "How your organisation prevents, spots and responds to fraud, theft, bribery, corruption, money laundering and the misuse of funds, including a step-by-step fraud response plan.",
    "pages": 15,
    "status": "new"
@@ -284,6 +365,7 @@
    "title": "Fundraising and Communications Consent Form",
    "category": "Consent forms",
    "type": "Form",
+   "label": "Form",
    "description": "A supporter sign-up and donor consent form that lets people choose exactly how your organisation may contact them, records tax relief and regular gifts, and explains how their data is used.",
    "pages": 7,
    "status": "new"
@@ -291,8 +373,9 @@
   {
    "slug": "gift-acceptance-policy",
    "title": "Gift Acceptance Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy",
    "description": "How your organisation handles gifts and hospitality offered to or by its people, and how it decides which donations to accept, check, restrict, refuse or return.",
    "pages": 12,
    "status": "new"
@@ -302,6 +385,7 @@
    "title": "Governing Body Terms of Reference",
    "category": "Governance & compliance",
    "type": "Terms of reference",
+   "label": "Terms of reference",
    "description": "How your board of trustees, directors or management committee works: what it decides, who sits on it, how it meets, and how it oversees the people who run the organisation day to day.",
    "pages": 14,
    "status": "new"
@@ -309,8 +393,9 @@
   {
    "slug": "incident-reporting-procedure",
    "title": "Incident Reporting Procedure",
-   "category": "Procedures",
+   "category": "Policies & procedures",
    "type": "Procedure",
+   "label": "Procedure",
    "description": "What everyone at your organisation does when something goes wrong: keep people safe, report it quickly to the right person, tell the authorities and funders on time, and learn from it.",
    "pages": 13,
    "status": "updated"
@@ -320,6 +405,7 @@
    "title": "Independent Contact Role Note",
    "category": "Governance & compliance",
    "type": "Role note",
+   "label": "Role note",
    "description": "Sets out the role of the trusted, independent person who receives concerns about the founder or safeguarding lead of your organisation, and covers urgent cases when the lead cannot be reached.",
    "pages": 9,
    "status": "new"
@@ -329,6 +415,7 @@
    "title": "Independent Contractor Agreement",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "A clear agreement for your organisation to engage an individual consultant or freelancer: the work, fees, deadlines, ownership of what is produced, conduct standards and how either side can end it.",
    "pages": 14,
    "status": "updated"
@@ -338,6 +425,7 @@
    "title": "Information Sharing Consent Form",
    "category": "Consent forms",
    "type": "Form",
+   "label": "Form",
    "description": "Records a person's choice about whether your organisation may share their information with named organisations, for example to refer them to other services.",
    "pages": 8,
    "status": "updated"
@@ -345,8 +433,9 @@
   {
    "slug": "it-and-information-security-policy",
    "title": "IT and Information Security Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy with procedure steps",
    "description": "The practical rules your organisation follows to keep its accounts, devices and information safe: from passwords and phones to backups, AI tools and what happens when someone leaves.",
    "pages": 15,
    "status": "new"
@@ -356,6 +445,7 @@
    "title": "Legal Review Checklist",
    "category": "Governance & compliance",
    "type": "Checklist",
+   "label": "Checklist",
    "description": "A yes-or-no checklist that your organisation completes before adopting a new document, and once a year as a legal health check, and then takes to a lawyer or adviser with a short brief of questions.",
    "pages": 10,
    "status": "updated"
@@ -365,6 +455,7 @@
    "title": "Mutual Confidentiality Agreement",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "A short, balanced agreement that lets your organisation and another organisation share confidential information safely while they explore working together.",
    "pages": 8,
    "status": "updated"
@@ -372,8 +463,9 @@
   {
    "slug": "partner-due-diligence-and-sanctions-screening-policy",
    "title": "Partner Due Diligence and Sanctions Screening Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "How your organisation gets to know its partners, sub-grantees, major suppliers and large donors, screens them against sanctions lists, and supports small local partners rather than excluding them.",
    "pages": 15,
    "status": "new"
@@ -383,6 +475,7 @@
    "title": "Partner Due Diligence Questionnaire",
    "category": "Governance & compliance",
    "type": "Form",
+   "label": "Form",
    "description": "A plain-language questionnaire for partners and sub-grantees, with a section for your organisation to record its risk assessment, conditions, support and approval.",
    "pages": 13,
    "status": "new"
@@ -392,6 +485,7 @@
    "title": "Partnership Memorandum of Understanding",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "A memorandum of understanding (MOU) for two or more organisations working together. It records a shared purpose, who does what and how decisions are made, and states clearly which few commitments are legally binding.",
    "pages": 13,
    "status": "updated"
@@ -401,15 +495,27 @@
    "title": "Photo and Story Consent Form",
    "category": "Consent forms",
    "type": "Form",
+   "label": "Form",
    "description": "A clear, fair way to ask people whether your organisation may use their photo, video, voice or story, for which purposes, and how they want to be identified.",
    "pages": 9,
    "status": "updated"
   },
   {
+   "slug": "policy-approval-and-review-procedure",
+   "title": "Policy Approval and Review Procedure",
+   "category": "Policies & procedures",
+   "type": "Procedure",
+   "label": "Procedure",
+   "description": "How your organisation decides which policies it needs, drafts, consults on, approves, shares, stores and reviews them, so that everyone works from one current, approved version.",
+   "pages": 15,
+   "status": "new"
+  },
+  {
    "slug": "privacy-notice",
    "title": "Privacy Notice",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Notice",
+   "label": "Notice",
    "description": "Tells the people whose information your organisation holds what you collect, why, who you share it with, how long you keep it and how they can use their rights.",
    "pages": 11,
    "status": "updated"
@@ -417,8 +523,9 @@
   {
    "slug": "procurement-policy",
    "title": "Procurement Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "How your organisation buys goods, services and works fairly, openly and at the best value, so every purchase can stand up to a funder's audit.",
    "pages": 14,
    "status": "new"
@@ -428,6 +535,7 @@
    "title": "Records Retention Schedule",
    "category": "Governance & compliance",
    "type": "Register",
+   "label": "Register",
    "description": "How long your organisation keeps each type of record, who is responsible for it, and what happens when the time is up.",
    "pages": 11,
    "status": "updated"
@@ -437,6 +545,7 @@
    "title": "Research Participation Consent Form",
    "category": "Consent forms",
    "type": "Form",
+   "label": "Form",
    "description": "An information sheet and consent form for people taking part in research, evaluations, surveys, interviews or focus groups run by your organisation.",
    "pages": 8,
    "status": "updated"
@@ -444,8 +553,9 @@
   {
    "slug": "reserves-policy",
    "title": "Reserves Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy",
    "description": "Why your organisation holds reserves, how much it aims to hold, how it calculates its free reserves, and who can decide to build or use them.",
    "pages": 12,
    "status": "new"
@@ -455,6 +565,7 @@
    "title": "Risk Register",
    "category": "Governance & compliance",
    "type": "Register",
+   "label": "Register",
    "description": "How your organisation identifies, scores and manages the risks that could stop it achieving its mission, with a ready-to-use register, ten worked examples and short plans for the most serious risks.",
    "pages": 12,
    "status": "new"
@@ -462,17 +573,29 @@
   {
    "slug": "safeguarding-policy-and-procedure",
    "title": "Safeguarding Policy and Procedure",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "How your organisation keeps children, adults at risk and everyone you work with safe from harm, including sexual exploitation, abuse and harassment, and what you do when someone raises a concern.",
-   "pages": 18,
+   "pages": 19,
    "status": "updated"
+  },
+  {
+   "slug": "safer-recruitment-procedure",
+   "title": "Safer Recruitment Procedure",
+   "category": "Policies & procedures",
+   "type": "Procedure",
+   "label": "Procedure",
+   "description": "How your organisation recruits staff, volunteers, interns, board members and contractors fairly and safely, with checks that match the risks of each role.",
+   "pages": 16,
+   "status": "new"
   },
   {
    "slug": "services-agreement",
    "title": "Services Agreement",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "A clear contract for paid services between your organisation and another organisation. It works both ways: when you buy services from a supplier, and when you sell your own services to a client.",
    "pages": 16,
    "status": "updated"
@@ -480,8 +603,9 @@
   {
    "slug": "social-media-and-communications-policy",
    "title": "Social Media and Communications Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy",
+   "label": "Policy with procedure steps",
    "description": "How your organisation runs its social media and public communications safely and honestly: who posts, how you protect the people in your stories, how staff use personal accounts, and what you do in a crisis.",
    "pages": 13,
    "status": "new"
@@ -491,6 +615,7 @@
    "title": "Sub-grant Agreement",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "The agreement your organisation signs when it passes grant funds to a partner organisation to deliver a project. It covers the budget, payments in tranches, reporting, the head donor's conditions, compliance and what happens to unspent funds.",
    "pages": 14,
    "status": "new"
@@ -498,8 +623,9 @@
   {
    "slug": "travel-safety-and-duty-of-care-policy",
    "title": "Travel Safety and Duty of Care Policy",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "How your organisation keeps people safe when they travel for its work: assessing risks before travel, staying in contact, responding to emergencies and giving everyone, local or international, the same care.",
    "pages": 16,
    "status": "new"
@@ -509,6 +635,7 @@
    "title": "Volunteer Agreement",
    "category": "Contracts & agreements",
    "type": "Agreement",
+   "label": "Agreement",
    "description": "A volunteer role description and agreement for your organisation: what you offer your volunteers, what you ask of them, and how you look after each other, without creating an employment relationship.",
    "pages": 12,
    "status": "new"
@@ -518,6 +645,7 @@
    "title": "Website Terms of Use",
    "category": "Contracts & agreements",
    "type": "Terms",
+   "label": "Terms",
    "description": "The terms that apply when people use your website, with optional sections for accounts, user content, online donations and a simple shop.",
    "pages": 10,
    "status": "new"
@@ -525,8 +653,9 @@
   {
    "slug": "whistleblowing-policy-and-procedure",
    "title": "Whistleblowing Policy and Procedure",
-   "category": "Policies",
+   "category": "Policies & procedures",
    "type": "Policy and procedure",
+   "label": "Policy and procedure",
    "description": "How anyone can raise a concern about wrongdoing at your organisation safely, including anonymously or outside the organisation, how you assess and investigate it, and how you protect the people who speak up.",
    "pages": 14,
    "status": "new"

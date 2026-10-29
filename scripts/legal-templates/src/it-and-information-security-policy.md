@@ -223,7 +223,7 @@ The IT lead keeps the key accounts list, Annexes A and B, backup test and access
 
 # If this policy is breached
 
-If you break these rules, we first try to understand why: often a rule is unclear or a tool does not fit. Depending on the case, we may give guidance or training, remove access, or act under our disciplinary procedure, up to dismissal or ending a contract or volunteer role. Deliberate unauthorised access may also be a criminal offence.
+If you break these rules, we first try to understand why: often a rule is unclear or a tool does not fit. Depending on the case, we may give guidance or training, remove access, or act under our Disciplinary and Grievance Procedure, up to dismissal or ending a contract or volunteer role. Deliberate unauthorised access may also be a criminal offence.
 
 Nobody is penalised for reporting an incident or a mistake promptly. Hiding one makes the harm worse.
 

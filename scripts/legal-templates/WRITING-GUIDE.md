@@ -80,7 +80,7 @@ Body:
 
 Policies: Code of Conduct · Safeguarding Policy and Procedure · Anti-Harassment, Intimidation and Bullying Policy and Procedure · Fraud, Bribery and Corruption Policy and Procedure · Whistleblowing Policy and Procedure · Conflict of Interest Policy · Gift Acceptance Policy · Financial Controls Policy · Reserves Policy · Procurement Policy · Partner Due Diligence and Sanctions Screening Policy · Expenses and Per Diem Policy · Travel Safety and Duty of Care Policy · Data Protection Policy · Privacy Notice · Cookie Policy · IT and Information Security Policy · Social Media and Communications Policy · Equality, Diversity and Inclusion Policy · Environmental Policy
 
-Procedures: Incident Reporting Procedure · Complaints and Feedback Procedure · Data Rights Request Procedure · Data Breach Response Procedure
+Procedures: Incident Reporting Procedure · Complaints and Feedback Procedure · Data Rights Request Procedure · Data Breach Response Procedure · Disciplinary and Grievance Procedure · Safer Recruitment Procedure · Finance Procedures · Policy Approval and Review Procedure
 
 Contracts & agreements: Employment Contract · Co-founder Agreement · Volunteer Agreement · Independent Contractor Agreement · Services Agreement · Mutual Confidentiality Agreement · Partnership Memorandum of Understanding · Sub-grant Agreement · Data Sharing Agreement · Website Terms of Use
 

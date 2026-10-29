@@ -230,7 +230,7 @@ If an account is hacked, the second administrator changes passwords, contacts th
 
 # If this policy is breached
 
-Report breaches to the communications lead, or, if they involve safeguarding, to the safeguarding lead, within [[24 hours]]. We may remove content, remove access to accounts, and take action under our Code of Conduct, disciplinary procedure or the person's agreement with us. Posting content that puts someone at risk, or sharing confidential information, may be treated as serious misconduct.
+Report breaches to the communications lead, or, if they involve safeguarding, to the safeguarding lead, within [[24 hours]]. We may remove content, remove access to accounts, and take action under our Code of Conduct, Disciplinary and Grievance Procedure or the person's agreement with us. Posting content that puts someone at risk, or sharing confidential information, may be treated as serious misconduct.
 
 # Monitoring and review
 

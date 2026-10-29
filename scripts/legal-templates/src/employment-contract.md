@@ -11,7 +11,7 @@ purpose: A written employment contract records what you and your employee have a
 who_asks: The law in most countries; new employees; labour inspectors and tax and social security authorities; funders and auditors in due diligence; banks and immigration authorities
 time: 3–5 hours to adapt, plus local legal review
 course: Course 2 · Organise, Module 4 (people and culture)
-related: Code of Conduct; Safeguarding Policy and Procedure; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Whistleblowing Policy and Procedure; Fraud, Bribery and Corruption Policy and Procedure; Data Protection Policy; Expenses and Per Diem Policy; Independent Contractor Agreement
+related: Code of Conduct; Safeguarding Policy and Procedure; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Whistleblowing Policy and Procedure; Fraud, Bribery and Corruption Policy and Procedure; Data Protection Policy; Expenses and Per Diem Policy; Independent Contractor Agreement; Disciplinary and Grievance Procedure; Safer Recruitment Procedure
 control: none
 history: no
 ---
@@ -252,7 +252,7 @@ The end of a grant does not automatically end an employment contract. In many co
 
 ## 22. Disciplinary and grievance procedures
 
-1. Our disciplinary procedure, at [[location]], explains how we deal with concerns about conduct or performance. It does not form part of this contract.
+1. Our Disciplinary and Grievance Procedure, at [[location]], explains how we deal with concerns about conduct or performance. It does not form part of this contract.
 2. Before any disciplinary action, we will tell you the concern in writing, hear your response at a meeting where you may bring [[a colleague or representative]], and give a written decision with a right of appeal.
 3. We may suspend you on full pay while we investigate a serious concern. Suspension is not a finding of wrongdoing.
 4. If you have a grievance about your work, raise it first with your manager. If that does not resolve it, or the grievance is about your manager, write to [[role, for example the chair of the board]]. We will meet you within [[ten working days]] and reply in writing.

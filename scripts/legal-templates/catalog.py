@@ -10,6 +10,9 @@ OVERRIDE = {
  'website-terms-of-use': 'The terms that apply when people use your website, with optional sections for accounts, user content, online donations and a simple shop.',
  'cookie-policy': 'Explains to visitors which cookies and similar technologies your website uses, why, and how to accept, refuse or change them.',
 }
+LABEL_OVERRIDE = {'it-and-information-security-policy': 'Policy with procedure steps',
+                  'social-media-and-communications-policy': 'Policy with procedure steps',
+                  'code-of-conduct': 'Code of conduct'}
 def card_text(s):
     s = s.replace("the [[Organisation name]] website", "your website")
     s = s.replace("[[Organisation name]]'s", "your organisation's").replace("[[Organisation name]]", "your organisation")
@@ -20,18 +23,22 @@ def card_text(s):
     return s
 
 CATS = [
- {'id': 'policies', 'name': 'Policies', 'file': 'legal-templates-policies.html',
-  'lead': 'Policies state the principles and rules your organisation follows. They set expectations for decisions, behaviour and accountability across a topic.',
-  'intro': 'Each policy comes with model wording, the commitments funders and partners look for, and clear steps for reporting and responding. Adapt it, have it approved, and review it every year.',
+ {'id': 'policies', 'name': 'Policies & procedures', 'file': 'legal-templates-policies.html',
+  'lead': 'Policies set out the rules and commitments your organisation follows. Procedures set out the steps people take to put them into practice: who does what, by when, and what is recorded.',
+  'intro': 'Each card says what you get. A policy gives the rules. A policy and procedure gives the rules and the steps in one document. A procedure gives the steps for a policy, or for a situation that keeps coming up, with forms, logs and letters in the annexes.',
+  'legend': [['Policy', 'The rules and commitments, with roles and what happens if they are broken.'],
+             ['Policy with procedure steps', 'A policy that also includes the key steps to follow.'],
+             ['Policy and procedure', 'The rules and the full step-by-step procedure in one document.'],
+             ['Procedure', 'The steps, owners, timescales and records, with templates in the annexes.'],
+             ['Notice', 'Information you publish for the people whose data you hold or who visit your website.']],
   'groups': [
-   {'id': 'conduct-safeguarding', 'name': 'Conduct and safeguarding', 'slugs': ['code-of-conduct','safeguarding-policy-and-procedure','anti-harassment-intimidation-and-bullying-policy-and-procedure','whistleblowing-policy-and-procedure','equality-diversity-and-inclusion-policy']},
-   {'id': 'integrity-money', 'name': 'Integrity and money', 'slugs': ['fraud-bribery-and-corruption-policy-and-procedure','conflict-of-interest-policy','gift-acceptance-policy','financial-controls-policy','reserves-policy','procurement-policy','expenses-and-per-diem-policy']},
+   {'id': 'conduct-safeguarding', 'name': 'Conduct and safeguarding', 'slugs': ['code-of-conduct','safeguarding-policy-and-procedure','anti-harassment-intimidation-and-bullying-policy-and-procedure','whistleblowing-policy-and-procedure','incident-reporting-procedure','complaints-and-feedback-procedure']},
+   {'id': 'people', 'name': 'People', 'slugs': ['safer-recruitment-procedure','disciplinary-and-grievance-procedure','equality-diversity-and-inclusion-policy']},
+   {'id': 'integrity-money', 'name': 'Integrity and money', 'slugs': ['fraud-bribery-and-corruption-policy-and-procedure','conflict-of-interest-policy','gift-acceptance-policy','financial-controls-policy','finance-procedures','reserves-policy','procurement-policy','expenses-and-per-diem-policy']},
    {'id': 'partners-operations', 'name': 'Partners and operations', 'slugs': ['partner-due-diligence-and-sanctions-screening-policy','travel-safety-and-duty-of-care-policy','environmental-policy']},
-   {'id': 'data-digital', 'name': 'Data and digital', 'slugs': ['data-protection-policy','privacy-notice','cookie-policy','it-and-information-security-policy','social-media-and-communications-policy']},
+   {'id': 'data-digital', 'name': 'Data and digital', 'slugs': ['data-protection-policy','privacy-notice','cookie-policy','data-rights-request-procedure','data-breach-response-procedure','it-and-information-security-policy','social-media-and-communications-policy']},
+   {'id': 'managing-policies', 'name': 'Managing your policies', 'slugs': ['policy-approval-and-review-procedure']},
   ]},
- {'id': 'procedures', 'name': 'Procedures', 'file': 'legal-templates-procedures.html',
-  'lead': 'Procedures explain the steps people take to carry out a policy or handle a recurring situation. They make responsibilities, handoffs and records clear.',
-  'intro': 'Each procedure sets out who does what and by when, with logs, forms and letter wording in the annexes, so your team can act quickly when it matters.'},
  {'id': 'contracts', 'name': 'Contracts & agreements', 'file': 'legal-templates-contracts-and-agreements.html',
   'lead': 'Contracts and agreements record what parties expect from one another, including work, payment, information, rights and ways to end or resolve a relationship.',
   'intro': 'Each agreement has full clause wording, schedules and signature blocks, with guidance on the clauses that change most from country to country. Have the final version checked locally before anyone signs.',
@@ -58,10 +65,17 @@ def main(pdf_dir):
         if os.path.exists(p):
             out = subprocess.run(['pdfinfo', p], capture_output=True, text=True).stdout
             pages = int(re.search(r'Pages:\s+(\d+)', out).group(1))
-        temps.append({'slug': slug, 'title': g('title'), 'category': g('category'), 'type': g('type'),
+        cat_name = 'Policies & procedures' if g('category') in ('Policies', 'Procedures') else g('category')
+        typ = g('type'); tl = typ.lower()
+        if 'policy' in tl and 'procedure' in tl: label = 'Policy and procedure'
+        elif tl == 'procedure': label = 'Procedure'
+        elif tl == 'policy' and re.search(r'^# Procedure', s, re.M): label = 'Policy with procedure steps'
+        else: label = typ
+        label = LABEL_OVERRIDE.get(slug, label)
+        temps.append({'slug': slug, 'title': g('title'), 'category': cat_name, 'type': typ, 'label': label,
                       'description': OVERRIDE.get(slug) or card_text(g('summary')), 'pages': pages,
                       'status': 'updated' if slug in OLD else 'new'})
-    cat = {'lead': 'Editable Word templates for policies, procedures, contracts, consent forms and governance. Each one has model wording, highlighted fields to fill in and guidance boxes to help you adapt it to your organisation and country.',
+    cat = {'redirects': [{'file': 'legal-templates-procedures.html', 'to': 'legal-templates-policies.html', 'title': 'Procedures'}], 'lead': 'Editable Word templates for policies, procedures, contracts, consent forms and governance. Each one has model wording, highlighted fields to fill in and guidance boxes to help you adapt it to your organisation and country.',
            'categories': CATS, 'templates': temps}
     json.dump(cat, sys.stdout, ensure_ascii=False, indent=1)
 
