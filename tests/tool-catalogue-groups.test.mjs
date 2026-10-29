@@ -25,5 +25,5 @@ test('every standalone tool page is linked from the Impact Tools catalogue',()=>
  const pages=readdirSync(new URL('../assets/tools/',import.meta.url)).filter(name=>name.endsWith('.html')).sort();
  const linked=softwareProducts.filter(tool=>availableToolSlugs.includes(tool.slug)&&tool.launchUrl?.startsWith('assets/tools/')).map(tool=>tool.launchUrl.split('/').at(-1)).sort();
  assert.deepEqual(linked,pages);
- assert.equal(softwareProducts.filter(tool=>availableToolSlugs.includes(tool.slug)&&tool.launchUrl?.startsWith('https://')).length,1);
+ assert.equal(softwareProducts.filter(tool=>availableToolSlugs.includes(tool.slug)&&tool.launchUrl?.startsWith('https://')).length,0); // every tool, including the Ethical Bridge CRM, now lives on the platform
 });

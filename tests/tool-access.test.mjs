@@ -13,7 +13,7 @@ test('the guest code grants browser access only to the completed tools',()=>{
  assert.equal(needsToolAccess('gantt'),false);
  assert.equal(needsToolAccess('donor-mapping'),false);
  assert.equal(softwareProducts.find(p=>p.slug==='theory-of-change').launchUrl,'assets/tools/Theory-of-Change-Builder.html');
- assert.equal(softwareProducts.find(p=>p.slug==='ethical-bridge-crm').launchUrl,'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/');
+ assert.equal(softwareProducts.find(p=>p.slug==='ethical-bridge-crm').launchUrl,'assets/tools/Ethical-Bridge-CRM.html');
  assert.equal(softwareProducts.find(p=>p.slug==='donor-mapping').launchUrl,'assets/tools/Donor-Mapping.html');
  assert.equal(softwareProducts.find(p=>p.slug==='donor-tracking').launchUrl,'assets/tools/Donor-Tracking.html');
  assert.equal(softwareProducts.find(p=>p.slug==='donor-reference-guide').launchUrl,'assets/tools/Donor-Reference-Guide.html');

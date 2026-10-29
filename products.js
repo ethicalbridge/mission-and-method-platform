@@ -12,7 +12,7 @@ export const invitationToolSlugs=['theory-of-change','ethical-bridge-crm'];
 export const previewToolSlugs=['donor-mapping','donor-tracking','donor-reference-guide','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona','policy-management','marketing-social-planner'];
 const launchUrls={
  'theory-of-change':'assets/tools/Theory-of-Change-Builder.html',
- 'ethical-bridge-crm':'https://ethical-bridge-crm.open-pike-3973.chatgpt.site/',
+ 'ethical-bridge-crm':'assets/tools/Ethical-Bridge-CRM.html',
  'donor-mapping':'assets/tools/Donor-Mapping.html',
  'donor-tracking':'assets/tools/Donor-Tracking.html',
  'donor-reference-guide':'assets/tools/Donor-Reference-Guide.html',
