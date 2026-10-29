@@ -1,5 +1,5 @@
-import base from './m00-start-here.js?v=c831b856d';
-import {adapt} from './adapt.js?v=c831b856d';
+import base from './m00-start-here.js?v=c8bd65a76';
+import {adapt} from './adapt.js?v=c8bd65a76';
 // Entrepreneurs' version of m00: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'Start Here: Your Founder Journey',

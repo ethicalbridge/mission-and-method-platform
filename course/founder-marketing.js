@@ -33,7 +33,7 @@ export const lessons={
      "href": "legal-templates-governance-and-compliance.html",
      "label": "Governance and compliance templates",
      "items": [
-      "Legal review checklist"
+      "Legal Review Checklist"
      ]
     }
    ]
@@ -59,9 +59,9 @@ export const lessons={
      "href": "legal-templates-contracts-and-agreements.html",
      "label": "Contract and agreement templates",
      "items": [
-      "Services agreement",
-      "Independent contractor agreement",
-      "Partnership memorandum"
+      "Services Agreement",
+      "Independent Contractor Agreement",
+      "Partnership Memorandum of Understanding"
      ]
     }
    ]
@@ -82,14 +82,14 @@ export const lessons={
      "href": "legal-templates-governance-and-compliance.html",
      "label": "Governance and compliance templates",
      "items": [
-      "Board interest declaration"
+      "Board Interest Declaration"
      ]
     },
     {
      "href": "legal-templates-policies.html",
      "label": "Policy templates",
      "items": [
-      "Conflict of interest policy"
+      "Conflict of Interest Policy"
      ]
     }
    ]
@@ -108,9 +108,9 @@ export const lessons={
      "href": "legal-templates-contracts-and-agreements.html",
      "label": "Contract and agreement templates",
      "items": [
-      "Independent contractor agreement",
-      "Services agreement",
-      "Mutual confidentiality agreement"
+      "Independent Contractor Agreement",
+      "Services Agreement",
+      "Mutual Confidentiality Agreement"
      ]
     }
    ]
@@ -124,9 +124,9 @@ export const lessons={
      "href": "legal-templates-policies.html",
      "label": "Policy templates",
      "items": [
-      "Safeguarding policy",
-      "Privacy notice",
-      "Conflict of interest policy"
+      "Safeguarding Policy and Procedure",
+      "Privacy Notice",
+      "Conflict of Interest Policy"
      ]
     }
    ]
@@ -140,15 +140,15 @@ export const lessons={
      "href": "legal-templates-policies.html",
      "label": "Policy templates",
      "items": [
-      "Safeguarding policy",
-      "Privacy notice"
+      "Safeguarding Policy and Procedure",
+      "Privacy Notice"
      ]
     },
     {
      "href": "legal-templates-consent-forms.html",
      "label": "Consent form templates",
      "items": [
-      "Photo and story consent"
+      "Photo and Story Consent Form"
      ]
     }
    ]
@@ -169,7 +169,7 @@ export const lessons={
      "href": "legal-templates-governance-and-compliance.html",
      "label": "Governance and compliance templates",
      "items": [
-      "Records retention schedule"
+      "Records Retention Schedule"
      ]
     }
    ]
@@ -183,8 +183,8 @@ export const lessons={
      "href": "legal-templates-procedures.html",
      "label": "Procedure templates",
      "items": [
-      "Incident reporting procedure",
-      "Complaints procedure"
+      "Incident Reporting Procedure",
+      "Complaints and Feedback Procedure"
      ]
     }
    ]
@@ -198,15 +198,15 @@ export const lessons={
      "href": "legal-templates-consent-forms.html",
      "label": "Consent form templates",
      "items": [
-      "Research participation consent",
-      "Information sharing consent"
+      "Research Participation Consent Form",
+      "Information Sharing Consent Form"
      ]
     },
     {
      "href": "legal-templates-policies.html",
      "label": "Policy templates",
      "items": [
-      "Privacy notice"
+      "Privacy Notice"
      ]
     }
    ]
@@ -220,7 +220,7 @@ export const lessons={
      "href": "legal-templates-procedures.html",
      "label": "Procedure templates",
      "items": [
-      "Complaints procedure"
+      "Complaints and Feedback Procedure"
      ]
     }
    ]
@@ -234,15 +234,15 @@ export const lessons={
      "href": "legal-templates-policies.html",
      "label": "Policy templates",
      "items": [
-      "Privacy notice",
-      "Safeguarding policy"
+      "Privacy Notice",
+      "Safeguarding Policy and Procedure"
      ]
     },
     {
      "href": "legal-templates-procedures.html",
      "label": "Procedure templates",
      "items": [
-      "Complaints procedure"
+      "Complaints and Feedback Procedure"
      ]
     }
    ]
@@ -256,7 +256,7 @@ export const lessons={
      "href": "legal-templates-consent-forms.html",
      "label": "Consent form templates",
      "items": [
-      "Photo and story consent"
+      "Photo and Story Consent Form"
      ]
     }
    ]
@@ -270,7 +270,7 @@ export const lessons={
      "href": "legal-templates-policies.html",
      "label": "Policy templates",
      "items": [
-      "Privacy notice"
+      "Privacy Notice"
      ]
     }
    ]
@@ -289,7 +289,7 @@ export const lessons={
      "href": "legal-templates-procedures.html",
      "label": "Procedure templates",
      "items": [
-      "Incident reporting procedure"
+      "Incident Reporting Procedure"
      ]
     }
    ]
@@ -310,21 +310,21 @@ export const lessons={
      "href": "legal-templates-policies.html",
      "label": "Policy templates",
      "items": [
-      "Conflict of interest policy"
+      "Conflict of Interest Policy"
      ]
     },
     {
      "href": "legal-templates-governance-and-compliance.html",
      "label": "Governance and compliance templates",
      "items": [
-      "Board interest declaration"
+      "Board Interest Declaration"
      ]
     },
     {
      "href": "legal-templates-contracts-and-agreements.html",
      "label": "Contract and agreement templates",
      "items": [
-      "Services agreement"
+      "Services Agreement"
      ]
     }
    ]

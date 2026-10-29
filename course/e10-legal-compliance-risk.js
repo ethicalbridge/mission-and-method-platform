@@ -1,5 +1,5 @@
-import base from './m10-legal-compliance-risk.js?v=c831b856d';
-import {adapt} from './adapt.js?v=c831b856d';
+import base from './m10-legal-compliance-risk.js?v=c8bd65a76';
+import {adapt} from './adapt.js?v=c8bd65a76';
 // Entrepreneurs' version of m10: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:`Legal, Compliance, Policies & Risk`,
@@ -296,7 +296,7 @@ const T={all:'legal-templates.html',policies:'legal-templates-policies.html',pro
 const NAMES={all:'All legal templates',policies:'Policy templates',procedures:'Procedure templates',contracts:'Contract and agreement templates',consent:'Consent form templates',governance:'Governance and compliance templates'};
 const tpl=(...groups)=>({links:groups.map(([k,items])=>({href:T[k],label:NAMES[k],items:items||[]}))});
 const READING={
- 'legal-map':{templates:tpl(['governance',['Legal review checklist','Records retention schedule']],['all']),
+ 'legal-map':{templates:tpl(['governance',['Legal Review Checklist','Records Retention Schedule']],['all']),
   anatomy:{after:1,title:'Areas on your legal map',intro:'Most new initiatives meet the same areas. Not all of them will apply to you, and the rules in each depend on where you operate.',cols:['Area','What it usually covers','In the bakery'],rows:[
    ['Registration and governance','Registering your legal form, founding documents, yearly filings, who may sign for you','Informal for the three-month pilot, then registering as a company with a social purpose'],
    ['Tax','Registering for tax, sales tax or VAT, keeping records, filing returns','Registered for tax before the first sale; the accountant files the returns'],
@@ -306,8 +306,8 @@ const READING={
    ['Safeguarding','Protecting the children and adults at risk you work with','Trainees aged 17 and the mentors who supervise them'],
    ['Fundraising, consumer and advertising rules','Grant conditions, donations, selling to the public, honest claims','The youth-fund grant conditions; no “homemade” claim on bought-in products'],
    ['Insurance','Cover the law or your contracts require','Public liability and product insurance for the stall']]}},
- 'policy-needs':{templates:tpl(['policies',['Privacy notice','Safeguarding policy','Conflict of interest policy']],['procedures',['Incident reporting procedure','Complaints procedure','Data rights request procedure']],['all'])},
- contracts:{templates:tpl(['contracts',['Services agreement','Independent contractor agreement','Mutual confidentiality agreement','Partnership memorandum']]),
+ 'policy-needs':{templates:tpl(['policies',['Privacy Notice','Safeguarding Policy and Procedure','Conflict of Interest Policy']],['procedures',['Incident Reporting Procedure','Complaints and Feedback Procedure','Data Rights Request Procedure']],['all'])},
+ contracts:{templates:tpl(['contracts',['Co-founder Agreement','Employment Contract','Volunteer Agreement','Independent Contractor Agreement','Services Agreement','Mutual Confidentiality Agreement','Partnership Memorandum of Understanding','Sub-grant Agreement','Data Sharing Agreement']]),
   anatomy:{after:0,title:'Agreements a new initiative often signs',intro:'You may sign several of these before you are fully set up. Each one settles different questions.',cols:['Agreement','What it settles','In the bakery'],rows:[
    ['Co-founder agreement','Who owns what, who does what, how you decide, what happens if a founder leaves','Shares, roles and a leaving clause for the two co-founders'],
    ['Lease or rental','Use of a space, cost, length, who pays for damage','The shared-kitchen slot and the market pitch'],
@@ -316,14 +316,14 @@ const READING={
    ['Partnership agreement or memorandum of understanding','Who does what together, and whether it is legally binding','Referrals from the youth centre'],
    ['Employment, traineeship and volunteer agreements','Role, pay, hours, conduct, how it ends','Each trainee’s six-month agreement; the volunteer mentors'],
    ['Data-sharing agreement','What personal data is shared, why and how it is protected','Referral information from the youth centre']]}},
- 'core-policies':{templates:tpl(['policies',['Conflict of interest policy']],['governance',['Board interest declaration']]),
+ 'core-policies':{templates:tpl(['policies',['Code of Conduct','Conflict of Interest Policy','Fraud, Bribery and Corruption Policy and Procedure','Anti-Harassment, Intimidation and Bullying Policy and Procedure']],['governance',['Board Interest Declaration']]),
   anatomy:{after:1,title:'The core set',intro:'Four short policies cover most of what a new team needs. Write them before habits form.',cols:['Policy','What it says','In the bakery'],rows:[
    ['Code of conduct','The behaviour expected of everyone involved','Respect in the kitchen, care with trainees, report any concern'],
    ['Conflict of interest','Declare personal interests and step out of decisions they could sway','A co-founder’s cousin supplies flour, so the other co-founder decides on the order'],
    ['Anti-fraud, bribery and corruption','Fraud, bribes and improper gifts are never accepted; how money is controlled; how to report','Two people count the stall’s takings; no extra “fee” to speed up a licence'],
    ['Anti-harassment and bullying','Everyone is protected, with a safe route for complaints','A trainee can go to the youth-centre manager, not only to the founders']]}},
- safeguarding:{templates:tpl(['policies',['Safeguarding policy']],['consent',['Photo and story consent']],['procedures',['Incident reporting procedure']])},
- 'data-protection':{templates:tpl(['policies',['Privacy notice']],['procedures',['Data rights request procedure']],['consent',['Information sharing consent','Research participation consent']],['governance',['Records retention schedule']]),
+ safeguarding:{templates:tpl(['policies',['Safeguarding Policy and Procedure','Code of Conduct','Whistleblowing Policy and Procedure']],['consent',['Photo and Story Consent Form']],['procedures',['Incident Reporting Procedure']])},
+ 'data-protection':{templates:tpl(['policies',['Data Protection Policy','Privacy Notice']],['procedures',['Data Rights Request Procedure','Data Breach Response Procedure']],['consent',['Information Sharing Consent Form','Research Participation Consent Form']],['governance',['Records Retention Schedule','Data Protection Impact Assessment']]),
   anatomy:{after:0,title:'The principles in practice',intro:'The wording differs from country to country, but these principles appear in most data protection laws.',cols:['Principle','What it means','In the bakery'],rows:[
    ['A clear, lawful purpose','Know why you collect each piece of information, and on what legal basis','Trainee records, to run the traineeship and pay wages'],
    ['Only what you need','Do not collect information “just in case”','No copies of school reports; only a name and phone number for cake orders'],
@@ -331,15 +331,15 @@ const READING={
    ['No longer than needed','Delete it when its purpose ends','Cake-order lists deleted after three months'],
    ['Open with people','Tell people what you do with their information','A short privacy notice at the stall and in the traineeship pack'],
    ['People’s rights','Let people see, correct or delete their information','A trainee can ask for a copy of their record']]}},
- whistleblowing:{templates:tpl(['procedures',['Incident reporting procedure','Complaints procedure']])},
- procedures:{templates:tpl(['procedures',['Incident reporting procedure','Complaints procedure','Data rights request procedure']]),
+ whistleblowing:{templates:tpl(['procedures',['Incident Reporting Procedure','Complaints and Feedback Procedure']])},
+ procedures:{templates:tpl(['procedures',['Incident Reporting Procedure','Complaints and Feedback Procedure','Data Rights Request Procedure']]),
   anatomy:{after:0,title:'Parts of a usable procedure',intro:'The same five parts work for almost any task. The example is how the bakery labels a batch.',cols:['Part','What it says','In the bakery: labelling a batch'],rows:[
    ['What starts it','The moment the procedure applies','A batch comes out of the oven'],
    ['Who','Who does it, and who checks','The person who baked it; a co-founder signs off'],
    ['Steps','The actions, in order','Check against the recipe card, label ingredients, allergens and bake date, record it on the batch sheet'],
    ['Records','What is written down, and where','The batch sheet in the kitchen folder'],
    ['Exceptions','What to do when something goes wrong','A batch that fails is tagged “not for sale” and kept apart']]}},
- lifecycle:{templates:tpl(['governance',['Legal review checklist','Records retention schedule']],['all']),
+ lifecycle:{templates:tpl(['governance',['Legal Review Checklist','Records Retention Schedule']],['all']),
   anatomy:{after:0,title:'The policy cycle',intro:'Each policy goes round the same cycle, however few you have.',cols:['Stage','What happens','In the bakery'],rows:[
    ['Draft','Write it, starting from a template adapted to your local laws','The safeguarding policy, from a template, checked against local rules'],
    ['Consult','Ask the people it affects','The youth centre and two trainees read it first'],

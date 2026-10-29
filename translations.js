@@ -16,7 +16,7 @@ export const translations = {
     "nav.resources.tools": "Impact Tools",
     "nav.resources.tools_sub": "The integrated tool-set",
     "nav.resources.legal": "Legal Templates",
-    "nav.resources.legal_sub": "Starter outlines, not legal advice",
+    "nav.resources.legal_sub": "Editable templates, not legal advice",
     "nav.consult": "Consult",
     "nav.coming_soon": "soon",
 
@@ -828,7 +828,7 @@ export const translations = {
     "nav.resources.tools": "Impact Tools",
     "nav.resources.tools_sub": "El conjunto integrado de herramientas",
     "nav.resources.legal": "Plantillas Legales",
-    "nav.resources.legal_sub": "Esquemas de partida, no asesoría legal",
+    "nav.resources.legal_sub": "Plantillas editables, no asesoría legal",
     "nav.consult": "Consultoría",
     "nav.coming_soon": "pronto",
 
