@@ -177,3 +177,5 @@
 .px-free .px-free-cta:hover{background:#d65f3a;border-color:#d65f3a}
 .px-free-fine{display:block;margin-top:14px;color:#bfe0da;font-size:13.5px}
 @media (max-width:560px){.px-free{padding:34px 20px 28px}.px-free-pill{font-size:17px}}
+/* Phones: plan badges sit above the heading instead of over it */
+@media (max-width:560px){.pr-plan-badge{position:static;display:inline-block;width:fit-content;margin:0 0 10px}}
