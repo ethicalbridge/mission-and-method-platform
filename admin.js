@@ -32,9 +32,9 @@ const FOUNDER_PACKAGES = [
   { value: 'A2', label: 'A2 · Built with your team (I build + train + 3-month runway)' },
 ];
 const ORG_PACKAGES = [
-  { value: 'B1', label: 'B1 · Best value (I build the systems for your organisation)' },
+  { value: 'B1', label: 'B1 · Built for you (I build the systems for your organisation)' },
   { value: 'B2', label: 'B2 · Built with your team (I build + train each role)' },
-  { value: 'B3', label: 'B3 · Deep (Organisational therapy)' },
+  { value: 'B3', label: 'B3 · Best value (Organisational therapy)' },
 ];
 const CUSTOM_PACKAGE = { value: 'custom', label: 'Custom / Other' };
 
