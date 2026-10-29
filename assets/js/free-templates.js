@@ -1,7 +1,7 @@
 /* Free templates: one email form on legal-templates.html gives the 3 free templates.
-   PREVIEW: email delivery is not connected yet, so after a valid email the 3 files download
-   straight away and nothing is stored on a server. When the Supabase function and Resend are
-   set up, replace deliver() with a POST to the `request-free-templates` function. */
+   The 3 files download straight away and are also emailed (function mip-newsletter, via Brevo).
+   The newsletter box is optional and unticked: ticking it adds a "Yes, keep me posted" button to that email,
+   and only that click adds the person to the newsletter list (double opt-in). Uses assets/js/newsletter.js. */
 (function () {
   'use strict';
   var KEY = 'mip.free-templates.v1';
@@ -49,6 +49,13 @@
       remember();
       deliver();
       showDone();
+      var box2 = form.querySelector('[name=marketing]');
+      var consent = form.querySelector('.ft-consent');
+      var payload = { email: v, marketing: !!(box2 && box2.checked), consentText: consent ? consent.textContent.replace(/\s+/g, ' ').trim() : '' };
+      var go = function () { return window.MIPNewsletter.send('free-templates', payload); };
+      var p = window.MIPNewsletter ? go() : new Promise(function (res) { var sc = document.createElement('script'); sc.src = 'assets/js/newsletter.js?v=1'; sc.onload = res; document.head.appendChild(sc); }).then(go);
+      var note = done.querySelector('.ft-mailed');
+      p.then(function (j) { if (note && j && j.emailed) note.hidden = false; }).catch(function () {});
     });
     if (again) again.addEventListener('click', deliver);
   }

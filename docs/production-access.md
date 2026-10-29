@@ -48,7 +48,7 @@ Before going live, test the purchase/refund/renewal matrix, anonymous access, wr
 ## Entrepreneurs' courses (test mode, Oct 2026)
 - Each entrepreneur course is sold on its own (`entrepreneurs-clarify`, `entrepreneurs-organise`, `entrepreneurs-prove-show`,
   `entrepreneurs-protect`) or all four together (`entrepreneurs-all`). Module 00 (Start Here) stays free.
-- `founder-checkout.js` holds ownership and a simulated checkout: the "payment" is the test code 1234, and access is
+- `founder-checkout.js` holds ownership and a simulated checkout: the "payment" is a test code (checked by the mip-account function), and access is
   kept for the browser session only (sessionStorage, `mm.course-access.v1`), so closing the tab locks the courses again.
   Nothing is charged; this is not secure access control.
 - Learners see only the courses they have in the course contents; the others appear as "Previous course" /

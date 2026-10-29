@@ -846,7 +846,21 @@ export const translations = {
     "acc.courses": "Your courses",
     "acc.templates": "Your templates",
     "acc.orders": "Your orders",
-    "acc.data": "Your data"
+    "acc.data": "Your data",
+    "news.title": "Stay in touch",
+    "news.line": "One short email now and then about new courses and templates. Unsubscribe anytime.",
+    "news.label": "Your email",
+    "news.button": "Subscribe",
+    "news.privacy": "We use your email as described in our",
+    "news.privacy_link": "privacy notice",
+    "nl.eyebrow": "Newsletter",
+    "nl.title": "Stay in touch",
+    "nl.lead": "One short email now and then about new courses and templates. Unsubscribe anytime.",
+    "nl.confirm_title": "Confirm your subscription",
+    "nl.confirm_body": "Press the button to join the Method into Impact newsletter. You can unsubscribe at any time from the link at the bottom of every email.",
+    "nl.confirm_btn": "Yes, keep me posted",
+    "nl.form_title": "Join the newsletter",
+    "nl.form_body": "One short email now and then about new courses and templates. Unsubscribe anytime."
   },
 
   es: {
@@ -1692,6 +1706,20 @@ export const translations = {
     "acc.courses": "Tus cursos",
     "acc.templates": "Tus plantillas",
     "acc.orders": "Tus pedidos",
-    "acc.data": "Tus datos"
+    "acc.data": "Tus datos",
+    "news.title": "Mantengámonos en contacto",
+    "news.line": "Un correo breve de vez en cuando sobre nuevos cursos y plantillas. Puedes darte de baja cuando quieras.",
+    "news.label": "Tu correo",
+    "news.button": "Suscribirme",
+    "news.privacy": "Usamos tu correo como se explica en nuestro",
+    "news.privacy_link": "aviso de privacidad",
+    "nl.eyebrow": "Boletín",
+    "nl.title": "Mantengámonos en contacto",
+    "nl.lead": "Un correo breve de vez en cuando sobre nuevos cursos y plantillas. Puedes darte de baja cuando quieras.",
+    "nl.confirm_title": "Confirma tu suscripción",
+    "nl.confirm_body": "Pulsa el botón para suscribirte al boletín de Method into Impact. Puedes darte de baja en cualquier momento desde el enlace al pie de cada correo.",
+    "nl.confirm_btn": "Sí, quiero recibir novedades",
+    "nl.form_title": "Suscríbete al boletín",
+    "nl.form_body": "Un correo breve de vez en cuando sobre nuevos cursos y plantillas. Puedes darte de baja cuando quieras."
   }
 };

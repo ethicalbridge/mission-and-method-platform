@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {TOOL_ACCESS_STORAGE_KEY,grantToolAccess,hasToolAccess,invitationCodeIsValid,needsToolAccess} from '../tool-access.js';
+import {TOOL_ACCESS_STORAGE_KEY,grantToolAccess,hasToolAccess,invitationCodeIsValid,needsToolAccess,sha256hex,TOOL_CODE_SHA} from '../tool-access.js';
+import {createHash} from 'node:crypto';
 import {availableToolSlugs,invitationToolSlugs,softwareProducts} from '../products.js';
 
 test('the guest code grants browser access only to the completed tools',()=>{
  const store=new Map(),storage={getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)};
- assert.equal(invitationCodeIsValid('1234'),true);assert.equal(invitationCodeIsValid('1235'),false);
- assert.equal(hasToolAccess(storage),false);assert.equal(grantToolAccess('wrong',storage),false);assert.equal(grantToolAccess('1234',storage),true);assert.equal(hasToolAccess(storage),true);assert.equal(store.get(TOOL_ACCESS_STORAGE_KEY),'granted');
+ const sha=createHash('sha256').update('test-code').digest('hex');assert.equal(sha256hex('test-code'),sha);assert.match(TOOL_CODE_SHA,/^[0-9a-f]{64}$/);assert.equal(invitationCodeIsValid('test-code',sha),true);assert.equal(invitationCodeIsValid('other',sha),false);
+ assert.equal(hasToolAccess(storage),false);assert.equal(grantToolAccess('wrong',storage),false);assert.equal(grantToolAccess('test-code',storage,sha),true);assert.equal(hasToolAccess(storage),true);assert.equal(store.get(TOOL_ACCESS_STORAGE_KEY),'granted');
  assert.equal(needsToolAccess('theory-of-change'),true);assert.equal(needsToolAccess('ethical-bridge-crm'),true);assert.equal(needsToolAccess('risk-register'),false);
  assert.deepEqual(invitationToolSlugs,['theory-of-change','ethical-bridge-crm']);
  assert.deepEqual(availableToolSlugs,['theory-of-change','ethical-bridge-crm','donor-mapping','donor-tracking','donor-reference-guide','individual-giving','issue-risk-management','meetings-actions-decisions','people-check-ins-development','onboarding-compliance','organisation-structure','strategy-kpis-annual-planning','strategic-objectives','gantt','meal-strategy','customer-persona','policy-management','marketing-social-planner']);

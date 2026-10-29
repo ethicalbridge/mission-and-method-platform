@@ -8,7 +8,6 @@ import {priceOf,BANDS,PRICE_FLOOR,launchOn} from './pricing-config.js?v=launch-1
 import {countries,bandOfCountry} from './country-bands.js?v=1';
 import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=2';
 export const FOUNDER_ALL='entrepreneurs-all';
-const TEST_CODE='1234';
 // Earlier browser-only test purchases (before accounts) are cleared once, so nothing unlocks without an account.
 try{for(const st of [globalThis.localStorage,globalThis.sessionStorage]){const kept=ownedCourseIds(st);if(kept.some(x=>x.startsWith('entrepreneurs-')))st.setItem(COURSE_ACCESS_KEY,JSON.stringify(kept.filter(x=>!x.startsWith('entrepreneurs-'))));}}catch{}
 const FOUNDER_COURSES=['entrepreneurs-clarify','entrepreneurs-organise','entrepreneurs-prove-show','entrepreneurs-protect'];
@@ -86,7 +85,7 @@ export async function openFounderCheckout(course,{onDone}={}){
  wrap.querySelector('.fc-cancel').onclick=close;
  wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();const code=wrap.querySelector('#fc-code').value.trim();
   if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
-  if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(code!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
+  if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(!code){wrap.querySelector('#fc-error').textContent='Enter the test code you were given.';return;}
   const what=wrap.querySelector('input[name=fc-what]:checked').value,bandIx=currentBand();
   pay.disabled=true;pay.textContent='Saving to your account…';
   testPurchase({product:what,code,country:sel.value,band:BANDS[bandIx].id,amount:coursePrice(what,bandIx).now,waiver:true})
@@ -153,7 +152,7 @@ export async function openProductCheckout({key,name}){
  wrap.querySelector('.fc-cancel').onclick=close;
  wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();
   if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
-  if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(wrap.querySelector('#fc-code').value.trim()!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
+  if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(!wrap.querySelector('#fc-code').value.trim()){wrap.querySelector('#fc-error').textContent='Enter the test code you were given.';return;}
   const code=wrap.querySelector('#fc-code').value.trim(),zip=ZIPS[key],bandIx=currentBand();
   pay.disabled=true;pay.textContent='Saving to your account…';
   testPurchase({product:key,code,country:sel.value,band:BANDS[bandIx].id,amount:priceOf(key,bandIx,launchOn()?'launch':'regular'),waiver:true}).then(()=>{

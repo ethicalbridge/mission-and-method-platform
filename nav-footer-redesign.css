@@ -335,3 +335,19 @@ nav.nav .nav-links a.nav-coming-soon em {
 .nav .nav-account:hover{background:#16746e;color:#fff!important}
 .nav .nav-account.is-signed-in{background:#e8f3f1}
 @media (max-width:960px){.nav .nav-account{display:inline-block;margin:6px 0}}
+
+/* Newsletter sign-up in the footer */
+.site-footer .footer-news{padding-top:26px;padding-bottom:6px}
+.footer-news-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:10px 28px;align-items:center;padding:20px 22px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
+.footer-news-text b{display:block;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:22px;color:#fff;margin-bottom:2px}
+.footer-news-text span{color:rgba(255,255,255,.78);font-size:14.5px}
+.footer-news-row{display:flex;gap:8px}
+.footer-news-row input{flex:1;min-width:0;font:inherit;padding:11px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:#fff;color:#102e3b}
+.footer-news-row button{font:inherit;font-weight:800;padding:11px 20px;border-radius:999px;border:0;background:#e56f4a;color:#fff;cursor:pointer;white-space:nowrap}
+.footer-news-row button:disabled{opacity:.6;cursor:wait}
+.footer-news-note{grid-column:1/-1;margin:0;min-height:0;color:#f8ca68;font-size:14px;font-weight:700}
+.footer-news-note:empty{display:none}
+.footer-news-privacy{grid-column:1/-1;margin:0;font-size:12.5px;color:rgba(255,255,255,.6)}
+.footer-news-privacy a{color:rgba(255,255,255,.85);text-decoration:underline}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+@media (max-width:760px){.footer-news-form{grid-template-columns:1fr}.footer-news-row{flex-direction:column}.footer-news-row button{width:100%}}

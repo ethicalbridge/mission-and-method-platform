@@ -3,7 +3,7 @@
 import { mip, getSession, refreshKeys, cachedKeys, signOut, downloadFile, downloadError, deleteAccount, resetTestPurchases, takeReturnTo, pullCourseState } from './mip-account.js?v=2';
 import { founderPhases, phases, courseModules, freeModules, lessonPath } from '../../course-data.js?v=ev44';
 import { readState, stats, lessonKey } from '../../learning-store.js?v=acct1';
-import { openFounderCheckout, FOUNDER_ALL } from '../../founder-checkout.js?v=9';
+import { openFounderCheckout, FOUNDER_ALL } from '../../founder-checkout.js?v=10';
 
 const $ = id => document.getElementById(id);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

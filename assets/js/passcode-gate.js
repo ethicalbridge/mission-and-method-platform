@@ -1,11 +1,16 @@
 /* Preview-passcode gate for Method into Impact course + resource pages.
-   Blocks the page body until the code "1234" is entered. Remembers the
+   Blocks the page body until the preview code is entered. Remembers the
    unlock per browser via localStorage. This is a soft "under construction"
    gate while content is being built — NOT real auth. */
 (function () {
  'use strict';
  var KEY  = 'mip_gate_v2';
- var CODE = '1234';
+ var CODE_SHA = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'; // SHA-256 of the preview code (the code itself is not kept in this file)
+ function matches(v) {
+  try { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(v).trim())).then(function (b) {
+   return Array.prototype.map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('') === CODE_SHA; }); }
+  catch (e) { return Promise.resolve(false); }
+ }
  // sessionStorage: cleared when the tab/browser closes, so the gate
  // re-prompts on every fresh session (matches owner expectation).
  try { if (sessionStorage.getItem(KEY) === 'ok') return; }
@@ -81,12 +86,12 @@
 
   form.addEventListener('submit', function (ev) {
    ev.preventDefault();
-   if (input.value.trim() === CODE) succeed(); else fail();
+   matches(input.value).then(function (ok) { if (ok) succeed(); else fail(); });
   });
 
   // Unlock on paste or typing when the full code is already there — gentler UX.
   input.addEventListener('input', function () {
-   if (input.value.trim() === CODE) succeed();
+   matches(input.value).then(function (ok) { if (ok) succeed(); });
   });
 
   setTimeout(function () { input.focus(); }, 50);
