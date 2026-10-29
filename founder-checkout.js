@@ -1,22 +1,21 @@
-// Entrepreneurs' courses: which ones this learner has, and a simulated checkout until payments are connected.
-// Each course is bought on its own, or all four together ('entrepreneurs-all'). In test mode ownership is kept in
-// this browser session only (same key as course-access.js, in sessionStorage). TEST MODE: the "payment" is the test code below; nothing is
-// charged and nothing leaves the browser. When the payment provider is connected, replace confirmPurchase() with
-// the real checkout and read ownership from the server (docs/production-access.md).
+// Entrepreneurs' courses: which ones this learner has, and the checkout (simulated until payments are connected).
+// Each course is bought on its own, or all four together ('entrepreneurs-all'). Ownership lives on the person's
+// account (assets/js/mip-account.js: Supabase tables mip_orders / mip_entitlements), so buying needs sign-in first.
+// TEST MODE: the "payment" is the test code below; nothing is charged, and the server records a test order.
+// When the payment provider is connected, replace testPurchase() with the provider's checkout; its webhook writes the order.
 import {COURSE_ACCESS_KEY,ownedCourseIds} from './course-access.js?v=ev5';
 import {priceOf,BANDS,PRICE_FLOOR,launchOn} from './pricing-config.js?v=launch-1';
 import {countries,bandOfCountry} from './country-bands.js?v=1';
+import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=1';
 export const FOUNDER_ALL='entrepreneurs-all';
 const TEST_CODE='1234';
-// Test purchases last only for this browser session (like the 1234 page gate): closing the browser or tab locks the
-// courses again, so the purchase flow can be tested from the start each time.
-const store=()=>{try{return globalThis.sessionStorage;}catch{return null;}};
-// Earlier test purchases were kept permanently; clear those once so the courses start locked.
-try{const ls=globalThis.localStorage,kept=ownedCourseIds(ls);if(kept.some(x=>x.startsWith('entrepreneurs-')))ls.setItem(COURSE_ACCESS_KEY,JSON.stringify(kept.filter(x=>!x.startsWith('entrepreneurs-'))));}catch{}
-export const ownsFounderCourse=id=>{const owned=ownedCourseIds(store());return owned.includes(FOUNDER_ALL)||owned.includes(id);};
-export const ownsAllFounderCourses=()=>ownedCourseIds(store()).includes(FOUNDER_ALL);
-export function grantFounder(id){const s=store();if(!s)return false;const owned=new Set(ownedCourseIds(s));owned.add(id);try{s.setItem(COURSE_ACCESS_KEY,JSON.stringify([...owned]));return true;}catch{return false;}}
-export function resetFounderPurchases(){const s=store();if(!s)return;try{s.setItem(COURSE_ACCESS_KEY,JSON.stringify(ownedCourseIds(s).filter(x=>!x.startsWith('entrepreneurs-'))));}catch{}}
+// Earlier browser-only test purchases (before accounts) are cleared once, so nothing unlocks without an account.
+try{for(const st of [globalThis.localStorage,globalThis.sessionStorage]){const kept=ownedCourseIds(st);if(kept.some(x=>x.startsWith('entrepreneurs-')))st.setItem(COURSE_ACCESS_KEY,JSON.stringify(kept.filter(x=>!x.startsWith('entrepreneurs-'))));}}catch{}
+const FOUNDER_COURSES=['entrepreneurs-clarify','entrepreneurs-organise','entrepreneurs-prove-show','entrepreneurs-protect'];
+export const ownsFounderCourse=id=>owns(FOUNDER_ALL)||owns(id);
+export const ownsAllFounderCourses=()=>owns(FOUNDER_ALL)||FOUNDER_COURSES.every(id=>owns(id));
+export function resetFounderPurchases(){return resetTestPurchases().catch(()=>{});}
+const SIGN_IN_WHY='Your purchase is saved to your account, so you can open it on any device. We email you a sign-in link: no password.';
 
 // Price band: the country that issued the card sets it (World Bank income groups). The Prices page switcher and the
 // checkout country choice are remembered for this browser session.
@@ -53,7 +52,8 @@ const CSS=`.fc-backdrop{position:fixed;inset:0;background:rgba(10,22,28,.55);z-i
 function ensureCSS(){if(document.getElementById('fc-style'))return;const s=document.createElement('style');s.id='fc-style';s.textContent=CSS;document.head.append(s);}
 
 // course = {id, name ('Course 2 · Organise'), start (first lesson URL)}; opens the checkout for that course.
-export function openFounderCheckout(course,{onDone}={}){
+export async function openFounderCheckout(course,{onDone}={}){
+ if(!await requireUser({title:'Sign in to get '+course.name,why:SIGN_IN_WHY}))return;
  ensureCSS();
  const wrap=document.createElement('div');wrap.className='fc-backdrop';
  const saved=sget(COUNTRY_KEY)||'';
@@ -87,9 +87,11 @@ export function openFounderCheckout(course,{onDone}={}){
  wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();const code=wrap.querySelector('#fc-code').value.trim();
   if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
   if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(code!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
-  const what=wrap.querySelector('input[name=fc-what]:checked').value;
-  if(!grantFounder(what)){wrap.querySelector('#fc-error').textContent='This browser is blocking storage, so access could not be saved.';return;}
-  close();(onDone||(()=>{location.href=course.start||location.href;}))(what);});
+  const what=wrap.querySelector('input[name=fc-what]:checked').value,bandIx=currentBand();
+  pay.disabled=true;pay.textContent='Saving to your account…';
+  testPurchase({product:what,code,country:sel.value,band:BANDS[bandIx].id,amount:coursePrice(what,bandIx).now,waiver:true})
+   .then(()=>{close();(onDone||(()=>{location.href=course.start||location.href;}))(what);})
+   .catch(e=>{pay.disabled=false;render();wrap.querySelector('#fc-error').textContent=e.code==='wrong_code'?'That code is not right. Use the test code you were given.':e.code==='not_signed_in'?'Please sign in again.':'The purchase could not be saved. Please try again.';});});
  document.body.append(wrap);(sel.value?wrap.querySelector('#fc-code'):sel).focus();
 }
 
@@ -107,17 +109,22 @@ export function refreshFounderPrices(root=document){
 // Owned courses turn into a "Go to the course" link; data-owned-text sets its label.
 export function bindFounderButtons(root=document){
  if(new URLSearchParams(location.search).has('reset-purchases')){resetFounderPurchases();}
- root.querySelectorAll('[data-founder-buy]').forEach(btn=>{
+ const apply=()=>root.querySelectorAll('[data-founder-buy]').forEach(btn=>{
   const id=btn.dataset.founderBuy;
   if(id!==FOUNDER_ALL&&ownsFounderCourse(id)&&btn.dataset.start){const a=document.createElement('a');a.className=btn.className;a.href=btn.dataset.start;a.textContent=btn.dataset.ownedText||'Go to the course →';btn.replaceWith(a);return;}
-  if(id===FOUNDER_ALL&&ownsAllFounderCourses()){btn.hidden=true;return;}
+  btn.hidden=id===FOUNDER_ALL&&ownsAllFounderCourses();
+  if(btn.dataset.fcBound)return;btn.dataset.fcBound='1';
   btn.addEventListener('click',ev=>{ev.preventDefault();openFounderCheckout({id,name:btn.dataset.name||'All four courses',start:btn.dataset.start});});
- }); refreshFounderPrices(root);
+ });
+ apply();refreshFounderPrices(root);
+ // Ownership arrives from the account a moment after the page loads (and changes after a purchase).
+ window.addEventListener('mip:account',apply);
 }
 
 // Prices page: any catalogue item (pack, library, Essentials...) can be test-bought.
 // <button data-buy-key="pack-policies" data-buy-name="Policies & procedures pack">.
-export function openProductCheckout({key,name}){
+export async function openProductCheckout({key,name}){
+ if(!await requireUser({title:'Sign in to buy '+name,why:SIGN_IN_WHY}))return;
  ensureCSS();
  const wrap=document.createElement('div');wrap.className='fc-backdrop';
  const saved=sget(COUNTRY_KEY)||'';
@@ -147,18 +154,17 @@ export function openProductCheckout({key,name}){
  wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();
   if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
   if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(wrap.querySelector('#fc-code').value.trim()!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
-  const code=wrap.querySelector('#fc-code').value.trim(),zip=USE_STORAGE&&ZIPS[key];
-  wrap.querySelector('.fc-card').innerHTML=`<span class="fc-eyebrow">Test purchase complete</span><h2>${esc(name)}</h2><p>Nothing was charged. When payments open, buyers receive their files straight away by email and in their account.</p>${zip?`<div class="fc-actions" style="justify-content:flex-start"><button type="button" class="fc-pay" data-zip="packs/${zip}.zip">Download in English (.zip)</button><button type="button" class="fc-cancel" data-zip="packs/${zip}-es.zip">Descargar en español (.zip)</button></div><p class="fc-error" id="fc-zip-error" role="alert"></p>`:''}<div class="fc-actions"><a class="fc-cancel" style="text-decoration:none" href="legal-templates.html">Go to the templates</a><button type="button" class="fc-cancel" data-close>Close</button></div>`;
+  const code=wrap.querySelector('#fc-code').value.trim(),zip=ZIPS[key],bandIx=currentBand();
+  pay.disabled=true;pay.textContent='Saving to your account…';
+  testPurchase({product:key,code,country:sel.value,band:BANDS[bandIx].id,amount:priceOf(key,bandIx,launchOn()?'launch':'regular'),waiver:true}).then(()=>{
+  wrap.querySelector('.fc-card').innerHTML=`<span class="fc-eyebrow">Test purchase complete</span><h2>${esc(name)}</h2><p>Nothing was charged. It is now on your account: download it below now or any time from <a href="account.html">My account</a>.</p>${zip?`<div class="fc-actions" style="justify-content:flex-start"><button type="button" class="fc-pay" data-zip="packs/${zip}.zip">Download in English (.zip)</button><button type="button" class="fc-cancel" data-zip="packs/${zip}-es.zip">Descargar en español (.zip)</button></div><p class="fc-error" id="fc-zip-error" role="alert"></p>`:''}<div class="fc-actions"><a class="fc-cancel" style="text-decoration:none" href="legal-templates.html">Go to the templates</a><button type="button" class="fc-cancel" data-close>Close</button></div>`;
   wrap.querySelector('[data-close]').onclick=close;
-  wrap.querySelectorAll('[data-zip]').forEach(b=>b.onclick=()=>fileLink(b.dataset.zip,code).then(url=>{location.href=url;}).catch(m=>{wrap.querySelector('#fc-zip-error').textContent=m;}));});
+  wrap.querySelectorAll('[data-zip]').forEach(b=>b.onclick=()=>downloadFile(b.dataset.zip).catch(e=>{wrap.querySelector('#fc-zip-error').textContent=downloadError(e);}));
+  }).catch(e=>{pay.disabled=false;render();wrap.querySelector('#fc-error').textContent=e.code==='wrong_code'?'That code is not right. Use the test code you were given.':'The purchase could not be saved. Please try again.';});});
  document.body.append(wrap);(sel.value?wrap.querySelector('#fc-code'):sel).focus();
 }
 // Pack zips in private storage (built by scripts/legal-templates/packs.mjs and the template-files function).
 const ZIPS={'pack-policies':'policies-pack','pack-contracts':'contracts-pack','pack-consent':'consent-pack','pack-governance':'governance-pack','essentials':'start-up-legal-essentials','full-library':'full-template-library'};
-const USE_STORAGE=true; // pack zips live in private storage (packs/, built by the template-files function)
-const FILES_FN='https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/template-files',ANON='sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
-function fileLink(file,code){return fetch(FILES_FN,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+ANON,apikey:ANON},body:JSON.stringify({action:'download',file,code})})
- .then(r=>r.json().then(j=>{if(!r.ok||!j.url)throw 'The download is not available right now. Please try again in a minute.';return j.url;}),()=>{throw 'The download could not start. Check your connection.';});}
 export function bindPriceButtons(root=document){
  root.querySelectorAll('[data-buy-key]').forEach(b=>b.addEventListener('click',ev=>{ev.preventDefault();openProductCheckout({key:b.dataset.buyKey,name:b.dataset.buyName||b.textContent});}));
 }

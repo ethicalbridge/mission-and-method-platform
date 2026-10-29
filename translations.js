@@ -831,7 +831,22 @@ export const translations = {
     "ec.sample.foot": "Built in Course 1 · Clarify, lesson by lesson. Example data.",
     "track.switch.label": "Choose your path",
     "track.switch.start": "I'm starting something",
-    "track.switch.running": "I already run an organisation"
+    "track.switch.running": "I already run an organisation",
+    "nav.account": "My account",
+    "acc.eyebrow": "Your account",
+    "acc.title": "My account",
+    "acc.lead": "Your courses, templates and orders, on any device.",
+    "acc.signin.title": "Sign in or create your account",
+    "acc.signin.body": "Enter your email and we'll send you a sign-in link. No password. The first time, the same link creates your account.",
+    "acc.signin.email": "Your email",
+    "acc.signin.send": "Email me a sign-in link",
+    "acc.signin.code": "Or type the 6-digit code from the email",
+    "acc.signin.verify": "Sign in",
+    "acc.signout": "Sign out",
+    "acc.courses": "Your courses",
+    "acc.templates": "Your templates",
+    "acc.orders": "Your orders",
+    "acc.data": "Your data"
   },
 
   es: {
@@ -841,7 +856,7 @@ export const translations = {
     "nav.resources": "Recursos",
     "nav.pricing": "Precios",
     "nav.contact": "Contacto",
-    "nav.signin": "Entrar",
+    "nav.signin": "Iniciar sesión",
     "nav.menu": "Menú",
     "nav.resources.tools": "Impact Tools",
     "nav.resources.tools_sub": "El conjunto integrado de herramientas",
@@ -1662,6 +1677,21 @@ export const translations = {
     "ec.sample.foot": "Construido en el Curso 1 · Claridad, lección por lección. Datos de ejemplo.",
     "track.switch.label": "Elige tu camino",
     "track.switch.start": "Estoy empezando algo",
-    "track.switch.running": "Ya dirijo una organización"
+    "track.switch.running": "Ya dirijo una organización",
+    "nav.account": "Mi cuenta",
+    "acc.eyebrow": "Tu cuenta",
+    "acc.title": "Mi cuenta",
+    "acc.lead": "Tus cursos, plantillas y pedidos, en cualquier dispositivo.",
+    "acc.signin.title": "Inicia sesión o crea tu cuenta",
+    "acc.signin.body": "Escribe tu correo y te enviaremos un enlace para entrar. Sin contraseña. La primera vez, el mismo enlace crea tu cuenta.",
+    "acc.signin.email": "Tu correo",
+    "acc.signin.send": "Envíame un enlace para entrar",
+    "acc.signin.code": "O escribe el código de 6 dígitos del correo",
+    "acc.signin.verify": "Entrar",
+    "acc.signout": "Cerrar sesión",
+    "acc.courses": "Tus cursos",
+    "acc.templates": "Tus plantillas",
+    "acc.orders": "Tus pedidos",
+    "acc.data": "Tus datos"
   }
 };

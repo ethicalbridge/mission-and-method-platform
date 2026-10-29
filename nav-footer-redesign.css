@@ -329,3 +329,9 @@ nav.nav .nav-links a.nav-coming-soon em {
 .nav-menu-pill{display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;font-style:normal;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;vertical-align:2px}
 .nav-menu-pill-soon{background:#ffe3d6;color:#c4512c}
 .nav-menu-pill-dev{background:#eceae4;color:#5d6b73}
+
+/* Account link in the top menu: "Sign in" or "My account" */
+.nav .nav-account{border:1.5px solid #16746e;border-radius:999px;padding:7px 14px!important;color:#16746e!important;font-weight:800;white-space:nowrap}
+.nav .nav-account:hover{background:#16746e;color:#fff!important}
+.nav .nav-account.is-signed-in{background:#e8f3f1}
+@media (max-width:960px){.nav .nav-account{display:inline-block;margin:6px 0}}

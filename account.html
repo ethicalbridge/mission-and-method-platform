@@ -3,258 +3,94 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="cache-bust" content="202610020600">
-<title>Sign in | Method into Impact</title>
-<meta name="description" content="Your account on Method into Impact. In this development preview, drafts save to your browser; cloud accounts are coming next.">
+<title>My account | Method into Impact</title>
+<meta name="description" content="Your Method into Impact account: your courses and progress, your templates and packs, your orders and your data.">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800;6..12,900&display=swap">
 <link rel="stylesheet" href="styles.css?v=consent-1">
 <link rel="stylesheet" href="mission.css?v=nav-courses-1">
-<link rel="stylesheet" href="learning.css?v=course42">
-<link rel="stylesheet" href="pricing.css">
 <link rel="stylesheet" href="planning-system.css?v=fade3">
-<link rel="stylesheet" href="account-redesign.css?v=account-redesign-1">
-<link rel="stylesheet" href="account-signin.css?v=mip-auth-1">
+<link rel="stylesheet" href="account.css?v=1">
 </head>
-<body data-page="account" data-product="planning-system">
+<body data-page="account">
 <a class="skip-link" href="#main">Skip to content</a>
 <nav class="nav" aria-label="Main navigation"></nav>
-<div class="preview-note">Development preview · Sign-in works · Cloud sync for your tool data arrives next · Billing not yet connected</div>
+<div class="preview-note">Development preview · Accounts work · Purchases use the test code 1234 until payments are connected</div>
 
-<main id="main">
-
-  <!-- ================= HERO ================= -->
-  <section class="hm-hero hm-hero-account">
-    <div class="hm-hero-shapes" aria-hidden="true">
-      <span class="hm-shape hm-shape-1"></span>
-      <span class="hm-shape hm-shape-2"></span>
-      <span class="hm-shape hm-shape-3"></span>
-    </div>
-    <div class="container hm-hero-inner">
-      <div class="hm-eyebrow" data-i18n="account.hero.eyebrow">YOUR ACCOUNT · PREVIEW BUILD</div>
-      <h1>Welcome back. <em>Keep building.</em></h1>
-      <p class="hm-lead" data-i18n="account.hero.lead">Your drafts, your progress and your tools live here. In this preview build, work saves to this browser — cloud accounts and sign-in are on the way.</p>
-      <div class="hm-actions">
-        <a class="hm-btn hm-btn-primary" href="#progress">See your progress ↓</a>
-        <a class="hm-btn hm-btn-ghost" href="/clarify/how-this-course-works" data-resume data-resume-label="Continue your course →">Continue learning →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= SIGN-IN / SIGNED-IN STATE ================= -->
-  <section class="hm-section ac-notice" id="signin-section">
+<main id="main" class="acc">
+  <section class="acc-hero">
     <div class="container">
-      <!-- Loading state (replaced on auth check) -->
-      <div class="ac-notice-box reveal" id="auth-loading">
-        <div class="ac-notice-body">
-          <div class="hm-section-eyebrow">ACCOUNT</div>
-          <h2>Checking your sign-in status…</h2>
-          <p>One second — looking you up.</p>
-        </div>
-      </div>
-
-      <!-- Signed-OUT state: magic-link form (shown when auth returns no user) -->
-      <div class="ac-notice-box reveal" id="auth-signed-out" hidden>
-        <div class="ac-notice-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-        </div>
-        <div class="ac-notice-body">
-          <div class="hm-section-eyebrow">SIGN IN · PASSWORDLESS</div>
-          <h2>Sign in with a one-time email link.</h2>
-          <p>Enter your email and we'll send you a sign-in link. First time? The same link creates your account, your personal workspace and signs you in — no password to remember, no form to fill in twice.</p>
-          <form id="signin-form" class="ac-signin-form" novalidate>
-            <label class="ac-signin-field">
-              <span>Email address</span>
-              <input type="email" id="signin-email" required autocomplete="email" placeholder="you@yourorganisation.org">
-            </label>
-            <button type="submit" class="hm-btn hm-btn-primary" id="signin-submit">
-              Send sign-in link
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-            </button>
-          </form>
-          <p class="ac-signin-note tiny" id="signin-note" hidden></p>
-        </div>
-      </div>
-
-      <!-- Signed-IN state: workspace + sign-out (shown when auth returns a user) -->
-      <div class="ac-notice-box reveal" id="auth-signed-in" hidden>
-        <div class="ac-notice-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
-        </div>
-        <div class="ac-notice-body">
-          <div class="hm-section-eyebrow">SIGNED IN</div>
-          <h2>Welcome, <span id="auth-user-name">there</span>.</h2>
-          <p>You're signed in as <b id="auth-user-email">—</b>. Your workspace is <b id="auth-workspace-name">—</b>. Right now sign-in gives you an account and a workspace; cloud sync of your tool data arrives in the next release.</p>
-          <div class="ac-notice-actions">
-            <a class="hm-btn hm-btn-primary" href="organisation.html">
-              Open Your Organisation
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-            </a>
-            <button type="button" class="hm-btn hm-btn-ghost" id="signout-btn">Sign out</button>
-          </div>
-        </div>
-      </div>
-      <!-- end auth states -->
+      <span class="acc-eyebrow" data-i18n="acc.eyebrow">Your account</span>
+      <h1 id="acc-title" data-i18n="acc.title">My account</h1>
+      <p class="acc-lead" id="acc-lead" data-i18n="acc.lead">Your courses, templates and orders, on any device.</p>
     </div>
   </section>
 
-  <!-- ================= PROGRESS ================= -->
-  <section class="hm-section hm-section-alt" id="progress">
-    <div class="container">
-      <div class="hm-head reveal">
-        <div class="hm-section-eyebrow">YOUR COURSE</div>
-        <h2>Where you are in the method.</h2>
-        <p class="hm-subhead">Pick up where you left off. If you haven't started yet, open lesson 0.1: it's free and takes about 15 minutes. All of Module 0 takes about 70 minutes.</p>
-      </div>
-      <div class="ac-progress reveal" style="--delay:80ms">
-        <div class="ac-progress-head">
-          <div>
-            <small>PLANNING SYSTEM</small>
-            <b>Your organisation pack</b>
-          </div>
-          <span class="ac-progress-badge">Preview · not purchased</span>
+  <div class="container acc-body">
+    <p class="acc-loading" id="acc-loading">Loading your account…</p>
+
+    <!-- Signed out -->
+    <section class="acc-card acc-signin" id="acc-signed-out" hidden>
+      <h2 data-i18n="acc.signin.title">Sign in or create your account</h2>
+      <p data-i18n="acc.signin.body">Enter your email and we'll send you a sign-in link. No password. The first time, the same link creates your account.</p>
+      <form id="acc-signin-form" novalidate>
+        <label for="acc-email" data-i18n="acc.signin.email">Your email</label>
+        <div class="acc-row"><input id="acc-email" type="email" autocomplete="email" required placeholder="you@organisation.org"><button class="acc-btn" type="submit" data-i18n="acc.signin.send">Email me a sign-in link</button></div>
+        <p class="acc-note" id="acc-signin-note" role="status"></p>
+      </form>
+      <form id="acc-code-form" hidden novalidate>
+        <label for="acc-code" data-i18n="acc.signin.code">Or type the 6-digit code from the email</label>
+        <div class="acc-row"><input id="acc-code" class="acc-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10"><button class="acc-btn" type="submit" data-i18n="acc.signin.verify">Sign in</button></div>
+        <p class="acc-note" id="acc-code-note" role="status"></p>
+      </form>
+      <p class="acc-small">Free to start: <a href="/entrepreneurs-clarify/how-this-course-works">Module 0</a> needs no account. See our <a href="legal.html#privacy">privacy notice</a>.</p>
+    </section>
+
+    <!-- Signed in -->
+    <div id="acc-signed-in" hidden>
+      <section class="acc-card acc-me">
+        <div><span class="acc-eyebrow">Signed in</span><h2 id="acc-name">—</h2><p class="acc-muted" id="acc-email-shown">—</p></div>
+        <button class="acc-btn ghost" type="button" id="acc-signout" data-i18n="acc.signout">Sign out</button>
+      </section>
+
+      <section class="acc-section" aria-labelledby="acc-courses-title">
+        <h2 id="acc-courses-title" data-i18n="acc.courses">Your courses</h2>
+        <div class="acc-grid" id="acc-courses"></div>
+      </section>
+
+      <section class="acc-section" aria-labelledby="acc-packs-title">
+        <h2 id="acc-packs-title" data-i18n="acc.templates">Your templates</h2>
+        <div id="acc-templates"></div>
+      </section>
+
+      <section class="acc-section" aria-labelledby="acc-orders-title">
+        <h2 id="acc-orders-title" data-i18n="acc.orders">Your orders</h2>
+        <div id="acc-orders"></div>
+      </section>
+
+      <section class="acc-section acc-data" aria-labelledby="acc-data-title">
+        <h2 id="acc-data-title" data-i18n="acc.data">Your data</h2>
+        <p>Your course answers are saved on this browser and on your account, so they follow you to other devices. You can download everything we hold about you, or delete your account.</p>
+        <div class="acc-actions">
+          <button class="acc-btn ghost" type="button" id="acc-export">Download my data (.json)</button>
+          <button class="acc-btn ghost danger" type="button" id="acc-delete">Delete my account…</button>
         </div>
-        <div class="ac-progress-stat" id="account-progress">Progress loading…</div>
-        <div class="ac-progress-bar"><i></i></div>
-        <div class="ac-progress-actions">
-          <a class="hm-btn hm-btn-primary" href="/clarify/how-this-course-works" data-resume data-resume-label="Continue your course →">
-            Open course preview
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-          </a>
-          <a class="hm-btn hm-btn-ghost" href="organisation.html">Your Organisation →</a>
-        </div>
-      </div>
+        <form class="acc-confirm" id="acc-delete-form" hidden>
+          <p><b>This deletes your account, your course answers saved on the account, your orders and everything you own here.</b> It cannot be undone. Type <b>DELETE</b> to confirm.</p>
+          <div class="acc-row"><input id="acc-delete-word" autocomplete="off" aria-label="Type DELETE to confirm"><button class="acc-btn danger" type="submit">Delete my account</button></div>
+          <p class="acc-note" id="acc-delete-note" role="status"></p>
+        </form>
+        <details class="acc-test"><summary>Preview tools</summary><p>Test purchases made with the code 1234 can be removed here, to try the purchase flow again.</p><button class="acc-btn ghost" type="button" id="acc-reset">Remove my test purchases</button> <span class="acc-note" id="acc-reset-note" role="status"></span></details>
+      </section>
     </div>
-  </section>
-
-  <!-- ================= IMPACT TOOLS ================= -->
-  <section class="hm-section" id="tools">
-    <div class="container">
-      <div class="hm-head reveal">
-        <div class="hm-section-eyebrow">YOUR IMPACT TOOLS</div>
-        <h2>Interactive previews, open anytime.</h2>
-        <p class="hm-subhead">These tools work on their own in this preview build. Course answers are not auto-imported; each tool keeps its own browser data.</p>
-      </div>
-      <div class="ac-tools-grid">
-        <article class="ac-tool reveal" style="--delay:40ms">
-          <div class="ac-tool-pillar ac-tool-build">BUILD</div>
-          <h3>Strategic Objectives</h3>
-          <p>Define a few external and internal objectives that guide every later decision.</p>
-          <a class="hm-link" href="assets/tools/Strategic-Objectives.html">Open tool →</a>
-        </article>
-        <article class="ac-tool reveal" style="--delay:80ms">
-          <div class="ac-tool-pillar ac-tool-build">BUILD</div>
-          <h3>Theory of Change Builder</h3>
-          <p>Work backwards from impact. Access by invitation code in this preview.</p>
-          <a class="hm-link" href="software.html#tools">Request access →</a>
-        </article>
-        <article class="ac-tool reveal" style="--delay:120ms">
-          <div class="ac-tool-pillar ac-tool-build">BUILD</div>
-          <h3>Strategy, KPIs &amp; Annual Planning</h3>
-          <p>Turn multi-year objectives into this year's priorities and KPIs.</p>
-          <a class="hm-link" href="assets/tools/Strategy-KPIs-and-Annual-Planning.html">Open tool →</a>
-        </article>
-        <article class="ac-tool reveal" style="--delay:160ms">
-          <div class="ac-tool-pillar ac-tool-strengthen">STRENGTHEN</div>
-          <h3>MEAL Strategy</h3>
-          <p>Build a MEAL framework with honest indicators and baselines.</p>
-          <a class="hm-link" href="assets/tools/MEAL-Strategy.html">Open tool →</a>
-        </article>
-        <article class="ac-tool reveal" style="--delay:200ms">
-          <div class="ac-tool-pillar ac-tool-run">RUN</div>
-          <h3>Gantt &amp; Project Planner</h3>
-          <p>A simple project view with milestones, dependencies and a responsive timeline.</p>
-          <a class="hm-link" href="assets/tools/Gantt-Project-Planner.html">Open tool →</a>
-        </article>
-        <article class="ac-tool reveal" style="--delay:240ms">
-          <div class="ac-tool-pillar ac-tool-run">RUN</div>
-          <h3>Issue &amp; Risk Management</h3>
-          <p>Register, score and track risks and issues on a 5×5 L×I matrix.</p>
-          <a class="hm-link" href="assets/tools/Issue-and-Risk-Management.html">Open tool →</a>
-        </article>
-        <article class="ac-tool reveal" style="--delay:280ms">
-          <div class="ac-tool-pillar ac-tool-run">RUN</div>
-          <h3>Meetings, Actions &amp; Decisions</h3>
-          <p>Capture every meeting with a rolling actions log and decisions register.</p>
-          <a class="hm-link" href="assets/tools/Meetings-Actions-and-Decisions.html">Open tool →</a>
-        </article>
-        <article class="ac-tool reveal" style="--delay:320ms">
-          <div class="ac-tool-pillar ac-tool-run">RUN</div>
-          <h3>Donor Mapping</h3>
-          <p>Build a prospect list, score fit and keep a stewardship cadence.</p>
-          <a class="hm-link" href="assets/tools/Donor-Mapping.html">Open tool →</a>
-        </article>
-      </div>
-      <div class="ac-tools-foot reveal">
-        <a class="hm-btn hm-btn-primary" href="software.html">See all Impact Tools →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= COMING SOON ================= -->
-  <section class="hm-section hm-section-alt ac-roadmap">
-    <div class="container">
-      <div class="hm-head reveal">
-        <div class="hm-section-eyebrow">COMING TO YOUR ACCOUNT</div>
-        <h2>What we're building next.</h2>
-      </div>
-      <ol class="ac-roadmap-list">
-        <li class="reveal" style="--delay:40ms">
-          <span class="ac-roadmap-dot"></span>
-          <b>Sign-in &amp; cloud sync</b>
-          <p>One account across devices. Your Organisation and tool data move with you.</p>
-        </li>
-        <li class="reveal" style="--delay:100ms">
-          <span class="ac-roadmap-dot"></span>
-          <b>Checkout &amp; receipts</b>
-          <p>Secure checkout, invoices for your records, fair prices by country.</p>
-        </li>
-        <li class="reveal" style="--delay:160ms">
-          <span class="ac-roadmap-dot"></span>
-          <b>The integrated tool-set</b>
-          <p>Shared data across every tool. Open your Theory of Change in MEAL. Pull KPIs into Gantt.</p>
-        </li>
-        <li class="reveal" style="--delay:220ms">
-          <span class="ac-roadmap-dot"></span>
-          <b>Team workspaces</b>
-          <p>Invite collaborators with roles. Share outputs with your board or funders.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- ================= FINAL CTA ================= -->
-  <section class="hm-final">
-    <div class="hm-final-shapes" aria-hidden="true">
-      <span class="hm-shape hm-shape-f1"></span>
-      <span class="hm-shape hm-shape-f2"></span>
-    </div>
-    <div class="container">
-      <div class="hm-final-inner reveal">
-        <div class="hm-section-eyebrow hm-section-eyebrow-light">PICK UP WHERE YOU LEFT OFF</div>
-        <h2>Your organisation is waiting.</h2>
-        <p>Open your next lesson or review the pack you've built so far.</p>
-        <div class="hm-actions hm-actions-center">
-          <a class="hm-btn hm-btn-primary" href="/clarify/how-this-course-works" data-resume data-resume-label="Continue your course →">
-            Continue learning
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-          </a>
-          <a class="hm-btn hm-btn-ghost-light" href="organisation.html">Your Organisation</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
+  </div>
 </main>
 
 <footer></footer>
-<script type="module" src="i18n.js?v=prices-7"></script>
-<script type="module" src="i18n.js?v=prices-7"></script>
-<script src="app.js?v=prices-7"></script>
-<script type="module" src="overview.js"></script>
-<script type="module" src="tool-access-ui.js"></script>
-<script src="home.js?v=home-redesign-4"></script>
-<script type="module" src="assets/js/account-signin.js?v=mip-auth-1"></script>
+<script type="module" src="i18n.js?v=acct1"></script>
+<script src="app.js?v=acct1"></script>
+<script type="module" src="assets/js/account-page.js?v=1"></script>
 </body>
 </html>

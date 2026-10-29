@@ -5,8 +5,9 @@ const courseLabel=p=>`Course ${p.number} · ${p.name}`;
 import {softwareProducts,resourceManifest,previewToolSlugs} from './products.js';
 import {hasToolAccess} from './tool-access.js';
 import {ownsCourse} from './course-access.js?v=ev5';
-import {ownsFounderCourse,ownsAllFounderCourses,openFounderCheckout,refreshFounderPrices,FOUNDER_ALL} from './founder-checkout.js?v=7';
-import {readState,mutateState,emptyState,lessonKey,storeKey,valueOf,stats,isFilled,invalidate,escapeHTML as e,download,STORAGE_KEY,validateState,FIRST_LESSON,REFLECT,NOT_YET,reflectField,notYetOf,isDeferred} from './learning-store.js?v=ev45';
+import {ownsFounderCourse,ownsAllFounderCourses,openFounderCheckout,refreshFounderPrices,FOUNDER_ALL} from './founder-checkout.js?v=8';
+import {cachedKeys,pullCourseState,schedulePush} from './assets/js/mip-account.js?v=1';
+import {readState,mutateState,emptyState,lessonKey,storeKey,valueOf,stats,isFilled,invalidate,escapeHTML as e,download,STORAGE_KEY,validateState,FIRST_LESSON,REFLECT,NOT_YET,reflectField,notYetOf,isDeferred} from './learning-store.js?v=acct1';
 const root=document.querySelector('#learning-root');
 // ?reset-answers empties every saved answer, completed lesson and task in this browser (course access is kept).
 {const q=new URLSearchParams(location.search);if(q.has('reset-answers')){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(emptyState()));}catch{}q.delete('reset-answers');history.replaceState(history.state,'',location.pathname+(q.size?`?${q}`:'')+location.hash);}}
@@ -255,5 +256,13 @@ function renderOrganisation(){const f=new URLSearchParams(location.search).get('
 const resumeCourseList=list=>{for(const p of list)for(const x of courseModules(p))for(const l of x.lessons)if(!state.completed[lessonKey(x,l)])return urlFor(x,l);return firstLessonOf(list[0]);};
 export function resumeURL(){const [id,...parts]=(state.lastLesson||FIRST_LESSON).split('.');const m=moduleFor(id),l=m?.lessons.find(x=>x.id===parts.join('.'));return m&&l?urlFor(m,l):`learn.html?module=${id}&lesson=${parts.join('.')}`;}
 if(root){if(document.body.dataset.page==='organisation')renderOrganisation();else renderLesson();}
+// Accounts: course answers are also kept on the signed-in person's account (assets/js/mip-account.js), and course
+// ownership comes from it. Re-draw when ownership changes, or when answers saved on another device arrive.
+let ownedSeen=JSON.stringify(cachedKeys());
+const redraw=()=>{if(!root)return;try{state=readState();}catch{}if(document.body.dataset.page==='organisation')renderOrganisation();else renderLesson();};
+window.addEventListener('mip:account',()=>{const now=JSON.stringify(cachedKeys());if(now!==ownedSeen){ownedSeen=now;redraw();}});
+window.addEventListener('mip:course-state',()=>{const busy=document.activeElement&&document.activeElement.closest?.('form');if(!busy)redraw();else status('Your answers from another device were added. Reload the page to see them.');});
+window.addEventListener('mm:state-saved',schedulePush);
+pullCourseState().catch(()=>{});
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY){status('Course work changed in another tab. Reload before continuing here so you can review the latest version.',true);document.querySelectorAll('#lesson-form input,#lesson-form textarea,#lesson-form button,#review-form input,#review-form button,#synthesis-form textarea').forEach(b=>b.disabled=true);}});
 window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();}); // back/forward: show the latest progress
