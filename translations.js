@@ -809,7 +809,9 @@ export const translations = {
     "ec.final.cta2": "Work with Julieta",
     "nav.prices": "Prices",
     "nav.courses.ent_status": "Launching soon",
-    "nav.courses.org_status": "Under development"
+    "nav.courses.org_status": "Under development",
+    "footer.courses_ent": "Courses for entrepreneurs",
+    "footer.courses_org": "Courses for organisations"
   },
 
   es: {
@@ -1618,6 +1620,8 @@ export const translations = {
     "ec.final.cta2": "Trabaja con Julieta",
     "nav.prices": "Precios",
     "nav.courses.ent_status": "Muy pronto",
-    "nav.courses.org_status": "En desarrollo"
+    "nav.courses.org_status": "En desarrollo",
+    "footer.courses_ent": "Cursos para emprendedores",
+    "footer.courses_org": "Cursos para organizaciones"
   }
 };

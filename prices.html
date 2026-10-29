@@ -168,6 +168,11 @@
 @media (max-width:760px){.px-consult-grid{grid-template-columns:1fr}.px-pkg{grid-template-columns:1fr}.px-pkg em{grid-column:1;grid-row:auto}}
 .px-pack-save{font-size:12.5px;font-weight:800;color:#c4512c;background:#ffe9df;border-radius:8px;padding:6px 10px;line-height:1.35}
 .px-single{margin:28px 0 0;padding:14px 18px;background:#fff;border:1px dashed var(--line);border-radius:14px;font-size:15px;color:var(--ink);text-align:center}
+.px-pack-buy{margin-top:6px;font:inherit;font-weight:800;font-size:14px;background:var(--deep);color:#fff;border:0;border-radius:999px;padding:10px 14px;cursor:pointer}
+.px-pack-buy:hover{background:var(--teal)}
+.px-single a{color:var(--teal);font-weight:800;margin-left:6px}
+.px-text-link{display:block;text-align:center;margin-top:10px;font-weight:800;font-size:14px;color:var(--teal)}
+.px-text-link-light{color:#f6c25b}
 </style>
 </head>
 <body data-page="pricing" data-product="planning-system">
@@ -329,7 +334,8 @@
           <div class="pr-price"><b data-price-key="essentials.regular" data-prices="49,29,15,9">$49</b><span>one-time · 12 templates</span></div>
           <div class="px-founding">Launch price <b data-price-key="essentials.launch" data-prices="39,23,12,9">$39</b></div>
           <p class="pr-plan-desc">Code of Conduct · Safeguarding Policy and Procedure · Data Protection Policy · Privacy Notice · Conflict of Interest Policy · Financial Controls Policy · Fraud, Bribery and Corruption Policy and Procedure · Co-founder Agreement · Volunteer Agreement · Photo and Story Consent Form · Complaints and Feedback Procedure · Risk Register.</p>
-          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="legal-templates.html">See the templates →</a>
+          <button type="button" class="hm-btn hm-btn-primary pr-plan-cta" data-buy-key="essentials" data-buy-name="Start-up Legal Essentials">Buy Essentials →</button>
+          <a class="px-text-link" href="legal-templates.html">See the templates</a>
           <small class="pr-fine">Included with Protect and with both pathways.</small>
         </article>
 
@@ -345,13 +351,14 @@
             <li>9 governance documents · 4 consent forms</li>
             <li>Licensed for use within one organisation</li>
           </ul>
-          <a class="hm-btn hm-btn-primary pr-plan-cta" href="legal-templates.html">Browse the library →</a>
+          <button type="button" class="hm-btn hm-btn-primary pr-plan-cta" data-buy-key="full-library" data-buy-name="Full Template Library">Buy the library →</button>
+          <a class="px-text-link px-text-link-light" href="legal-templates.html">Browse the library</a>
           <small class="pr-fine">You save <span data-price-key="save.full-library" data-prices="67,39,24,20">$67</span> against buying the four packs below separately (<span data-price-key="save.packs-total" data-prices="216,128,69,42">$216</span>).</small>
         </article>
       </div>
 
       <p class="px-subhead">OR CHOOSE A PACK</p>
-      <p class="px-single"><b>Need just one?</b> Any single template is <b>$9</b>, in every country. The packs below save you more.</p>
+      <p class="px-single"><b>Need just one?</b> Any single template is <b>$9</b>, in every country. The packs below save you more. <a href="legal-templates.html">Choose a template →</a></p>
 <div class="px-packs">
         <div class="px-pack reveal">
           <small><span data-count="pack-policies">28</span> TEMPLATES</small>
@@ -359,6 +366,7 @@
           <p>Conduct and safeguarding, people, integrity and money, partners and operations, data and digital, and managing your policies.</p>
           <div class="px-pack-price"><b data-price-key="pack-policies.regular" data-prices="99,59,30,15">$99</b><span>launch price <span data-price-key="pack-policies.launch" data-prices="75,45,23,11">$75</span></span></div>
 <div class="px-pack-save">Saves <span data-price-key="save.pack-policies" data-prices="153,193,222,237">$153</span> vs. <span data-count="pack-policies">28</span> single templates</div>
+<button type="button" class="px-pack-buy" data-buy-key="pack-policies" data-buy-name="Policies &amp; procedures pack">Buy this pack →</button>
         </div>
         <div class="px-pack reveal">
           <small><span data-count="pack-contracts">10</span> TEMPLATES</small>
@@ -366,6 +374,7 @@
           <p>Employment, co-founders, volunteers, contractors, services, partners and data sharing.</p>
           <div class="px-pack-price"><b data-price-key="pack-contracts.regular" data-prices="59,35,18,9">$59</b><span>launch price <span data-price-key="pack-contracts.launch" data-prices="45,27,14,9">$45</span></span></div>
 <div class="px-pack-save">Saves <span data-price-key="save.pack-contracts" data-prices="31,55,72,81">$31</span> vs. <span data-count="pack-contracts">10</span> single templates</div>
+<button type="button" class="px-pack-buy" data-buy-key="pack-contracts" data-buy-name="Contracts &amp; agreements pack">Buy this pack →</button>
         </div>
         <div class="px-pack reveal">
           <small><span data-count="pack-consent">4</span> TEMPLATES</small>
@@ -373,6 +382,7 @@
           <p>Photo and story, research participation, information sharing, and fundraising and communications consent.</p>
           <div class="px-pack-price"><b data-price-key="pack-consent.regular" data-prices="19,11,9,9">$19</b><span>launch price <span data-price-key="pack-consent.launch" data-prices="15,9,9,9">$15</span></span></div>
 <div class="px-pack-save">Saves <span data-price-key="save.pack-consent" data-prices="17,25,27,27">$17</span> vs. <span data-count="pack-consent">4</span> single templates</div>
+<button type="button" class="px-pack-buy" data-buy-key="pack-consent" data-buy-name="Consent forms pack">Buy this pack →</button>
         </div>
         <div class="px-pack reveal">
           <small><span data-count="pack-governance">9</span> TEMPLATES</small>
@@ -380,6 +390,7 @@
           <p>Board terms of reference, delegation of authority, risk register, due diligence and records.</p>
           <div class="px-pack-price"><b data-price-key="pack-governance.regular" data-prices="39,23,12,9">$39</b><span>launch price <span data-price-key="pack-governance.launch" data-prices="29,17,9,9">$29</span></span></div>
 <div class="px-pack-save">Saves <span data-price-key="save.pack-governance" data-prices="42,58,69,72">$42</span> vs. <span data-count="pack-governance">9</span> single templates</div>
+<button type="button" class="px-pack-buy" data-buy-key="pack-governance" data-buy-name="Governance &amp; compliance pack">Buy this pack →</button>
         </div>
       </div>
 
@@ -623,8 +634,9 @@
   setBand(saved);
 })();
 </script>
-<script type="module" src="i18n.js?v=prices-3"></script>
-<script src="app.js?v=prices-4"></script>
+<script type="module" src="i18n.js?v=prices-4"></script>
+<script type="module">import {bindPriceButtons} from './founder-checkout.js?v=4';bindPriceButtons();</script>
+<script src="app.js?v=prices-5"></script>
 <script type="module" src="overview.js"></script>
 <script src="home.js?v=home-redesign-4"></script>
 </body>

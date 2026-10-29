@@ -57,15 +57,15 @@
     overlay.innerHTML =
       '<div class="ldg-card">' +
         '<button class="ldg-close" type="button" aria-label="Close">×</button>' +
-        '<div class="ldg-eyebrow">Legal templates · preview</div>' +
-        '<h2 class="ldg-title" id="ldg-title">Enter the access code</h2>' +
-        '<p class="ldg-body">Templates are in preview while we finalise the offer. Enter the code to download <span class="ldg-doc">' + esc(title) + '</span>.</p>' +
+        '<div class="ldg-eyebrow">Buy this template · $9</div>' +
+        '<h2 class="ldg-title" id="ldg-title">' + esc(title) + '</h2>' +
+        '<p class="ldg-body">Any single template is <b>$9</b>, in every country. Payments are not connected yet: enter the test code to simulate the purchase and download it. Nothing is charged.</p>' +
         '<form class="ldg-form" novalidate>' +
-          '<input class="ldg-input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Code" aria-label="Access code">' +
+          '<input class="ldg-input" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Test code" aria-label="Test code">' +
           '<p class="ldg-error" aria-live="polite"></p>' +
-          '<button class="ldg-btn" type="submit">Download</button>' +
+          '<button class="ldg-btn" type="submit">Confirm test purchase · $9</button>' +
         '</form>' +
-        '<p class="ldg-note">No code? <a href="contact.html">Ask us for access</a>.</p>' +
+        '<p class="ldg-note">Need several? <a href="prices.html#templates">A pack saves you more</a>.</p>' +
       '</div>';
     document.body.appendChild(overlay);
 

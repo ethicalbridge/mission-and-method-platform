@@ -70,7 +70,7 @@ export function openFounderCheckout(course,{onDone}={}){
   const country=sel.value,bandId=country&&bandOfCountry(country),band=bandId?BANDS.findIndex(b=>b.id===bandId):currentBand(),B=BANDS[band];
   wrap.querySelectorAll('[data-fc-price]').forEach(el=>{const p=coursePrice(el.dataset.fcPrice,band);el.innerHTML=(p.regular>p.now?`<s>${usd(p.regular)}</s>`:'')+usd(p.now);});
   bandBox.innerHTML=country
-   ?`<b>${esc(country)}</b> is a ${esc(B.name.toLowerCase())} country (World Bank, FY2027), so you pay ${Math.round(B.level*100)}% of the standard price. No item costs less than US$${PRICE_FLOOR}.`
+   ?`<b>${esc(country)}</b> is ${/^[aeiou]/i.test(B.name)?"an":"a"} ${esc(B.name.toLowerCase())} country (World Bank, FY2027), so you pay ${Math.round(B.level*100)}% of the standard price. No item costs less than US$${PRICE_FLOOR}.`
    :`Showing <b>${esc(B.name.toLowerCase())}</b> prices. Choose the country where your card was issued: it sets your price band. No item costs less than US$${PRICE_FLOOR}.`;
   const what=wrap.querySelector('input[name=fc-what]:checked').value;
   pay.textContent='Confirm test purchase · '+usd(coursePrice(what,band).now);
@@ -112,4 +112,44 @@ export function bindFounderButtons(root=document){
   if(id===FOUNDER_ALL&&ownsAllFounderCourses()){btn.hidden=true;return;}
   btn.addEventListener('click',ev=>{ev.preventDefault();openFounderCheckout({id,name:btn.dataset.name||'All four courses',start:btn.dataset.start});});
  }); refreshFounderPrices(root);
+}
+
+// Prices page: any catalogue item (pack, library, Essentials...) can be test-bought.
+// <button data-buy-key="pack-policies" data-buy-name="Policies & procedures pack">.
+export function openProductCheckout({key,name}){
+ ensureCSS();
+ const wrap=document.createElement('div');wrap.className='fc-backdrop';
+ const saved=sget(COUNTRY_KEY)||'';
+ const opts=countries.map(c=>`<option value="${esc(c.name)}"${c.name===saved?' selected':''}>${esc(c.name)}</option>`).join('');
+ wrap.innerHTML=`<div class="fc-card" role="dialog" aria-modal="true" aria-labelledby="fc-title"><span class="fc-eyebrow">Buy</span><h2 id="fc-title">${esc(name)}</h2>
+ <div class="fc-options"><div class="fc-option" style="cursor:default"><span><span class="fc-price" id="fc-one"></span><b>${esc(name)}</b><small>One payment. Editable Word files for use within one organisation.</small></span></div></div>
+ <div class="fc-country"><label for="fc-country">Country where your card was issued</label><select id="fc-country"><option value="">Choose a country…</option>${opts}</select><p class="fc-band" id="fc-band" aria-live="polite"></p></div>
+ <form class="fc-test"><label for="fc-code">Test payment</label><p style="margin:0 0 .5rem">Payments are not connected yet. Enter the test code to simulate a purchase; nothing is charged.</p><input id="fc-code" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="fc-error"><p class="fc-error" id="fc-error" role="alert"></p>
+ <div class="fc-actions"><button type="button" class="fc-cancel">Cancel</button><button type="submit" class="fc-pay">Confirm test purchase</button></div></form></div>`;
+ const sel=wrap.querySelector('#fc-country'),bandBox=wrap.querySelector('#fc-band'),pay=wrap.querySelector('.fc-pay');
+ const render=()=>{
+  const country=sel.value,bandId=country&&bandOfCountry(country),band=bandId?BANDS.findIndex(b=>b.id===bandId):currentBand(),B=BANDS[band];
+  const now=priceOf(key,band,'launch'),reg=priceOf(key,band,'regular');
+  wrap.querySelector('#fc-one').innerHTML=(reg>now?`<s>${usd(reg)}</s>`:'')+usd(now);
+  bandBox.innerHTML=country
+   ?`<b>${esc(country)}</b> is ${/^[aeiou]/i.test(B.name)?"an":"a"} ${esc(B.name.toLowerCase())} country (World Bank, FY2027), so you pay ${Math.round(B.level*100)}% of the standard price. No item costs less than US$${PRICE_FLOOR}.`
+   :`Showing <b>${esc(B.name.toLowerCase())}</b> prices. Choose the country where your card was issued: it sets your price band. No item costs less than US$${PRICE_FLOOR}.`;
+  pay.textContent='Confirm test purchase · '+usd(now);
+ };
+ sel.addEventListener('change',()=>{if(sel.value){sset(COUNTRY_KEY,sel.value);sset(BAND_KEY,String(BANDS.findIndex(b=>b.id===bandOfCountry(sel.value))));}render();});
+ render();
+ const close=()=>{wrap.remove();document.removeEventListener('keydown',onKey);};
+ const onKey=ev=>{if(ev.key==='Escape')close();};
+ document.addEventListener('keydown',onKey);
+ wrap.addEventListener('click',ev=>{if(ev.target===wrap)close();});
+ wrap.querySelector('.fc-cancel').onclick=close;
+ wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();
+  if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
+  if(wrap.querySelector('#fc-code').value.trim()!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
+  wrap.querySelector('.fc-card').innerHTML=`<span class="fc-eyebrow">Test purchase complete</span><h2>${esc(name)}</h2><p>Nothing was charged. When payments open, buyers receive their files straight away by email and in their account. For now, download templates from the template pages with the test code.</p><div class="fc-actions"><a class="fc-pay" style="text-decoration:none" href="legal-templates.html">Go to the templates</a><button type="button" class="fc-cancel">Close</button></div>`;
+  wrap.querySelector('.fc-cancel').onclick=close;});
+ document.body.append(wrap);(sel.value?wrap.querySelector('#fc-code'):sel).focus();
+}
+export function bindPriceButtons(root=document){
+ root.querySelectorAll('[data-buy-key]').forEach(b=>b.addEventListener('click',ev=>{ev.preventDefault();openProductCheckout({key:b.dataset.buyKey,name:b.dataset.buyName||b.textContent});}));
 }
