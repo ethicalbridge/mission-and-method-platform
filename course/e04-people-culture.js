@@ -1,5 +1,5 @@
-import base from './m04-people-culture.js?v=deeplink2';
-import {adapt} from './adapt.js?v=deeplink2';
+import base from './m04-people-culture.js?v=links3';
+import {adapt} from './adapt.js?v=links3';
 // Entrepreneurs' version of m04: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'People, Culture & Volunteers',

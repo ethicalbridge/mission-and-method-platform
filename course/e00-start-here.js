@@ -1,5 +1,5 @@
-import base from './m00-start-here.js?v=deeplink2';
-import {adapt} from './adapt.js?v=deeplink2';
+import base from './m00-start-here.js?v=links3';
+import {adapt} from './adapt.js?v=links3';
 // Entrepreneurs' version of m00: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'Start Here: Your Founder Journey',

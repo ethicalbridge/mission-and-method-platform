@@ -1,5 +1,5 @@
-import base from './m10-legal-compliance-risk.js?v=deeplink2';
-import {adapt} from './adapt.js?v=deeplink2';
+import base from './m10-legal-compliance-risk.js?v=links3';
+import {adapt} from './adapt.js?v=links3';
 // Entrepreneurs' version of m10: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:`Legal, Compliance, Policies & Risk`,
@@ -301,12 +301,12 @@ Object.assign(T,{
  'Incident Reporting Procedure':`${T.procedures}#incident-reporting-procedure`,'Complaints and Feedback Procedure':`${T.procedures}#complaints-and-feedback-procedure`,'Data Rights Request Procedure':`${T.procedures}#data-rights-request-procedure`,'Data Breach Response Procedure':`${T.procedures}#data-breach-response-procedure`,
  'Co-founder Agreement':`${T.contracts}#co-founder-agreement`,'Employment Contract':`${T.contracts}#employment-contract`,'Volunteer Agreement':`${T.contracts}#volunteer-agreement`,'Independent Contractor Agreement':`${T.contracts}#independent-contractor-agreement`,'Services Agreement':`${T.contracts}#services-agreement`,'Mutual Confidentiality Agreement':`${T.contracts}#mutual-confidentiality-agreement`,'Partnership Memorandum of Understanding':`${T.contracts}#partnership-memorandum-of-understanding`,'Sub-grant Agreement':`${T.contracts}#sub-grant-agreement`,'Data Sharing Agreement':`${T.contracts}#data-sharing-agreement`,
  'Photo and Story Consent Form':`${T.consent}#photo-and-story-consent-form`,'Information Sharing Consent Form':`${T.consent}#information-sharing-consent-form`,'Research Participation Consent Form':`${T.consent}#research-participation-consent-form`,
- 'Legal Review Checklist':`${T.governance}#legal-review-checklist`,'Records Retention Schedule':`${T.governance}#records-retention-schedule`,'Board Interest Declaration':`${T.governance}#board-interest-declaration`,'Data Protection Impact Assessment':`${T.governance}#data-protection-impact-assessment`});
+ 'Legal Review Checklist':`${T.governance}#legal-review-checklist`,'Records Retention Schedule':`${T.governance}#records-retention-schedule`,'Board Interest Declaration':`${T.governance}#board-interest-declaration`,'Data Protection Impact Assessment':`${T.governance}#data-protection-impact-assessment`,'Governing Document Guide and Model Constitution':`${T.governance}#governing-document-guide`,'Grant Acceptance Checklist':`${T.governance}#grant-acceptance-checklist`,'Gift and Donation Agreement':`${T.contracts}#gift-and-donation-agreement`});
 const NAMES={all:'All legal templates',policies:'Policy and procedure templates',procedures:'Policy and procedure templates',contracts:'Contract and agreement templates',consent:'Consent form templates',governance:'Governance and compliance templates'};
 // A group with templates gives one link per template, named by its title; a group without (e.g. 'all') links to the page.
 const tpl=(...groups)=>({links:groups.flatMap(([k,items])=>items?.length?items.map(i=>({href:T[i]||T[k],label:i,items:[]})):[{href:T[k],label:NAMES[k],items:[]}])});
 const READING={
- 'legal-map':{templates:tpl(['governance',['Legal Review Checklist','Records Retention Schedule']],['all']),
+ 'legal-map':{templates:tpl(['governance',['Legal Review Checklist','Governing Document Guide and Model Constitution','Grant Acceptance Checklist','Records Retention Schedule']],['all']),
   anatomy:{after:1,title:'Areas on your legal map',intro:'Most new initiatives meet the same areas. Not all of them will apply to you, and the rules in each depend on where you operate.',cols:['Area','What it usually covers','In the bakery'],rows:[
    ['Registration and governance','Registering your legal form, founding documents, yearly filings, who may sign for you','Informal for the three-month pilot, then registering as a company with a social purpose'],
    ['Tax','Registering for tax, sales tax or VAT, keeping records, filing returns','Registered for tax before the first sale; the accountant files the returns'],

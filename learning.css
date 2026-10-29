@@ -328,3 +328,6 @@
 .open-item{margin:6px 0 10px;padding:10px 14px;border-left:4px solid #c98f62;background:#fff6ec;border-radius:0 8px 8px 0;font-size:14px;line-height:1.6}
 .open-items{margin:22px 0;padding:18px 22px;border:1px solid #e1c9a6;border-radius:12px;background:#fffaf3}.open-items h2{font-size:22px!important;margin:0 0 6px!important}.open-items ul{margin:10px 0 0;padding-left:20px;line-height:1.7}
 .synthesis-output h4{margin:14px 0 4px}
+.templates-tag{align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;background:#f3eee2;color:#6a5a2e}
+.templates-tag.is-free{background:#e5f4e4;color:#1f6b2e}.templates-tag.is-included{background:#e8f3f1;color:#16746e}
+.templates-why{font-size:13px;line-height:1.45;color:#546974}

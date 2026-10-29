@@ -1,5 +1,5 @@
-import base from './m06-meal.js?v=deeplink2';
-import {adapt} from './adapt.js?v=deeplink2';
+import base from './m06-meal.js?v=links3';
+import {adapt} from './adapt.js?v=links3';
 // Entrepreneurs' version of m06: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  title:'MEAL: Monitoring, Evaluation, Accountability & Learning',

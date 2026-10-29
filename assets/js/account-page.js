@@ -1,8 +1,8 @@
 /* My account (account.html): sign-in, courses with progress, templates and packs with downloads, orders,
    data export and account deletion. Everything comes from the signed-in person's own rows (RLS). */
 import { mip, getSession, refreshKeys, cachedKeys, signOut, downloadFile, downloadError, deleteAccount, resetTestPurchases, takeReturnTo, pullCourseState } from './mip-account.js?v=2';
-import { founderPhases, phases, courseModules, freeModules, lessonPath } from '../../course-data.js?v=ev44';
-import { readState, stats, lessonKey } from '../../learning-store.js?v=acct1';
+import { founderPhases, phases, courseModules, freeModules, lessonPath } from '../../course-data.js?v=ev45';
+import { readState, stats, lessonKey } from '../../learning-store.js?v=acct2';
 import { openFounderCheckout, FOUNDER_ALL } from '../../founder-checkout.js?v=10';
 
 const $ = id => document.getElementById(id);

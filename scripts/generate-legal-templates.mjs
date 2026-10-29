@@ -43,6 +43,40 @@ const XLSX = ['risk-register', 'delegation-of-authority-matrix', 'records-retent
 const hasXlsx = slug => XLSX.includes(slug);
 const count = n => `${n} editable template${n === 1 ? '' : 's'}`;
 
+// Links from each template page back to the courses and to consulting (planned with the course review, 29 Oct 2026).
+const CONNECT = {
+ "legal-templates.html": {
+  "course": "New to legal documents? The courses for entrepreneurs show when you need each template and how to adapt it, and the Founder Pathway includes the 12 Start-up Legal Essentials.",
+  "courseHref": "course-entrepreneurs-protect.html",
+  "consult": "Working in a particular country? Julieta can help you adapt these templates to your work and prepare clear questions for a local lawyer.",
+  "consultHref": "work-with-julieta.html#start"
+ },
+ "legal-templates-policies.html": {
+  "course": "Learn which policies you actually need, and how to adapt them, in Course 4 · Protect.",
+  "courseHref": "/entrepreneurs-protect/working-out-which-policies-you-actually-need",
+  "consult": "Need your policies fitted to your country and your work? Julieta can adapt them with you before a local lawyer reviews them.",
+  "consultHref": "work-with-julieta.html#start"
+ },
+ "legal-templates-contracts-and-agreements.html": {
+  "course": "See which agreements a new initiative signs first, and what each one settles, in Course 4 · Protect. Course 2 · Organise covers the terms for the people who work with you.",
+  "courseHref": "/entrepreneurs-protect/contracts-and-agreements",
+  "consult": "Not sure which agreement fits a relationship, or how it works in your country? Julieta can help you choose and adapt it, and list what to check with a lawyer.",
+  "consultHref": "work-with-julieta.html#start"
+ },
+ "legal-templates-consent-forms.html": {
+  "course": "Learn to collect data and tell stories ethically in Course 3 · Prove & Show, where these forms feed your data collection plan and consent log.",
+  "courseHref": "/entrepreneurs-prove-show/storytelling-and-ethical-storytelling",
+  "consult": "Collecting stories or data in another country or language? Julieta can help you adapt the forms so people understand what they agree to.",
+  "consultHref": "work-with-julieta.html#start"
+ },
+ "legal-templates-governance-and-compliance.html": {
+  "course": "Design your governance and decision rights in Course 2 · Organise, then build your legal map and risk register in Course 4 · Protect.",
+  "courseHref": "/entrepreneurs-organise/governance-structures-by-legal-form",
+  "consult": "Setting up a board, or checking what your legal form requires where you operate? Julieta can help you adapt these documents and prepare questions for local advice.",
+  "consultHref": "work-with-julieta.html#start"
+ }
+};
+const connect = file => { const c = CONNECT[file]; if (!c) return ''; return `<aside class="legal-connect" aria-label="Learn and get help"><div><span class="eyebrow">Learn</span><p>${esc(c.course)}</p><a href="${esc(c.courseHref)}">Go to the course →</a></div><div><span class="eyebrow">Work with Julieta</span><p>${esc(c.consult)}</p><a href="${esc(c.consultHref)}">Book a consultation →</a></div></aside>`; };
 const kindClass = l => 'legal-kind-' + String(l || '').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
 function card(t) {
   const meta = [t.pages ? `about ${t.pages} pages` : null, 'Word (.docx)'].filter(Boolean).join(' · ');
@@ -61,7 +95,7 @@ for (const cat of catalog.categories) {
     const list = g.slugs.map(s => items.find(t => t.slug === s)).filter(Boolean);
     return `<section class="suite-tool-topic legal-topic" id="${esc(g.id || cat.id)}"><h2>${esc(g.name)}</h2><div class="suite-tool-grid">${list.map(card).join('')}</div></section>`;
   }).join('');
-  const main = `<div class="catalog legal-catalog legal-category-page"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="legal-templates.html">Legal Templates</a><span>› ${esc(cat.name)}</span></nav><span class="eyebrow">${count(items.length)}</span><h1>${esc(cat.name)}</h1><p class="lead">${esc(cat.lead)}</p><p class="legal-category-intro">${esc(cat.intro)}</p>${freeBanner}${legend(cat)}${notice}${jump}${sections}${howTo}<p class="legal-back"><a href="legal-templates.html">← All legal template categories</a></p></div>`;
+  const main = `<div class="catalog legal-catalog legal-category-page"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="legal-templates.html">Legal Templates</a><span>› ${esc(cat.name)}</span></nav><span class="eyebrow">${count(items.length)}</span><h1>${esc(cat.name)}</h1><p class="lead">${esc(cat.lead)}</p><p class="legal-category-intro">${esc(cat.intro)}</p>${freeBanner}${legend(cat)}${notice}${jump}${sections}${connect(cat.file)}${howTo}<p class="legal-back"><a href="legal-templates.html">← All legal template categories</a></p></div>`;
   writeFileSync(new URL(cat.file, root), page(cat.name, cat.lead, main));
 }
 
@@ -76,7 +110,7 @@ const cards = catalog.categories.map(cat => {
   return `<article class="legal-category-card"><span class="eyebrow">${count(n)}</span><h2>${esc(cat.name)}</h2><p>${esc(cat.lead)}</p><a class="button ghost" href="${esc(cat.file)}">Explore ${esc(cat.name)} →</a></article>`;
 }).join('');
 const EDITIONS_LATEST = '2026-10';
-const indexMain = `<div class="catalog legal-catalog"><span class="eyebrow">Document library · ${all.length} editable templates</span><h1>Legal Templates</h1><p class="lead">${esc(catalog.lead)}</p>${freeBlock()}${notice}<section class="legal-category-grid" aria-label="Legal template categories">${cards}</section>${howTo}<p class="legal-edition">Template edition ${EDITIONS_LATEST} · <a href="legal-templates-changelog.html">What changed</a></p></div>`;
+const indexMain = `<div class="catalog legal-catalog"><span class="eyebrow">Document library · ${all.length} editable templates</span><h1>Legal Templates</h1><p class="lead">${esc(catalog.lead)}</p>${freeBlock()}${notice}<section class="legal-category-grid" aria-label="Legal template categories">${cards}</section>${connect('legal-templates.html')}${howTo}<p class="legal-edition">Template edition ${EDITIONS_LATEST} · <a href="legal-templates-changelog.html">What changed</a></p></div>`;
 writeFileSync(new URL('legal-templates.html', root), page('Legal Templates', catalog.lead, indexMain));
 // Public change log of the template library. Add a new edition at the top when templates change,
 // and update EDITION in scripts/legal-templates/build.cjs (printed in every template footer).

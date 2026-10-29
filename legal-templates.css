@@ -43,3 +43,13 @@
 @media(max-width:480px){.ft-covers{gap:8px}.ft-cover figcaption{font-size:11.5px}.ft-btn{width:100%}}
 .legal-card{scroll-margin-top:110px}.legal-card:target{outline:3px solid #f6c25b;outline-offset:3px}
 .legal-edition{margin:28px 0 0;font-size:14px;color:#5d6b73}.legal-edition a{color:var(--teal);font-weight:800}
+
+/* Template pages: links back to the courses and to consulting */
+.legal-connect{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:34px 0 10px}
+.legal-connect>div{padding:20px 22px;border-radius:14px;border:1px solid #d9e6e3;background:#f4f9f8}
+.legal-connect>div+div{background:#fff6f1;border-color:#f1d3c4}
+.legal-connect .eyebrow{display:block;margin-bottom:6px}
+.legal-connect p{margin:0 0 10px;line-height:1.55}
+.legal-connect a{font-weight:800;color:#16746e;text-decoration:none}
+.legal-connect>div+div a{color:#c4512c}
+@media (max-width:720px){.legal-connect{grid-template-columns:1fr}}
