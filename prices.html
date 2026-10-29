@@ -63,12 +63,6 @@
 .px-ladder li b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:4px}
 .px-ladder li:before{counter-increment:step;content:counter(step);display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--deep);color:#fff;font-size:12px;font-weight:900;margin-bottom:8px}
 
-/* Partner seats table */
-.px-seats{width:100%;border-collapse:separate;border-spacing:0;margin-top:32px;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
-.px-seats th,.px-seats td{text-align:left;padding:14px 18px;font-size:14.5px;border-bottom:1px solid var(--line)}
-.px-seats th{background:var(--cream);font-size:11px;letter-spacing:.14em;color:var(--teal);font-weight:900}
-.px-seats tr:last-child td{border-bottom:0}
-.px-seats td b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;color:var(--deep)}
 
 /* Coming-soon strip */
 .px-soon{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between;background:linear-gradient(160deg,var(--deep) 0%,#0d2a33 100%);color:#fff;border-radius:22px;padding:28px 32px}
@@ -106,7 +100,6 @@
   .px-bands-inner{padding:10px 0}
   .px-seg{width:100%;justify-content:space-between}
   .px-seg button{flex:1 1 auto;padding:8px 10px;font-size:12.5px}
-  .px-seats th,.px-seats td{padding:12px;font-size:13.5px}
   .px-soon{padding:24px}
   .px-bands-label{font-size:12px}
   .px-bands-label small{display:none}
@@ -410,26 +403,6 @@
     </div>
   </section>
 
-  <!-- ================= 06 · PARTNERS ================= -->
-  <section class="hm-section hm-section-alt pr-tier" id="partners">
-    <div class="container">
-      <div class="hm-head reveal">
-        <div class="hm-section-eyebrow">06 · FOR FUNDERS, INCUBATORS AND NETWORKS</div>
-        <h2>Seats for the organisations you support.</h2>
-        <p class="hm-subhead">Give every grantee or cohort founder the Founder Pathway, and see who has finished which Pack.</p>
-      </div>
-      <table class="px-seats">
-        <thead><tr><th scope="col">SEATS</th><th scope="col">PRICE</th><th scope="col">PER SEAT</th></tr></thead>
-        <tbody>
-          <tr><td>10 seats</td><td><b>$690</b></td><td>$69</td></tr>
-          <tr><td>25 seats</td><td><b>$1,450</b></td><td>$58</td></tr>
-          <tr><td>50 or more</td><td><b>By quote</b></td><td>Cohort pricing</td></tr>
-        </tbody>
-      </table>
-      <p class="pr-fine" style="margin-top:12px">Partner seats are priced the same in every country. Progress reports and invoicing are being built. <a href="contact.html">Contact us</a> to plan a cohort.</p>
-    </div>
-  </section>
-
   <!-- ================= IMPACT TOOLS · COMING SOON ================= -->
   <section class="hm-section pr-tier">
     <div class="container">
@@ -478,7 +451,7 @@
         </details>
         <details class="reveal">
           <summary>What if I can't pay?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
-          <p>We offer a number of free places every quarter, funded by partner seats. <a href="contact.html">Write to us</a> and tell us what you are building.</p>
+          <p>We offer a number of free places every quarter. <a href="contact.html">Write to us</a> and tell us what you are building.</p>
         </details>
       </div>
     </div>
