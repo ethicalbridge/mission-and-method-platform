@@ -401,3 +401,4 @@ nav.nav{position:sticky !important;top:0 !important;z-index:60 !important}
 .px-bands{top:var(--nav-h,78px) !important;z-index:50 !important}
 /* My account: less space before the newsletter box */
 .acc{padding-bottom:20px !important}
+body[data-page="account"] .pre-footer-news{display:none}
