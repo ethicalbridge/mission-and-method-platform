@@ -15,7 +15,8 @@ const shellHead = shellSrc.slice(0, headEnd);
 const shellTail = shellSrc.slice(tailStart);
 const page = (title, description, main) => shellHead
   .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)} | Method into Impact</title>`)
-  .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(description)}">`)
+  .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(description)}"><meta name="robots" content="noindex, nofollow">`)
+  .replace(/<meta name="robots" content="[^"]*">(?=<meta name="robots")/, '')
   + `<main id="main">${main}</main>` + shellTail;
 
 const notice = `<aside class="legal-notice" aria-labelledby="legal-notice-title"><h2 id="legal-notice-title">Templates, not legal advice</h2><p>Each template is a general starting point written for small purpose-led organisations in different countries. Before you adopt, sign or publish one, adapt it to your organisation and have a qualified adviser check it against the law where you operate, your funders’ conditions and your sector’s rules.</p><p>Method into Impact does not guarantee that a template is complete, current, suitable or enforceable for your circumstances, and using one does not create an adviser–client relationship. You are responsible for getting advice and approving the final document. Nothing here limits rights or duties that cannot lawfully be excluded.</p></aside>`;
