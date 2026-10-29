@@ -4,7 +4,7 @@
 // charged and nothing leaves the browser. When the payment provider is connected, replace confirmPurchase() with
 // the real checkout and read ownership from the server (docs/production-access.md).
 import {COURSE_ACCESS_KEY,ownedCourseIds} from './course-access.js?v=ev5';
-import {priceOf,BANDS,PRICE_FLOOR} from './pricing-config.js?v=prices-sync-1';
+import {priceOf,BANDS,PRICE_FLOOR,launchOn} from './pricing-config.js?v=launch-1';
 import {countries,bandOfCountry} from './country-bands.js?v=1';
 export const FOUNDER_ALL='entrepreneurs-all';
 const TEST_CODE='1234';
@@ -25,7 +25,7 @@ const sget=k=>{try{return globalThis.sessionStorage.getItem(k);}catch{return nul
 const sset=(k,v)=>{try{globalThis.sessionStorage.setItem(k,v);}catch{}};
 export const currentBand=()=>{const c=sget(COUNTRY_KEY),b=c&&bandOfCountry(c);if(b)return BANDS.findIndex(x=>x.id===b);const n=Number(sget(BAND_KEY));return n>=0&&n<4?n:0;};
 const priceKey=id=>id===FOUNDER_ALL?'founder-pathway':'course';
-export const coursePrice=(id,band=currentBand())=>({now:priceOf(priceKey(id),band,'launch'),regular:priceOf(priceKey(id),band,'regular')});
+export const coursePrice=(id,band=currentBand())=>({now:priceOf(priceKey(id),band,launchOn()?'launch':'regular'),regular:priceOf(priceKey(id),band,'regular')});
 const usd=n=>'$'+n;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const CSS=`.fc-backdrop{position:fixed;inset:0;background:rgba(10,22,28,.55);z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -130,7 +130,7 @@ export function openProductCheckout({key,name}){
  const sel=wrap.querySelector('#fc-country'),bandBox=wrap.querySelector('#fc-band'),pay=wrap.querySelector('.fc-pay');
  const render=()=>{
   const country=sel.value,bandId=country&&bandOfCountry(country),band=bandId?BANDS.findIndex(b=>b.id===bandId):currentBand(),B=BANDS[band];
-  const now=priceOf(key,band,'launch'),reg=priceOf(key,band,'regular');
+  const now=priceOf(key,band,launchOn()?'launch':'regular'),reg=priceOf(key,band,'regular');
   wrap.querySelector('#fc-one').innerHTML=(reg>now?`<s>${usd(reg)}</s>`:'')+usd(now);
   bandBox.innerHTML=country
    ?`<b>${esc(country)}</b> is ${/^[aeiou]/i.test(B.name)?"an":"a"} ${esc(B.name.toLowerCase())} country (World Bank, FY2027), so you pay ${Math.round(B.level*100)}% of the standard price. No item costs less than US$${PRICE_FLOOR}.`

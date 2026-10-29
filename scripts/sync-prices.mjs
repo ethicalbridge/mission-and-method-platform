@@ -2,7 +2,7 @@
 // and assets/legal-templates/catalog.json, so the page never drifts from the price list.
 // Run after changing prices or adding templates:  node scripts/sync-prices.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
-import { catalog, priceOf, savings, BANDS, PACKS } from '../pricing-config.js';
+import { catalog, priceOf, savings, BANDS, PACKS, LAUNCH_PRICE_ENDS_TEXT } from '../pricing-config.js';
 
 const root = new URL('../', import.meta.url);
 const read = p => readFileSync(new URL(p, root), 'utf8');
@@ -37,5 +37,6 @@ html = html.replace(/<span data-count="([^"]+)">\d+<\/span>/g, (_, key) => {
   c++;
   return `<span data-count="${key}">${counts[key]}</span>`;
 });
+html = html.replace(/<span data-founding-until>[^<]*<\/span>/g, `<span data-founding-until>${LAUNCH_PRICE_ENDS_TEXT}</span>`);
 writeFileSync(new URL('prices.html', root), html);
 console.log(`prices.html: ${n} prices and ${c} template counts synced (library ${counts.library}: ${PACKS.map(p => `${p.replace('pack-', '')} ${counts[p]}`).join(', ')})`);

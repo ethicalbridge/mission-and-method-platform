@@ -5,7 +5,7 @@ const courseLabel=p=>`Course ${p.number} · ${p.name}`;
 import {softwareProducts,resourceManifest,previewToolSlugs} from './products.js';
 import {hasToolAccess} from './tool-access.js';
 import {ownsCourse} from './course-access.js?v=ev5';
-import {ownsFounderCourse,ownsAllFounderCourses,openFounderCheckout,refreshFounderPrices,FOUNDER_ALL} from './founder-checkout.js?v=6';
+import {ownsFounderCourse,ownsAllFounderCourses,openFounderCheckout,refreshFounderPrices,FOUNDER_ALL} from './founder-checkout.js?v=7';
 import {readState,mutateState,emptyState,lessonKey,storeKey,valueOf,stats,isFilled,invalidate,escapeHTML as e,download,STORAGE_KEY,validateState,FIRST_LESSON,REFLECT,NOT_YET,reflectField,notYetOf,isDeferred} from './learning-store.js?v=ev45';
 const root=document.querySelector('#learning-root');
 // ?reset-answers empties every saved answer, completed lesson and task in this browser (course access is kept).

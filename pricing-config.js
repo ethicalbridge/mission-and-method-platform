@@ -82,7 +82,10 @@ export const BANDS = [
   {id:'low', name:'Low income', short:'Low', level:0.15},
 ];
 export const PRICE_FLOOR = 9;             // no paid item costs less than US$9 in any band
-export const LAUNCH_PRICE_ENDS = null;    // set a date such as '2027-03-31' when decided
+export const LAUNCH_PRICE_ENDS = '2027-03-31'; // last day of the launch price (shown on prices.html; checkout switches to the standard price after it)
+export const LAUNCH_PRICE_ENDS_TEXT = '31 March 2027';
+/** True until the end of LAUNCH_PRICE_ENDS (UTC). */
+export const launchOn = (now = new Date()) => !LAUNCH_PRICE_ENDS || now <= new Date(LAUNCH_PRICE_ENDS + 'T23:59:59Z');
 
 // regular = list price; launch = price until LAUNCH_PRICE_ENDS (omit if none)
 export const catalog = {
