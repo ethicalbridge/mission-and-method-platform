@@ -151,7 +151,7 @@ Basa tus tarifas en los precios locales reales y deja constancia de cómo las fi
 
 ## 8. Clase de viaje y reservas
 
-- Reserve a través de [[nuestro proceso de reservas / Nombre, cargo]], o usted mismo con aprobación, lo antes posible para conseguir la mejor tarifa.
+- Reserve a través de [[nuestro proceso de reservas / Nombre, cargo]], o hágalo personalmente con aprobación, lo antes posible para conseguir la mejor tarifa.
 - Viaje en clase económica en todos los vuelos. La clase business solo puede aprobarse por motivos médicos u otros motivos aprobados por escrito por [[Nombre, cargo]].
 - Use el transporte público cuando sea seguro, fiable y práctico. Elija opciones más seguras en lugar de más baratas cuando el riesgo lo justifique. Nuestra Política de Seguridad en Viajes y Deber de Cuidado establece qué vehículos y rutas están permitidos, por ejemplo de noche.
 - Acepte tarifas flexibles o reembolsables cuando sea probable que los planes cambien y el costo adicional sea pequeño.

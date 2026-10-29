@@ -46,7 +46,7 @@ La Parte B se aplica a cada donación que se ofrece a [[Nombre de la organizaci�
 **Ley.** [[Nombre de la organización]] está registrada en [[país]] y cumple sus leyes sobre recaudación de fondos, donaciones, recibos fiscales, financiación extranjera, blanqueo de capitales y sanciones. Cuando las normas de un financiador o socio son más estrictas, seguimos la norma más estricta.
 
 ::: adapt Ley y países
-Enumera las leyes que se aplican a tus donaciones. Ámbitos habituales que comprobar: las normas sobre la recepción de financiación extranjera (por ejemplo, en la India las contribuciones extranjeras están reguladas por la Foreign Contribution (Regulation) Act 2010 y deben recibirse en una cuenta designada); las normas sobre la emisión de recibos fiscales a las personas donantes (por ejemplo, en los EE. UU. una persona donante necesita un acuse de recibo por escrito para un regalo de 250 USD o más, y en el Reino Unido el Gift Aid tiene sus propias normas de declaración); los permisos para la recaudación pública de fondos; y las obligaciones de prevención del blanqueo de capitales. Si no estás segura de qué se aplica, consulta tu ley local sobre recaudación de fondos y financiación extranjera antes de aceptar donaciones internacionales.
+Enumera las leyes que se aplican a tus donaciones. Ámbitos habituales que comprobar: las normas sobre la recepción de financiación extranjera (por ejemplo, en la India las contribuciones extranjeras están reguladas por la Foreign Contribution (Regulation) Act 2010 y deben recibirse en una cuenta designada); las normas sobre la emisión de recibos fiscales a las personas donantes (por ejemplo, en los EE. UU. una persona donante necesita un acuse de recibo por escrito para un regalo de 250 USD o más, y en el Reino Unido el Gift Aid tiene sus propias normas de declaración); los permisos para la recaudación pública de fondos; y las obligaciones de prevención del blanqueo de capitales. Si tienes dudas sobre qué se aplica, consulta tu ley local sobre recaudación de fondos y financiación extranjera antes de aceptar donaciones internacionales.
 :::
 
 # Parte A: Regalos y atenciones
@@ -142,7 +142,7 @@ Rechazaremos una donación si:
 - la ofrece alguien que nos ha solicitado un empleo, un contrato o apoyo mientras esa decisión está pendiente.
 
 ::: adapt Líneas rojas éticas
-Decide de qué sectores o personas donantes no aceptarás dinero, en función de tu misión. Una organización de salud puede rechazar el dinero del tabaco y del alcohol; un grupo ambientalista puede rechazar a las empresas de combustibles fósiles; un grupo de construcción de paz puede rechazar a los partidos políticos. Algunas organizaciones excluyen la financiación gubernamental para seguir siendo independientes. Sé concreta: las normas vagas son difíciles de aplicar. Pide al órgano de gobierno que apruebe la lista.
+Decide de qué sectores o personas donantes no aceptarás dinero, en función de tu misión. Una organización de salud puede rechazar el dinero del tabaco y del alcohol; un grupo ambientalista puede rechazar a las empresas de combustibles fósiles; un grupo de construcción de paz puede rechazar a los partidos políticos. Algunas organizaciones excluyen la financiación gubernamental para seguir siendo independientes. Concreta al máximo: las normas vagas son difíciles de aplicar. Pide al órgano de gobierno que apruebe la lista.
 :::
 
 ## 10. Condiciones y regalos restringidos

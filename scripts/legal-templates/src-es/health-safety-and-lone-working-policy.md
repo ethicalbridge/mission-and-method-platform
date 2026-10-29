@@ -47,7 +47,7 @@ Se aplica en **nuestra oficina** en [[dirección]]; en **terreno**, incluidos lo
 **Legislación y normas más estrictas.** [[Nombre de la organización]] está registrada en [[país]] y cumple sus leyes sobre seguridad y salud en el trabajo. En el extranjero, también cumplimos la legislación local. Cuando un propietario, espacio, organización socia o financiador tenga normas de seguridad más estrictas, esas normas se aplican mientras trabaje con ellos.
 
 ::: adapt La legislación de tu país
-Indica el país donde estás registrada la organización y cada país donde tengas personal. La mayoría de los países tienen una ley general de seguridad y salud en el trabajo que impone deberes a la entidad empleadora. Ejemplos que debes confirmar localmente:
+Indica el país donde está registrada tu organización y cada país donde tengas personal. La mayoría de los países tienen una ley general de seguridad y salud en el trabajo que impone deberes a la entidad empleadora. Ejemplos que debes confirmar localmente:
 
 - **Kenia:** la Occupational Safety and Health Act 2007; la indemnización por lesiones laborales se rige por la Work Injury Benefits Act 2007.
 - **Sudáfrica:** la Occupational Health and Safety Act 85 of 1993 y la Compensation for Occupational Injuries and Diseases Act 130 of 1993 (COIDA).
@@ -88,7 +88,7 @@ Tomamos medidas razonables y prácticas para proteger la salud, la seguridad y e
 
 ## 2. Qué esperamos de usted
 
-Cuide razonablemente de sí mismo y de los demás. Siga esta política, las evaluaciones de riesgos y las instrucciones de seguridad. Notifique con prontitud los equipos defectuosos, los accidentes, los cuasi accidentes y los peligros, y dé los avisos de control cuando trabaje en solitario. Infórmenos de cualquier circunstancia que pueda afectar a su seguridad en el trabajo, como un medicamento que produce somnolencia. Usted decide qué compartir, y nosotros lo tratamos de forma confidencial.
+Cuide razonablemente de su propia seguridad y de la de los demás. Siga esta política, las evaluaciones de riesgos y las instrucciones de seguridad. Notifique con prontitud los equipos defectuosos, los accidentes, los cuasi accidentes y los peligros, y dé los avisos de control cuando trabaje en solitario. Infórmenos de cualquier circunstancia que pueda afectar a su seguridad en el trabajo, como un medicamento que produce somnolencia. Usted decide qué compartir, y nosotros lo tratamos de forma confidencial.
 
 ## 3. Su derecho a detener un trabajo inseguro
 
@@ -233,7 +233,7 @@ En las actividades conjuntas o el trabajo en locales de una organización socia,
 
 ## 15. Quién trabaja en solitario
 
-Usted trabaja en solitario siempre que no tenga cerca a un colega que pueda verle u oírle y ayudarle con rapidez. Esto incluye trabajar solo en la oficina o en casa; las visitas domiciliarias y las reuniones individuales con las personas a las que servimos; las visitas de terreno que se hacen en solitario; conducir en solitario; y cerrar un local después de un evento. Trabajar en solitario no es inseguro en sí mismo, pero es más difícil conseguir ayuda, así que siempre debe haber alguien que sepa dónde está usted.
+Usted trabaja en solitario siempre que no tenga cerca a un colega que pueda verle u oírle y ayudarle con rapidez. Esto incluye trabajar sin compañía en la oficina o en casa; las visitas domiciliarias y las reuniones individuales con las personas a las que servimos; las visitas de terreno que se hacen en solitario; conducir en solitario; y cerrar un local después de un evento. Trabajar en solitario no es inseguro en sí mismo, pero es más difícil conseguir ayuda, así que siempre debe haber alguien que sepa dónde está usted.
 
 ## 16. Antes del trabajo en solitario
 
@@ -292,7 +292,7 @@ Fija tiempos adecuados a tu trabajo: 30 minutos pueden bastar para una oficina e
 ## 19. Visitas domiciliarias y trabajo de terreno
 
 - Concierte las visitas con antelación y revise cualquier información sobre riesgos que tengamos sobre la dirección.
-- Al llegar, valore la situación. Si se siente incómodo, no entre, o márchese con educación. Confíe en su intuición.
+- Al llegar, valore la situación. Si siente incomodidad, no entre, o márchese con educación. Confíe en su intuición.
 - Siéntese cerca de la salida, tenga a mano el teléfono y las llaves, y no acepte alcohol.
 - Si alguien se vuelve agresivo, mantenga la calma, no discuta y márchese. Su seguridad importa más que terminar la visita.
 - Estacione de forma que pueda irse con facilidad, sin nada valioso ni confidencial a la vista.
@@ -301,7 +301,7 @@ Si se sintió en peligro, informe a la persona responsable el mismo día y compl
 
 ## 20. Desplazamientos nocturnos
 
-Planifique el trabajo para poder volver a casa con luz de día, o viaje acompañado. Si tiene que desplazarse solo de noche, use [[un taxi o servicio de transporte registrado / un conductor aprobado]], comparta los datos del vehículo con su persona de control y evite caminar por zonas aisladas. Pagamos el transporte seguro conforme a nuestra Política de Gastos y Viáticos. Dé el aviso de control al salir y al llegar a casa: su persona de control espera su mensaje e inicia el escalamiento si no llega.
+Planifique el trabajo para poder volver a casa con luz de día, o viaje con otra persona. Si tiene que desplazarse sin compañía de noche, use [[un taxi o servicio de transporte registrado / un conductor aprobado]], comparta los datos del vehículo con su persona de control y evite caminar por zonas aisladas. Pagamos el transporte seguro conforme a nuestra Política de Gastos y Viáticos. Dé el aviso de control al salir y al llegar a casa: su persona de control espera su mensaje e inicia el escalamiento si no llega.
 
 ## 21. Dispositivos y aplicaciones de seguridad personal
 

@@ -186,7 +186,7 @@ Las señales de alerta no prueban un fraude, pero exigen una revisión más aten
 
 # Cómo denunciar
 
-Denuncie en cuanto sospeche un fraude, un soborno, un caso de corrupción o un uso indebido de fondos. No necesita pruebas. Use la vía con la que se sienta más seguro:
+Denuncie en cuanto sospeche un fraude, un soborno, un caso de corrupción o un uso indebido de fondos. No necesita pruebas. Use la vía que le dé más seguridad:
 
 {widths: 35 65}
 | Vía | Datos |

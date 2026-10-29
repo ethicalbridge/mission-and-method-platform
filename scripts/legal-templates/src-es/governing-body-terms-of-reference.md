@@ -130,7 +130,7 @@ Decide cómo llega la voz de la comunidad al órgano de gobierno: puestos reserv
 - Un miembro deja el órgano de gobierno si renuncia por escrito, queda inhabilitado por ley, falta a [[tres]] reuniones consecutivas sin motivos que el órgano de gobierno acepte, o es cesado conforme al documento constitutivo.
 
 ::: adapt Mandatos y requisitos
-Copia la duración de los mandatos de tu documento constitutivo. Nueve años en total es un límite de buenas prácticas muy extendido. Los órganos de gobierno fundacionales a veces mantienen más tiempo a los miembros fundadores mientras buscan relevo; en ese caso, fija una fecha para la primera renovación. Comprueba quién está inhabilitado por ley en tu país (por ejemplo, personas con determinadas condenas o administradores de sociedades inhabilitados) y si estás obligada a verificarlo.
+Copia la duración de los mandatos de tu documento constitutivo. Nueve años en total es un límite de buenas prácticas muy extendido. Los órganos de gobierno fundacionales a veces mantienen más tiempo a los miembros fundadores mientras buscan relevo; en ese caso, fija una fecha para la primera renovación. Comprueba quién está inhabilitado por ley en tu país (por ejemplo, personas con determinadas condenas o administradores de sociedades inhabilitados) y si tienes la obligación de verificarlo.
 :::
 
 # Cargos
