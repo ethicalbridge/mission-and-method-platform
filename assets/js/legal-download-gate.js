@@ -107,8 +107,10 @@
       var f = parse(b.getAttribute('data-template-file')); if (!f) return;
       if (!b.hasAttribute('data-buy-label')) b.setAttribute('data-buy-label', b.textContent);
       var own = A.owns('template:' + f.slug);
-      b.textContent = own ? (f.key.indexOf('es/') === 0 ? 'Descargar en español ↓' : /\.xlsx$/.test(f.key) ? 'Download Excel ↓' : 'Download Word template ↓') : b.getAttribute('data-buy-label');
+      b.textContent = own ? (f.key.indexOf('es/') === 0 ? 'Descargar en español ↓' : /\.xlsx$/.test(f.key) ? 'Download Excel ↓' : 'Download in English ↓') : b.getAttribute('data-buy-label');
       b.classList.toggle('is-owned', own);
+      // One "Buy · $9 · English + Spanish" button until bought; then the Spanish and Excel downloads appear.
+      if (b.classList.contains('legal-owned-only')) b.hidden = !own;
     });
   }
   if (document.querySelector('[data-template-file]')) account().then(function (A) { label(A); window.addEventListener('mip:account', function () { label(A); }); });

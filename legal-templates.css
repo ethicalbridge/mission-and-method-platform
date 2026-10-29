@@ -60,3 +60,4 @@
 .legal-langline a{color:#16746e;font-weight:800}
 .ft-next{margin-top:10px;font-size:14px;line-height:1.6}
 .ft-next a{font-weight:800}
+.legal-owned-only[hidden]{display:none !important}

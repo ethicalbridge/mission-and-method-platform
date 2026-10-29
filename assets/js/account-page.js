@@ -48,7 +48,7 @@ $('acc-signin-form').addEventListener('submit', async e => {
     }
     note.textContent = /rate|seconds/i.test(error.message) ? (es() ? 'Espera un minuto antes de pedir otro correo.' : 'Please wait a minute before asking for another email.') : (es() ? 'No pudimos enviar el correo: ' : 'We could not send the email: ') + error.message; return;
   }
-  note.innerHTML = es() ? `Revisa el correo de <b>${esc(email)}</b> y abre el enlace. Funciona durante una hora.` : `Check your inbox for <b>${esc(email)}</b> and open the link. It works for one hour.`;
+  note.innerHTML = es() ? `Revisa el correo de <b>${esc(email)}</b> y abre el enlace. Funciona durante una hora. ¿No llega en un par de minutos? Mira en spam o promociones.` : `Check your inbox for <b>${esc(email)}</b> and open the link. It works for one hour. Not there in a couple of minutes? Check your spam or promotions folder.`;
   $('acc-code-form').hidden = false;
   // Optional newsletter box (Create account only, unticked by default): double opt-in email via assets/js/newsletter.js.
   const news = $('acc-news');
