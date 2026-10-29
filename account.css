@@ -95,3 +95,4 @@
 .acc-tabs button:focus-visible{outline:3px solid rgba(22,116,110,.35);outline-offset:2px}
 .acc-check[hidden]{display:none}
 .acc-note .acc-link{font-size:inherit}
+body[data-page="newsletter"] .footer-news{display:none}

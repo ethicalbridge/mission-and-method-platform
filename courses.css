@@ -123,3 +123,4 @@
 .track-switch a[aria-current="page"]{background:var(--sun,#f8ca68);color:#102e3b}
 .track-switch a:focus-visible{outline:3px solid var(--sun,#f8ca68);outline-offset:2px}
 @media (max-width:520px){.track-switch{display:flex;border-radius:18px}.track-switch a{flex:1 1 100%;text-align:center}}
+.ec-soon-alt{text-align:center;margin:14px 0 0}.ec-soon-alt a{font-weight:800;color:#16746e}

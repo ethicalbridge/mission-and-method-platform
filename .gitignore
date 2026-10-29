@@ -9,4 +9,7 @@ assets/legal-templates/*.docx
 !assets/legal-templates/conflict-of-interest-policy.docx
 !assets/legal-templates/mutual-confidentiality-agreement.docx
 assets/legal-templates/*.xlsx
-assets/legal-templates/es/
+assets/legal-templates/es/*
+!assets/legal-templates/es/legal-review-checklist.docx
+!assets/legal-templates/es/conflict-of-interest-policy.docx
+!assets/legal-templates/es/mutual-confidentiality-agreement.docx

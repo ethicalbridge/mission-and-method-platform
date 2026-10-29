@@ -14,8 +14,10 @@
   function remembered() { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } }
   function remember() { try { localStorage.setItem(KEY, '1'); } catch (e) {} }
 
+  // Spanish pages get the Spanish versions of the 3 free templates.
+  function files() { return (document.documentElement.lang || '').indexOf('es') === 0 ? FILES.map(function (f) { return f.replace('assets/legal-templates/', 'assets/legal-templates/es/'); }) : FILES; }
   function deliver() {
-    FILES.forEach(function (file, i) {
+    files().forEach(function (file, i) {
       setTimeout(function () {
         var a = document.createElement('a');
         a.href = file;
@@ -35,7 +37,7 @@
     var again = box.querySelector('.ft-again');
 
     function showDone() { form.hidden = true; done.hidden = false; }
-    if (remembered()) showDone();
+    if (remembered()) { showDone(); var t = done.querySelector('.ft-done-title'); if (t) t.textContent = 'You already have the 3 free templates.'; }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();

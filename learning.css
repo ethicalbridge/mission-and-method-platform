@@ -331,3 +331,4 @@
 .templates-tag{align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:999px;background:#f3eee2;color:#6a5a2e}
 .templates-tag.is-free{background:#e5f4e4;color:#1f6b2e}.templates-tag.is-included{background:#e8f3f1;color:#16746e}
 .templates-why{font-size:13px;line-height:1.45;color:#546974}
+.locked-alt{margin-top:18px;font-size:14.5px;line-height:1.7;color:var(--muted,#5d6b73)}.locked-alt a{font-weight:800}

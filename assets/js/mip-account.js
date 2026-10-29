@@ -189,5 +189,14 @@ async function navLink() {
   document.querySelectorAll('.nav-account').forEach(a => { a.classList.toggle('is-signed-in', on); a.dataset.i18n = on ? 'nav.account' : 'nav.signin'; a.textContent = on ? (es ? 'Mi cuenta' : 'My account') : (es ? 'Iniciar sesión' : 'Sign in'); });
 }
 window.addEventListener('mip:account', navLink);
+// One-off message carried to the next page (for example after a purchase that opens the course).
+function showToast() {
+  let msg = null; try { msg = sessionStorage.getItem('mip.toast'); sessionStorage.removeItem('mip.toast'); } catch {}
+  if (!msg) return;
+  const t = document.createElement('div'); t.setAttribute('role', 'status'); t.textContent = msg;
+  t.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#102e3b;color:#fff;padding:12px 18px;border-radius:10px;font:600 14px "Nunito Sans",Arial,sans-serif;z-index:2147483000;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:calc(100vw - 32px)';
+  document.body.append(t); setTimeout(() => t.remove(), 5000);
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showToast); else showToast();
 mip.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') setTimeout(refreshKeys, 0); });
 getSession().then(s => { if (s) refreshKeys(); else if (ls.get(KEYS)) { ls.del(KEYS); emit(); } });

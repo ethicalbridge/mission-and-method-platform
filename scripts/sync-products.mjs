@@ -16,9 +16,11 @@ const tpl = s => 'template:' + s;
 const rows = [];
 const add = (key, kind, name, priceKey, includes = [], files = []) => rows.push({ key, kind, name, priceKey, includes, files });
 
-for (const p of founderPhases) add(p.id, 'course', `Course ${p.number} · ${p.name} (entrepreneurs)`, 'course');
+// Protect (either track) includes the Start-up Legal Essentials, as prices.html says; the pathways include Protect.
+const withEssentials = id => /(^|-)protect$/.test(id) ? ['essentials'] : [];
+for (const p of founderPhases) add(p.id, 'course', `Course ${p.number} · ${p.name} (entrepreneurs)`, 'course', withEssentials(p.id));
 add('entrepreneurs-all', 'pathway', 'Founder Pathway · all four courses', 'founder-pathway', founderPhases.map(p => p.id));
-for (const p of phases) add(p.id, 'course', `Course ${p.number} · ${p.name} (organisations)`, 'course');
+for (const p of phases) add(p.id, 'course', `Course ${p.number} · ${p.name} (organisations)`, 'course', withEssentials(p.id));
 add('organisations-all', 'pathway', 'Organisation Pathway · all five courses', 'org-pathway', phases.map(p => p.id));
 
 for (const t of lib.templates) add(tpl(t.slug), 'template', t.title, 'single-template');

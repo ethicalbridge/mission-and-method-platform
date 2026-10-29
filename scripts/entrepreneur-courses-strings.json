@@ -228,20 +228,20 @@
   "a tu ritmo"
  ],
  "ec.soon.eyebrow": [
-  "COMING SOON",
-  "PRÓXIMAMENTE"
+  "PRICES · LAUNCHING SOON",
+  "PRECIOS · MUY PRONTO"
  ],
  "ec.soon.title": [
-  "The courses for entrepreneurs open soon.",
-  "Los cursos para emprendedores abren pronto."
+  "One course, or all four together.",
+  "Un curso, o los cuatro juntos."
  ],
  "ec.soon.sub": [
-  "Prices and the launch date will be announced here. Want to start now? Work with Julieta on the entrepreneur path and build your foundations with her.",
-  "Los precios y la fecha de lanzamiento se anunciarán aquí. ¿Quieres empezar ya? Trabaja con Julieta en el camino para emprendedores y construye tus bases con ella."
+  "One course is $29 at the launch price (standard $39). The Founder Pathway gives you all four courses plus the Start-up Legal Essentials (12 templates) for $89 (standard $119). Prices are lower in middle and low income countries, and launch prices last until 31 March 2027. Module 0 is free.",
+  "Un curso cuesta 29 US$ con el precio de lanzamiento (precio normal 39 US$). La Founder Pathway incluye los cuatro cursos y Start-up Legal Essentials (12 plantillas) por 89 US$ (precio normal 119 US$). Los precios son más bajos en países de ingresos medios y bajos, y los precios de lanzamiento duran hasta el 31 de marzo de 2027. El Módulo 0 es gratis."
  ],
  "ec.soon.cta": [
-  "See the entrepreneur path →",
-  "Mira el camino para emprendedores →"
+  "Prefer to build it with Julieta? →",
+  "¿Prefieres construirlo con Julieta? →"
  ],
  "ec.faq.eyebrow": [
   "COURSE QUESTIONS",
@@ -306,5 +306,13 @@
  "ec.final.cta2": [
   "Work with Julieta",
   "Trabaja con Julieta"
+ ],
+ "ec.soon.prices": [
+  "See prices for your country →",
+  "Ver precios para tu país →"
+ ],
+ "ec.soon.buy": [
+  "Get the Founder Pathway",
+  "Consigue la Founder Pathway"
  ]
 }

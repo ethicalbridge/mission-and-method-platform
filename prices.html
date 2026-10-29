@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800;6..12,900&display=swap">
 <link rel="stylesheet" href="styles.css?v=consent-1">
 <link rel="stylesheet" href="mission.css?v=nav-courses-1">
-<link rel="stylesheet" href="learning.css?v=course43">
+<link rel="stylesheet" href="learning.css?v=course44">
 <link rel="stylesheet" href="pricing.css">
 <link rel="stylesheet" href="planning-system.css?v=fade3">
 <link rel="stylesheet" href="courses.css?v=courses-redesign-1">
 <link rel="stylesheet" href="pricing-redesign.css?v=pricing-redesign-3">
-<link rel="stylesheet" href="audiences.css?v=3">
+<link rel="stylesheet" href="audiences.css?v=4">
 <script src="assets/js/passcode-gate.js?v=2"></script>
 <style>
 /* prices.html — page-specific styles, px-* namespace. Uses the site tokens from mission.css. */
@@ -178,12 +178,13 @@
 .pr-tier .hm-head h2{font-size:clamp(30px,3.2vw,42px)}
 @media (min-width:900px){.pr-tier .hm-head h2{white-space:nowrap;font-size:clamp(28px,3.1vw,42px)}}
 @media (min-width:1100px){.pr-tier .hm-subhead{white-space:nowrap;font-size:16px}}
+.pr-plan-alt{display:block;margin-top:10px;font-size:14px;font-weight:700;color:inherit;opacity:.85;text-decoration:underline}
 </style>
 </head>
 <body data-page="pricing" data-product="planning-system">
 <a class="skip-link" href="#main">Skip to content</a>
 <nav class="nav" aria-label="Main navigation"></nav>
-<div class="preview-note">Development preview · Checkout is not open yet · Prices shown for review.</div>
+<div class="preview-note">Development preview · Prices shown for review · Payments not connected yet (test purchases only)</div>
 
 <main id="main">
 
@@ -269,7 +270,7 @@
             <li>12 essential legal templates</li>
             <li>Upgrade to the Full Template Library for <b data-price-key="library-upgrade.regular" data-prices="79,47,24,12">$79</b></li>
           </ul>
-          <a class="hm-btn hm-btn-primary pr-plan-cta" href="/entrepreneurs-clarify/how-this-course-works">Start with Module 0 free →</a>
+          <button type="button" class="hm-btn hm-btn-primary pr-plan-cta" data-founder-buy="entrepreneurs-all" data-name="Founder Pathway · all four courses" data-start="/entrepreneurs-clarify/how-this-course-works">Get the Founder Pathway →</button><a class="pr-plan-alt" href="/entrepreneurs-clarify/how-this-course-works">Or start with Module 0 free</a>
           <small class="pr-fine">You save <span data-price-key="save.founder-pathway" data-prices="37,21,12,18">$37</span> against buying the 4 courses one by one. One payment.</small>
         </article>
       </div>
@@ -352,8 +353,8 @@
           <div class="px-founding">Launch price <b data-price-key="full-library.launch" data-prices="119,71,36,18">$119</b></div>
           <p class="pr-plan-desc">Policies and procedures, contracts and agreements, consent forms, and governance and compliance documents.</p>
           <ul class="pr-plan-list">
-            <li>28 policies and procedures · 10 contracts</li>
-            <li>9 governance documents · 4 consent forms</li>
+            <li><span data-count="pack-policies">29</span> policies and procedures · <span data-count="pack-contracts">11</span> contracts and agreements</li>
+            <li><span data-count="pack-governance">15</span> governance and compliance documents · <span data-count="pack-consent">4</span> consent forms</li>
             <li>Licensed for use within one organisation</li>
           </ul>
           <button type="button" class="hm-btn hm-btn-primary pr-plan-cta" data-buy-key="full-library" data-buy-name="Full Template Library">Buy the library →</button>
@@ -431,7 +432,7 @@
             <li>One 60-minute review of your Packs with Julieta</li>
             <li>Credited in full if you start a consultancy engagement within 90 days</li>
           </ul>
-          <a class="hm-btn hm-btn-primary pr-plan-cta" href="/entrepreneurs-clarify/how-this-course-works">Start with Module 0 free →</a>
+          <a class="hm-btn hm-btn-primary pr-plan-cta" href="work-with-julieta.html#start">Ask about Launch Ready →</a>
           <small class="pr-fine">The review call covers your strategy, structure and plans. It is not a legal review of your documents.</small>
         </article>
         <article class="pr-plan reveal">
@@ -590,10 +591,6 @@
           <p>Templates are licensed for use within one organisation. If you are a consultant and want to use them with clients, <a href="contact.html">write to us</a>. Reselling or republishing the blank templates is not allowed.</p>
         </details>
         <details class="reveal">
-          <summary>Can I get a refund?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
-          <p>Refund terms will be published before checkout opens. In the current preview, no payments are processed.</p>
-        </details>
-        <details class="reveal">
           <summary>What if I can't pay?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
           <p>We offer a number of free places every quarter. <a href="contact.html">Write to us</a> and tell us what you are building.</p>
         </details>
@@ -643,9 +640,9 @@
   setBand(saved);
 })();
 </script>
-<script type="module" src="i18n.js?v=acct5"></script>
-<script type="module">import {bindPriceButtons} from './founder-checkout.js?v=10';bindPriceButtons();</script>
-<script src="app.js?v=acct2"></script>
+<script type="module" src="i18n.js?v=acct6"></script>
+<script type="module">import {bindPriceButtons,bindFounderButtons} from './founder-checkout.js?v=11';bindPriceButtons();bindFounderButtons();</script>
+<script src="app.js?v=acct3"></script>
 <script type="module" src="overview.js"></script>
 <script src="home.js?v=home-redesign-4"></script>
 </body>

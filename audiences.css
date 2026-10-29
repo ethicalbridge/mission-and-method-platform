@@ -59,3 +59,7 @@
 .aud-note a{color:var(--deep,#123c48);font-weight:800;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 /* Entrepreneurs catalogue: four courses (scripts/generate-entrepreneur-courses.mjs) */
 @media(min-width:861px){.cc-flow.cc-flow-4{grid-template-columns:repeat(4,1fr)}}
+.aud-btn-alt{display:inline-block;margin-top:10px;margin-left:14px;font-weight:800;font-size:14.5px;color:#16746e;text-decoration:underline;text-underline-offset:3px}
+.hm-hero-sub{margin-top:14px}
+.hm-hero-sub a{color:rgba(255,255,255,.85);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.hm-what-card .hm-what-mini-link{margin-top:8px;display:inline-block}

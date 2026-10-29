@@ -6,7 +6,7 @@
 import {COURSE_ACCESS_KEY,ownedCourseIds} from './course-access.js?v=ev5';
 import {priceOf,BANDS,PRICE_FLOOR,launchOn} from './pricing-config.js?v=launch-1';
 import {countries,bandOfCountry} from './country-bands.js?v=1';
-import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=2';
+import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=3';
 export const FOUNDER_ALL='entrepreneurs-all';
 // Earlier browser-only test purchases (before accounts) are cleared once, so nothing unlocks without an account.
 try{for(const st of [globalThis.localStorage,globalThis.sessionStorage]){const kept=ownedCourseIds(st);if(kept.some(x=>x.startsWith('entrepreneurs-')))st.setItem(COURSE_ACCESS_KEY,JSON.stringify(kept.filter(x=>!x.startsWith('entrepreneurs-'))));}}catch{}
@@ -60,7 +60,7 @@ export async function openFounderCheckout(course,{onDone}={}){
  wrap.innerHTML=`<div class="fc-card" role="dialog" aria-modal="true" aria-labelledby="fc-title"><span class="fc-eyebrow">Get access</span><h2 id="fc-title">${esc(course.name)}</h2><p>Choose what you would like to unlock.</p>
  <div class="fc-options" role="radiogroup" aria-label="What to unlock">
   ${course.id===FOUNDER_ALL?'':`<label class="fc-option"><input type="radio" name="fc-what" value="${esc(course.id)}" checked><span><span class="fc-price" data-fc-price="${esc(course.id)}"></span><b>${esc(course.name)}</b><small>All lessons, videos, exercises and PDFs in this course.</small></span></label>`}
-  <label class="fc-option"><input type="radio" name="fc-what" value="${FOUNDER_ALL}"${course.id===FOUNDER_ALL?' checked':''}><span><span class="fc-price" data-fc-price="${FOUNDER_ALL}"></span><b>All four courses</b><small>Clarify, Organise, Prove &amp; Show and Protect, with every course shown in one place.</small></span></label>
+  <label class="fc-option"><input type="radio" name="fc-what" value="${FOUNDER_ALL}"${course.id===FOUNDER_ALL?' checked':''}><span><span class="fc-price" data-fc-price="${FOUNDER_ALL}"></span><b>Founder Pathway · all four courses</b><small>Clarify, Organise, Prove &amp; Show and Protect, plus the Start-up Legal Essentials (12 templates).</small></span></label>
  </div>
  <div class="fc-country"><label for="fc-country">Country where your card was issued</label><select id="fc-country"><option value="">Choose a country…</option>${opts}</select><p class="fc-band" id="fc-band" aria-live="polite"></p></div>
  <form class="fc-test"><label for="fc-code">Test payment</label><p style="margin:0 0 .5rem">Payments are not connected yet. Enter the test code to simulate a purchase; nothing is charged.</p><input id="fc-code" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="fc-error"><label class="fc-consent"><input type="checkbox" id="fc-consent"> I want access straight away. I understand that once I open the course or download a file, I lose my 14-day right to cancel (EU and UK buyers). <a href="legal.html#refunds" target="_blank" rel="noopener">Refund policy</a></label><p class="fc-error" id="fc-error" role="alert"></p>
@@ -89,7 +89,7 @@ export async function openFounderCheckout(course,{onDone}={}){
   const what=wrap.querySelector('input[name=fc-what]:checked').value,bandIx=currentBand();
   pay.disabled=true;pay.textContent='Saving to your account…';
   testPurchase({product:what,code,country:sel.value,band:BANDS[bandIx].id,amount:coursePrice(what,bandIx).now,waiver:true})
-   .then(()=>{close();(onDone||(()=>{location.href=course.start||location.href;}))(what);})
+   .then(()=>{try{sessionStorage.setItem('mip.toast',(document.documentElement.lang||'').startsWith('es')?'Listo. Tu curso queda guardado en Mi cuenta, para abrirlo en cualquier dispositivo.':'Done. Your course is saved in My account, so you can open it on any device.');}catch{}close();(onDone||(()=>{location.href=course.start||location.href;}))(what);})
    .catch(e=>{pay.disabled=false;render();wrap.querySelector('#fc-error').textContent=e.code==='wrong_code'?'That code is not right. Use the test code you were given.':e.code==='not_signed_in'?'Please sign in again.':'The purchase could not be saved. Please try again.';});});
  document.body.append(wrap);(sel.value?wrap.querySelector('#fc-code'):sel).focus();
 }
