@@ -23,6 +23,9 @@ $('acc-signin-form').addEventListener('submit', async e => {
   btn.disabled = false;
   if (error) { note.textContent = /rate|seconds/i.test(error.message) ? 'Please wait a minute before asking for another email.' : 'We could not send the email: ' + error.message; return; }
   note.innerHTML = `Check your inbox for <b>${esc(email)}</b> and open the link. It works for one hour.`;
+  // Optional newsletter box (unticked by default): double opt-in email via assets/js/newsletter.js.
+  const news = $('acc-news');
+  if (news?.checked && window.MIPNewsletter) window.MIPNewsletter.send('subscribe', { email, source: 'sign-in', consentText: news.parentElement.textContent.replace(/\s+/g, ' ').trim() }).catch(() => {});
   $('acc-code-form').hidden = false;
 });
 $('acc-code-form').addEventListener('submit', async e => {

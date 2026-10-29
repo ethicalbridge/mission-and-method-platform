@@ -837,7 +837,7 @@ export const translations = {
     "acc.title": "My account",
     "acc.lead": "Your courses, templates and orders, on any device.",
     "acc.signin.title": "Sign in or create your account",
-    "acc.signin.body": "Enter your email and we'll send you a sign-in link. No password. The first time, the same link creates your account.",
+    "acc.signin.body": "Enter your email and we'll send you a sign-in link. The first time, the same link creates your account.",
     "acc.signin.email": "Your email",
     "acc.signin.send": "Email me a sign-in link",
     "acc.signin.code": "Or type the code from the email",
@@ -860,7 +860,18 @@ export const translations = {
     "nl.confirm_body": "Press the button to join the Method into Impact newsletter. You can unsubscribe at any time from the link at the bottom of every email.",
     "nl.confirm_btn": "Yes, keep me posted",
     "nl.form_title": "Join the newsletter",
-    "nl.form_body": "One short email now and then about new courses and templates. Unsubscribe anytime."
+    "nl.form_body": "One short email now and then about new courses and templates. Unsubscribe anytime.",
+    "acc.signin.eyebrow": "Sign in · No password",
+    "acc.signin.news": "Also send me occasional emails about new courses and templates. I can unsubscribe anytime.",
+    "acc.why.title": "With your account",
+    "acc.why.1t": "Your courses and progress",
+    "acc.why.1": "Pick up where you left off, on any device.",
+    "acc.why.2t": "Your templates and packs",
+    "acc.why.2": "Download them again whenever you need, in English and Spanish.",
+    "acc.why.3t": "Your orders",
+    "acc.why.3": "Everything you bought, in one place.",
+    "acc.why.free": "New here? Module 0 is free and needs no account.",
+    "acc.why.free_link": "Start Module 0 →"
   },
 
   es: {
@@ -1697,7 +1708,7 @@ export const translations = {
     "acc.title": "Mi cuenta",
     "acc.lead": "Tus cursos, plantillas y pedidos, en cualquier dispositivo.",
     "acc.signin.title": "Inicia sesión o crea tu cuenta",
-    "acc.signin.body": "Escribe tu correo y te enviaremos un enlace para entrar. Sin contraseña. La primera vez, el mismo enlace crea tu cuenta.",
+    "acc.signin.body": "Escribe tu correo y te enviaremos un enlace para entrar. La primera vez, el mismo enlace crea tu cuenta.",
     "acc.signin.email": "Tu correo",
     "acc.signin.send": "Envíame un enlace para entrar",
     "acc.signin.code": "O escribe el código del correo",
@@ -1720,6 +1731,17 @@ export const translations = {
     "nl.confirm_body": "Pulsa el botón para suscribirte al boletín de Method into Impact. Puedes darte de baja en cualquier momento desde el enlace al pie de cada correo.",
     "nl.confirm_btn": "Sí, quiero recibir novedades",
     "nl.form_title": "Suscríbete al boletín",
-    "nl.form_body": "Un correo breve de vez en cuando sobre nuevos cursos y plantillas. Puedes darte de baja cuando quieras."
+    "nl.form_body": "Un correo breve de vez en cuando sobre nuevos cursos y plantillas. Puedes darte de baja cuando quieras.",
+    "acc.signin.eyebrow": "Entrar · Sin contraseña",
+    "acc.signin.news": "Quiero recibir también correos ocasionales sobre nuevos cursos y plantillas. Me puedo dar de baja cuando quiera.",
+    "acc.why.title": "Con tu cuenta",
+    "acc.why.1t": "Tus cursos y tu progreso",
+    "acc.why.1": "Sigue donde lo dejaste, en cualquier dispositivo.",
+    "acc.why.2t": "Tus plantillas y packs",
+    "acc.why.2": "Descárgalos de nuevo cuando quieras, en inglés y en español.",
+    "acc.why.3t": "Tus pedidos",
+    "acc.why.3": "Todo lo que compraste, en un solo lugar.",
+    "acc.why.free": "¿Eres nuevo/a? El Módulo 0 es gratis y no necesita cuenta.",
+    "acc.why.free_link": "Empieza el Módulo 0 →"
   }
 };

@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="mission.css?v=nav-courses-1">
 <link rel="stylesheet" href="learning.css?v=course42">
 <link rel="stylesheet" href="planning-system.css?v=fade3">
-<link rel="stylesheet" href="account.css?v=2">
+<link rel="stylesheet" href="account.css?v=3">
 </head>
 <body data-page="account">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -33,20 +33,34 @@
     <p class="acc-loading" id="acc-loading">Loading your account…</p>
 
     <!-- Signed out -->
-    <section class="acc-card acc-signin" id="acc-signed-out" hidden>
-      <h2 data-i18n="acc.signin.title">Sign in or create your account</h2>
-      <p data-i18n="acc.signin.body">Enter your email and we'll send you a sign-in link. No password. The first time, the same link creates your account.</p>
-      <form id="acc-signin-form" novalidate>
-        <label for="acc-email" data-i18n="acc.signin.email">Your email</label>
-        <div class="acc-row"><input id="acc-email" type="email" autocomplete="email" required placeholder="you@organisation.org"><button class="acc-btn" type="submit" data-i18n="acc.signin.send">Email me a sign-in link</button></div>
-        <p class="acc-note" id="acc-signin-note" role="status"></p>
-      </form>
-      <form id="acc-code-form" hidden novalidate>
-        <label for="acc-code" data-i18n="acc.signin.code">Or type the code from the email</label>
-        <div class="acc-row"><input id="acc-code" class="acc-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10"><button class="acc-btn" type="submit" data-i18n="acc.signin.verify">Sign in</button></div>
-        <p class="acc-note" id="acc-code-note" role="status"></p>
-      </form>
-      <p class="acc-small">Free to start: <a href="/entrepreneurs-clarify/how-this-course-works">Module 0</a> needs no account. See our <a href="legal.html#privacy">privacy notice</a>.</p>
+    <section class="acc-auth" id="acc-signed-out" hidden>
+      <div class="acc-auth-card">
+        <span class="acc-auth-eyebrow" data-i18n="acc.signin.eyebrow">Sign in · No password</span>
+        <h2 data-i18n="acc.signin.title">Sign in or create your account</h2>
+        <p class="acc-auth-lead" data-i18n="acc.signin.body">Enter your email and we'll send you a sign-in link. The first time, the same link creates your account.</p>
+        <form id="acc-signin-form" novalidate>
+          <label class="acc-field-label" for="acc-email" data-i18n="acc.signin.email">Your email</label>
+          <input class="acc-input" id="acc-email" type="email" autocomplete="email" required placeholder="you@organisation.org">
+          <label class="acc-check"><input type="checkbox" id="acc-news"> <span data-i18n="acc.signin.news">Also send me occasional emails about new courses and templates. I can unsubscribe anytime.</span></label>
+          <button class="acc-btn acc-btn-wide" type="submit" data-i18n="acc.signin.send">Email me a sign-in link</button>
+          <p class="acc-note" id="acc-signin-note" role="status"></p>
+        </form>
+        <form id="acc-code-form" class="acc-code-box" hidden novalidate>
+          <label class="acc-field-label" for="acc-code" data-i18n="acc.signin.code">Or type the code from the email</label>
+          <div class="acc-row"><input class="acc-input acc-code" id="acc-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••••"><button class="acc-btn" type="submit" data-i18n="acc.signin.verify">Sign in</button></div>
+          <p class="acc-note" id="acc-code-note" role="status"></p>
+        </form>
+        <p class="acc-small"><span data-i18n="news.privacy">We use your email as described in our</span> <a href="legal.html#privacy" data-i18n="news.privacy_link">privacy notice</a>.</p>
+      </div>
+      <aside class="acc-auth-side" aria-labelledby="acc-why">
+        <h3 id="acc-why" data-i18n="acc.why.title">With your account</h3>
+        <ul class="acc-why">
+          <li><b data-i18n="acc.why.1t">Your courses and progress</b><span data-i18n="acc.why.1">Pick up where you left off, on any device.</span></li>
+          <li><b data-i18n="acc.why.2t">Your templates and packs</b><span data-i18n="acc.why.2">Download them again whenever you need, in English and Spanish.</span></li>
+          <li><b data-i18n="acc.why.3t">Your orders</b><span data-i18n="acc.why.3">Everything you bought, in one place.</span></li>
+        </ul>
+        <p class="acc-side-free"><span data-i18n="acc.why.free">New here? Module 0 is free and needs no account.</span> <a href="/entrepreneurs-clarify/how-this-course-works" data-i18n="acc.why.free_link">Start Module 0 →</a></p>
+      </aside>
     </section>
 
     <!-- Signed in -->
@@ -90,8 +104,8 @@
 </main>
 
 <footer></footer>
-<script type="module" src="i18n.js?v=acct3"></script>
+<script type="module" src="i18n.js?v=acct4"></script>
 <script src="app.js?v=acct2"></script>
-<script type="module" src="assets/js/account-page.js?v=2"></script>
+<script type="module" src="assets/js/account-page.js?v=3"></script>
 </body>
 </html>
