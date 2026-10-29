@@ -86,7 +86,7 @@ export const translations = {
     "home.what.legal.title": "Legal Templates",
     "home.what.legal.body": "Starter contracts, policies, consent forms and governance templates to adapt. Not legal advice; a running start for a small organisation.",
     "home.what.legal.cta": "Notify me →",
-    "home.what.note": "All four resources open through 2027. Notify me opens your mail app. No account, no spam, one email per launch.",
+    "home.what.note": "All three open through 2027. Notify me opens your mail app. No account, no spam, one email per launch.",
     "home.instructor.badge": "years\nbuilding purpose-led\norganisations",
     "home.instructor.quote": "\"Purpose-led founders don't need another textbook. They need a sequence they can actually follow, and outputs they can share with a board the next morning.\"",
     "home.instructor.bio": "Legal background, strategist and organisation builder. Founded Ethical Bridge. 13+ years across Save the Children, Lutheran World Federation, AdvocAid, Consulting Base and the Argentine Public Defence.",
@@ -727,9 +727,9 @@ export const translations = {
     "track.software.text": "Impact Tools are built for organisations that are already running. Tools for entrepreneurs will come later.",
     "track.software.link": "See the courses for entrepreneurs →",
     "nav.courses.ent": "For entrepreneurs",
-    "nav.courses.ent_sub": "Four courses · launching soon",
+    "nav.courses.ent_sub": "Four courses for people starting something new",
     "nav.courses.org": "For organisations",
-    "nav.courses.org_sub": "Five foundation courses · coming soon",
+    "nav.courses.org_sub": "Five courses for organisations already running",
     "ec.hero.eyebrow": "COURSES FOR ENTREPRENEURS · FOUR QUESTIONS · ONE PATHWAY",
     "ec.hero.title_before": "Four courses.",
     "ec.hero.title_em": "Strong foundations from day one.",
@@ -807,7 +807,9 @@ export const translations = {
     "ec.final.title": "Open Module 0. Decide the rest from there.",
     "ec.final.sub": "Meet the method and describe what you are building. Takes 15 minutes. No card.",
     "ec.final.cta2": "Work with Julieta",
-    "nav.prices": "Prices"
+    "nav.prices": "Prices",
+    "nav.courses.ent_status": "Launching soon",
+    "nav.courses.org_status": "Under development"
   },
 
   es: {
@@ -894,7 +896,7 @@ export const translations = {
     "home.what.legal.title": "Legal Templates",
     "home.what.legal.body": "Contratos, políticas, formularios de consentimiento y plantillas de gobernanza iniciales para adaptar. No es asesoramiento legal; es un punto de partida para una organización pequeña.",
     "home.what.legal.cta": "Avísame →",
-    "home.what.note": "Los cuatro recursos abren a lo largo de 2027. Avísame abre tu aplicación de correo. Sin cuenta, sin spam, un email por lanzamiento.",
+    "home.what.note": "Los tres abren a lo largo de 2027. Avísame abre tu aplicación de correo. Sin cuenta, sin spam, un email por lanzamiento.",
     "home.instructor.badge": "años\nconstruyendo organizaciones\ncon propósito",
     "home.instructor.quote": "\"Las fundadoras con propósito no necesitan otro manual. Necesitan una secuencia que puedan seguir de verdad, y entregables que puedan compartir con una junta a la mañana siguiente.\"",
     "home.instructor.bio": "Formación jurídica, estratega y constructora de organizaciones. Fundadora de Ethical Bridge. Más de 13 años en Save the Children, Lutheran World Federation, AdvocAid, Consulting Base y la Defensa Pública Argentina.",
@@ -1534,9 +1536,9 @@ export const translations = {
     "track.software.text": "Las Impact Tools están pensadas para organizaciones que ya están en marcha. Las herramientas para emprendedores llegarán más adelante.",
     "track.software.link": "Mira los cursos para emprendedores →",
     "nav.courses.ent": "Para emprendedores",
-    "nav.courses.ent_sub": "Cuatro cursos · lanzamiento pronto",
+    "nav.courses.ent_sub": "Cuatro cursos para quienes empiezan algo nuevo",
     "nav.courses.org": "Para organizaciones",
-    "nav.courses.org_sub": "Cinco cursos fundacionales · próximamente",
+    "nav.courses.org_sub": "Cinco cursos para organizaciones en marcha",
     "ec.hero.eyebrow": "CURSOS PARA EMPRENDEDORES · CUATRO PREGUNTAS · UN CAMINO",
     "ec.hero.title_before": "Cuatro cursos.",
     "ec.hero.title_em": "Bases sólidas desde el primer día.",
@@ -1614,6 +1616,8 @@ export const translations = {
     "ec.final.title": "Abre el Módulo 0. Decide el resto desde ahí.",
     "ec.final.sub": "Conoce el método y describe lo que estás construyendo. Lleva 15 minutos. Sin tarjeta.",
     "ec.final.cta2": "Trabaja con Julieta",
-    "nav.prices": "Precios"
+    "nav.prices": "Precios",
+    "nav.courses.ent_status": "Muy pronto",
+    "nav.courses.org_status": "En desarrollo"
   }
 };
