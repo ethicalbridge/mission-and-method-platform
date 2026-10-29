@@ -10,7 +10,7 @@
   'use strict';
   var PRICE = 9;
   var acct = null;
-  function account() { return acct || (acct = import('/assets/js/mip-account.js?v=1')); }
+  function account() { return acct || (acct = import('/assets/js/mip-account.js?v=2')); }
 
   var CSS = [
     '.ldg-overlay{position:fixed;inset:0;background:rgba(10,30,38,.55);z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:20px;font-family:"Nunito Sans",Arial,sans-serif}',

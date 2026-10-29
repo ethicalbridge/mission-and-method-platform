@@ -1,5 +1,5 @@
 /* Method into Impact — accounts in the browser.
-   Sign-in (emailed link or 6-digit code, no password), what the signed-in person owns, test purchases,
+   Sign-in (emailed link or code, no password), what the signed-in person owns, test purchases,
    downloads of owned files, and course answers kept on the account.
 
    Ownership ("keys") comes from the database (public.mip_my_keys(): products bought, plus what they include:
@@ -66,7 +66,8 @@ export async function downloadFile(file) {
 }
 export const downloadError = e => e?.code === 'not_owned' ? 'This file is not on your account yet.' : e?.code === 'not_signed_in' ? 'Please sign in again.' : e?.code === 'offline' ? e.message : 'The download is not available right now. Please try again in a minute.';
 
-export async function signOut() { await mip.auth.signOut(); ls.del(KEYS); emit(); }
+/** Signs out. The course answers belonging to the account are removed from this browser (they stay on the account). */
+export async function signOut() { await pushCourseState().catch(() => {}); await mip.auth.signOut(); ls.del(KEYS); if (ls.get(OWNER)) { ls.del(COURSE_KEY); ls.del(OWNER); } emit(); }
 
 // ---------- sign-in dialog ----------
 const CSS = `.ma-back{position:fixed;inset:0;background:rgba(10,22,28,.55);z-index:2147483001;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -92,7 +93,7 @@ export function signInDialog({ title = 'Sign in to continue', why = 'Your course
       <form class="ma-step1"><label for="ma-email">Your email</label><input id="ma-email" type="email" autocomplete="email" required placeholder="you@organisation.org">
       <button class="ma-btn" type="submit">Email me a sign-in link</button><p class="ma-err" role="alert"></p>
       <p class="ma-small">No password. New here? The same email creates your account. See our <a href="legal.html#privacy" target="_blank" rel="noopener">privacy notice</a>.</p></form>
-      <form class="ma-step2" hidden><p>We sent an email to <b class="ma-to"></b>. <b>Open the link in it</b> and you'll be signed in here. If the email shows a 6-digit code, you can type it instead:</p>
+      <form class="ma-step2" hidden><p>We sent an email to <b class="ma-to"></b>. <b>Open the link in it</b> and you'll be signed in here. If the email shows a code, you can type it instead:</p>
       <label for="ma-code">Code from the email (optional)</label><input id="ma-code" class="ma-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10">
       <button class="ma-btn" type="submit">Sign in with the code</button><p class="ma-err" role="alert"></p>
       <p class="ma-small">Nothing arrived after a minute? Check your spam folder, or <button type="button" class="ma-link ma-again">use another email</button>.</p></form></div>`;
@@ -155,11 +156,17 @@ function mergeStates(a, b) {
   return { ...newer, answers, completed: { ...(older.completed || {}), ...(newer.completed || {}) }, tasks: (newer.tasks || []).length ? newer.tasks : (older.tasks || []) };
 }
 let pushTimer = null;
+// The browser copy is tagged with the account it belongs to. Work done before signing in (no tag) joins the account;
+// work tagged with another account (a shared computer) is never merged into this one.
+const OWNER = 'mip.course.owner';
 export async function pullCourseState() {
   const u = await getUser(); if (!u) return null;
   const { data, error } = await mip.from('mip_course_state').select('state,updated_at').eq('user_id', u.id).maybeSingle();
   if (error) { console.warn('course state', error); return null; }
   let local = null; try { local = JSON.parse(ls.get(COURSE_KEY) || 'null'); } catch {}
+  const owner = ls.get(OWNER);
+  if (owner && owner !== u.id) local = null;
+  ls.set(OWNER, u.id);
   const merged = mergeStates(local, data?.state || null);
   if (merged && JSON.stringify(merged) !== JSON.stringify(local)) { ls.set(COURSE_KEY, JSON.stringify(merged)); window.dispatchEvent(new CustomEvent('mip:course-state')); }
   if (merged && JSON.stringify(merged) !== JSON.stringify(data?.state || null)) await pushCourseState();
@@ -167,6 +174,7 @@ export async function pullCourseState() {
 }
 export async function pushCourseState() {
   const u = await getUser(); if (!u) return;
+  const owner = ls.get(OWNER); if (owner && owner !== u.id) return;
   let state = null; try { state = JSON.parse(ls.get(COURSE_KEY) || 'null'); } catch {}
   if (!state) return;
   const { error } = await mip.from('mip_course_state').upsert({ user_id: u.id, state, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
