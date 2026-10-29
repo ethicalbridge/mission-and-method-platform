@@ -147,10 +147,18 @@ export function openProductCheckout({key,name}){
  wrap.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();
   if(!sel.value){wrap.querySelector('#fc-error').textContent='Choose the country where your card was issued: it sets your price.';sel.focus();return;}
   if(!wrap.querySelector('#fc-consent').checked){wrap.querySelector('#fc-error').textContent='Please tick the box to confirm you want access straight away.';return;}if(wrap.querySelector('#fc-code').value.trim()!==TEST_CODE){wrap.querySelector('#fc-error').textContent='That code is not right. Use the test code you were given.';return;}
-  wrap.querySelector('.fc-card').innerHTML=`<span class="fc-eyebrow">Test purchase complete</span><h2>${esc(name)}</h2><p>Nothing was charged. When payments open, buyers receive their files straight away by email and in their account. For now, download templates from the template pages with the test code.</p><div class="fc-actions"><a class="fc-pay" style="text-decoration:none" href="legal-templates.html">Go to the templates</a><button type="button" class="fc-cancel">Close</button></div>`;
-  wrap.querySelector('.fc-cancel').onclick=close;});
+  const code=wrap.querySelector('#fc-code').value.trim(),zip=USE_STORAGE&&ZIPS[key];
+  wrap.querySelector('.fc-card').innerHTML=`<span class="fc-eyebrow">Test purchase complete</span><h2>${esc(name)}</h2><p>Nothing was charged. When payments open, buyers receive their files straight away by email and in their account.</p>${zip?`<div class="fc-actions" style="justify-content:flex-start"><button type="button" class="fc-pay" data-zip="packs/${zip}.zip">Download in English (.zip)</button><button type="button" class="fc-cancel" data-zip="packs/${zip}-es.zip">Descargar en español (.zip)</button></div><p class="fc-error" id="fc-zip-error" role="alert"></p>`:''}<div class="fc-actions"><a class="fc-cancel" style="text-decoration:none" href="legal-templates.html">Go to the templates</a><button type="button" class="fc-cancel" data-close>Close</button></div>`;
+  wrap.querySelector('[data-close]').onclick=close;
+  wrap.querySelectorAll('[data-zip]').forEach(b=>b.onclick=()=>fileLink(b.dataset.zip,code).then(url=>{location.href=url;}).catch(m=>{wrap.querySelector('#fc-zip-error').textContent=m;}));});
  document.body.append(wrap);(sel.value?wrap.querySelector('#fc-code'):sel).focus();
 }
+// Pack zips in private storage (built by scripts/legal-templates/packs.mjs and the template-files function).
+const ZIPS={'pack-policies':'policies-pack','pack-contracts':'contracts-pack','pack-consent':'consent-pack','pack-governance':'governance-pack','essentials':'start-up-legal-essentials','full-library':'full-template-library'};
+const USE_STORAGE=false; // switched on once the pack zips are in private storage
+const FILES_FN='https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/template-files',ANON='sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
+function fileLink(file,code){return fetch(FILES_FN,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+ANON,apikey:ANON},body:JSON.stringify({action:'download',file,code})})
+ .then(r=>r.json().then(j=>{if(!r.ok||!j.url)throw 'The download is not available right now. Please try again in a minute.';return j.url;}),()=>{throw 'The download could not start. Check your connection.';});}
 export function bindPriceButtons(root=document){
  root.querySelectorAll('[data-buy-key]').forEach(b=>b.addEventListener('click',ev=>{ev.preventDefault();openProductCheckout({key:b.dataset.buyKey,name:b.dataset.buyName||b.textContent});}));
 }

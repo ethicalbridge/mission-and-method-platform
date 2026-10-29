@@ -160,7 +160,7 @@ Comprueba qué derechos y plazos se aplican. El RGPD y el UK GDPR establecen un 
 
 # Cómo presentar una reclamación
 
-Si no está satisfecho con cómo tratamos su información, díganoslo primero en [[privacidad@tuorganizacion.org]] o mediante nuestro Procedimiento de Quejas y Retroalimentación. Intentaremos solucionarlo.
+Si no está conforme con cómo tratamos su información, díganoslo primero en [[privacidad@tuorganizacion.org]] o mediante nuestro Procedimiento de Quejas y Retroalimentación. Intentaremos solucionarlo.
 
 También tiene derecho a presentar una reclamación ante la autoridad de protección de datos: [[nombre de la autoridad de control]], [[sitio web]], [[teléfono o dirección]]. Si vive en otro país, normalmente puede reclamar ante la autoridad de ese país.
 

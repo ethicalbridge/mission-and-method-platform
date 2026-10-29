@@ -39,13 +39,29 @@
     if (lastTrigger) lastTrigger.focus();
   }
 
-  function download(file) {
-    var a = document.createElement('a');
-    a.href = file;
-    a.setAttribute('download', file.split('/').pop());
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  // Paid files live in private storage. The template-files function checks the code (later: the purchase)
+  // and returns a link that works for two minutes. "assets/legal-templates/es/x.docx" -> "es/x.docx".
+  var FN = 'https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/template-files';
+  var ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
+  function storageKey(file) {
+    var m = file.match(/assets\/legal-templates\/(es\/)?([a-z0-9-]+\.(docx|xlsx))$/);
+    return m ? (m[1] ? 'es/' : 'en/') + m[2] : null;
+  }
+  // Switched on once every file is in private storage. Until then files download from the site as before.
+  var USE_STORAGE = false;
+  function download(file, code, onError) {
+    if (!USE_STORAGE) { var d = document.createElement('a'); d.href = file; d.setAttribute('download', file.split('/').pop()); document.body.appendChild(d); d.click(); d.remove(); return; }
+    var key = storageKey(file);
+    if (!key) { onError('This file is not available.'); return; }
+    fetch(FN, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ANON, 'apikey': ANON },
+      body: JSON.stringify({ action: 'download', file: key, code: code }) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.j.url) { onError(res.j.error === 'wrong_code' ? 'That code is not right.' : 'The download is not available right now. Please try again in a minute.'); return; }
+        var a = document.createElement('a'); a.href = res.j.url; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); a.remove();
+      })
+      .catch(function () { onError('The download could not start. Check your connection and try again.'); });
   }
 
   function ask(file, title) {
@@ -82,7 +98,7 @@
     overlay.querySelector('.ldg-form').addEventListener('submit', function (e) {
       e.preventDefault();
       if (!overlay.querySelector('.ldg-check').checked) { err.textContent = 'Please tick the box to confirm you want the file straight away.'; return; }
-      if (input.value.trim() === CODE) { close(overlay); download(file); }
+      if (input.value.trim() === CODE) { var btn = overlay.querySelector('.ldg-btn'); btn.disabled = true; btn.textContent = 'Preparing your file…'; download(file, input.value.trim(), function (msg) { btn.disabled = false; btn.textContent = 'Confirm test purchase · $9'; err.textContent = msg; }); setTimeout(function () { if (document.body.contains(overlay) && !err.textContent) close(overlay); }, 2500); }
       else {
         input.classList.add('ldg-wrong'); err.textContent = 'That code is not right.';
         setTimeout(function () { input.classList.remove('ldg-wrong'); }, 400);
