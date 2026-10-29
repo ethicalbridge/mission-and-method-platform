@@ -6,7 +6,7 @@
 import {COURSE_ACCESS_KEY,ownedCourseIds} from './course-access.js?v=ev5';
 import {priceOf,BANDS,PRICE_FLOOR,launchOn} from './pricing-config.js?v=launch-1';
 import {countries,bandOfCountry} from './country-bands.js?v=1';
-import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=4';
+import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=5';
 export const FOUNDER_ALL='entrepreneurs-all';
 // Earlier browser-only test purchases (before accounts) are cleared once, so nothing unlocks without an account.
 try{for(const st of [globalThis.localStorage,globalThis.sessionStorage]){const kept=ownedCourseIds(st);if(kept.some(x=>x.startsWith('entrepreneurs-')))st.setItem(COURSE_ACCESS_KEY,JSON.stringify(kept.filter(x=>!x.startsWith('entrepreneurs-'))));}}catch{}

@@ -92,7 +92,7 @@ export function signInDialog({ title = 'Sign in to continue', why = 'Your course
       <span class="ma-eyebrow">Your account</span><h2 id="ma-title">${esc(title)}</h2><p>${esc(why)}</p>
       <form class="ma-step1"><label for="ma-email">Your email</label><input id="ma-email" type="email" autocomplete="email" required placeholder="you@organisation.org">
       <button class="ma-btn" type="submit">Email me a sign-in link</button><p class="ma-err" role="alert"></p>
-      <p class="ma-small">No password. New here? The same email creates your account. See our <a href="legal.html#privacy" target="_blank" rel="noopener">privacy notice</a>.</p></form>
+      <p class="ma-small">No password. New here? The same email creates your account, and by creating one you agree to the <a href="legal.html#terms" target="_blank" rel="noopener">Terms of use</a> and the <a href="legal.html#refunds" target="_blank" rel="noopener">Refund policy</a>. See our <a href="legal.html#privacy" target="_blank" rel="noopener">privacy notice</a>.</p></form>
       <form class="ma-step2" hidden><p>We sent an email to <b class="ma-to"></b>. <b>Open the link in it</b> and you'll be signed in here. If the email shows a code, you can type it instead:</p>
       <label for="ma-code">Code from the email (optional)</label><input id="ma-code" class="ma-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10">
       <button class="ma-btn" type="submit">Sign in with the code</button><p class="ma-err" role="alert"></p>

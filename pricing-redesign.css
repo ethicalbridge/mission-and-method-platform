@@ -182,3 +182,4 @@
 /* Launch price is the big number; the standard price follows as "then $X from 1 April 2027" */
 .px-then s,.px-pack-price s{text-decoration:none;font-weight:800}
 .px-then{font-weight:600}
+.px-then[hidden],.px-then-inline[hidden]{display:none !important}

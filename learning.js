@@ -5,8 +5,8 @@ const courseLabel=p=>`Course ${p.number} · ${p.name}`;
 import {softwareProducts,resourceManifest,previewToolSlugs} from './products.js';
 import {hasToolAccess} from './tool-access.js';
 import {ownsCourse} from './course-access.js?v=ev5';
-import {ownsFounderCourse,ownsAllFounderCourses,openFounderCheckout,refreshFounderPrices,FOUNDER_ALL} from './founder-checkout.js?v=12';
-import {cachedKeys,pullCourseState,schedulePush,signedInHint} from './assets/js/mip-account.js?v=4';
+import {ownsFounderCourse,ownsAllFounderCourses,openFounderCheckout,refreshFounderPrices,FOUNDER_ALL} from './founder-checkout.js?v=13';
+import {cachedKeys,pullCourseState,schedulePush,signedInHint} from './assets/js/mip-account.js?v=5';
 import {readState,mutateState,emptyState,lessonKey,storeKey,valueOf,stats,isFilled,invalidate,escapeHTML as e,download,STORAGE_KEY,validateState,FIRST_LESSON,REFLECT,NOT_YET,reflectField,notYetOf,isDeferred} from './learning-store.js?v=acct2';
 const root=document.querySelector('#learning-root');
 // ?reset-answers empties every saved answer, completed lesson and task in this browser (course access is kept).
@@ -75,7 +75,7 @@ function lessonLinks(x,m,l){let part='';return x.lessons.map(y=>{const heading=y
 const canOpen=m=>!isFounder(m)||freeModules.includes(m.id)||ownsFounderCourse(courseFor(m).id);
 const founderVisible=list=>list.filter(canOpen);
 const buyAttrs=p=>`data-founder-buy="${p.id}" data-name="${e(courseLabel(p))}" data-start="${firstLessonOf(p)}"`;
-function lockedCourseRow(p,cur){const rel=p.number<cur?'Previous course':p.number>cur?'Next course':'This course';return `<button type="button" class="locked-course" ${buyAttrs(p)}><span>🔒 ${rel}</span><b>Access ${e(p.name)} →</b></button>`;}
+function lockedCourseRow(p,cur){const rel=p.number<cur?'Previous course':p.number>cur?'Next course':'This course';return `<button type="button" class="locked-course" ${buyAttrs(p)} aria-label="${rel}: access ${e(p.name)}"><span>🔒 ${rel}</span> <b>Access ${e(p.name)} →</b></button>`;}
 function nav(m,l){const f=isFounder(m),list=trackModules(m),every=!f||ownsAllFounderCourses(),all=stats(state,null,every?list:founderVisible(list)),cur=courseFor(m).number;return `<details class="course-sidebar" ${matchMedia('(min-width:761px)').matches?'open':''}><summary>${f?'Courses for entrepreneurs':'Planning System'} · course contents</summary><div class="sidebar-inner"><a href="${packURL(m)}">Your Organisation →</a><p class="subtle" id="course-progress">${all.done} of ${all.total} lessons complete</p><progress aria-label="Course progress" max="100" value="${all.percent}"></progress>${phasesFor(m).map(p=>`<p class="phase-label"><a href="course-${p.id}.html">${e(courseLabel(p))}</a></p>${list.filter(x=>x.phase===p.name&&(every||canOpen(x))).map(x=>`<details class="module-nav" data-module="${x.id}" ${x.id===m.id?'open':''}><summary>${moduleNumber(x)}. ${e(x.title)} <span class="subtle">${stats(state,x).done}/${x.lessons.length}</span></summary><ol>${lessonLinks(x,m,l)}</ol></details>`).join('')}${every||ownsFounderCourse(p.id)?'':lockedCourseRow(p,cur)}`).join('')}${every?'':`<button type="button" class="locked-course all" data-founder-buy="${FOUNDER_ALL}" data-name="Founder Pathway · all four courses" data-start=""><span>Founder Pathway</span><b>All 4 courses + 12 legal templates →</b></button>`}</div></details>`;}
 const packURL=m=>isFounder(m)?'organisation.html?track=entrepreneurs':'organisation.html';
 

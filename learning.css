@@ -340,3 +340,10 @@
 .course-offer>:nth-child(1),.course-offer>:nth-child(2){grid-column:1!important}
 .course-offer>:nth-child(3){grid-column:1!important;grid-row:auto!important;justify-content:flex-start!important;flex-wrap:wrap!important;gap:10px;margin-top:8px}
 .course-offer>:nth-child(4){grid-column:1!important;grid-row:auto!important;text-align:left!important}
+/* Lesson text: left-aligned, no automatic hyphenation (justified text left wide gaps on phones) */
+.lesson-content,.lesson-content p,.lesson-content li,.lesson-content td,.lesson-content blockquote{text-align:left !important;hyphens:manual !important;-webkit-hyphens:manual !important}
+/* Wide tables scroll inside their card instead of being cut off */
+.lesson-content table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* Brief form notes */
+.wwj-privacy-note{font-size:13.5px;line-height:1.55;color:#41525c;margin:0 0 10px}.wwj-privacy-note a{color:#16746e;font-weight:700}
+.wwj-file-warn{display:block;margin-top:6px}

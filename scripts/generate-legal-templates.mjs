@@ -1,6 +1,7 @@
 // Builds legal-templates.html, the category pages and legacy redirects from assets/legal-templates/catalog.json.
 // Run: node scripts/generate-legal-templates.mjs
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { priceOf, launchOn } from '../pricing-config.js';
 
 const root = new URL('../', import.meta.url);
 const read = p => readFileSync(new URL(p, root), 'utf8');
@@ -17,7 +18,7 @@ const shellHead = shellSrc.slice(0, headEnd)
   .replace(/<script src="assets\/js\/legal-download-gate\.js[^"]*" defer><\/script>/, '')
   .replace(/<script src="assets\/js\/free-templates\.js[^"]*" defer><\/script>/, '')
   .replace(/<script type="module">import \{bindPriceButtons\} from '\.\/founder-checkout\.js[^']*';bindPriceButtons\(\);<\/script>/g, '')
-  .replace('</head>', '<script src="assets/js/legal-download-gate.js?v=6" defer></script><script src="assets/js/free-templates.js?v=3" defer></script><script type="module">import {bindPriceButtons} from \'./founder-checkout.js?v=12\';bindPriceButtons();</script></head>');
+  .replace('</head>', '<script src="assets/js/legal-download-gate.js?v=6" defer></script><script src="assets/js/free-templates.js?v=3" defer></script><script type="module">import {bindPriceButtons} from \'./founder-checkout.js?v=13\';bindPriceButtons();</script></head>');
 const shellTail = shellSrc.slice(tailStart);
 const page = (title, description, main) => shellHead
   .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)} | Method into Impact</title>`)
@@ -38,7 +39,7 @@ const freeBlock = () => {
 };
 // Each category page offers its pack (prices.html has the price for each country band).
 const PACK_OF = { 'Policies & procedures': ['pack-policies', 'Policies & procedures pack'], 'Contracts & agreements': ['pack-contracts', 'Contracts & agreements pack'], 'Consent forms': ['pack-consent', 'Consent forms pack'], 'Governance & compliance': ['pack-governance', 'Governance & compliance pack'] };
-const packBanner = (cat, n) => { const p = PACK_OF[cat.name]; return p ? `<p class="ft-banner pack-banner"><span class="ft-pill pack-pill">Pack</span> Need several? Get all ${n} in the ${esc(p[1])} and save against buying them one by one. <button type="button" class="pack-buy" data-buy-key="${p[0]}" data-buy-name="${esc(p[1])}">Buy the pack →</button> <a href="prices.html#templates">See pack prices</a></p>` : ''; };
+const packBanner = (cat, n) => { const p = PACK_OF[cat.name]; return p ? `<p class="ft-banner pack-banner"><span class="ft-pill pack-pill">Pack</span> Need several? Get all ${n} in the ${esc(p[1])} for <b>$${priceOf(p[0],0,launchOn()?'launch':'regular')}</b>${launchOn()?' at the launch price':''}, saving $${n*priceOf('single-template',0)-priceOf(p[0],0,launchOn()?'launch':'regular')} against buying them one by one. Lower in middle- and low-income countries. <button type="button" class="pack-buy" data-buy-key="${p[0]}" data-buy-name="${esc(p[1])}">Buy the pack →</button> <a href="prices.html#templates">See pack prices</a></p>` : ''; };
 const libLine = `<p class="legal-langline">Every template comes in <b>English and Spanish</b>. Any single template is <b>$9</b>, in every country; packs, the Start-up Legal Essentials and the Full Template Library save you more. Templates you buy stay in <a href="account.html">My account</a> to download again. <a href="prices.html#templates">See template prices →</a></p>`;
 const freeBanner = `<p class="ft-banner"><span class="ft-pill">Free</span> Try three templates free before you buy. <a href="legal-templates.html#free-templates">Get them with your email →</a></p>`;
 
@@ -133,3 +134,6 @@ const logMain = `<div class="catalog legal-catalog"><nav class="breadcrumbs" ari
 writeFileSync(new URL('legal-templates-changelog.html', root), page('Template change log', 'What changed in each edition of the Method into Impact template library.', logMain));
 
 console.log(`Wrote ${catalog.categories.length + 1} pages for ${all.length} templates`);
+
+// Link previews for the pages written above
+await import('./add-og.mjs');

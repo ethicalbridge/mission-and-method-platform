@@ -251,7 +251,7 @@ export const translations = {
     "wwj.a.a2.b1": "Everything in A1",
     "wwj.a.a2.b2": "Training sessions tailored to each role that will use the tools",
     "wwj.a.a2.b3": "Written usage guide + short walk-through per tool",
-    "wwj.a.a2.b4": "Three months of the Impact Tools after handover, all team seats included",
+    "wwj.a.a2.b4": "Three months of the Impact Tools after handover, all team seats included (from their launch in 2027)",
     "wwj.a.a2.b5": "Email Q&A for one month after the last training",
     "wwj.a.a2.b6": "Team leaves fluent and ready to run the tools day-to-day",
     "wwj.a.a2.good": "Good when you want the outputs built AND the team ready to run them.",
@@ -292,7 +292,7 @@ export const translations = {
     "wwj.b.b3.b4": "Leadership coaching for the lead(s)",
     "wwj.b.b3.b5": "Roles and routines redesigned with the team, each role trained on the new tools",
     "wwj.b.b3.b6": "Optional on-site missions (travel costs discussed up front)",
-    "wwj.b.b3.b7": "Six months of the Impact Tools after handover + mission playbook + 6-month scale-up plan",
+    "wwj.b.b3.b7": "Six months of the Impact Tools after handover (from their launch in 2027) + mission playbook + 6-month scale-up plan",
     "wwj.b.b3.good": "Good when the organisation knows what it wants to become but needs help getting the team, routines and leadership to actually become that.",
 
     "wwj.pkg_cta.button": "Start a conversation",
@@ -800,7 +800,7 @@ export const translations = {
     "ec.faq.q3": "Do I have to take the courses in order?",
     "ec.faq.a3": "They are designed in sequence: Course 1 feeds Course 2, and so on. You can jump ahead, but each later course uses the decisions you made in the ones before it.",
     "ec.faq.q4": "How long will it take?",
-    "ec.faq.a4": "Self-paced. Each course takes about 7 to 11 hours including the exercises: Clarify about 7, Organise about 10, Prove & Show about 11, Protect about 8. The free first lesson takes about 15 minutes.",
+    "ec.faq.a4": "Self-paced. Each course takes about 7 to 11 hours including the exercises: Clarify about 7, Organise about 10, Prove & Show about 11, Protect about 8. The free Module 0 takes about an hour: four short lessons of 15 to 20 minutes each.",
     "ec.faq.q5": "Can I get help while I build?",
     "ec.faq.a5": "Yes. Julieta works one-to-one with entrepreneurs on the same method: she can build the documents for you or build them with you.",
     "ec.final.eyebrow": "START WHERE YOU ARE",
@@ -902,7 +902,11 @@ export const translations = {
     "acc.terms.terms": "Terms of use",
     "acc.terms.and": "and the",
     "acc.terms.refunds": "Refund policy",
-    "acc.terms.privacy": "How we use your data:"
+    "acc.terms.privacy": "How we use your data:",
+    "wwj.dialog.files_warn": "Please don't attach ID documents, health information or other people's personal data.",
+    "wwj.dialog.privacy": "Only Julieta reads your brief. It is stored securely with our database provider (Supabase) and deleted 12 months after our last contact if we don't start working together.",
+    "wwj.dialog.privacy_link": "Privacy notice",
+    "footer.refunds": "Refunds"
   },
 
   es: {
@@ -1153,7 +1157,7 @@ export const translations = {
     "wwj.a.a2.b1": "Todo lo de A1",
     "wwj.a.a2.b2": "Sesiones de capacitación adaptadas a cada rol que usará las herramientas",
     "wwj.a.a2.b3": "Guía escrita de uso + recorrido breve por cada herramienta",
-    "wwj.a.a2.b4": "Tres meses de Impact Tools después del traspaso, con todos los asientos del equipo incluidos",
+    "wwj.a.a2.b4": "Tres meses de Impact Tools después del traspaso, con todos los asientos del equipo incluidos (desde su lanzamiento en 2027)",
     "wwj.a.a2.b5": "Consultas por correo durante un mes después de la última capacitación",
     "wwj.a.a2.b6": "El equipo queda fluido y listo para usar las herramientas en el día a día",
     "wwj.a.a2.good": "Útil cuando quieres los entregables construidos Y el equipo listo para usarlos.",
@@ -1194,7 +1198,7 @@ export const translations = {
     "wwj.b.b3.b4": "Acompañamiento de liderazgo para quien lidera",
     "wwj.b.b3.b5": "Roles y rutinas rediseñados con el equipo, cada rol capacitado en las nuevas herramientas",
     "wwj.b.b3.b6": "Misiones presenciales opcionales (costos de viaje acordados por adelantado)",
-    "wwj.b.b3.b7": "Seis meses de las Impact Tools tras el traspaso + manual de misión + plan de escalado a 6 meses",
+    "wwj.b.b3.b7": "Seis meses de las Impact Tools tras el traspaso (desde su lanzamiento en 2027) + manual de misión + plan de escalado a 6 meses",
     "wwj.b.b3.good": "Útil cuando la organización sabe en qué quiere convertirse pero necesita ayuda para que el equipo, las rutinas y el liderazgo realmente lo logren.",
 
     "wwj.pkg_cta.button": "Iniciemos una conversación",
@@ -1702,7 +1706,7 @@ export const translations = {
     "ec.faq.q3": "¿Tengo que hacer los cursos en orden?",
     "ec.faq.a3": "Están pensados en secuencia: el Curso 1 alimenta al Curso 2, y así sucesivamente. Puedes adelantarte, pero cada curso posterior usa las decisiones que tomaste en los anteriores.",
     "ec.faq.q4": "¿Cuánto tiempo lleva?",
-    "ec.faq.a4": "A tu ritmo. Cada curso lleva entre 7 y 11 horas aproximadamente, con los ejercicios: Clarify unas 7, Organise unas 10, Prove & Show unas 11 y Protect unas 8. La primera lección, gratuita, lleva unos 15 minutos.",
+    "ec.faq.a4": "A tu ritmo. Cada curso lleva entre 7 y 11 horas aproximadamente, con los ejercicios: Clarify unas 7, Organise unas 10, Prove & Show unas 11 y Protect unas 8. El Módulo 0 gratuito lleva alrededor de una hora: cuatro lecciones cortas de 15 a 20 minutos cada una.",
     "ec.faq.q5": "¿Puedo recibir ayuda mientras construyo?",
     "ec.faq.a5": "Sí. Julieta trabaja uno a uno con emprendedores con el mismo método: puede preparar los documentos por ti o construirlos contigo.",
     "ec.final.eyebrow": "EMPIEZA DONDE ESTÁS",
@@ -1804,6 +1808,10 @@ export const translations = {
     "acc.terms.terms": "Términos de uso",
     "acc.terms.and": "y la",
     "acc.terms.refunds": "Política de reembolsos",
-    "acc.terms.privacy": "Cómo usamos tus datos:"
+    "acc.terms.privacy": "Cómo usamos tus datos:",
+    "wwj.dialog.files_warn": "Por favor, no adjuntes documentos de identidad, información de salud ni datos personales de otras personas.",
+    "wwj.dialog.privacy": "Solo Julieta lee tu resumen. Se guarda de forma segura con nuestro proveedor de base de datos (Supabase) y se borra 12 meses después de nuestro último contacto si no empezamos a trabajar juntos.",
+    "wwj.dialog.privacy_link": "Aviso de privacidad",
+    "footer.refunds": "Reembolsos"
   }
 };
