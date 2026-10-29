@@ -23,8 +23,11 @@
 /* Country band switcher */
 .px-bands{position:sticky;top:0;z-index:40;background:rgba(255,250,243,.96);backdrop-filter:saturate(1.2) blur(6px);border-bottom:1px solid var(--line)}
 .px-bands-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding:14px 0}
-.px-bands-label{font-size:13px;font-weight:800;color:var(--ink)}
-.px-bands-label small{display:block;font-weight:600;color:var(--muted);font-size:12px;margin-top:2px}
+.px-bands-label{display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:560px}
+.px-bands-title{font-size:15px;font-weight:800;color:var(--ink)}
+.px-bands-help{font-size:13.5px;font-weight:600;line-height:1.4;color:var(--ink)}
+.px-find{display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:6px 14px;border-radius:999px;background:#e3f1ef;border:1.5px solid var(--teal);color:var(--teal);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap}
+.px-find:hover,.px-find:focus-visible{background:var(--teal);color:#fff}
 .px-seg{display:flex;flex-wrap:wrap;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}
 .px-seg button{appearance:none;border:0;background:transparent;font:inherit;font-size:13px;font-weight:800;color:var(--deep);padding:8px 14px;border-radius:999px;cursor:pointer}
 .px-seg button[aria-pressed="true"]{background:var(--deep);color:#fff}
@@ -125,8 +128,10 @@
   .px-band-card{padding:0 16px}
   .px-band-card summary{grid-template-columns:1fr}
   .px-band-toggle{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}
-  .px-bands-label{font-size:12px}
-  .px-bands-label small{display:none}
+  .px-bands-label{flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 10px;max-width:none}
+  .px-bands-title{font-size:13px}
+  .px-bands-help{display:none}
+  .px-find{margin-top:0;padding:4px 10px;font-size:12px}
   .px-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border-radius:14px;padding:3px}
   .px-seg button{padding:8px 4px;font-size:12px;border-radius:11px}
   .px-long{display:none}
@@ -163,8 +168,10 @@
   <!-- ================= BAND SWITCHER ================= -->
   <div class="px-bands" role="region" aria-label="Country price band">
     <div class="container px-bands-inner">
-      <div class="px-bands-label" id="px-band-label">Show prices for
-        <small>Set by the country of the card you pay with. <a class="px-band-link" href="#country-bands">Find your country →</a></small>
+      <div class="px-bands-label">
+        <span class="px-bands-title" id="px-band-label">Your price depends on your country</span>
+        <span class="px-bands-help">Based on the World Bank income group of the country where your card was issued.</span>
+        <a class="px-find" href="#country-bands">Find your country &amp; band →</a>
       </div>
       <div class="px-seg" role="group" aria-labelledby="px-band-label">
         <button type="button" data-band="0" aria-pressed="true"><span class="px-long">High income</span><span class="px-short">High</span></button>
