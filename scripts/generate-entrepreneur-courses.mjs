@@ -85,10 +85,10 @@ const cmain=`<main id="main">
       <h1><span data-i18n="ec.hero.title_before">${s('ec.hero.title_before')}</span> <em data-i18n="ec.hero.title_em">${s('ec.hero.title_em')}</em></h1>
       ${t('ec.hero.lead','p','class="hm-lead"')}
       <div class="hm-facts" data-counter-group>
-        <div><b data-counter="${founderPhases.length}">0</b><span data-i18n="home.facts.courses">courses</span></div>
-        <div><b data-counter="${total.modules}">0</b><span data-i18n="home.facts.modules">modules</span></div>
-        <div><b data-counter="${total.lessons}">0</b><span data-i18n="home.facts.lessons">lessons &amp; reviews</span></div>
-        <div><b data-counter="${total.hours}" data-prefix="~">~0</b><span data-i18n="home.facts.hours">hours, self-paced</span></div>
+        <div><b data-counter="${founderPhases.length}">${founderPhases.length}</b><span data-i18n="home.facts.courses">courses</span></div>
+        <div><b data-counter="${total.modules}">${total.modules}</b><span data-i18n="home.facts.modules">modules</span></div>
+        <div><b data-counter="${total.lessons}">${total.lessons}</b><span data-i18n="home.facts.lessons">lessons &amp; reviews</span></div>
+        <div><b data-counter="${total.hours}" data-prefix="~">~${total.hours}</b><span data-i18n="home.facts.hours">hours, self-paced</span></div>
       </div>
       <div class="hm-actions">
         <a class="hm-btn hm-btn-primary" href="${start}" data-i18n="ec.hero.cta_primary">${s('ec.hero.cta_primary')}</a>
