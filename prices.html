@@ -87,6 +87,12 @@
 .px-ladder-compact li{display:grid;grid-template-columns:28px 1fr;column-gap:10px;align-items:start;padding:12px 14px}
 .px-ladder-compact li:before{margin:0;grid-row:span 2}
 .px-ladder-compact li b{margin:0}
+/* Coming-soon block (organisation courses) */
+.px-soon-block{position:relative}
+.px-soon-block .px-pair{opacity:.5;filter:grayscale(.6);pointer-events:none;user-select:none}
+.px-soon-pill{display:inline-block;background:var(--coral);color:#fff;font-size:11px;font-weight:900;letter-spacing:.14em;padding:6px 12px;border-radius:999px;margin-bottom:12px}
+.px-soon-note{margin:28px auto 0;max-width:640px;text-align:center;font-size:15px;line-height:1.55;color:var(--ink)}
+.px-btn-disabled{display:inline-block;align-self:flex-start;margin-top:14px;padding:12px 20px;border-radius:999px;border:1.5px dashed var(--line);color:var(--muted);font-weight:800;font-size:14px}
 /* Short band labels on phones */
 .px-short{display:none}
 
@@ -206,9 +212,10 @@
   </section>
 
   <!-- ================= 02 · COURSES FOR ORGANISATIONS ================= -->
-  <section class="hm-section hm-section-alt pr-tier" id="courses-organisations">
+  <section class="hm-section hm-section-alt pr-tier px-soon-block" id="courses-organisations" aria-describedby="org-soon-note">
     <div class="container">
       <div class="hm-head reveal">
+        <span class="px-soon-pill">COMING SOON</span>
         <div class="hm-section-eyebrow">02 · COURSES FOR ORGANISATIONS</div>
         <h2>Strengthen what you already run.</h2>
         <p class="hm-subhead">Five courses for organisations that are already operating, from strategy to a one-year operating plan.</p>
@@ -226,7 +233,7 @@
             <li><b>Protect</b> includes the Start-up Legal Essentials</li>
             <li>Lifetime access and future updates</li>
           </ul>
-          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="courses.html">Choose a course →</a>
+          <span class="px-btn-disabled" aria-disabled="true">Coming soon</span>
           <small class="pr-fine">Module 0 is free.</small>
         </article>
 
@@ -244,10 +251,11 @@
             <li>All 47 legal templates, with 12 months of updates</li>
             <li>Lifetime access to the courses</li>
           </ul>
-          <a class="hm-btn hm-btn-primary pr-plan-cta" href="/clarify/how-this-course-works">Start with Module 0 free →</a>
+          <span class="px-btn-disabled" aria-disabled="true">Coming soon</span>
           <small class="pr-fine">One payment. Lifetime access to the courses.</small>
         </article>
       </div>
+      <p class="px-soon-note" id="org-soon-note">The courses for organisations are coming soon. The prices above are a preview. Running an organisation now? <a href="work-with-julieta.html#path-org">Work with Julieta</a> on the same method.</p>
     </div>
   </section>
 
@@ -497,7 +505,7 @@
         <p>Meet the method, describe what you are building and record an honest starting point. No card.</p>
         <div class="hm-actions hm-actions-center">
           <a class="hm-btn hm-btn-primary" href="/entrepreneurs-clarify/how-this-course-works">I'm starting something →</a>
-          <a class="hm-btn hm-btn-ghost-light" href="/clarify/how-this-course-works">I run an organisation →</a>
+          <a class="hm-btn hm-btn-ghost-light" href="work-with-julieta.html#path-org">I run an organisation · courses coming soon</a>
         </div>
       </div>
     </div>
