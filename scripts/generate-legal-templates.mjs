@@ -87,6 +87,7 @@ const EDITIONS = [
     'Policies and procedures now sit together; four procedures added (Disciplinary and Grievance, Safer Recruitment, Finance Procedures, Policy Approval and Review).',
     'Excel versions of the Risk Register, Delegation of Authority Matrix, Records Retention Schedule and Board Skills Matrix.',
     'Every template footer shows its edition, so you can tell which version you adapted.',
+    'Added later in the edition: Gift and Donation Agreement, and Grant Acceptance Checklist (59 templates in all).',
   ] },
 ];
 const logMain = `<div class="catalog legal-catalog"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="legal-templates.html">Legal Templates</a><span>› Change log</span></nav><span class="eyebrow">Template library</span><h1>Change log</h1><p class="lead">What changed in each edition of the template library. The edition is printed in the footer of every template, so you can check which version you adapted.</p>${EDITIONS.map(e => `<section class="legal-review" id="edition-${esc(e.edition)}"><h2>Edition ${esc(e.edition)} · ${esc(e.date)}</h2><ul>${e.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></section>`).join('')}<p class="legal-back"><a href="legal-templates.html">← All legal template categories</a></p></div>`;

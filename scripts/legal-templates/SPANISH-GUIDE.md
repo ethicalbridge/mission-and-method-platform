@@ -68,8 +68,10 @@ Course names stay in English, as on the website: "Course 4 · Protect" → "Curs
 | fraud-bribery-and-corruption-policy-and-procedure | Política y Procedimiento contra el Fraude, el Soborno y la Corrupción |
 | fundraising-and-communications-consent-form | Formulario de Consentimiento para Recaudación de Fondos y Comunicaciones |
 | gift-acceptance-policy | Política de Aceptación de Regalos y Donaciones |
+| gift-and-donation-agreement | Acuerdo de Donación |
 | governing-body-terms-of-reference | Términos de Referencia del Órgano de Gobierno |
 | governing-document-guide | Guía del Documento Constitutivo y Estatuto Modelo |
+| grant-acceptance-checklist | Lista de Verificación para Aceptar una Subvención |
 | health-safety-and-lone-working-policy | Política de Salud, Seguridad y Trabajo en Solitario |
 | incident-reporting-procedure | Procedimiento de Notificación de Incidentes |
 | independent-contact-role-note | Nota sobre el Rol de Contacto Independiente |

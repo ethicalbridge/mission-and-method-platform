@@ -129,6 +129,7 @@
       "mutual-confidentiality-agreement",
       "partnership-memorandum-of-understanding",
       "sub-grant-agreement",
+      "gift-and-donation-agreement",
       "data-sharing-agreement",
       "website-terms-of-use"
      ]
@@ -422,6 +423,16 @@
    "status": "new"
   },
   {
+   "slug": "gift-and-donation-agreement",
+   "title": "Gift and Donation Agreement",
+   "category": "Contracts & agreements",
+   "type": "Agreement",
+   "label": "Agreement",
+   "description": "A clear written agreement between your organisation and a donor for a significant gift of money, goods or a restricted gift. It records what is given, how it may be used, how the donor is thanked and kept informed, and what happens if plans change.",
+   "pages": 15,
+   "status": "new"
+  },
+  {
    "slug": "governing-body-terms-of-reference",
    "title": "Governing Body Terms of Reference",
    "category": "Governance & compliance",
@@ -439,6 +450,16 @@
    "label": "Guide and model constitution",
    "description": "A plain-language guide to governing documents and legal forms, followed by a model constitution that a small non-profit association or company can adapt, adopt and register.",
    "pages": 22,
+   "status": "new"
+  },
+  {
+   "slug": "grant-acceptance-checklist",
+   "title": "Grant Acceptance Checklist",
+   "category": "Governance & compliance",
+   "type": "Checklist",
+   "label": "Checklist",
+   "description": "A checklist that your organisation completes before signing any grant agreement, so that you accept only funding you can deliver, afford and comply with, and negotiate the rest.",
+   "pages": 15,
    "status": "new"
   },
   {

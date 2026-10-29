@@ -232,7 +232,7 @@ Never write a value on a receipt that you have not checked. Inflated values for 
 4. Each party will keep confidential the other's information that is marked confidential or is obviously confidential. The Organisation may share this agreement with its board, auditors, bank, regulators and, where relevant, other funders of the Purpose. [[The amount of the Gift will / will not be published in the Organisation's annual report.]]
 
 ::: adapt Donor data and public disclosure
-Your Privacy Notice must explain how you use donor data, including any research you do on prospective major donors (for example, searching public sources about their wealth). Several data protection authorities have taken action against charities for wealth screening that donors were not told about. If you rely on consent for marketing, record it. Check your local law on direct marketing.
+Your Privacy Notice must explain how you use donor data, including any research you do on prospective major donors (for example, searching public sources about their wealth). The UK Information Commissioner's Office, for example, has fined several large charities for screening donors' wealth without telling them. If you rely on consent for marketing, record it. Check your local law on direct marketing.
 
 Some regulators or funders require you to publish large donations, or donors above a set amount. Political or campaigning organisations may have extra disclosure rules. Check what applies before promising confidentiality.
 :::

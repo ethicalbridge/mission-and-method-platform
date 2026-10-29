@@ -44,7 +44,7 @@ CATS = [
   'intro': 'Each agreement has full clause wording, schedules and signature blocks, with guidance on the clauses that change most from country to country. Have the final version checked locally before anyone signs.',
   'groups': [
    {'id': 'people', 'name': 'People', 'slugs': ['employment-contract','co-founder-agreement','volunteer-agreement','independent-contractor-agreement']},
-   {'id': 'organisations', 'name': 'Organisations, partners and the public', 'slugs': ['services-agreement','mutual-confidentiality-agreement','partnership-memorandum-of-understanding','sub-grant-agreement','data-sharing-agreement','website-terms-of-use']},
+   {'id': 'organisations', 'name': 'Organisations, partners and the public', 'slugs': ['services-agreement','mutual-confidentiality-agreement','partnership-memorandum-of-understanding','sub-grant-agreement','gift-and-donation-agreement','data-sharing-agreement','website-terms-of-use']},
   ]},
  {'id': 'consent', 'name': 'Consent forms', 'file': 'legal-templates-consent-forms.html',
   'lead': 'Consent forms help people understand a specific activity or use of their information and record a clear choice where consent is appropriate.',
