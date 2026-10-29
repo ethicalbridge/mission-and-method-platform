@@ -90,6 +90,7 @@ nav.nav .nav-links .account-link:hover{
   letter-spacing:.02em !important;
   padding:6px 20px !important;
   text-align:center !important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
 /* ---------- Footer ---------- */
