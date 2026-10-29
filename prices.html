@@ -87,6 +87,26 @@
 .px-soon-pill{display:inline-block;background:var(--coral);color:#fff;font-size:11px;font-weight:900;letter-spacing:.14em;padding:6px 12px;border-radius:999px;margin-bottom:12px}
 .px-soon-note{margin:28px auto 0;max-width:640px;text-align:center;font-size:15px;line-height:1.55;color:var(--ink)}
 .px-btn-disabled{display:inline-block;align-self:flex-start;margin-top:14px;padding:12px 20px;border-radius:999px;border:1.5px dashed var(--line);color:var(--muted);font-weight:800;font-size:14px}
+/* Country band list */
+.px-band-cards{display:flex;flex-direction:column;gap:12px;margin-top:36px}
+.px-band-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:0 24px}
+.px-band-card summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:20px 0}
+.px-band-card summary::-webkit-details-marker{display:none}
+.px-band-name{font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:var(--ink);grid-column:1}
+.px-band-meta{grid-column:1;font-size:14px;color:var(--muted)}
+.px-band-toggle{grid-column:2;grid-row:1 / span 2;font-size:13px;font-weight:800;color:var(--teal);border:1.5px solid var(--teal);border-radius:999px;padding:8px 14px}
+.px-band-card[open] .px-band-toggle{background:var(--mint)}
+.px-band-card[open] .px-band-toggle::after{content:" ▲"}
+.px-countries{list-style:none;margin:0;padding:18px 0 22px;border-top:1px dashed var(--line);columns:4 180px;column-gap:24px;font-size:14px;line-height:1.75;color:var(--ink)}
+.px-countries li{break-inside:avoid}
+.px-band-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.px-band-note{background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:22px}
+.px-band-note b{display:block;font-size:11px;font-weight:900;letter-spacing:.16em;color:var(--teal);margin-bottom:8px}
+.px-band-note p{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink)}
+.px-band-note-dark{background:var(--deep);border-color:var(--deep)}
+.px-band-note-dark b{color:var(--sun)}
+.px-band-note-dark p{color:#fff}
+.px-band-link{color:var(--teal);font-weight:800}
 /* Short band labels on phones */
 .px-short{display:none}
 
@@ -101,6 +121,10 @@
   .px-seg{width:100%;justify-content:space-between}
   .px-seg button{flex:1 1 auto;padding:8px 10px;font-size:12.5px}
   .px-soon{padding:24px}
+  .px-band-notes{grid-template-columns:1fr}
+  .px-band-card{padding:0 16px}
+  .px-band-card summary{grid-template-columns:1fr}
+  .px-band-toggle{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}
   .px-bands-label{font-size:12px}
   .px-bands-label small{display:none}
   .px-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border-radius:14px;padding:3px}
@@ -140,7 +164,7 @@
   <div class="px-bands" role="region" aria-label="Country price band">
     <div class="container px-bands-inner">
       <div class="px-bands-label" id="px-band-label">Show prices for
-        <small>Your band is set by your billing country at checkout.</small>
+        <small>Set by the country of the card you pay with. <a class="px-band-link" href="#country-bands">Find your country →</a></small>
       </div>
       <div class="px-seg" role="group" aria-labelledby="px-band-label">
         <button type="button" data-band="0" aria-pressed="true"><span class="px-long">High income</span><span class="px-short">High</span></button>
@@ -417,6 +441,40 @@
     </div>
   </section>
 
+  <!-- ================= COUNTRY PRICE BANDS ================= -->
+  <section class="hm-section pr-tier" id="country-bands">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">FAIR PRICES BY COUNTRY</div>
+        <h2>Which price band your country is in.</h2>
+        <p class="hm-subhead">We use the World Bank's country income groups, so people building in lower-income countries pay less for the same course.</p>
+      </div>
+      <div class="px-band-cards">
+        <details class="px-band-card">
+          <summary><span class="px-band-name">Low income</span><span class="px-band-meta">GNI per head US$1,175 or less · 25 economies · pay 15% of the standard price</span><span class="px-band-toggle" aria-hidden="true">Show countries</span></summary>
+          <ul class="px-countries"><li>Afghanistan</li><li>Burkina Faso</li><li>Burundi</li><li>Central African Republic</li><li>Chad</li><li>Democratic Republic of the Congo</li><li>Eritrea</li><li>Ethiopia</li><li>The Gambia</li><li>Guinea-Bissau</li><li>Korea, Democratic People&#x27;s Republic</li><li>Liberia</li><li>Madagascar</li><li>Malawi</li><li>Mali</li><li>Mozambique</li><li>Niger</li><li>Rwanda</li><li>Sierra Leone</li><li>Somalia</li><li>South Sudan</li><li>Sudan</li><li>Syrian Arab Republic</li><li>Uganda</li><li>Yemen</li></ul>
+        </details>
+        <details class="px-band-card">
+          <summary><span class="px-band-name">Lower-middle income</span><span class="px-band-meta">GNI per head US$1,176 to 4,635 · 47 economies · pay 30% of the standard price</span><span class="px-band-toggle" aria-hidden="true">Show countries</span></summary>
+          <ul class="px-countries"><li>Angola</li><li>Bangladesh</li><li>Benin</li><li>Bhutan</li><li>Bolivia</li><li>Cambodia</li><li>Cameroon</li><li>Comoros</li><li>Côte d&#x27;Ivoire</li><li>Djibouti</li><li>Egypt</li><li>Eswatini</li><li>Ghana</li><li>Guinea</li><li>Haiti</li><li>Honduras</li><li>India</li><li>Kenya</li><li>Kiribati</li><li>Kyrgyz Republic</li><li>Lao PDR</li><li>Lebanon</li><li>Lesotho</li><li>Mauritania</li><li>Morocco</li><li>Myanmar</li><li>Namibia</li><li>Nepal</li><li>Nicaragua</li><li>Nigeria</li><li>Pakistan</li><li>Papua New Guinea</li><li>Republic of the Congo</li><li>Senegal</li><li>Solomon Islands</li><li>São Tomé and Príncipe</li><li>Tajikistan</li><li>Tanzania</li><li>Timor-Leste</li><li>Togo</li><li>Tunisia</li><li>Uzbekistan</li><li>Vanuatu</li><li>Venezuela</li><li>West Bank and Gaza</li><li>Zambia</li><li>Zimbabwe</li></ul>
+        </details>
+        <details class="px-band-card">
+          <summary><span class="px-band-name">Upper-middle income</span><span class="px-band-meta">GNI per head US$4,636 to 14,375 · 59 economies · pay 60% of the standard price</span><span class="px-band-toggle" aria-hidden="true">Show countries</span></summary>
+          <ul class="px-countries"><li>Albania</li><li>Algeria</li><li>Argentina</li><li>Armenia</li><li>Azerbaijan</li><li>Belarus</li><li>Belize</li><li>Bosnia and Herzegovina</li><li>Botswana</li><li>Brazil</li><li>Cabo Verde</li><li>China</li><li>Colombia</li><li>Cuba</li><li>Dominica</li><li>Dominican Republic</li><li>Ecuador</li><li>El Salvador</li><li>Equatorial Guinea</li><li>Fiji</li><li>Gabon</li><li>Georgia</li><li>Grenada</li><li>Guatemala</li><li>Indonesia</li><li>Iran</li><li>Iraq</li><li>Jamaica</li><li>Jordan</li><li>Kazakhstan</li><li>Kosovo</li><li>Libya</li><li>Malaysia</li><li>Maldives</li><li>Marshall Islands</li><li>Mauritius</li><li>Mexico</li><li>Micronesia</li><li>Moldova</li><li>Mongolia</li><li>Montenegro</li><li>North Macedonia</li><li>Paraguay</li><li>Peru</li><li>Philippines</li><li>Samoa</li><li>Serbia</li><li>South Africa</li><li>Sri Lanka</li><li>St. Lucia</li><li>St. Vincent and the Grenadines</li><li>Suriname</li><li>Thailand</li><li>Tonga</li><li>Turkmenistan</li><li>Tuvalu</li><li>Türkiye</li><li>Ukraine</li><li>Viet Nam</li></ul>
+        </details>
+        <details class="px-band-card">
+          <summary><span class="px-band-name">High income</span><span class="px-band-meta">GNI per head above US$14,375 · 87 economies · pay 100% of the standard price</span><span class="px-band-toggle" aria-hidden="true">Show countries</span></summary>
+          <ul class="px-countries"><li>American Samoa</li><li>Andorra</li><li>Antigua and Barbuda</li><li>Aruba</li><li>Australia</li><li>Austria</li><li>The Bahamas</li><li>Bahrain</li><li>Barbados</li><li>Belgium</li><li>Bermuda</li><li>British Virgin Islands</li><li>Brunei Darussalam</li><li>Bulgaria</li><li>Canada</li><li>Cayman Islands</li><li>Channel Islands</li><li>Chile</li><li>Costa Rica</li><li>Croatia</li><li>Curaçao</li><li>Cyprus</li><li>Czechia</li><li>Denmark</li><li>Estonia</li><li>Faroe Islands</li><li>Finland</li><li>France</li><li>French Polynesia</li><li>Germany</li><li>Gibraltar</li><li>Greece</li><li>Greenland</li><li>Guam</li><li>Guyana</li><li>Hong Kong SAR, China</li><li>Hungary</li><li>Iceland</li><li>Ireland</li><li>Isle of Man</li><li>Israel</li><li>Italy</li><li>Japan</li><li>Kuwait</li><li>Latvia</li><li>Liechtenstein</li><li>Lithuania</li><li>Luxembourg</li><li>Macao SAR, China</li><li>Malta</li><li>Monaco</li><li>Nauru</li><li>Netherlands</li><li>New Caledonia</li><li>New Zealand</li><li>Northern Mariana Islands</li><li>Norway</li><li>Oman</li><li>Palau</li><li>Panama</li><li>Poland</li><li>Portugal</li><li>Puerto Rico</li><li>Qatar</li><li>Republic of Korea</li><li>Romania</li><li>Russian Federation</li><li>San Marino</li><li>Saudi Arabia</li><li>Seychelles</li><li>Singapore</li><li>Sint Maarten (Dutch part)</li><li>Slovak Republic</li><li>Slovenia</li><li>Spain</li><li>St. Kitts and Nevis</li><li>St. Martin (French part)</li><li>Sweden</li><li>Switzerland</li><li>Taiwan, China</li><li>Trinidad and Tobago</li><li>Turks and Caicos Islands</li><li>United Arab Emirates</li><li>United Kingdom</li><li>United States</li><li>Uruguay</li><li>Virgin Islands (U.S.)</li></ul>
+        </details>
+      </div>
+      <div class="px-band-notes">
+        <div class="px-band-note"><b>WHICH COUNTRY COUNTS</b><p>Your price depends on the country where the card or account you pay with was issued. If you live in one country but pay with a card from another, the card's country sets the price. Checkout shows your band and the reason before you pay.</p></div>
+        <div class="px-band-note"><b>SOURCE</b><p>World Bank country classifications by income for FY2027 (1 July 2026 to 30 June 2027), based on 2025 GNI per person, Atlas method. 218 economies. <a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups" target="_blank" rel="noopener">See the World Bank list →</a></p></div>
+        <div class="px-band-note px-band-note-dark"><b>YEARLY UPDATE</b><p>The World Bank reclassifies countries every 1 July. We update this list and our prices by 1 September. Anything you have already bought keeps its price.</p></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= FAQ ================= -->
   <section class="hm-section hm-section-alt" id="faq">
     <div class="container">
@@ -427,7 +485,7 @@
       <div class="hm-faq">
         <details class="reveal">
           <summary>How do the country price bands work?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
-          <p>Prices follow the World Bank's country income groups. Upper-middle income countries pay 60% of the standard price, lower-middle 30% and low income 15%, with a minimum of $9. Your band comes from your billing country, and checkout shows which band applies and why.</p>
+          <p>Prices follow the World Bank's country income groups. Upper-middle income countries pay 60% of the standard price, lower-middle 30% and low income 15%, with a minimum of $9. Your band comes from the country where the card you pay with was issued, and checkout shows which band applies and why. <a href="#country-bands">See which band your country is in</a>.</p>
         </details>
         <details class="reveal">
           <summary>What is a founding price?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
@@ -499,7 +557,7 @@
 })();
 </script>
 <script type="module" src="i18n.js?v=audiences-6"></script>
-<script src="app.js?v=prices-2"></script>
+<script src="app.js?v=prices-3"></script>
 <script type="module" src="overview.js"></script>
 <script src="home.js?v=home-redesign-4"></script>
 </body>
