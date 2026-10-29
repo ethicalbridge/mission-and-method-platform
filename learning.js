@@ -1,6 +1,6 @@
-import {recaps,modules,allModules,founderModules,founderPhases,phasesFor,courseModules as modulesOfCourse,FOUNDER_OFFSET,isFounder,trackModules,phases,readingsFor,primaryFor,toolsFor,moduleCount,moduleNumber,moduleFor,nextModule,lessonSheets,courseToolLabels,STAGES,courseFor,freeModules,lessonPath,lessonReadings,exampleOrg,exampleOrgs as allOrgs,lessonVideos,moduleVideos} from './course-data.js?v=ev42';
+import {recaps,modules,allModules,founderModules,founderPhases,phasesFor,courseModules as modulesOfCourse,FOUNDER_OFFSET,isFounder,trackModules,phases,readingsFor,primaryFor,toolsFor,moduleCount,moduleNumber,moduleFor,nextModule,lessonSheets,courseToolLabels,STAGES,courseFor,freeModules,lessonPath,lessonReadings,exampleOrg,exampleOrgs as allOrgs,lessonVideos,moduleVideos} from './course-data.js?v=ev43';
 import {pricing,money} from './pricing-config.js';
-import {courseComplete} from './course/founder-marketing.js?v=c324e2a2c';
+import {courseComplete} from './course/founder-marketing.js?v=deeplink1';
 const courseLabel=p=>`Course ${p.number} · ${p.name}`;
 import {softwareProducts,resourceManifest,previewToolSlugs} from './products.js';
 import {hasToolAccess} from './tool-access.js';

@@ -30,11 +30,9 @@ export const lessons={
    "why": "Turns your list of things to check before you register into clear questions for someone with a legal background.",
    "links": [
     {
-     "href": "legal-templates-governance-and-compliance.html",
-     "label": "Governance and compliance templates",
-     "items": [
-      "Legal Review Checklist"
-     ]
+     "href": "legal-templates-governance-and-compliance.html#legal-review-checklist",
+     "label": "Legal Review Checklist",
+     "items": []
     }
    ]
   },
@@ -56,13 +54,19 @@ export const lessons={
    "why": "When you contract out or share a function, these set out clearly who does what, so you stay accountable for the work.",
    "links": [
     {
-     "href": "legal-templates-contracts-and-agreements.html",
-     "label": "Contract and agreement templates",
-     "items": [
-      "Services Agreement",
-      "Independent Contractor Agreement",
-      "Partnership Memorandum of Understanding"
-     ]
+     "href": "legal-templates-contracts-and-agreements.html#services-agreement",
+     "label": "Services Agreement",
+     "items": []
+    },
+    {
+     "href": "legal-templates-contracts-and-agreements.html#independent-contractor-agreement",
+     "label": "Independent Contractor Agreement",
+     "items": []
+    },
+    {
+     "href": "legal-templates-contracts-and-agreements.html#partnership-memorandum-of-understanding",
+     "label": "Partnership Memorandum of Understanding",
+     "items": []
     }
    ]
   },
@@ -79,18 +83,14 @@ export const lessons={
    "why": "Good governance needs managed conflicts of interest; these give your founders, advisers and future board a simple way to declare and record them.",
    "links": [
     {
-     "href": "legal-templates-governance-and-compliance.html",
-     "label": "Governance and compliance templates",
-     "items": [
-      "Board Interest Declaration"
-     ]
+     "href": "legal-templates-governance-and-compliance.html#board-interest-declaration",
+     "label": "Board Interest Declaration",
+     "items": []
     },
     {
-     "href": "legal-templates-policies.html",
-     "label": "Policy templates",
-     "items": [
-      "Conflict of Interest Policy"
-     ]
+     "href": "legal-templates-policies.html#conflict-of-interest-policy",
+     "label": "Conflict of Interest Policy",
+     "items": []
     }
    ]
   },
@@ -105,13 +105,19 @@ export const lessons={
    "why": "A starting point for written terms with contractors and anyone who sees confidential information; adapt them and have them reviewed by a qualified lawyer.",
    "links": [
     {
-     "href": "legal-templates-contracts-and-agreements.html",
-     "label": "Contract and agreement templates",
-     "items": [
-      "Independent Contractor Agreement",
-      "Services Agreement",
-      "Mutual Confidentiality Agreement"
-     ]
+     "href": "legal-templates-contracts-and-agreements.html#independent-contractor-agreement",
+     "label": "Independent Contractor Agreement",
+     "items": []
+    },
+    {
+     "href": "legal-templates-contracts-and-agreements.html#services-agreement",
+     "label": "Services Agreement",
+     "items": []
+    },
+    {
+     "href": "legal-templates-contracts-and-agreements.html#mutual-confidentiality-agreement",
+     "label": "Mutual Confidentiality Agreement",
+     "items": []
     }
    ]
   }
@@ -121,13 +127,19 @@ export const lessons={
    "why": "The core policies a new person reads and signs off in their first week, ready to adapt before your first person joins.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Policy templates",
-     "items": [
-      "Safeguarding Policy and Procedure",
-      "Privacy Notice",
-      "Conflict of Interest Policy"
-     ]
+     "href": "legal-templates-policies.html#safeguarding-policy-and-procedure",
+     "label": "Safeguarding Policy and Procedure",
+     "items": []
+    },
+    {
+     "href": "legal-templates-policies.html#privacy-notice",
+     "label": "Privacy Notice",
+     "items": []
+    },
+    {
+     "href": "legal-templates-policies.html#conflict-of-interest-policy",
+     "label": "Conflict of Interest Policy",
+     "items": []
     }
    ]
   }
@@ -137,19 +149,19 @@ export const lessons={
    "why": "Ready-made starting points for the essentials this lesson lists, so you can put them in place before your first activity.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Policy templates",
-     "items": [
-      "Safeguarding Policy and Procedure",
-      "Privacy Notice"
-     ]
+     "href": "legal-templates-policies.html#safeguarding-policy-and-procedure",
+     "label": "Safeguarding Policy and Procedure",
+     "items": []
     },
     {
-     "href": "legal-templates-consent-forms.html",
-     "label": "Consent form templates",
-     "items": [
-      "Photo and Story Consent Form"
-     ]
+     "href": "legal-templates-policies.html#privacy-notice",
+     "label": "Privacy Notice",
+     "items": []
+    },
+    {
+     "href": "legal-templates-consent-forms.html#photo-and-story-consent-form",
+     "label": "Photo and Story Consent Form",
+     "items": []
     }
    ]
   },
@@ -166,11 +178,9 @@ export const lessons={
    "why": "Helps you decide how long each type of record is kept and when it is deleted or archived.",
    "links": [
     {
-     "href": "legal-templates-governance-and-compliance.html",
-     "label": "Governance and compliance templates",
-     "items": [
-      "Records Retention Schedule"
-     ]
+     "href": "legal-templates-governance-and-compliance.html#records-retention-schedule",
+     "label": "Records Retention Schedule",
+     "items": []
     }
    ]
   }
@@ -180,12 +190,14 @@ export const lessons={
    "why": "Gives your issue log clear routes for the two issues you will meet first: incidents and complaints.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Procedure templates",
-     "items": [
-      "Incident Reporting Procedure",
-      "Complaints and Feedback Procedure"
-     ]
+     "href": "legal-templates-policies.html#incident-reporting-procedure",
+     "label": "Incident Reporting Procedure",
+     "items": []
+    },
+    {
+     "href": "legal-templates-policies.html#complaints-and-feedback-procedure",
+     "label": "Complaints and Feedback Procedure",
+     "items": []
     }
    ]
   }
@@ -195,19 +207,19 @@ export const lessons={
    "why": "Helps you explain why you collect data and ask for informed consent before your pilot begins.",
    "links": [
     {
-     "href": "legal-templates-consent-forms.html",
-     "label": "Consent form templates",
-     "items": [
-      "Research Participation Consent Form",
-      "Information Sharing Consent Form"
-     ]
+     "href": "legal-templates-consent-forms.html#research-participation-consent-form",
+     "label": "Research Participation Consent Form",
+     "items": []
     },
     {
-     "href": "legal-templates-policies.html",
-     "label": "Policy templates",
-     "items": [
-      "Privacy Notice"
-     ]
+     "href": "legal-templates-consent-forms.html#information-sharing-consent-form",
+     "label": "Information Sharing Consent Form",
+     "items": []
+    },
+    {
+     "href": "legal-templates-policies.html#privacy-notice",
+     "label": "Privacy Notice",
+     "items": []
     }
    ]
   }
@@ -217,11 +229,9 @@ export const lessons={
    "why": "A ready structure for handling complaints fairly, with timescales and a route to someone independent.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Procedure templates",
-     "items": [
-      "Complaints and Feedback Procedure"
-     ]
+     "href": "legal-templates-policies.html#complaints-and-feedback-procedure",
+     "label": "Complaints and Feedback Procedure",
+     "items": []
     }
    ]
   }
@@ -231,19 +241,19 @@ export const lessons={
    "why": "Published policies are trust signals; these help you close that gap before you launch.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Policy templates",
-     "items": [
-      "Privacy Notice",
-      "Safeguarding Policy and Procedure"
-     ]
+     "href": "legal-templates-policies.html#privacy-notice",
+     "label": "Privacy Notice",
+     "items": []
     },
     {
-     "href": "legal-templates-policies.html",
-     "label": "Procedure templates",
-     "items": [
-      "Complaints and Feedback Procedure"
-     ]
+     "href": "legal-templates-policies.html#safeguarding-policy-and-procedure",
+     "label": "Safeguarding Policy and Procedure",
+     "items": []
+    },
+    {
+     "href": "legal-templates-policies.html#complaints-and-feedback-procedure",
+     "label": "Complaints and Feedback Procedure",
+     "items": []
     }
    ]
   }
@@ -253,11 +263,9 @@ export const lessons={
    "why": "Records informed consent for every story and image, and feeds straight into your consent log.",
    "links": [
     {
-     "href": "legal-templates-consent-forms.html",
-     "label": "Consent form templates",
-     "items": [
-      "Photo and Story Consent Form"
-     ]
+     "href": "legal-templates-consent-forms.html#photo-and-story-consent-form",
+     "label": "Photo and Story Consent Form",
+     "items": []
     }
    ]
   }
@@ -267,11 +275,9 @@ export const lessons={
    "why": "Tells visitors how you handle their data, one of the trust signals your website needs from the first sign-up form.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Policy templates",
-     "items": [
-      "Privacy Notice"
-     ]
+     "href": "legal-templates-policies.html#privacy-notice",
+     "label": "Privacy Notice",
+     "items": []
     }
    ]
   },
@@ -286,11 +292,9 @@ export const lessons={
    "why": "When a safeguarding incident or data breach happens, a clear reporting route is the first step of your crisis response.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Procedure templates",
-     "items": [
-      "Incident Reporting Procedure"
-     ]
+     "href": "legal-templates-policies.html#incident-reporting-procedure",
+     "label": "Incident Reporting Procedure",
+     "items": []
     }
    ]
   },
@@ -307,25 +311,19 @@ export const lessons={
    "why": "Supports fair procurement: declare conflicts when you choose suppliers, and put agreed terms in writing.",
    "links": [
     {
-     "href": "legal-templates-policies.html",
-     "label": "Policy templates",
-     "items": [
-      "Conflict of Interest Policy"
-     ]
+     "href": "legal-templates-policies.html#conflict-of-interest-policy",
+     "label": "Conflict of Interest Policy",
+     "items": []
     },
     {
-     "href": "legal-templates-governance-and-compliance.html",
-     "label": "Governance and compliance templates",
-     "items": [
-      "Board Interest Declaration"
-     ]
+     "href": "legal-templates-governance-and-compliance.html#board-interest-declaration",
+     "label": "Board Interest Declaration",
+     "items": []
     },
     {
-     "href": "legal-templates-contracts-and-agreements.html",
-     "label": "Contract and agreement templates",
-     "items": [
-      "Services Agreement"
-     ]
+     "href": "legal-templates-contracts-and-agreements.html#services-agreement",
+     "label": "Services Agreement",
+     "items": []
     }
    ]
   },

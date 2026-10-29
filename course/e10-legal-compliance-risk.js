@@ -1,5 +1,5 @@
-import base from './m10-legal-compliance-risk.js?v=c324e2a2c';
-import {adapt} from './adapt.js?v=c324e2a2c';
+import base from './m10-legal-compliance-risk.js?v=deeplink1';
+import {adapt} from './adapt.js?v=deeplink1';
 // Entrepreneurs' version of m10: same lessons, fields, workbook and tools; wording for people building something new.
 const m=adapt(base,{
  title:`Legal, Compliance, Policies & Risk`,
@@ -293,8 +293,16 @@ const m=adapt(base,{
 // Legal and policy lessons (10.1–10.9) are reading only: what each duty, policy or procedure is, with examples, and
 // the templates to adapt. Risk lessons (10.10–10.12) keep their exercises. HR and workplace policies is left out.
 const T={all:'legal-templates.html',policies:'legal-templates-policies.html',procedures:'legal-templates-policies.html',contracts:'legal-templates-contracts-and-agreements.html',consent:'legal-templates-consent-forms.html',governance:'legal-templates-governance-and-compliance.html'};
+// Each template links to its own card on its category page; the anchor is its slug in assets/legal-templates/catalog.json.
+Object.assign(T,{
+ 'Code of Conduct':`${T.policies}#code-of-conduct`,'Safeguarding Policy and Procedure':`${T.policies}#safeguarding-policy-and-procedure`,'Anti-Harassment, Intimidation and Bullying Policy and Procedure':`${T.policies}#anti-harassment-intimidation-and-bullying-policy-and-procedure`,'Whistleblowing Policy and Procedure':`${T.policies}#whistleblowing-policy-and-procedure`,'Conflict of Interest Policy':`${T.policies}#conflict-of-interest-policy`,'Fraud, Bribery and Corruption Policy and Procedure':`${T.policies}#fraud-bribery-and-corruption-policy-and-procedure`,'Data Protection Policy':`${T.policies}#data-protection-policy`,'Privacy Notice':`${T.policies}#privacy-notice`,
+ 'Incident Reporting Procedure':`${T.procedures}#incident-reporting-procedure`,'Complaints and Feedback Procedure':`${T.procedures}#complaints-and-feedback-procedure`,'Data Rights Request Procedure':`${T.procedures}#data-rights-request-procedure`,'Data Breach Response Procedure':`${T.procedures}#data-breach-response-procedure`,
+ 'Co-founder Agreement':`${T.contracts}#co-founder-agreement`,'Employment Contract':`${T.contracts}#employment-contract`,'Volunteer Agreement':`${T.contracts}#volunteer-agreement`,'Independent Contractor Agreement':`${T.contracts}#independent-contractor-agreement`,'Services Agreement':`${T.contracts}#services-agreement`,'Mutual Confidentiality Agreement':`${T.contracts}#mutual-confidentiality-agreement`,'Partnership Memorandum of Understanding':`${T.contracts}#partnership-memorandum-of-understanding`,'Sub-grant Agreement':`${T.contracts}#sub-grant-agreement`,'Data Sharing Agreement':`${T.contracts}#data-sharing-agreement`,
+ 'Photo and Story Consent Form':`${T.consent}#photo-and-story-consent-form`,'Information Sharing Consent Form':`${T.consent}#information-sharing-consent-form`,'Research Participation Consent Form':`${T.consent}#research-participation-consent-form`,
+ 'Legal Review Checklist':`${T.governance}#legal-review-checklist`,'Records Retention Schedule':`${T.governance}#records-retention-schedule`,'Board Interest Declaration':`${T.governance}#board-interest-declaration`,'Data Protection Impact Assessment':`${T.governance}#data-protection-impact-assessment`});
 const NAMES={all:'All legal templates',policies:'Policy and procedure templates',procedures:'Policy and procedure templates',contracts:'Contract and agreement templates',consent:'Consent form templates',governance:'Governance and compliance templates'};
-const tpl=(...groups)=>({links:groups.map(([k,items])=>({href:T[k],label:NAMES[k],items:items||[]}))});
+// A group with templates gives one link per template, named by its title; a group without (e.g. 'all') links to the page.
+const tpl=(...groups)=>({links:groups.flatMap(([k,items])=>items?.length?items.map(i=>({href:T[i]||T[k],label:i,items:[]})):[{href:T[k],label:NAMES[k],items:[]}])});
 const READING={
  'legal-map':{templates:tpl(['governance',['Legal Review Checklist','Records Retention Schedule']],['all']),
   anatomy:{after:1,title:'Areas on your legal map',intro:'Most new initiatives meet the same areas. Not all of them will apply to you, and the rules in each depend on where you operate.',cols:['Area','What it usually covers','In the bakery'],rows:[

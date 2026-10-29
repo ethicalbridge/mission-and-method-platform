@@ -1,5 +1,5 @@
-import base from './m09-financial-management.js?v=c324e2a2c';
-import {adapt} from './adapt.js?v=c324e2a2c';
+import base from './m09-financial-management.js?v=deeplink1';
+import {adapt} from './adapt.js?v=deeplink1';
 // Entrepreneurs' version of m09: same lessons, fields, workbook and tools; wording for people building something new.
 export default adapt(base,{
  short:'Budgets, cost allocation, restricted funds, cash flow, controls, reporting, audit and financial health, set up from the start',
