@@ -80,6 +80,7 @@ const cmain=`<main id="main">
   <section class="hm-hero hm-hero-courses">
     <div class="hm-hero-shapes" aria-hidden="true"><span class="hm-shape hm-shape-1"></span><span class="hm-shape hm-shape-2"></span><span class="hm-shape hm-shape-3"></span></div>
     <div class="container hm-hero-inner">
+      <nav class="track-switch" aria-label="Choose your path" data-i18n-attr="aria-label:track.switch.label"><a href="courses-entrepreneurs.html" aria-current="page" data-i18n="track.switch.start">I'm starting something</a><a href="courses.html" data-i18n="track.switch.running">I already run an organisation</a></nav>
       ${t('ec.hero.eyebrow','div','class="hm-eyebrow"')}
       <h1><span data-i18n="ec.hero.title_before">${s('ec.hero.title_before')}</span> <em data-i18n="ec.hero.title_em">${s('ec.hero.title_em')}</em></h1>
       ${t('ec.hero.lead','p','class="hm-lead"')}

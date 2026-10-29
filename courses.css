@@ -115,3 +115,11 @@
 .ec-sample-wide{grid-column:1/-1}
 .ec-sample-foot{margin-top:10px;font-size:11px;color:#7a8893;text-align:right}
 @media(max-width:860px){.ec-sample{grid-template-columns:1fr;padding:20px}.ec-sample-page{transform:none}.ec-sample-grid{grid-template-columns:1fr}}
+
+/* Path switch on the two course landings: starting something vs already running an organisation */
+.track-switch{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;margin:0 0 22px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22)}
+.track-switch a{padding:9px 18px;border-radius:999px;color:#fff;font-weight:800;font-size:14.5px;text-decoration:none;line-height:1.2;transition:background .2s,color .2s}
+.track-switch a:hover{background:rgba(255,255,255,.14)}
+.track-switch a[aria-current="page"]{background:var(--sun,#f8ca68);color:#102e3b}
+.track-switch a:focus-visible{outline:3px solid var(--sun,#f8ca68);outline-offset:2px}
+@media (max-width:520px){.track-switch{display:flex;border-radius:18px}.track-switch a{flex:1 1 100%;text-align:center}}

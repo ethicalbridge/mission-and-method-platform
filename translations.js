@@ -828,7 +828,10 @@ export const translations = {
     "ec.sample.toc": "If young people who left school early bake in a real bakery for six months and earn a food-hygiene certificate, and local food businesses trust that experience, then more of them will get a first paid job.",
     "ec.sample.next_h": "Next 90 days",
     "ec.sample.next": "Register the bakery before our three informal months at the market stall end. Agree the first two traineeships with the youth centre.",
-    "ec.sample.foot": "Built in Course 1 · Clarify, lesson by lesson. Example data."
+    "ec.sample.foot": "Built in Course 1 · Clarify, lesson by lesson. Example data.",
+    "track.switch.label": "Choose your path",
+    "track.switch.start": "I'm starting something",
+    "track.switch.running": "I already run an organisation"
   },
 
   es: {
@@ -1656,6 +1659,9 @@ export const translations = {
     "ec.sample.toc": "Si los jóvenes que dejaron la escuela trabajan seis meses en una panadería real y obtienen un certificado de higiene alimentaria, y los negocios de comida del barrio confían en esa experiencia, entonces más de ellos conseguirán un primer empleo pagado.",
     "ec.sample.next_h": "Próximos 90 días",
     "ec.sample.next": "Registrar la panadería antes de que terminen nuestros tres meses informales en el puesto del mercado. Acordar las dos primeras prácticas con el centro juvenil.",
-    "ec.sample.foot": "Construido en el Curso 1 · Claridad, lección por lección. Datos de ejemplo."
+    "ec.sample.foot": "Construido en el Curso 1 · Claridad, lección por lección. Datos de ejemplo.",
+    "track.switch.label": "Elige tu camino",
+    "track.switch.start": "Estoy empezando algo",
+    "track.switch.running": "Ya dirijo una organización"
   }
 };
