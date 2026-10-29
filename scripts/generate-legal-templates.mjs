@@ -72,6 +72,21 @@ const cards = catalog.categories.map(cat => {
   const n = all.filter(t => t.category === cat.name).length;
   return `<article class="legal-category-card"><span class="eyebrow">${count(n)}</span><h2>${esc(cat.name)}</h2><p>${esc(cat.lead)}</p><a class="button ghost" href="${esc(cat.file)}">Explore ${esc(cat.name)} →</a></article>`;
 }).join('');
-const indexMain = `<div class="catalog legal-catalog"><span class="eyebrow">Document library · ${all.length} editable templates</span><h1>Legal Templates</h1><p class="lead">${esc(catalog.lead)}</p>${freeBlock()}${notice}<section class="legal-category-grid" aria-label="Legal template categories">${cards}</section>${howTo}</div>`;
+const EDITIONS_LATEST = '2026-10';
+const indexMain = `<div class="catalog legal-catalog"><span class="eyebrow">Document library · ${all.length} editable templates</span><h1>Legal Templates</h1><p class="lead">${esc(catalog.lead)}</p>${freeBlock()}${notice}<section class="legal-category-grid" aria-label="Legal template categories">${cards}</section>${howTo}<p class="legal-edition">Template edition ${EDITIONS_LATEST} · <a href="legal-templates-changelog.html">What changed</a></p></div>`;
 writeFileSync(new URL('legal-templates.html', root), page('Legal Templates', catalog.lead, indexMain));
+// Public change log of the template library. Add a new edition at the top when templates change,
+// and update EDITION in scripts/legal-templates/build.cjs (printed in every template footer).
+const EDITIONS = [
+  { edition: '2026-10', date: '29 October 2026', notes: [
+    'First full edition: 57 editable Word templates in four sections, each with model wording, yellow fields and “Adapt this” guidance boxes.',
+    'New: Governing Document Guide and Model Constitution; Board Meeting Agenda and Minutes; Board Member Role Description; Board Skills Matrix; Health, Safety and Lone Working Policy; Business Continuity and Crisis Plan.',
+    'Policies and procedures now sit together; four procedures added (Disciplinary and Grievance, Safer Recruitment, Finance Procedures, Policy Approval and Review).',
+    'Excel versions of the Risk Register, Delegation of Authority Matrix, Records Retention Schedule and Board Skills Matrix.',
+    'Every template footer shows its edition, so you can tell which version you adapted.',
+  ] },
+];
+const logMain = `<div class="catalog legal-catalog"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="legal-templates.html">Legal Templates</a><span>› Change log</span></nav><span class="eyebrow">Template library</span><h1>Change log</h1><p class="lead">What changed in each edition of the template library. The edition is printed in the footer of every template, so you can check which version you adapted.</p>${EDITIONS.map(e => `<section class="legal-review" id="edition-${esc(e.edition)}"><h2>Edition ${esc(e.edition)} · ${esc(e.date)}</h2><ul>${e.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></section>`).join('')}<p class="legal-back"><a href="legal-templates.html">← All legal template categories</a></p></div>`;
+writeFileSync(new URL('legal-templates-changelog.html', root), page('Template change log', 'What changed in each edition of the Method into Impact template library.', logMain));
+
 console.log(`Wrote ${catalog.categories.length + 1} pages for ${all.length} templates`);
