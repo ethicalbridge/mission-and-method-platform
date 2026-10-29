@@ -212,7 +212,7 @@ export const translations = {
     "wwj.start.cta_button": "Start a conversation",
     "wwj.start.cta_note": "Takes about 10 minutes to fill in. No payment, no commitment.",
 
-    "wwj.paths.eyebrow": "Beyond one hour · Two paths",
+    "wwj.paths.eyebrow": "Two paths",
     "wwj.paths.h2": "Pick the path that matches where you are.",
     "wwj.paths.intro": "I work with two groups: entrepreneurs starting from an idea, and organisations that are already running. Path A has two ways to work together and Path B has three, depending on how much you want me to do and how much you want to do yourself.",
     "wwj.paths.a_tag": "For entrepreneurs · starting from an idea",
@@ -346,7 +346,7 @@ export const translations = {
     "wwj.limits.h2": "Clear limits, so expectations are honest.",
     "wwj.limits.intro": "Knowing what I don't do matters as much as what I do. These are the lines I don't cross.",
     "wwj.limits.item1_lead": "I start from what you bring.",
-    "wwj.limits.item1_body": "You bring the idea or the organisation; I turn it into something you can run. If you're still deciding what to build, you need a different kind of advisor.",
+    "wwj.limits.item1_body": "You bring the idea or the organisation; I turn it into something you can run. Still choosing between several ideas? Start with the free Module 0 of the courses for entrepreneurs: it helps you pick one before we work together.",
     "wwj.limits.item2_lead": "I'm not part of your team.",
     "wwj.limits.item2_body": "I prepare, review and coach, but the outputs are owned, held and run by the organisation. The aim is capability, not dependence.",
     "wwj.limits.item3_lead": "I don't promise funding.",
@@ -805,7 +805,7 @@ export const translations = {
     "ec.faq.a5": "Yes. Julieta works one-to-one with entrepreneurs on the same method: she can build the documents for you or build them with you.",
     "ec.final.eyebrow": "START WHERE YOU ARE",
     "ec.final.title": "Open Module 0. Decide the rest from there.",
-    "ec.final.sub": "Meet the method and describe what you are building. Takes 15 minutes. No card.",
+    "ec.final.sub": "Meet the method and describe what you are building. About an hour, at your own pace. No card.",
     "ec.final.cta2": "Work with Julieta",
     "nav.prices": "Prices",
     "nav.courses.ent_status": "Launching soon",
@@ -855,7 +855,7 @@ export const translations = {
     "news.privacy_link": "privacy notice",
     "nl.eyebrow": "Newsletter",
     "nl.title": "Stay in touch",
-    "nl.lead": "One short email now and then about new courses and templates. Unsubscribe anytime.",
+    "nl.lead": "Hear first when new courses, templates and Impact Tools open.",
     "nl.confirm_title": "Confirm your subscription",
     "nl.confirm_body": "Press the button to join the Method into Impact newsletter. You can unsubscribe at any time from the link at the bottom of every email.",
     "nl.confirm_btn": "Yes, keep me posted",
@@ -892,7 +892,12 @@ export const translations = {
     "home.facts.lessons": "lessons & reviews",
     "home.facts.hours": "hours, self-paced",
     "ec.soon.prices": "See prices for your country →",
-    "ec.soon.buy": "Get the Founder Pathway"
+    "ec.soon.buy": "Get the Founder Pathway",
+    "home.paths.o.cta2": "Work with Julieta now →",
+    "home.paths.o.alt": "Preview the courses for organisations →",
+    "courses.hero.soon_tag": "Under development",
+    "courses.hero.soon": "Every lesson is open to look at now; the courses go on sale later. Running an organisation today?",
+    "courses.hero.soon_cta": "Work with Julieta now →"
   },
 
   es: {
@@ -1104,7 +1109,7 @@ export const translations = {
     "wwj.start.cta_button": "Iniciemos una conversación",
     "wwj.start.cta_note": "Toma unos 10 minutos completarlo. Sin pago, sin compromiso.",
 
-    "wwj.paths.eyebrow": "Más allá de una hora · Dos caminos",
+    "wwj.paths.eyebrow": "Dos caminos",
     "wwj.paths.h2": "Elige el camino que coincide con dónde estás.",
     "wwj.paths.intro": "Trabajo con dos grupos: emprendedores que empiezan desde una idea y organizaciones que ya están en marcha. El camino A tiene dos formas de colaborar y el camino B tiene tres, según cuánto quieras que haga yo y cuánto quieras hacer tú.",
     "wwj.paths.a_tag": "Para emprendedores · empezando desde una idea",
@@ -1238,7 +1243,7 @@ export const translations = {
     "wwj.limits.h2": "Límites claros, para que las expectativas sean honestas.",
     "wwj.limits.intro": "El alcance es tan importante como el trabajo mismo. Estas son las líneas que no cruzo.",
     "wwj.limits.item1_lead": "Parto de lo que traes.",
-    "wwj.limits.item1_body": "Tú traes la idea o la organización; yo la convierto en algo que puedes operar. Si todavía estás decidiendo qué construir, necesitas otro tipo de asesora.",
+    "wwj.limits.item1_body": "Tú traes la idea o la organización; yo la convierto en algo que puedes operar. ¿Todavía eliges entre varias ideas? Empieza por el Módulo 0 gratuito de los cursos para emprendedores: te ayuda a elegir una antes de empezar a trabajar conmigo.",
     "wwj.limits.item2_lead": "No soy parte de tu equipo.",
     "wwj.limits.item2_body": "Preparo, reviso y acompaño, pero los entregables son propiedad de la organización, los mantiene y los ejecuta la organización. El objetivo es capacidad, no dependencia.",
     "wwj.limits.item3_lead": "No prometo financiamiento.",
@@ -1697,7 +1702,7 @@ export const translations = {
     "ec.faq.a5": "Sí. Julieta trabaja uno a uno con emprendedores con el mismo método: puede preparar los documentos por ti o construirlos contigo.",
     "ec.final.eyebrow": "EMPIEZA DONDE ESTÁS",
     "ec.final.title": "Abre el Módulo 0. Decide el resto desde ahí.",
-    "ec.final.sub": "Conoce el método y describe lo que estás construyendo. Lleva 15 minutos. Sin tarjeta.",
+    "ec.final.sub": "Conoce el método y describe lo que estás construyendo. Alrededor de una hora, a tu ritmo. Sin tarjeta.",
     "ec.final.cta2": "Trabaja con Julieta",
     "nav.prices": "Precios",
     "nav.courses.ent_status": "Muy pronto",
@@ -1747,7 +1752,7 @@ export const translations = {
     "news.privacy_link": "aviso de privacidad",
     "nl.eyebrow": "Boletín",
     "nl.title": "Mantengámonos en contacto",
-    "nl.lead": "Un correo breve de vez en cuando sobre nuevos cursos y plantillas. Puedes darte de baja cuando quieras.",
+    "nl.lead": "Entérate primero cuando abran nuevos cursos, plantillas e Impact Tools.",
     "nl.confirm_title": "Confirma tu suscripción",
     "nl.confirm_body": "Pulsa el botón para suscribirte al boletín de Method into Impact. Puedes darte de baja en cualquier momento desde el enlace al pie de cada correo.",
     "nl.confirm_btn": "Sí, quiero recibir novedades",
@@ -1784,6 +1789,11 @@ export const translations = {
     "home.facts.lessons": "lecciones y repasos",
     "home.facts.hours": "horas, a tu ritmo",
     "ec.soon.prices": "Ver precios para tu país →",
-    "ec.soon.buy": "Consigue la Founder Pathway"
+    "ec.soon.buy": "Consigue la Founder Pathway",
+    "home.paths.o.cta2": "Trabaja con Julieta ahora →",
+    "home.paths.o.alt": "Mira los cursos para organizaciones →",
+    "courses.hero.soon_tag": "En desarrollo",
+    "courses.hero.soon": "Ya puedes ver todas las lecciones; los cursos saldrán a la venta más adelante. ¿Ya diriges una organización?",
+    "courses.hero.soon_cta": "Trabaja con Julieta ahora →"
   }
 };

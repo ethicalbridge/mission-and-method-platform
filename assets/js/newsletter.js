@@ -17,8 +17,8 @@
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) { var e = new Error(j.error || 'failed'); e.code = j.error; throw e; } return j; }); });
   }
   var T = {
-    en: { bad: 'Please enter a valid email address.', busy: 'Sending…', ok: 'Almost there: check your inbox and click "Yes, keep me posted" to confirm.', many: 'Too many tries. Please wait a little and try again.', fail: 'That did not work. Please try again in a minute.' },
-    es: { bad: 'Escribe un correo válido.', busy: 'Enviando…', ok: 'Casi listo: revisa tu correo y pulsa "Sí, quiero recibir novedades" para confirmar.', many: 'Demasiados intentos. Espera un poco y vuelve a intentarlo.', fail: 'No funcionó. Inténtalo de nuevo en un minuto.' }
+    en: { bad: 'Please enter a valid email address.', busy: 'Sending…', ok: 'Almost there: check your inbox and click "Yes, keep me posted" to confirm.', next: 'While you wait: <a href="/entrepreneurs-clarify/how-this-course-works">start Module 0 free</a> or <a href="legal-templates.html#free-templates">get 3 free legal templates</a>.', many: 'Too many tries. Please wait a little and try again.', fail: 'That did not work. Please try again in a minute.' },
+    es: { bad: 'Escribe un correo válido.', busy: 'Enviando…', ok: 'Casi listo: revisa tu correo y pulsa "Sí, quiero recibir novedades" para confirmar.', next: 'Mientras tanto: <a href="/entrepreneurs-clarify/how-this-course-works">empieza el Módulo 0 gratis</a> o <a href="legal-templates.html#free-templates">consigue 3 plantillas legales gratis</a>.', many: 'Demasiados intentos. Espera un poco y vuelve a intentarlo.', fail: 'No funcionó. Inténtalo de nuevo en un minuto.' }
   };
   function wire(form) {
     if (form.dataset.nlBound) return; form.dataset.nlBound = '1';
@@ -30,7 +30,7 @@
       btn.disabled = true; note.textContent = t.busy;
       var consent = (form.querySelector('[data-consent-text]') || form).textContent.replace(/\s+/g, ' ').trim().slice(0, 400);
       send('subscribe', { email: email, consentText: consent, source: form.dataset.source || 'footer' })
-        .then(function () { note.textContent = t.ok; form.reset(); })
+        .then(function () { note.textContent = t.ok; if (form.dataset.source === 'newsletter-page') { var n = document.createElement('span'); n.innerHTML = ' ' + t.next; note.appendChild(n); } form.reset(); })
         .catch(function (x) { note.textContent = x && x.code === 'too_many' ? t.many : t.fail; })
         .then(function () { btn.disabled = false; });
     });

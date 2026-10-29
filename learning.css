@@ -332,3 +332,6 @@
 .templates-tag.is-free{background:#e5f4e4;color:#1f6b2e}.templates-tag.is-included{background:#e8f3f1;color:#16746e}
 .templates-why{font-size:13px;line-height:1.45;color:#546974}
 .locked-alt{margin-top:18px;font-size:14.5px;line-height:1.7;color:var(--muted,#5d6b73)}.locked-alt a{font-weight:800}
+/* Spanish visitors on a page that is not translated yet (added by i18n.js) */
+.mim-en-only{max-width:1120px;margin:16px auto 0;padding:10px 16px;border-radius:10px;background:#eef6f4;border:1px solid #9cc7c0;color:#102e3b;font-size:.95rem}
+.org-preview{margin:0 0 16px;padding:10px 14px;border-radius:10px;background:#fff6e5;border:1px solid #f0c987;color:#102e3b;font-size:14.5px;line-height:1.6}.org-preview a{font-weight:800}

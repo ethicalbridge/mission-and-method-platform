@@ -2,13 +2,23 @@
 // Reads language preference from localStorage, applies translations to any
 // element carrying a `data-i18n` attribute, and wires up the EN/ES switcher.
 
-import { translations } from './translations.js?v=acct6';
+import { translations } from './translations.js?v=acct7';
 
 const STORAGE_KEY = 'mim-lang';
 const DEFAULT_LANG = 'en';
 const SUPPORTED = ['en', 'es'];
 
+// A link can choose the language: ?lang=es (used in emails). It is remembered like the EN/ES switch.
+try {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q && SUPPORTED.includes(q)) localStorage.setItem(STORAGE_KEY, q);
+} catch {}
+
 function getLang() {
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q && SUPPORTED.includes(q)) return q;
+  } catch {}
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored && SUPPORTED.includes(stored)) return stored;
@@ -53,6 +63,19 @@ function applyLang(lang) {
       if (str != null) el.setAttribute(attr, str);
     });
   });
+
+  // Pages not translated yet say so in Spanish, instead of switching silently to English.
+  const main = document.querySelector('main');
+  let note = document.getElementById('mim-en-only');
+  const untranslated = main && !main.querySelector('[data-i18n]') && !document.body.hasAttribute('data-i18n-skip');
+  if (lang === 'es' && untranslated) {
+    if (!note) {
+      note = document.createElement('p');
+      note.id = 'mim-en-only'; note.className = 'mim-en-only'; note.setAttribute('role', 'note');
+      note.textContent = 'Esta página todavía está en inglés; la estamos traduciendo. Las plantillas legales ya tienen su versión en español.';
+      main.prepend(note);
+    }
+  } else if (note) note.remove();
 
   // Update the switcher's active state.
   document.querySelectorAll('[data-lang-switch]').forEach(btn => {

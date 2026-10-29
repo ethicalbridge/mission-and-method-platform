@@ -7,12 +7,35 @@
    `authenticated` roles. It is NOT the service_role key.
 */
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
+// The library loads from a CDN. If that fails (an ad-blocker, a firewall, no connection), pages still work:
+// `mip` becomes an offline stand-in whose calls answer "signed out" or an error, so free lessons and
+// templates render and only account features say they could not connect. MIP_OFFLINE tells pages which case it is.
+let createClient = null;
+try { ({ createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm')); }
+catch (e) { console.warn('Account service library could not load; continuing without sign-in.', e); }
+export const MIP_OFFLINE = !createClient;
 
 export const SUPABASE_URL = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
 
-export const mip = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+const OFFLINE_ERROR = { message: 'Could not reach the account service. Check your connection or ad-blocker and try again.', code: 'offline' };
+const offlineResult = () => Promise.resolve({ data: null, error: OFFLINE_ERROR, count: null });
+// A query chain that accepts any method (.select().eq()…) and resolves to the offline error.
+const chain = () => new Proxy(function () {}, { get: (_, k) => k === 'then' ? (ok, no) => offlineResult().then(ok, no) : chain(), apply: () => chain() });
+const authBase = {
+ getSession: async () => ({ data: { session: null }, error: null }),
+ getUser: async () => ({ data: { user: null }, error: null }),
+ onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
+ signOut: async () => ({ error: null }),
+};
+const offlineClient = () => ({
+ auth: new Proxy(authBase, { get: (t, k) => k in t ? t[k] : async () => ({ data: {}, error: OFFLINE_ERROR }) }),
+ from: () => chain(), rpc: () => chain(), channel: () => chain(), removeChannel() {},
+ storage: { from: () => chain() },
+ functions: { invoke: async () => ({ data: null, error: OFFLINE_ERROR }) },
+});
+
+export const mip = !createClient ? offlineClient() : createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
  auth: {
   // Persist the session in localStorage so a signed-in user stays signed in
   // across tabs and reloads. Supabase JS handles token refresh automatically.

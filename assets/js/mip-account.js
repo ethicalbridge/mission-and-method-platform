@@ -6,7 +6,7 @@
    a pathway includes its courses, a pack its templates). It is cached in localStorage so pages can check it
    without waiting; the cache is refreshed on every page load and whenever the person signs in or buys.
    Orders and ownership are only written by the server (functions mip-account and, later, the payment webhook). */
-import { mip, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './supabase-client.js';
+import { mip, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './supabase-client.js?v=2';
 
 const KEYS = 'mip.keys.v1';
 const RETURN = 'mip.returnTo';

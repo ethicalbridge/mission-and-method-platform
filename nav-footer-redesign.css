@@ -351,3 +351,5 @@ nav.nav .nav-links a.nav-coming-soon em {
 .footer-news-privacy a{color:rgba(255,255,255,.85);text-decoration:underline}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 @media (max-width:760px){.footer-news-form{grid-template-columns:1fr}.footer-news-row{flex-direction:column}.footer-news-row button{width:100%}}
+/* Mobile menu: Contact lines up with the other links */
+@media (max-width:900px){nav.nav .nav-links .contact-link{text-align:left !important;justify-content:flex-start !important}}

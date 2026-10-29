@@ -6,7 +6,7 @@
 import {COURSE_ACCESS_KEY,ownedCourseIds} from './course-access.js?v=ev5';
 import {priceOf,BANDS,PRICE_FLOOR,launchOn} from './pricing-config.js?v=launch-1';
 import {countries,bandOfCountry} from './country-bands.js?v=1';
-import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=3';
+import {owns,requireUser,testPurchase,resetTestPurchases,downloadFile,downloadError} from './assets/js/mip-account.js?v=4';
 export const FOUNDER_ALL='entrepreneurs-all';
 // Earlier browser-only test purchases (before accounts) are cleared once, so nothing unlocks without an account.
 try{for(const st of [globalThis.localStorage,globalThis.sessionStorage]){const kept=ownedCourseIds(st);if(kept.some(x=>x.startsWith('entrepreneurs-')))st.setItem(COURSE_ACCESS_KEY,JSON.stringify(kept.filter(x=>!x.startsWith('entrepreneurs-'))));}}catch{}
@@ -98,11 +98,23 @@ export async function openFounderCheckout(course,{onDone}={}){
 export function refreshFounderPrices(root=document){
  root.querySelectorAll('[data-founder-buy]').forEach(btn=>{
   if(btn.tagName==='A'&&!btn.dataset.founderBuy)return;
+  // Prices page: the cards already show the price for the band chosen there, so the button carries no price of its own.
+  if('noPrice' in btn.dataset)return;
+  // A translated label (data-i18n) is taken over here, so the language switch does not wipe the price.
+  if(btn.dataset.i18n){btn.dataset.labelKey=btn.dataset.i18n;btn.removeAttribute('data-i18n');}
   if(!btn.dataset.label)btn.dataset.label=btn.textContent.replace(/\s*·\s*\$\d+/,'').replace(/\s*→\s*$/,'').trim();
   const p=coursePrice(btn.dataset.founderBuy);
-  btn.textContent=`${btn.dataset.label} · ${usd(p.now)} →`;
+  btn.textContent=`${labelFor(btn)} · ${usd(p.now)} →`;
  });
 }
+const isEs=()=>(document.documentElement.lang||'').startsWith('es');
+function labelFor(btn){
+ const t=btn.dataset.labelKey&&globalThis.MIM_i18n?.t?.(btn.dataset.labelKey);
+ if(t)return t;
+ const l=btn.dataset.label;
+ return isEs()?l.replace(/^Get Course (\d)/,'Consigue el Curso $1').replace(/^Get the Founder Pathway/,'Consigue la Founder Pathway'):l;
+}
+if(typeof document!=='undefined')document.addEventListener('mim:lang',()=>setTimeout(()=>refreshFounderPrices(),0));
 
 // Static pages: <a|button data-founder-buy="entrepreneurs-organise" data-name="Course 2 · Organise" data-start="…">.
 // Owned courses turn into a "Go to the course" link; data-owned-text sets its label.
@@ -116,6 +128,8 @@ export function bindFounderButtons(root=document){
   btn.addEventListener('click',ev=>{ev.preventDefault();openFounderCheckout({id,name:btn.dataset.name||'All four courses',start:btn.dataset.start});});
  });
  apply();refreshFounderPrices(root);
+ // Again once the language is applied (i18n.js runs alongside), so Spanish pages get Spanish labels.
+ setTimeout(()=>refreshFounderPrices(root),300);
  // Ownership arrives from the account a moment after the page loads (and changes after a purchase).
  window.addEventListener('mip:account',apply);
 }
