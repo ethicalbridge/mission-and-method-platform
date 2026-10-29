@@ -82,16 +82,22 @@ nav.nav .nav-links .account-link:hover{
 
 /* Preview banner — condensed, uppercase micro-label */
 .preview-note{
-  background:rgba(229,111,74,.08) !important;
-  border-bottom:1px solid rgba(229,111,74,.15) !important;
-  color:#8f4a2c !important;
-  font-size:11px !important;
-  font-weight:700 !important;
-  letter-spacing:.02em !important;
-  padding:6px 20px !important;
+  background:linear-gradient(90deg,#e56f4a,#f08a5d) !important;
+  border-bottom:0 !important;
+  color:#fff !important;
+  font-size:16px !important;
+  font-weight:800 !important;
+  letter-spacing:.01em !important;
+  padding:14px 20px !important;
   text-align:center !important;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
+.preview-note::before{
+  content:"COMING SOON";display:inline-block;margin-right:14px;padding:5px 14px;border-radius:999px;
+  background:#fff;color:#c4512c;font-size:15px;font-weight:900;letter-spacing:.14em;vertical-align:middle;
+}
+:lang(es) .preview-note::before{content:"MUY PRONTO"}
+@media (max-width:640px){.preview-note{font-size:13px !important;padding:10px 12px !important;white-space:normal}.preview-note::before{display:block;width:max-content;margin:0 auto 6px;font-size:13px}}
 
 /* ---------- Footer ---------- */
 .site-footer{

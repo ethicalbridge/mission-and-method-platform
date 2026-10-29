@@ -173,6 +173,10 @@
 .px-single a{color:var(--teal);font-weight:800;margin-left:6px}
 .px-text-link{display:block;text-align:center;margin-top:10px;font-weight:800;font-size:14px;color:var(--teal)}
 .px-text-link-light{color:#f6c25b}
+/* Section headings and subtitles on one line each on laptop screens */
+.pr-tier .hm-head{max-width:1180px}
+.pr-tier .hm-head h2{font-size:clamp(30px,3.2vw,42px)}
+@media (min-width:1180px){.pr-tier .hm-head h2,.pr-tier .hm-subhead{white-space:nowrap}}
 </style>
 </head>
 <body data-page="pricing" data-product="planning-system">
@@ -325,7 +329,7 @@
       <div class="hm-head reveal">
         <div class="hm-section-eyebrow">03 · LEGAL TEMPLATES</div>
         <h2>Full documents, ready to adapt.</h2>
-        <p class="hm-subhead">Editable Word templates with highlighted fields, “Adapt this” guidance boxes and country notes. Templates, not legal advice: have the final version checked locally.</p>
+        <p class="hm-subhead">Editable Word templates with yellow fields, “Adapt this” guidance and country notes. Templates, not legal advice.</p>
       </div>
       <div class="px-pair">
         <article class="pr-plan reveal" style="--delay:40ms">
@@ -450,7 +454,7 @@
       <div class="hm-head reveal">
         <div class="hm-section-eyebrow">05 · WORK WITH JULIETA</div>
         <h2>Help from someone who has built it before.</h2>
-        <p class="hm-subhead">Julieta has a legal background and 13+ years in international development, compliance, programmes and strategy. Every engagement starts with a free conversation.</p>
+        <p class="hm-subhead">A legal background and 13+ years in development, compliance and strategy. Every engagement starts with a free call.</p>
       </div>
       <div class="px-pair px-pair-3">
         <article class="pr-plan reveal" style="--delay:40ms">
@@ -524,7 +528,7 @@
       <div class="hm-head reveal">
         <div class="hm-section-eyebrow">FAIR PRICES BY COUNTRY</div>
         <h2>Which price band your country is in.</h2>
-        <p class="hm-subhead">We use the World Bank's country income groups, so people building in lower-income countries pay less for the same course.</p>
+        <p class="hm-subhead">We use the World Bank's income groups, so people in lower-income countries pay less for the same course.</p>
       </div>
       <div class="px-band-cards">
         <details class="px-band-card">
@@ -640,7 +644,7 @@
 </script>
 <script type="module" src="i18n.js?v=prices-5"></script>
 <script type="module">import {bindPriceButtons} from './founder-checkout.js?v=5';bindPriceButtons();</script>
-<script src="app.js?v=prices-6"></script>
+<script src="app.js?v=prices-7"></script>
 <script type="module" src="overview.js"></script>
 <script src="home.js?v=home-redesign-4"></script>
 </body>
