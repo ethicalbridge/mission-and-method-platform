@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prices | Method into Impact</title>
+<meta name="description" content="Prices for Method into Impact courses, legal templates and support. One payment per product, fair prices by country, and Module 0 free.">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800;6..12,900&display=swap">
+<link rel="stylesheet" href="styles.css?v=consent-1">
+<link rel="stylesheet" href="mission.css?v=nav-courses-1">
+<link rel="stylesheet" href="learning.css?v=course41">
+<link rel="stylesheet" href="pricing.css">
+<link rel="stylesheet" href="planning-system.css?v=crm-backend-1">
+<link rel="stylesheet" href="courses.css?v=courses-redesign-1">
+<link rel="stylesheet" href="pricing-redesign.css?v=pricing-redesign-3">
+<link rel="stylesheet" href="audiences.css?v=3">
+<script src="assets/js/passcode-gate.js?v=1"></script>
+<style>
+/* prices.html — page-specific styles, px-* namespace. Uses the site tokens from mission.css. */
+
+/* Country band switcher */
+.px-bands{position:sticky;top:0;z-index:40;background:rgba(255,250,243,.96);backdrop-filter:saturate(1.2) blur(6px);border-bottom:1px solid var(--line)}
+.px-bands-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding:14px 0}
+.px-bands-label{font-size:13px;font-weight:800;color:var(--ink)}
+.px-bands-label small{display:block;font-weight:600;color:var(--muted);font-size:12px;margin-top:2px}
+.px-seg{display:flex;flex-wrap:wrap;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}
+.px-seg button{appearance:none;border:0;background:transparent;font:inherit;font-size:13px;font-weight:800;color:var(--deep);padding:8px 14px;border-radius:999px;cursor:pointer}
+.px-seg button[aria-pressed="true"]{background:var(--deep);color:#fff}
+.px-seg button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+
+/* Preview note */
+.px-preview{background:var(--mint);border-radius:16px;padding:16px 20px;font-size:14.5px;line-height:1.55;color:var(--ink);margin:0 auto;max-width:860px}
+.px-preview b{color:var(--deep)}
+
+/* Founding price line inside a card */
+.px-founding{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 8px;font-size:13px;font-weight:700;color:var(--teal);margin-top:-4px}
+.px-founding b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;color:var(--coral)}
+.pr-plan-featured .px-founding{color:var(--sun)}
+.pr-plan-featured .px-founding b{color:#fff}
+.px-includes{display:inline-flex;align-items:center;gap:8px;background:var(--mint);color:var(--deep);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:800;width:fit-content}
+.pr-plan-featured .px-includes{background:rgba(248,202,104,.18);color:var(--sun)}
+
+/* Two-up grid that also fits a single card cleanly */
+.px-pair{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:40px;align-items:stretch}
+.px-pair-3{grid-template-columns:repeat(3,1fr)}
+
+/* Template category packs */
+.px-packs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
+.px-pack{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.px-pack small{color:var(--teal);font-size:10.5px;font-weight:900;letter-spacing:.16em}
+.px-pack h4{margin:0;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:20px;color:var(--ink);line-height:1.2}
+.px-pack p{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.px-pack .px-pack-price{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);display:flex;align-items:baseline;gap:8px}
+.px-pack .px-pack-price b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:30px;color:var(--deep);line-height:1}
+.px-pack .px-pack-price span{font-size:12px;color:var(--muted);font-weight:700}
+.px-subhead{font-size:13px;font-weight:900;letter-spacing:.16em;color:var(--teal);margin:44px 0 0}
+
+/* Ladder strip */
+.px-ladder{list-style:none;padding:0;margin:36px 0 0;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;counter-reset:step}
+.px-ladder li{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;font-size:13.5px;line-height:1.45;color:var(--muted);position:relative}
+.px-ladder li b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:4px}
+.px-ladder li:before{counter-increment:step;content:counter(step);display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--deep);color:#fff;font-size:12px;font-weight:900;margin-bottom:8px}
+
+/* Partner seats table */
+.px-seats{width:100%;border-collapse:separate;border-spacing:0;margin-top:32px;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.px-seats th,.px-seats td{text-align:left;padding:14px 18px;font-size:14.5px;border-bottom:1px solid var(--line)}
+.px-seats th{background:var(--cream);font-size:11px;letter-spacing:.14em;color:var(--teal);font-weight:900}
+.px-seats tr:last-child td{border-bottom:0}
+.px-seats td b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;color:var(--deep)}
+
+/* Coming-soon strip */
+.px-soon{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between;background:linear-gradient(160deg,var(--deep) 0%,#0d2a33 100%);color:#fff;border-radius:22px;padding:28px 32px}
+.px-soon h3{margin:0 0 6px;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:26px}
+.px-soon p{margin:0;color:#d4e2e3;font-size:15px;line-height:1.55;max-width:620px}
+.px-soon .px-soon-tag{color:var(--sun);font-size:11px;font-weight:900;letter-spacing:.16em;display:block;margin-bottom:8px}
+
+/* Ghost buttons on white cards: the site's ghost style is built for dark backgrounds */
+.pr-plan:not(.pr-plan-featured) .hm-btn-ghost{color:var(--teal);background:#fff;border:1.5px solid var(--teal);padding:12px 20px;height:auto;border-radius:999px}
+.pr-plan:not(.pr-plan-featured) .hm-btn-ghost:hover{background:var(--mint);color:var(--deep);transform:translateY(-2px)}
+/* Text prices such as "Free" and "By proposal" */
+.px-price-text b{font-size:34px}
+/* Launch Ready row: cards keep their own height */
+.px-pair-start{align-items:start}
+.px-ladder-compact{gap:8px}
+.px-ladder-compact li{display:grid;grid-template-columns:28px 1fr;column-gap:10px;align-items:start;padding:12px 14px}
+.px-ladder-compact li:before{margin:0;grid-row:span 2}
+.px-ladder-compact li b{margin:0}
+/* Short band labels on phones */
+.px-short{display:none}
+
+@media (max-width:1080px){
+  .px-packs{grid-template-columns:repeat(2,1fr)}
+  .px-ladder{grid-template-columns:repeat(2,1fr)}
+  .px-pair-3{grid-template-columns:1fr 1fr}
+}
+@media (max-width:760px){
+  .px-pair,.px-pair-3,.px-packs,.px-ladder{grid-template-columns:1fr}
+  .px-bands-inner{padding:10px 0}
+  .px-seg{width:100%;justify-content:space-between}
+  .px-seg button{flex:1 1 auto;padding:8px 10px;font-size:12.5px}
+  .px-seats th,.px-seats td{padding:12px;font-size:13.5px}
+  .px-soon{padding:24px}
+  .px-bands-label{font-size:12px}
+  .px-bands-label small{display:none}
+  .px-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border-radius:14px;padding:3px}
+  .px-seg button{padding:8px 4px;font-size:12px;border-radius:11px}
+  .px-long{display:none}
+  .px-short{display:inline}
+  .px-bands-inner{gap:6px;padding:8px 0}
+}
+</style>
+</head>
+<body data-page="pricing" data-product="planning-system">
+<a class="skip-link" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main navigation"></nav>
+<div class="preview-note">Development preview · Checkout is not open yet · Prices shown for review.</div>
+
+<main id="main">
+
+  <!-- ================= HERO ================= -->
+  <section class="hm-hero hm-hero-pricing">
+    <div class="hm-hero-shapes" aria-hidden="true">
+      <span class="hm-shape hm-shape-1"></span>
+      <span class="hm-shape hm-shape-2"></span>
+      <span class="hm-shape hm-shape-3"></span>
+    </div>
+    <div class="container hm-hero-inner">
+      <div class="hm-eyebrow">PRICES · ONE PAYMENT · FAIR BY COUNTRY</div>
+      <h1>Fair prices, <em>wherever</em> you are building.</h1>
+      <p class="hm-lead">Courses, legal templates and support, each with one clear price. Prices adjust to the income level of your country, and Module 0 is always free.</p>
+      <div class="hm-actions">
+        <a class="hm-btn hm-btn-primary" href="#courses-entrepreneurs">See the prices ↓</a>
+        <a class="hm-btn hm-btn-ghost" href="/entrepreneurs-clarify/how-this-course-works">Start Module 0 free →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BAND SWITCHER ================= -->
+  <div class="px-bands" role="region" aria-label="Country price band">
+    <div class="container px-bands-inner">
+      <div class="px-bands-label" id="px-band-label">Show prices for
+        <small>Your band is set by your billing country at checkout.</small>
+      </div>
+      <div class="px-seg" role="group" aria-labelledby="px-band-label">
+        <button type="button" data-band="0" aria-pressed="true"><span class="px-long">High income</span><span class="px-short">High</span></button>
+        <button type="button" data-band="1" aria-pressed="false"><span class="px-long">Upper-middle</span><span class="px-short">Upper-mid</span></button>
+        <button type="button" data-band="2" aria-pressed="false"><span class="px-long">Lower-middle</span><span class="px-short">Lower-mid</span></button>
+        <button type="button" data-band="3" aria-pressed="false"><span class="px-long">Low income</span><span class="px-short">Low</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PREVIEW NOTE ================= -->
+  <section class="hm-section pr-note-section">
+    <div class="container">
+      <p class="px-preview"><b>Founding prices</b> apply until <span data-founding-until>31 March 2027</span> or the first 200 buyers, whichever comes first. After that the standard price applies. All prices are in US dollars, and any VAT or GST is added at checkout where the law requires it.</p>
+    </div>
+  </section>
+
+  <!-- ================= 01 · COURSES FOR ENTREPRENEURS ================= -->
+  <section class="hm-section pr-tier" id="courses-entrepreneurs">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">01 · COURSES FOR ENTREPRENEURS</div>
+        <h2>Build your foundations from day one.</h2>
+        <p class="hm-subhead">Four courses for people starting a project, nonprofit, social business or cooperative. Lifetime access, one payment.</p>
+      </div>
+      <div class="px-pair">
+        <article class="pr-plan reveal" style="--delay:40ms">
+          <div class="pr-plan-eyebrow">ONE COURSE</div>
+          <h3>Clarify, Organise, Prove &amp; Show or Protect.</h3>
+          <div class="pr-price"><b data-prices="39,23,12,9">$39</b><span>one-time · per course</span></div>
+          <div class="px-founding">Founding price <b data-prices="29,17,9,9">$29</b></div>
+          <p class="pr-plan-desc">Every lesson, exercise and module review in the course, ending in a Pack you can share with co-founders, partners or funders.</p>
+          <ul class="pr-plan-list">
+            <li>All lessons, videos and exercises in the course</li>
+            <li>Your Pack, downloadable as PDF</li>
+            <li><b>Protect</b> includes the Start-up Legal Essentials (12 templates)</li>
+            <li>Lifetime access and future updates</li>
+          </ul>
+          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="courses-entrepreneurs.html">Choose a course →</a>
+          <small class="pr-fine">Module 0 is free in every course.</small>
+        </article>
+
+        <article class="pr-plan pr-plan-featured reveal" style="--delay:120ms">
+          <div class="pr-plan-badge">SAVES <span data-prices="37,21,12,18">$37</span></div>
+          <div class="pr-plan-eyebrow">FOUNDER PATHWAY</div>
+          <h3>All four courses, in order.</h3>
+          <div class="pr-price"><b data-prices="119,71,36,18">$119</b><span>one-time · 4 courses</span></div>
+          <div class="px-founding">Founding price <b data-prices="89,53,27,13">$89</b></div>
+          <div class="px-includes">✓ Start-up Legal Essentials included</div>
+          <p class="pr-plan-desc">The full entrepreneur track: purpose and Theory of Change, structure and people, evidence and brand, money, legal duties and risk.</p>
+          <ul class="pr-plan-list">
+            <li><b>4 courses · 11 modules · 111 lessons</b></li>
+            <li>Clarity, Organisation, Evidence &amp; Voice and Protection Packs</li>
+            <li>12 essential legal templates</li>
+            <li>Upgrade to the Full Template Library for <b data-prices="79,47,24,12">$79</b></li>
+          </ul>
+          <a class="hm-btn hm-btn-primary pr-plan-cta" href="/entrepreneurs-clarify/how-this-course-works">Start with Module 0 free →</a>
+          <small class="pr-fine">One payment. Lifetime access.</small>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 · COURSES FOR ORGANISATIONS ================= -->
+  <section class="hm-section hm-section-alt pr-tier" id="courses-organisations">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">02 · COURSES FOR ORGANISATIONS</div>
+        <h2>Strengthen what you already run.</h2>
+        <p class="hm-subhead">Five courses for organisations that are already operating, from strategy to a one-year operating plan.</p>
+      </div>
+      <div class="px-pair">
+        <article class="pr-plan reveal" style="--delay:40ms">
+          <div class="pr-plan-eyebrow">ONE COURSE</div>
+          <h3>Pick the course that solves today's problem.</h3>
+          <div class="pr-price"><b data-prices="39,23,12,9">$39</b><span>one-time · per course</span></div>
+          <div class="px-founding">Founding price <b data-prices="29,17,9,9">$29</b></div>
+          <p class="pr-plan-desc">Clarify, Organise, Prove &amp; Show, Protect or Sustain &amp; Run, each with its lessons, exercises and course Pack.</p>
+          <ul class="pr-plan-list">
+            <li>All lessons, videos and exercises in the course</li>
+            <li>Your course Pack, downloadable as PDF</li>
+            <li><b>Protect</b> includes the Start-up Legal Essentials</li>
+            <li>Lifetime access and future updates</li>
+          </ul>
+          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="courses.html">Choose a course →</a>
+          <small class="pr-fine">Module 0 is free.</small>
+        </article>
+
+        <article class="pr-plan pr-plan-featured reveal" style="--delay:120ms">
+          <div class="pr-plan-badge">FULL LIBRARY INCLUDED</div>
+          <div class="pr-plan-eyebrow">ORGANISATION PATHWAY</div>
+          <h3>All five courses, one organisation pack.</h3>
+          <div class="pr-price"><b data-prices="149,89,45,22">$149</b><span>one-time · 5 courses</span></div>
+          <div class="px-founding">Founding price <b data-prices="109,65,33,16">$109</b></div>
+          <div class="px-includes">✓ Full Template Library included (47 templates)</div>
+          <p class="pr-plan-desc">Strategy, Theory of Change, structure, people, MEAL, finance, risk, funding, partnerships and your operating plan.</p>
+          <ul class="pr-plan-list">
+            <li><b>5 courses · 14 modules</b></li>
+            <li>Every course Pack, combined into your organisation pack</li>
+            <li>All 47 legal templates, with 12 months of updates</li>
+            <li>Lifetime access to the courses</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary pr-plan-cta" href="/clarify/how-this-course-works">Start with Module 0 free →</a>
+          <small class="pr-fine">One payment. Lifetime access to the courses.</small>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 03 · LEGAL TEMPLATES ================= -->
+  <section class="hm-section pr-tier" id="templates">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">03 · LEGAL TEMPLATES</div>
+        <h2>Full documents, ready to adapt.</h2>
+        <p class="hm-subhead">Editable Word templates with highlighted fields, “Adapt this” guidance boxes and country notes. Templates, not legal advice: have the final version checked locally.</p>
+      </div>
+      <div class="px-pair">
+        <article class="pr-plan reveal" style="--delay:40ms">
+          <div class="pr-plan-eyebrow">START-UP LEGAL ESSENTIALS</div>
+          <h3>The 12 documents to have before your first activity.</h3>
+          <div class="pr-price"><b data-prices="49,29,15,9">$49</b><span>one-time · 12 templates</span></div>
+          <div class="px-founding">Founding price <b data-prices="39,23,12,9">$39</b></div>
+          <p class="pr-plan-desc">Code of Conduct · Safeguarding Policy and Procedure · Data Protection Policy · Privacy Notice · Conflict of Interest · Financial Controls · Fraud, Bribery and Corruption · Co-founder Agreement · Volunteer Agreement · Photo and Story Consent Form · Complaints and Feedback Procedure · Risk Register.</p>
+          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="legal-templates.html">See the templates →</a>
+          <small class="pr-fine">Included with Protect and with both pathways.</small>
+        </article>
+
+        <article class="pr-plan pr-plan-featured reveal" style="--delay:120ms">
+          <div class="pr-plan-badge">BEST VALUE</div>
+          <div class="pr-plan-eyebrow">FULL TEMPLATE LIBRARY</div>
+          <h3>All 47 templates, plus every new one for a year.</h3>
+          <div class="pr-price"><b data-prices="149,89,45,22">$149</b><span>one-time · 47 templates</span></div>
+          <div class="px-founding">Founding price <b data-prices="119,71,36,18">$119</b></div>
+          <p class="pr-plan-desc">Policies, procedures, contracts and agreements, consent forms, and governance and compliance documents.</p>
+          <ul class="pr-plan-list">
+            <li>20 policies · 10 contracts · 9 governance documents</li>
+            <li>4 procedures · 4 consent forms</li>
+            <li>Updates and new templates for 12 months</li>
+            <li>Licensed for use within one organisation</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary pr-plan-cta" href="legal-templates.html">Browse the library →</a>
+          <small class="pr-fine">The four packs below cost <span data-prices="216,128,66,39">$216</span> separately.</small>
+        </article>
+      </div>
+
+      <p class="px-subhead">OR CHOOSE A PACK</p>
+      <div class="px-packs">
+        <div class="px-pack reveal">
+          <small>20 TEMPLATES</small>
+          <h4>Policies</h4>
+          <p>Conduct, safeguarding, integrity and money, partners and operations, data and digital.</p>
+          <div class="px-pack-price"><b data-prices="79,47,24,12">$79</b><span>founding <span data-prices="59,35,18,9">$59</span></span></div>
+        </div>
+        <div class="px-pack reveal">
+          <small>10 TEMPLATES</small>
+          <h4>Contracts &amp; agreements</h4>
+          <p>Employment, co-founders, volunteers, contractors, services, partners and data sharing.</p>
+          <div class="px-pack-price"><b data-prices="59,35,18,9">$59</b><span>founding <span data-prices="45,27,14,9">$45</span></span></div>
+        </div>
+        <div class="px-pack reveal">
+          <small>9 TEMPLATES</small>
+          <h4>Governance &amp; compliance</h4>
+          <p>Board terms of reference, delegation of authority, risk register, due diligence and records.</p>
+          <div class="px-pack-price"><b data-prices="39,23,12,9">$39</b><span>founding <span data-prices="29,17,9,9">$29</span></span></div>
+        </div>
+        <div class="px-pack reveal">
+          <small>8 TEMPLATES</small>
+          <h4>Procedures &amp; consent</h4>
+          <p>Complaints, data breaches, data rights, incidents, and four consent forms.</p>
+          <div class="px-pack-price"><b data-prices="39,23,12,9">$39</b><span>founding <span data-prices="29,17,9,9">$29</span></span></div>
+        </div>
+      </div>
+
+      <div class="px-pair" style="margin-top:24px">
+        <article class="pr-plan reveal">
+          <div class="pr-plan-eyebrow">PRACTITIONER LICENCE</div>
+          <h3>For consultants who adapt templates for clients.</h3>
+          <div class="pr-price"><b data-prices="299,179,90,45">$299</b><span>per year · one consultant</span></div>
+          <div class="px-founding">Founding price <b data-prices="249,149,75,37">$249</b></div>
+          <p class="pr-plan-desc">Use the full library with as many client organisations as you support. Resale or redistribution of the blank templates is not included.</p>
+          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="contact.html">Ask about the licence →</a>
+        </article>
+        <article class="pr-plan reveal">
+          <div class="pr-plan-eyebrow">FREE TO TRY</div>
+          <h3>Three templates, free.</h3>
+          <div class="pr-price px-price-text"><b>Free</b><span>with your email</span></div>
+          <p class="pr-plan-desc">See the quality before you buy: the Legal Review Checklist, the Board Interest Declaration and the Photo and Story Consent Form.</p>
+          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="legal-templates.html">Get the free templates →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 04 · LAUNCH READY ================= -->
+  <section class="hm-section hm-section-alt pr-tier" id="launch-ready">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">04 · THE COMPLETE START</div>
+        <h2>Launch Ready: learn it, adapt it, check it with Julieta.</h2>
+        <p class="hm-subhead">For founders who want their foundations finished and reviewed, without a full consultancy engagement.</p>
+      </div>
+      <div class="px-pair px-pair-start">
+        <article class="pr-plan pr-plan-featured reveal">
+          <div class="pr-plan-badge">SAVES <span data-prices="138,70,51,30">$138</span></div>
+          <div class="pr-plan-eyebrow">LAUNCH READY</div>
+          <h3>Founder Pathway + Full Template Library + one review call.</h3>
+          <div class="pr-price"><b data-prices="279,169,109,89">$279</b><span>one-time</span></div>
+          <ul class="pr-plan-list">
+            <li>All four entrepreneur courses and their Packs</li>
+            <li>All 47 legal templates, with 12 months of updates</li>
+            <li>One 60-minute review of your Packs with Julieta</li>
+            <li>Credited in full if you start a consultancy engagement within 90 days</li>
+          </ul>
+          <a class="hm-btn hm-btn-primary pr-plan-cta" href="/entrepreneurs-clarify/how-this-course-works">Start with Module 0 free →</a>
+          <small class="pr-fine">The review call covers your strategy, structure and plans. It is not a legal review of your documents.</small>
+        </article>
+        <article class="pr-plan reveal">
+          <div class="pr-plan-eyebrow">HOW IT ADDS UP</div>
+          <h3>From a free start to a reviewed foundation.</h3>
+          <ol class="px-ladder px-ladder-compact" style="grid-template-columns:1fr;margin-top:8px">
+            <li><b>Module 0 · free</b>Meet the method and describe what you are building.</li>
+            <li><b>One course</b>Build the part you need most.</li>
+            <li><b>Founder Pathway</b>All four courses with the legal essentials.</li>
+            <li><b>Launch Ready</b>Every template and a review with Julieta.</li>
+            <li><b>Consultancy</b>Julieta builds it for you or with you.</li>
+          </ol>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 05 · WORK WITH JULIETA ================= -->
+  <section class="hm-section pr-tier" id="support">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">05 · WORK WITH JULIETA</div>
+        <h2>Help from someone who has built it before.</h2>
+        <p class="hm-subhead">Julieta has a legal background and 13+ years in international development, compliance, programmes and strategy. Every engagement starts with a free conversation.</p>
+      </div>
+      <div class="px-pair px-pair-3">
+        <article class="pr-plan reveal" style="--delay:40ms">
+          <div class="pr-plan-eyebrow">DISCOVERY CALL</div>
+          <h3>Start a conversation.</h3>
+          <div class="pr-price px-price-text"><b>Free</b><span>brief · 30-minute call</span></div>
+          <p class="pr-plan-desc">Send a 10-minute brief and meet online for 30 minutes. Within a week you get a tailored proposal, or an honest “this isn't the right fit”.</p>
+          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="work-with-julieta.html#start">Send a brief →</a>
+        </article>
+        <article class="pr-plan reveal" style="--delay:100ms">
+          <div class="pr-plan-eyebrow">PACK REVIEW CALL</div>
+          <h3>A second pair of eyes on your work.</h3>
+          <div class="pr-price"><b data-prices="149,79,79,79">$149</b><span>60 minutes</span></div>
+          <p class="pr-plan-desc">Julieta reads your course Packs before the call and tells you what holds up, what is missing and what to do next.</p>
+          <a class="hm-btn hm-btn-ghost pr-plan-cta" href="work-with-julieta.html#start">Book a review →</a>
+          <small class="pr-fine">Two prices only: high-income countries, and everywhere else.</small>
+        </article>
+        <article class="pr-plan reveal" style="--delay:160ms">
+          <div class="pr-plan-eyebrow">TAILORED ENGAGEMENT</div>
+          <h3>Built for you, or built with you.</h3>
+          <div class="pr-price px-price-text"><b>By proposal</b><span>scope · timeline · price</span></div>
+          <p class="pr-plan-desc">Choose how many of the five foundation steps you need support with, and how: built for you, built with you, or built with you plus two months of coaching.</p>
+          <a class="hm-btn hm-btn-primary pr-plan-cta" href="work-with-julieta.html#packages">See the options →</a>
+          <small class="pr-fine">Your last course or bundle purchase is credited against an engagement started within 90 days.</small>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 06 · PARTNERS ================= -->
+  <section class="hm-section hm-section-alt pr-tier" id="partners">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">06 · FOR FUNDERS, INCUBATORS AND NETWORKS</div>
+        <h2>Seats for the organisations you support.</h2>
+        <p class="hm-subhead">Give every grantee or cohort founder the Founder Pathway, and see who has finished which Pack.</p>
+      </div>
+      <table class="px-seats">
+        <thead><tr><th scope="col">SEATS</th><th scope="col">PRICE</th><th scope="col">PER SEAT</th></tr></thead>
+        <tbody>
+          <tr><td>10 seats</td><td><b>$690</b></td><td>$69</td></tr>
+          <tr><td>25 seats</td><td><b>$1,450</b></td><td>$58</td></tr>
+          <tr><td>50 or more</td><td><b>By quote</b></td><td>Cohort pricing</td></tr>
+        </tbody>
+      </table>
+      <p class="pr-fine" style="margin-top:12px">Partner seats are priced the same in every country. Progress reports and invoicing are being built. <a href="contact.html">Contact us</a> to plan a cohort.</p>
+    </div>
+  </section>
+
+  <!-- ================= IMPACT TOOLS · COMING SOON ================= -->
+  <section class="hm-section pr-tier">
+    <div class="container">
+      <div class="px-soon reveal">
+        <div>
+          <span class="px-soon-tag">IMPACT TOOLS · COMING SOON</span>
+          <h3>Run your plans in one connected workspace.</h3>
+          <p>Strategy, Theory of Change, MEAL, projects, risk and donors in one place. A founding membership opens when the first tools are live, with a clear list of what is included.</p>
+        </div>
+        <a class="hm-btn hm-btn-ghost-light" href="software.html">See the tools →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="hm-section hm-section-alt" id="faq">
+    <div class="container">
+      <div class="hm-head reveal">
+        <div class="hm-section-eyebrow">PRICE QUESTIONS</div>
+        <h2>Fair, honest, no surprises.</h2>
+      </div>
+      <div class="hm-faq">
+        <details class="reveal">
+          <summary>How do the country price bands work?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>Prices follow the World Bank's country income groups. Upper-middle income countries pay 60% of the standard price, lower-middle 30% and low income 15%, with a minimum of $9. Your band comes from your billing country, and checkout shows which band applies and why.</p>
+        </details>
+        <details class="reveal">
+          <summary>What is a founding price?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>A lower price for the first buyers while we open. It applies until <span data-founding-until>31 March 2027</span> or the first 200 buyers, whichever comes first. After that the standard price shown on each card applies.</p>
+        </details>
+        <details class="reveal">
+          <summary>What does lifetime access mean?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>You can use the course for as long as Method into Impact offers it, and for at least five years. Your Packs are always downloadable, so your work stays yours.</p>
+        </details>
+        <details class="reveal">
+          <summary>Are the templates legal advice?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>No. Each template is a general starting point for small purpose-led organisations in different countries. Adapt it to your organisation and have a qualified adviser check it against the law where you operate before you adopt, sign or publish it.</p>
+        </details>
+        <details class="reveal">
+          <summary>Can I share the templates with other organisations?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>Templates are licensed for use within one organisation. Consultants who adapt them for clients need the Practitioner licence. Reselling or republishing the blank templates is not allowed.</p>
+        </details>
+        <details class="reveal">
+          <summary>Can I get a refund?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>Refund terms will be published before checkout opens. In the current preview, no payments are processed.</p>
+        </details>
+        <details class="reveal">
+          <summary>What if I can't pay?<span class="hm-faq-icon" aria-hidden="true"></span></summary>
+          <p>We offer a number of free places every quarter, funded by partner seats. <a href="contact.html">Write to us</a> and tell us what you are building.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="hm-final">
+    <div class="hm-final-shapes" aria-hidden="true">
+      <span class="hm-shape hm-shape-f1"></span>
+      <span class="hm-shape hm-shape-f2"></span>
+    </div>
+    <div class="container">
+      <div class="hm-final-inner reveal">
+        <div class="hm-section-eyebrow hm-section-eyebrow-light">TRY BEFORE YOU BUY</div>
+        <h2>Start Module 0 free. Decide the rest from there.</h2>
+        <p>Meet the method, describe what you are building and record an honest starting point. No card.</p>
+        <div class="hm-actions hm-actions-center">
+          <a class="hm-btn hm-btn-primary" href="/entrepreneurs-clarify/how-this-course-works">I'm starting something →</a>
+          <a class="hm-btn hm-btn-ghost-light" href="/clarify/how-this-course-works">I run an organisation →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer></footer>
+<script>
+/* Country band switcher: each price element lists its four band prices (high, upper-middle, lower-middle, low). */
+(function(){
+  var KEY='mii.priceBand';
+  var buttons=[].slice.call(document.querySelectorAll('.px-seg button'));
+  function setBand(i){
+    [].forEach.call(document.querySelectorAll('[data-prices]'),function(el){
+      var p=el.getAttribute('data-prices').split(',');
+      var v=p[i]!==undefined?p[i]:p[0];
+      el.textContent='$'+Number(v).toLocaleString('en-US');
+    });
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-band')===String(i)));});
+    try{sessionStorage.setItem(KEY,String(i));}catch(e){}
+  }
+  buttons.forEach(function(b){b.addEventListener('click',function(){setBand(Number(b.getAttribute('data-band')));});});
+  var saved=0; try{saved=Number(sessionStorage.getItem(KEY))||0;}catch(e){}
+  setBand(saved);
+})();
+</script>
+<script type="module" src="i18n.js?v=audiences-6"></script>
+<script src="app.js?v=audiences-3"></script>
+<script type="module" src="overview.js"></script>
+<script src="home.js?v=home-redesign-4"></script>
+</body>
+</html>

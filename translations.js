@@ -811,7 +811,8 @@ export const translations = {
     "ec.final.eyebrow": "START WHERE YOU ARE",
     "ec.final.title": "Open Module 0. Decide the rest from there.",
     "ec.final.sub": "Meet the method and describe what you are building. Takes 15 minutes. No card.",
-    "ec.final.cta2": "Work with Julieta"
+    "ec.final.cta2": "Work with Julieta",
+    "nav.prices": "Prices"
   },
 
   es: {
@@ -1622,6 +1623,7 @@ export const translations = {
     "ec.final.eyebrow": "EMPIEZA DONDE ESTÁS",
     "ec.final.title": "Abre el Módulo 0. Decide el resto desde ahí.",
     "ec.final.sub": "Conoce el método y describe lo que estás construyendo. Lleva 15 minutos. Sin tarjeta.",
-    "ec.final.cta2": "Trabaja con Julieta"
+    "ec.final.cta2": "Trabaja con Julieta",
+    "nav.prices": "Precios"
   }
 };
