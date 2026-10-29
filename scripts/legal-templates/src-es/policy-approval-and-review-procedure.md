@@ -197,7 +197,7 @@ Cuando se aprueba una nueva versión, o se retira un documento:
 Las organizaciones socias que ejecutan trabajo con nuestros fondos deben tener políticas que cumplan nuestros estándares, como mínimo, en materia de salvaguarda, fraude y gestión financiera, y de protección de datos cuando traten datos personales. Lo comprobamos mediante la debida diligencia, conforme a nuestra Política de Debida Diligencia de Socios y Control de Sanciones. Cuando una organización socia no tenga una política adecuada, podrá adoptar la nuestra para el proyecto, o elaborar la suya con nuestro apoyo en un plazo acordado. El Acuerdo de Subvención a Socios o el Memorando de Entendimiento de Alianza establecen qué políticas se aplican. Informamos a las organizaciones socias cuando cambiamos una política que les afecta.
 
 ::: adapt Trabajar con organizaciones socias
-Sé proporcional y respetuoso. Las pequeñas organizaciones socias locales pueden tener buenas prácticas pero pocos documentos escritos. Ofrece plantillas, tiempo y apoyo en lugar de limitarte a exigir papeles, y acepta la política propia de una organización socia cuando cumpla el mismo estándar. Cuando un financiador exija que sus reglas se trasladen a las organizaciones socias, indícalo en el acuerdo.
+Actúa con proporcionalidad y respeto. Las pequeñas organizaciones socias locales pueden tener buenas prácticas pero pocos documentos escritos. Ofrece plantillas, tiempo y apoyo en lugar de limitarte a exigir papeles, y acepta la política propia de una organización socia cuando cumpla el mismo estándar. Cuando un financiador exija que sus reglas se trasladen a las organizaciones socias, indícalo en el acuerdo.
 :::
 
 # Registro de políticas
