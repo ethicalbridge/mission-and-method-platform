@@ -11,7 +11,11 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 const shellSrc = read('legal-templates.html');
 const headEnd = shellSrc.indexOf('<main id="main">');
 const tailStart = shellSrc.indexOf('</main>') + '</main>'.length;
-const shellHead = shellSrc.slice(0, headEnd);
+// Pages are open to everyone; each download asks for the access code (assets/js/legal-download-gate.js).
+const shellHead = shellSrc.slice(0, headEnd)
+  .replace(/<script src="assets\/js\/passcode-gate\.js[^"]*"><\/script>/, '')
+  .replace(/<script src="assets\/js\/legal-download-gate\.js[^"]*" defer><\/script>/, '')
+  .replace('</head>', '<script src="assets/js/legal-download-gate.js?v=1" defer></script></head>');
 const shellTail = shellSrc.slice(tailStart);
 const page = (title, description, main) => shellHead
   .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)} | Method into Impact</title>`)
@@ -28,7 +32,7 @@ const count = n => `${n} editable template${n === 1 ? '' : 's'}`;
 function card(t) {
   const meta = [t.type, t.pages ? `about ${t.pages} pages` : null, 'Word (.docx)'].filter(Boolean).join(' · ');
   const isNew = t.status === 'new' ? '<span class="small-tag legal-new">New</span>' : '';
-  return `<article class="suite-tool-card legal-card"><h3>${esc(t.title)}</h3><p>${esc(t.description)}</p><p class="legal-meta"><span class="small-tag">${esc(meta)}</span>${isNew}</p><p class="tool-card-actions"><a class="button ghost" href="assets/legal-templates/${esc(t.slug)}.docx" download>Download Word template ↓</a></p></article>`;
+  return `<article class="suite-tool-card legal-card"><h3>${esc(t.title)}</h3><p>${esc(t.description)}</p><p class="legal-meta"><span class="small-tag">${esc(meta)}</span>${isNew}</p><p class="tool-card-actions"><button class="button ghost" type="button" data-template-file="assets/legal-templates/${esc(t.slug)}.docx" data-template-title="${esc(t.title)}">Download Word template ↓</button></p></article>`;
 }
 
 const all = catalog.templates;
