@@ -54,3 +54,6 @@
 .acc-test{margin-top:22px;color:#5d6b73;font-size:14px}
 .acc-test summary{cursor:pointer;font-weight:700}
 @media (max-width:600px){.acc-hero{padding:40px 0 34px}.acc-card{padding:20px 16px}.acc-row .acc-btn{flex:1 1 100%}}
+/* Keyboard "Skip to content" link: hidden until it gets focus */
+.skip-link{position:fixed;top:-80px;left:16px;z-index:50;padding:12px;background:#fff;color:#102e3b}
+.skip-link:focus{top:12px}
