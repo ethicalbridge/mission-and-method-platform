@@ -179,3 +179,6 @@
 @media (max-width:560px){.px-free{padding:34px 20px 28px}.px-free-pill{font-size:17px}}
 /* Phones: plan badges sit above the heading instead of over it */
 @media (max-width:560px){.pr-plan-badge{position:static;display:inline-block;width:fit-content;margin:0 0 10px}}
+/* Launch price is the big number; the standard price follows as "then $X from 1 April 2027" */
+.px-then s,.px-pack-price s{text-decoration:none;font-weight:800}
+.px-then{font-weight:600}

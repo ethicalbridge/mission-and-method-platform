@@ -27,6 +27,7 @@ function setMode(m) {
   $('acc-auth-title').textContent = t[0]; $('acc-auth-lead').textContent = t[1]; $('acc-send').textContent = t[2];
   document.querySelectorAll('.acc-tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === m)));
   $('acc-news-row').hidden = m !== 'signup';
+  $('acc-terms').hidden = m !== 'signup';
   $('acc-signin-note').textContent = ''; $('acc-code-form').hidden = true;
 }
 document.querySelectorAll('.acc-tabs [data-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));

@@ -238,7 +238,7 @@
    ? `<div class="wwj-cal-embed"><div id="cal-inline"></div></div>`
    : `<div class="wwj-cal-placeholder" role="status">
        <b data-i18n="wwj.success.cal_placeholder_title">Calendar coming here.</b>
-       <p data-i18n="wwj.success.cal_placeholder_body">Julieta's Cal.com picker will embed here so you can pick a slot directly. Until then, she'll reply within a week with a time and the meeting link.</p>
+       <p data-i18n="wwj.success.cal_placeholder_body">Julieta's Cal.com picker will embed here so you can pick a slot directly. Until then, she'll usually reply within 2 working days with a time and the meeting link.</p>
       </div>`;
 
   const warnBlock = briefSaved ? '' : `

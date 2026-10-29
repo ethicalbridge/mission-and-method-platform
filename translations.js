@@ -121,7 +121,7 @@ export const translations = {
     "home.faq.q5": "Is Method into Impact a team or just Julieta?",
     "home.faq.a5": "Just Julieta. One practitioner, one point of contact, no handoffs. The person preparing your work is the person you're talking to.",
     "home.faq.q6": "Where are you based and who can you work with?",
-    "home.faq.a6": "Clients are global. Julieta is based on UTC+7 and works in English or Spanish. Calls are scheduled around your time zone.",
+    "home.faq.a6": "Clients are global. Julieta works on Singapore time (UTC+8), in English or Spanish. Calls are scheduled around your time zone.",
 
     "home.final.eyebrow": "PICK UP WHERE YOU ARE",
     "home.final.title": "Ready to work together?",
@@ -600,7 +600,7 @@ export const translations = {
     "wwj.success.greet_post": "your brief is in.",
     "wwj.success.body": "Pick a time for the free 30-minute discovery call. After the call, I come back with a tailored proposal (or, if it isn't a fit, I say so and point you somewhere useful).",
     "wwj.success.cal_placeholder_title": "Calendar coming here.",
-    "wwj.success.cal_placeholder_body": "Julieta's Cal.com picker will embed here so you can pick a slot directly. Until then, she'll reply within a week with a time and the meeting link.",
+    "wwj.success.cal_placeholder_body": "Julieta's Cal.com picker will embed here so you can pick a slot directly. Until then, she'll usually reply within 2 working days with a time and the meeting link.",
     "wwj.success.footnote": "You'll get a confirmation email with the meeting link. If anything changes, you can reschedule from that email.",
     "nav.entrepreneurs": "For entrepreneurs",
     "nav.organisations": "For organisations",
@@ -897,7 +897,12 @@ export const translations = {
     "home.paths.o.alt": "Preview the courses for organisations →",
     "courses.hero.soon_tag": "Under development",
     "courses.hero.soon": "Every lesson is open to look at now; the courses go on sale later. Running an organisation today?",
-    "courses.hero.soon_cta": "Work with Julieta now →"
+    "courses.hero.soon_cta": "Work with Julieta now →",
+    "acc.terms.lead": "By creating an account you agree to the",
+    "acc.terms.terms": "Terms of use",
+    "acc.terms.and": "and the",
+    "acc.terms.refunds": "Refund policy",
+    "acc.terms.privacy": "How we use your data:"
   },
 
   es: {
@@ -1019,7 +1024,7 @@ export const translations = {
     "home.faq.q5": "¿Method into Impact es un equipo o solo Julieta?",
     "home.faq.a5": "Solo Julieta. Una sola profesional, un solo punto de contacto, sin traspasos. La persona que prepara tu trabajo es la persona con la que hablas.",
     "home.faq.q6": "¿Desde dónde trabajas y con quién puedes trabajar?",
-    "home.faq.a6": "Los clientes son globales. Julieta trabaja en zona horaria UTC+7 en inglés o español. Las llamadas se agendan según tu zona horaria.",
+    "home.faq.a6": "Los clientes son globales. Julieta trabaja en horario de Singapur (UTC+8), en inglés o español. Las llamadas se agendan según tu zona horaria.",
     "home.final.eyebrow": "RETOMA DONDE ESTÁS",
     "home.final.title": "¿Trabajamos juntos?",
     "home.final.sub": "Envíame un resumen breve y agendamos una llamada de descubrimiento gratuita de 30 minutos.",
@@ -1497,7 +1502,7 @@ export const translations = {
     "wwj.success.greet_post": "tu resumen está recibido.",
     "wwj.success.body": "Elige un horario para la llamada de descubrimiento gratuita de 30 minutos. Después de la llamada, vuelvo con una propuesta a medida (o, si no es un buen ajuste, lo digo y te oriento hacia algo útil).",
     "wwj.success.cal_placeholder_title": "El calendario va acá.",
-    "wwj.success.cal_placeholder_body": "El selector de Cal.com de Julieta se va a embeber acá para que puedas elegir un horario directamente. Hasta entonces, ella responderá en menos de una semana con un horario y el link de la reunión.",
+    "wwj.success.cal_placeholder_body": "El selector de Cal.com de Julieta se va a embeber acá para que puedas elegir un horario directamente. Hasta entonces, ella suele responder en 2 días hábiles con un horario y el link de la reunión.",
     "wwj.success.footnote": "Vas a recibir un email de confirmación con el link de la reunión. Si algo cambia, podés reagendar desde ese email.",
     "nav.entrepreneurs": "Para emprendedores",
     "nav.organisations": "Para organizaciones",
@@ -1794,6 +1799,11 @@ export const translations = {
     "home.paths.o.alt": "Mira los cursos para organizaciones →",
     "courses.hero.soon_tag": "En desarrollo",
     "courses.hero.soon": "Ya puedes ver todas las lecciones; los cursos saldrán a la venta más adelante. ¿Ya diriges una organización?",
-    "courses.hero.soon_cta": "Trabaja con Julieta ahora →"
+    "courses.hero.soon_cta": "Trabaja con Julieta ahora →",
+    "acc.terms.lead": "Al crear una cuenta aceptas los",
+    "acc.terms.terms": "Términos de uso",
+    "acc.terms.and": "y la",
+    "acc.terms.refunds": "Política de reembolsos",
+    "acc.terms.privacy": "Cómo usamos tus datos:"
   }
 };

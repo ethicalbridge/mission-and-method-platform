@@ -114,12 +114,14 @@ export function priceOf(id, band = 0, kind = 'regular') {
   return Math.max(PRICE_FLOOR, list[bandIndex(band)]);
 }
 const per = fn => BANDS.map((_, i) => fn(i));
+// Savings are worked out at the price people pay today: the launch price while it runs, then the standard price.
+const pay = (id, i) => priceOf(id, i, launchOn() ? 'launch' : 'regular');
 /** Savings, per band, worked out from the list above (never typed by hand). counts = templates per pack. */
 export const savings = {
-  'founder-pathway': () => per(i => catalog['founder-pathway'].courses * priceOf('course', i) - priceOf('founder-pathway', i)),
-  'org-pathway':     () => per(i => catalog['org-pathway'].courses * priceOf('course', i) - priceOf('org-pathway', i)),
-  'packs-total':     () => per(i => PACKS.reduce((n, p) => n + priceOf(p, i), 0)),
-  'full-library':    () => per(i => PACKS.reduce((n, p) => n + priceOf(p, i), 0) - priceOf('full-library', i)),
-  'launch-ready':    () => per(i => priceOf('founder-pathway', i) + priceOf('full-library', i) + priceOf('review-call', i) - priceOf('launch-ready', i)),
-  pack: (id, count) => per(i => count * priceOf('single-template', i) - priceOf(id, i)),
+  'founder-pathway': () => per(i => catalog['founder-pathway'].courses * pay('course', i) - pay('founder-pathway', i)),
+  'org-pathway':     () => per(i => catalog['org-pathway'].courses * pay('course', i) - pay('org-pathway', i)),
+  'packs-total':     () => per(i => PACKS.reduce((n, p) => n + pay(p, i), 0)),
+  'full-library':    () => per(i => PACKS.reduce((n, p) => n + pay(p, i), 0) - pay('full-library', i)),
+  'launch-ready':    () => per(i => pay('founder-pathway', i) + pay('full-library', i) + pay('review-call', i) - pay('launch-ready', i)),
+  pack: (id, count) => per(i => count * pay('single-template', i) - pay(id, i)),
 };

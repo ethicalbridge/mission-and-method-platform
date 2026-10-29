@@ -364,3 +364,25 @@ nav.nav .nav-links a.nav-coming-soon em {
 .pre-footer-news .footer-news-privacy{color:#6a7a83}
 .pre-footer-news .footer-news-privacy a{color:#16746e}
 body[data-page="newsletter"] .pre-footer-news{display:none}
+/* ===== Contrast (WCAG AA): navy text on every coral button and on the orange banner =====
+   White on coral is 3.1:1; navy #102e3b on coral #e56f4a is 4.5:1 and on the lighter hover coral 5.6:1. */
+.preview-note{color:#102e3b !important}
+.acc-btn,.footer-news-row button,.footer-newsletter button,.footer-contact-button,.support-box .button,.course-consult .button,
+.invite-all .button,.pager-buy,.pack-pill,.pack-buy,.button-bright,.hm-coming-notify,.px-free .px-free-cta,
+.wwj-consult-booking .button,.wwj-pkg-feature .wwj-pkg-tag,.wwj-final-actions .button,.dash-pwd-actions #pwd-save,
+.cm-module[open] .cm-module-num,.numbered-fields li::before,.sw-path article.is-next .step-circle,.quick-strip,
+.hm-btn-primary{color:#102e3b !important}
+.acc-btn:hover,.footer-news-row button:hover,.pager-buy:hover,.pack-buy:hover,.px-free .px-free-cta:hover,
+.wwj-final-actions .button:hover,.wwj-consult-booking .button:hover,.support-box .button:hover,.course-consult .button:hover{background:#f08560 !important;border-color:#f08560 !important;color:#102e3b !important}
+.acc-btn svg,.hm-btn-primary svg{stroke:currentColor}
+/* Focus rings that show on dark sections too */
+.hm-hero a:focus-visible,.hm-hero button:focus-visible,.site-footer a:focus-visible,.site-footer button:focus-visible,
+.pr-plan-featured a:focus-visible,.pr-plan-featured button:focus-visible,.px-free a:focus-visible,
+[class*="featured"] a:focus-visible,[class*="featured"] button:focus-visible{outline:3px solid #f8ca68 !important;outline-offset:3px}
+/* The shared coral .button (mission.css): navy text, lighter coral on hover. Outline variants keep their own colours. */
+.button:not(.ghost):not(.secondary):not(.danger),.fp-cta{color:#102e3b !important}
+.button:not(.ghost):not(.secondary):not(.danger):hover,.fp-cta:hover{background:#f08560 !important;color:#102e3b !important}
+.ft-btn,.px-soon-pill{color:#102e3b !important}
+.ft-btn:hover{background:#f08560 !important}
+.course-band-badge{color:#102e3b !important}
+.pre-footer-news{padding:4px 0 40px !important}main + .pre-footer-news,main>section:last-child{margin-bottom:0}
