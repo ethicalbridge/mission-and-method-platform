@@ -70,7 +70,7 @@ const formData = form => Object.fromEntries(new FormData(form).entries());
 
 // ---------- state ----------
 const S = {
-  code: lsGet(LS.code), ws: null, hasDirectory: false,
+  code: lsGet(LS.code) || '1234', ws: null, hasDirectory: false, // 1234 = team code chosen by the owner (29 Oct 2026); same as the Impact Tools preview code
   orgs: [], orgById: new Map(), outreach: new Map(), records: { campaign: [], goal: [], stakeholder: [], partner: [], assessment: [] },
   loading: true, loadError: '', directoryError: '', directoryLoadedAt: '',
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
@@ -204,7 +204,7 @@ function render() {
     'Partnership mapping': renderMapping, 'Partnership assessment (PAT)': renderPat, 'Partnership tracking': renderTracking,
   })[S.view]();
   root.innerHTML = `<div class="shell crm">
-    <header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="crm-top-right"><span class="tiny">Workspace: <b>${esc(S.ws.name)}</b></span><span class="tiny" id="save-state">${S.saving ? 'Saving…' : 'All changes saved'}</span><button class="link" data-action="signout" title="Forget the code on this browser">Lock CRM</button><a href="../../software.html">← Impact Tools</a></div></header>
+    <header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="crm-top-right"><span class="tiny">Workspace: <b>${esc(S.ws.name)}</b></span><span class="tiny" id="save-state">${S.saving ? 'Saving…' : 'All changes saved'}</span><a href="../../software.html">← Impact Tools</a></div></header>
     <div class="hero crm-hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Partner, outreach &amp; partnerships</h1><p>${S.hasDirectory ? 'Organisations come live from the Ethical Bridge directory. Your outreach, mapping, assessments and partnership records are saved to this workspace.' : 'Add the organisations you work with, then track outreach, mapping, assessments and partnerships in one place.'}</p></div>
     <nav class="nav" aria-label="CRM sections">${SECTIONS.map(t => `<button type="button" data-tab="${esc(t)}" class="${t === S.view ? 'active' : ''}"${t === S.view ? ' aria-current="page"' : ''}>${esc(t)}</button>`).join('')}</nav>
     <main id="main" tabindex="-1">${S.message ? `<div class="notice" role="status">${esc(S.message)}</div>` : ''}${S.directoryError ? `<div class="notice warn" role="alert">Directory: ${esc(S.directoryError)}</div>` : ''}${continentBar}${body}</main>
@@ -222,7 +222,7 @@ function renderContinentBar() {
 function renderSignIn() {
   root.innerHTML = `<div class="shell crm"><header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><a href="../../software.html">← Impact Tools</a></header>
   <div class="hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Enter your team code</h1><p>The CRM holds organisation contacts and your outreach records, so it opens with your team's private code. This browser remembers it until you press “Lock CRM”.</p></div>
-  <main id="main"><form class="panel form crm-signin" data-form="signin"><label class="field full"><span class="label">Team code</span><input name="code" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="word-word-word-0000"></label><div class="actions field full"><button class="button" type="submit">Open the CRM</button></div><p class="tiny" id="signin-note" role="status">${esc(S.message || '')}</p></form></main></div>`;
+  <main id="main"><form class="panel form crm-signin" data-form="signin"><label class="field full"><span class="label">Team code</span><input name="code" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Team code"></label><div class="actions field full"><button class="button" type="submit">Open the CRM</button></div><p class="tiny" id="signin-note" role="status">${esc(S.message || '')}</p></form></main></div>`;
   root.querySelector('input[name=code]')?.focus();
 }
 
