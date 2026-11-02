@@ -250,3 +250,8 @@ nav.nav .nav-links a.nav-coming-soon {
 .wwj-hero { padding: 48px 0 36px !important; }
 .wwj-sect-head { margin-bottom: 18px !important; }
 .nav-dropdown[open]>summary span[data-i18n]{transform:none}
+
+/* Coming-soon pill used in page heros (Legal Templates, Prices, My account) */
+.page-soon-pill{display:inline-block;background:var(--coral);color:#fff;font-size:11px;font-weight:900;letter-spacing:.14em;padding:6px 12px;border-radius:999px;vertical-align:middle;margin-left:10px;line-height:1;text-transform:uppercase}
+.page-soon-pill-row{display:block;margin:0 0 14px}
+.page-soon-pill-row .page-soon-pill{margin-left:0}
