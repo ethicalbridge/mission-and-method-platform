@@ -911,7 +911,8 @@ export const translations = {
     "wwj.areas.fold": "See the areas I work on",
     "acc.link_hint": "We email you a link and a code. Both work for one hour; if the email doesn't arrive, check your spam folder.",
     "acc.why.free_tpl": "Running an organisation? Three legal templates are free too.",
-    "acc.why.free_tpl_link": "Get 3 free templates →"
+    "acc.why.free_tpl_link": "Get 3 free templates →",
+    "wwj.pkg_cta.note_a": "The call and the proposal are free and non-binding."
   },
 
   es: {
@@ -1822,6 +1823,7 @@ export const translations = {
     "wwj.areas.fold": "Ver las áreas en las que trabajo",
     "acc.link_hint": "Te enviamos por correo un enlace y un código. Ambos funcionan durante una hora; si el correo no llega, revisa tu carpeta de spam.",
     "acc.why.free_tpl": "¿Diriges una organización? También hay tres plantillas legales gratis.",
-    "acc.why.free_tpl_link": "Consigue 3 plantillas gratis →"
+    "acc.why.free_tpl_link": "Consigue 3 plantillas gratis →",
+    "wwj.pkg_cta.note_a": "La llamada y la propuesta son gratuitas y sin compromiso."
   }
 };
