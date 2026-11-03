@@ -216,7 +216,7 @@ function visualDashboard(){
   <article class="dm-card dm-coverage">
    <div class="dm-card-head"><div><p class="dm-eyebrow">Follow-through</p><h3>Needs attention</h3></div><span>${st.totalOverdue} flagged</span></div>
    <div class="dm-coverage-num"><strong>${st.totalOverdue}</strong><span>actions overdue or without an owner</span></div>
-   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${Math.min(st.totalOverdue*15,100)}%;background:${st.totalOverdue?'linear-gradient(90deg,#c7442b,#e56f4a)':'linear-gradient(90deg,#16746e,#4ea89f)'}"></i></div>
+   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${Math.min(st.totalOverdue*15,100)}%;background:${st.totalOverdue?'linear-gradient(90deg,#c7442b,#c04a28)':'linear-gradient(90deg,#16746e,#4ea89f)'}"></i></div>
    <div class="dm-done-badge ${overdueClass}">${overdueText}</div>
    <dl class="dm-done-key">
     <div><dt>Overdue</dt><dd>${st.overdueActions}</dd></div>
@@ -227,7 +227,7 @@ function visualDashboard(){
   <article class="dm-card dm-assess">
    <div class="dm-card-head"><div><p class="dm-eyebrow">Decisions log · ${st.totalD} record${st.totalD===1?'':'s'}</p><h3>What was decided</h3></div><span>${st.dApproved} approved</span></div>
    <div class="dm-coverage-num"><strong>${st.dApproved}</strong><span>approved decisions on record</span></div>
-   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${st.totalD?Math.round((st.dApproved/st.totalD)*100):0}%;background:linear-gradient(90deg,#16746e,#e56f4a)"></i></div>
+   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${st.totalD?Math.round((st.dApproved/st.totalD)*100):0}%;background:linear-gradient(90deg,#16746e,#c04a28)"></i></div>
    <div class="dm-verdict-row">
     <span class="dm-verdict-pill go"><b>${st.dApproved}</b> approved</span>
     <span class="dm-verdict-pill review"><b>${st.dPending}</b> pending</span>

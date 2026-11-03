@@ -288,7 +288,7 @@ function visualDashboard(){
   <article class="dm-card dm-assess">
    <div class="dm-card-head"><div><p class="dm-eyebrow">Assessment · ${ASSESS_FIELDS.length} questions</p><h3>Go/no-go verdict</h3></div><span>${s.assessFull}/${s.total} fully assessed</span></div>
    <div class="dm-coverage-num"><strong>${s.assessPct}%</strong><span>of donors fully assessed</span></div>
-   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${s.assessPct}%;background:linear-gradient(90deg,#16746e,#e56f4a)"></i></div>
+   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${s.assessPct}%;background:linear-gradient(90deg,#16746e,#c04a28)"></i></div>
    <div class="dm-verdict-row">
     <span class="dm-verdict-pill go"><b>${s.assessVerdictGo}</b> leaning Go</span>
     <span class="dm-verdict-pill review"><b>${s.assessVerdictReview}</b> Review</span>

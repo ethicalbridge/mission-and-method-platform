@@ -6,7 +6,7 @@
   --ink-dim:    #4b6270;
   --teal:       #16746e;
   --teal-deep:  #0d3836;
-  --coral:      #e56f4a;
+  --coral:      #c04a28;
   --coral-deep: #c7442b;
   --sun:        #f1c874;
   --border:     #e4ddce;
@@ -414,7 +414,7 @@ body {
 }
 .dash-mini-btn:hover { background: var(--cream-2); color: var(--ink); border-color: var(--teal); }
 .dash-mini-btn-del { color: #c7442b; }
-.dash-mini-btn-del:hover { background: #fff5ef; color: #8e2e2e; border-color: #e56f4a; }
+.dash-mini-btn-del:hover { background: #fff5ef; color: #8e2e2e; border-color: #c04a28; }
 
 .dash-upload {
   display: flex; flex-direction: column; gap: 8px;

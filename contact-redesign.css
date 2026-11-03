@@ -85,7 +85,7 @@
   font-weight: 900;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: #e56f4a;
+  color: #c04a28;
 }
 .ct-email-card h3 {
   font-family: 'Playfair Display','DM Serif Display',Georgia,serif;
@@ -130,7 +130,7 @@
 .ct-email-alias {
   display: block;
   font-size: 13px;
-  color: #6a7a85;
+  color: #5d7079;
   line-height: 1.5;
   margin: 2px 0 10px;
 }
@@ -173,7 +173,7 @@
   font-weight: 900;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: #e56f4a;
+  color: #c04a28;
   margin-bottom: 6px;
 }
 .ct-highlight h3 {

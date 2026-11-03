@@ -41,7 +41,7 @@ const CSS=`.fc-backdrop{position:fixed;inset:0;background:rgba(10,22,28,.55);z-i
 .fc-error{color:#c53b1a;font-size:.88rem;min-height:1.2em;margin:.35rem 0 0}
 .fc-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap}
 .fc-actions button{font:inherit;font-weight:800;border-radius:999px;padding:.7rem 1.2rem;cursor:pointer;border:1.5px solid #16746e}
-.fc-pay{background:#e56f4a;border-color:#e56f4a!important;color:#fff}.fc-cancel{background:#fff;color:#16746e}
+.fc-pay{background:#c04a28;border-color:#c04a28!important;color:#fff}.fc-cancel{background:#fff;color:#16746e}
 .fc-country{margin:.9rem 0 0}.fc-country label{display:block;font-weight:700;font-size:.92rem;margin-bottom:.3rem}
 .fc-country select{width:100%;font:inherit;padding:.55rem .6rem;border:1.5px solid #d4c9b1;border-radius:8px;background:#fff}
 .fc-band{margin:.5rem 0 0;padding:.6rem .75rem;border-radius:8px;background:#eef6f4;font-size:.86rem;line-height:1.45;color:#14304a}

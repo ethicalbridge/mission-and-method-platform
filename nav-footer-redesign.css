@@ -82,7 +82,7 @@ nav.nav .nav-links .account-link:hover{
 
 /* Preview banner — condensed, uppercase micro-label */
 .preview-note{
-  background:linear-gradient(90deg,#e56f4a,#f08a5d) !important;
+  background:linear-gradient(90deg,#c04a28,#f08a5d) !important;
   border-bottom:0 !important;
   color:#fff !important;
   font-size:16px !important;
@@ -187,7 +187,7 @@ nav.nav .nav-links .account-link:hover{
   align-items:center;
   padding:12px 22px !important;
   border-radius:999px !important;
-  background:#e56f4a !important;
+  background:#c04a28 !important;
   border:0 !important;
   color:#fff !important;
   font-weight:800 !important;
@@ -262,7 +262,7 @@ nav.nav .nav-links a.nav-coming-soon em {
   font-weight: 900;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: #e56f4a;
+  color: #c04a28;
   background: #ffe9dc;
   padding: 2px 6px;
   border-radius: 999px;
@@ -343,7 +343,7 @@ nav.nav .nav-links a.nav-coming-soon em {
 .footer-news-text span{color:rgba(255,255,255,.78);font-size:14.5px}
 .footer-news-row{display:flex;gap:8px}
 .footer-news-row input{flex:1;min-width:0;font:inherit;padding:11px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:#fff;color:#102e3b}
-.footer-news-row button{font:inherit;font-weight:800;padding:11px 20px;border-radius:999px;border:0;background:#e56f4a;color:#fff;cursor:pointer;white-space:nowrap}
+.footer-news-row button{font:inherit;font-weight:800;padding:11px 20px;border-radius:999px;border:0;background:#c04a28;color:#fff;cursor:pointer;white-space:nowrap}
 .footer-news-row button:disabled{opacity:.6;cursor:wait}
 .footer-news-note{grid-column:1/-1;margin:0;min-height:0;color:#f8ca68;font-size:14px;font-weight:700}
 .footer-news-note:empty{display:none}
@@ -365,7 +365,7 @@ nav.nav .nav-links a.nav-coming-soon em {
 .pre-footer-news .footer-news-privacy a{color:#16746e}
 body[data-page="newsletter"] .pre-footer-news{display:none}
 /* ===== Contrast (WCAG AA): navy text on every coral button and on the orange banner =====
-   White on coral is 3.1:1; navy #102e3b on coral #e56f4a is 4.5:1 and on the lighter hover coral 5.6:1. */
+   White on coral is 3.1:1; navy #102e3b on coral #c04a28 is 4.5:1 and on the lighter hover coral 5.6:1. */
 .preview-note{color:#102e3b !important}
 .acc-btn,.footer-news-row button,.footer-newsletter button,.footer-contact-button,.support-box .button,.course-consult .button,
 .invite-all .button,.pager-buy,.pack-pill,.pack-buy,.button-bright,.hm-coming-notify,.px-free .px-free-cta,

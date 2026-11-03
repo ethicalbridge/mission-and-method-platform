@@ -425,7 +425,7 @@ tr.group td{background:#f3f8f5}
 
 /* Decision donut */
 .dm-donut-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;align-items:center}
-.dm-donut{aspect-ratio:1;border-radius:50%;background:conic-gradient(#16746e 0 var(--go-share),#e56f4a var(--go-share) calc(var(--go-share) + var(--no-go-share)),#afd6c8 calc(var(--go-share) + var(--no-go-share)) 100%);position:relative;display:grid;place-items:center;padding:18px}
+.dm-donut{aspect-ratio:1;border-radius:50%;background:conic-gradient(#16746e 0 var(--go-share),#c04a28 var(--go-share) calc(var(--go-share) + var(--no-go-share)),#afd6c8 calc(var(--go-share) + var(--no-go-share)) 100%);position:relative;display:grid;place-items:center;padding:18px}
 .dm-donut::before{content:"";position:absolute;inset:16px;background:#fff;border-radius:50%}
 .dm-donut > div{position:relative;z-index:1;text-align:center;line-height:1}
 .dm-donut strong{display:block;font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:24px;color:#102e3b}
@@ -436,7 +436,7 @@ tr.group td{background:#f3f8f5}
 .dm-legend dt::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%}
 .dm-legend dd{margin:0;color:#102e3b;font-weight:900;font-size:15px}
 .dm-leg-go dt::before{background:#16746e}
-.dm-leg-nogo dt::before{background:#e56f4a}
+.dm-leg-nogo dt::before{background:#c04a28}
 .dm-leg-review dt::before{background:#afd6c8}
 
 /* Fit distribution */
@@ -449,7 +449,7 @@ tr.group td{background:#f3f8f5}
 .dm-fit-strong{background:#16746e}
 .dm-fit-good{background:#67a995}
 .dm-fit-weak{background:#f8ca68}
-.dm-fit-poor{background:#e56f4a}
+.dm-fit-poor{background:#c04a28}
 
 /* Scoring coverage / "all done" */
 .dm-coverage-num{display:flex;align-items:baseline;gap:8px;margin:2px 0 4px}
@@ -617,7 +617,7 @@ tr.group td{background:#f3f8f5}
 .dm-verdict-badge.dm-risk-band-low{background:#d9eee3;color:#0e5a4e;border-color:#8dc9ab}
 .dm-verdict-badge.dm-risk-band-medium{background:#fff5e7;color:#8a5e14;border-color:#f1c874}
 .dm-verdict-badge.dm-risk-band-high{background:#ffdfc5;color:#88452b;border-color:#f0b48a}
-.dm-verdict-badge.dm-risk-band-critical{background:var(--coral,#e56f4a);color:#fff;border-color:#c7442b}
+.dm-verdict-badge.dm-risk-band-critical{background:var(--coral,#c04a28);color:#fff;border-color:#c7442b}
 .dm-verdict-badge.dm-risk-band-none{background:#edf3f0;color:#7a8e97;border-color:#d4e2db}
 .dm-grid-flags{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:6px}
 .dm-grid-flag{display:inline-flex;align-items:center;padding:1px 6px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.02em;line-height:1.3;white-space:nowrap;border:1px solid transparent}
@@ -632,8 +632,8 @@ tr.group td{background:#f3f8f5}
 
 /* Risk-themed donut variant — red/amber gradient to match severity instead
    of go/no-go green. Reuses .dm-donut's --go-share / --no-go-share vars. */
-.dm-donut.dm-donut-risk{background:conic-gradient(var(--coral,#e56f4a) 0 var(--go-share,0%),#f1c874 var(--go-share,0%) calc(var(--go-share,0%) + var(--no-go-share,0%)),#8dc9ab calc(var(--go-share,0%) + var(--no-go-share,0%)) 100%)}
-.dm-donut.dm-donut-risk > div strong{color:var(--coral,#e56f4a)}
+.dm-donut.dm-donut-risk{background:conic-gradient(var(--coral,#c04a28) 0 var(--go-share,0%),#f1c874 var(--go-share,0%) calc(var(--go-share,0%) + var(--no-go-share,0%)),#8dc9ab calc(var(--go-share,0%) + var(--no-go-share,0%)) 100%)}
+.dm-donut.dm-donut-risk > div strong{color:var(--coral,#c04a28)}
 
 /* ======================================================================
    Column-header info tooltip (small "i" chip with a native title tooltip).
@@ -714,7 +714,7 @@ tr.group td{background:#f3f8f5}
 .dm-nest-add .link:hover{background:#eaf6ef;border-color:#16746e}
 .dm-nest-empty{color:#c7d4cc;text-align:center;font-size:14px;background:#fcfdfc}
 /* Standalone pseudo-meeting block */
-.dm-standalone-head{background:#fff5e7 !important;vertical-align:middle;padding:12px 14px !important;border-top:3px solid #e56f4a}
+.dm-standalone-head{background:#fff5e7 !important;vertical-align:middle;padding:12px 14px !important;border-top:3px solid #c04a28}
 .dm-standalone-head b{color:#8a3f27;font-size:13px}
 .dm-standalone-head small{color:#8a5e14;font-size:11.5px;line-height:1.5}
 

@@ -77,7 +77,7 @@ const CSS = `.ma-back{position:fixed;inset:0;background:rgba(10,22,28,.55);z-ind
 .ma-card label{display:block;font-weight:700;font-size:.9rem;margin:.6rem 0 .3rem}
 .ma-card input{width:100%;box-sizing:border-box;font:inherit;padding:.7rem .8rem;border:1.5px solid #cfdcd9;border-radius:10px}
 .ma-card input.ma-code{font-size:1.4rem;letter-spacing:.4em;text-align:center}
-.ma-btn{display:block;width:100%;margin-top:.9rem;font:inherit;font-weight:800;border:0;border-radius:999px;padding:.8rem 1rem;background:#e56f4a;color:#fff;cursor:pointer}
+.ma-btn{display:block;width:100%;margin-top:.9rem;font:inherit;font-weight:800;border:0;border-radius:999px;padding:.8rem 1rem;background:#c04a28;color:#fff;cursor:pointer}
 .ma-btn[disabled]{opacity:.6;cursor:wait}.ma-link{background:none;border:0;color:#16746e;font:inherit;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
 .ma-err{color:#c53b1a;font-size:.88rem;min-height:1.2em;margin:.4rem 0 0}.ma-small{font-size:.8rem!important;color:#6a7a83!important}
 .ma-x{position:absolute;top:10px;right:12px;background:none;border:0;font-size:1.6rem;line-height:1;cursor:pointer;color:#6a7a83}`;

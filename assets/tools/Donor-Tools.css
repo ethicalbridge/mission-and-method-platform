@@ -5,7 +5,7 @@
 body{background:linear-gradient(180deg,rgba(217,238,232,.55),rgba(251,248,241,0) 260px),var(--bg);font-family:inherit}
 header.mast{align-items:center;background:#155852;border-bottom:4px solid #1d6c67;color:#fbf8f1;display:flex;flex-wrap:wrap;gap:1.4rem 2rem;justify-content:space-between;padding:1.12rem max(1.25rem,calc((100vw - 1600px)/2))}
 header.mast .brand{color:#fbf8f1;font-size:.86rem;font-weight:850;letter-spacing:.12em;text-decoration:none;white-space:nowrap}
-header.mast .brand span{color:#ed7d4d}
+header.mast .brand span{color:#c04a28}
 .mast-copy{flex:1 1 420px}.mast-copy small{color:#a9d5cc;display:block;font-size:.7rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase}.mast-copy h1{color:#fbf8f1;font-size:clamp(1.6rem,2.7vw,2.35rem);letter-spacing:-.035em;margin:0}.mast-copy p{color:#d9e8e3;margin:.42rem 0 0}
 .site-notice{background:#d9eee8;border-bottom:1px solid rgba(29,108,103,.16);font-size:.88rem;padding:.68rem max(1.25rem,calc((100vw - 1600px)/2))}.site-notice a{font-weight:800;margin-left:.55rem}
 .workspace-layout{align-items:start;display:grid;gap:1rem;grid-template-columns:252px minmax(0,1fr);max-width:1600px;margin:auto;padding:1.15rem 1.25rem 4rem}.workspace-content{min-width:0}.workspace-content .wrap{max-width:none;padding:0}

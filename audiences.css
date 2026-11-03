@@ -7,14 +7,14 @@
 .aud-eyebrow{color:var(--teal,#16746e);font-size:12px;font-weight:900;letter-spacing:.2em;text-transform:uppercase}
 .aud-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;max-width:1040px;margin:0 auto}
 .aud-card{display:flex;flex-direction:column;gap:12px;padding:28px;border-radius:22px;background:#fff;border:1px solid #ede8dd;box-shadow:0 10px 30px rgba(16,46,59,.06)}
-.aud-card-e{border-top:6px solid var(--coral,#e56f4a)}
+.aud-card-e{border-top:6px solid var(--coral,#c04a28)}
 .aud-card-o{border-top:6px solid var(--teal,#16746e)}
 .aud-tag{align-self:flex-start;font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:#fdf0e9;color:#b44a26}
 .aud-card-o .aud-tag{background:var(--mint,#d8eee2);color:#0f5a55}
 .aud-card h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:30px;line-height:1.1;margin:2px 0;color:var(--ink,#102e3b)}
 .aud-card p{margin:0;color:var(--muted,#5d7079);font-size:16px;line-height:1.55}
 .aud-card ul{margin:4px 0 6px;padding-left:20px;color:var(--ink,#102e3b);font-size:15px;line-height:1.6}
-.aud-card li::marker{color:var(--coral,#e56f4a)}
+.aud-card li::marker{color:var(--coral,#c04a28)}
 .aud-card-o li::marker{color:var(--teal,#16746e)}
 .aud-btn{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;background:var(--deep,#123c48);color:#fff;font-weight:800;text-decoration:none}
 .aud-btn:hover{background:var(--teal,#16746e)}
@@ -25,7 +25,7 @@
 .aud-checks{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px}
 .aud-checks li{position:relative;padding:14px 16px 14px 48px;border-radius:14px;background:var(--cream,#fffaf3);border:1px solid #ede8dd;font-size:17px;color:var(--ink,#102e3b)}
 .aud-checks li::before{content:"✓";position:absolute;left:16px;top:13px;width:22px;height:22px;border-radius:50%;background:var(--teal,#16746e);color:#fff;font-size:13px;font-weight:900;display:grid;place-items:center}
-.aud-ent .aud-checks li::before{background:var(--coral,#e56f4a)}
+.aud-ent .aud-checks li::before{background:var(--coral,#c04a28)}
 .aud-ways{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .aud-way{display:flex;flex-direction:column;gap:10px;padding:24px;border-radius:18px;background:#fff;border:1px solid #ede8dd}
 .aud-way h3{font-size:21px;margin:0;color:var(--ink,#102e3b)}
@@ -36,7 +36,7 @@
 .aud-steps{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:10px}
 .aud-steps li{display:flex;gap:16px;align-items:flex-start;padding:14px 0;border-bottom:1px solid #f1ece2;font-size:17px;color:var(--ink,#102e3b);line-height:1.5}
 .aud-step-no{flex:0 0 auto;width:36px;height:36px;border-radius:10px;background:var(--deep,#123c48);color:#fff;font-weight:900;display:grid;place-items:center}
-.aud-ent .aud-step-no{background:var(--coral,#e56f4a)}
+.aud-ent .aud-step-no{background:var(--coral,#c04a28)}
 .aud-finish{margin-top:30px;padding:24px;border-radius:18px;background:var(--deep,#123c48);color:#fff}
 .aud-finish .aud-eyebrow{color:var(--sun,#f8ca68)}
 .aud-finish h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:28px;margin:6px 0 8px;color:#fff}

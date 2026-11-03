@@ -226,7 +226,7 @@ function visualDashboard(){
   <article class="dm-card dm-assess">
    <div class="dm-card-head"><div><p class="dm-eyebrow">Strategy coverage · ${st.esos.length} ESO${st.esos.length===1?'':'s'}</p><h3>Persona ↔ ESO map</h3></div><span>${st.esoCovered}/${st.esos.length} covered</span></div>
    <div class="dm-coverage-num"><strong>${st.esoCovered}</strong><span>of your ESOs have at least one persona</span></div>
-   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${st.esos.length?Math.round((st.esoCovered/st.esos.length)*100):0}%;background:linear-gradient(90deg,#16746e,#e56f4a)"></i></div>
+   <div class="dm-coverage-track" aria-hidden="true"><i style="--coverage:${st.esos.length?Math.round((st.esoCovered/st.esos.length)*100):0}%;background:linear-gradient(90deg,#16746e,#c04a28)"></i></div>
    <div class="dm-verdict-row">
     ${st.esos.length?st.esos.map(o=>`<span class="dm-verdict-pill ${st.esoHits[o.code]>0?'go':'nogo'}"><b>${st.esoHits[o.code]||0}</b> ${esc(o.code)}</span>`).join(''):'<span class="dm-verdict-pill">No ESOs in Strategic Objectives yet</span>'}
    </div>

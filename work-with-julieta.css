@@ -19,7 +19,7 @@
 .wwj-hero-portrait { margin:0; max-width:340px; justify-self:end; width:100%; }
 .wwj-hero-portrait img { display:block; width:100%; aspect-ratio:1/1; object-fit:cover; object-position:center 15%; border-radius:10px; background:#f5efe3; }
 .wwj-hero-portrait figcaption { margin-top:22px; padding-left:2px; }
-.wwj-hero-rule { display:block; width:44px; height:2px; background:#e56f4a; margin-bottom:14px; }
+.wwj-hero-rule { display:block; width:44px; height:2px; background:#c04a28; margin-bottom:14px; }
 .wwj-hero-portrait figcaption strong { display:block; font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:20px; color:#0a1419; letter-spacing:-.005em; line-height:1.2; margin-bottom:6px; }
 .wwj-hero-portrait figcaption small { display:block; font-size:13.5px; color:#4b6270; line-height:1.5; margin-bottom:12px; }
 .wwj-hero-profile-link { color:#16746e; font-size:12.5px; font-weight:700; text-decoration:none; border-bottom:1px solid rgba(22,116,110,.4); padding-bottom:1px; }
@@ -35,7 +35,7 @@
 .wwj-section { padding:24px 0; }
 .wwj-section:nth-of-type(even) { background:#fff; }
 .wwj-sect-head { max-width:760px; margin:0 auto 20px; text-align:center; }
-.wwj-sect-head .eyebrow { color:#e56f4a; }
+.wwj-sect-head .eyebrow { color:#c04a28; }
 .wwj-sect-head h2 { font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:clamp(24px,2.8vw,34px); color:#06161c; margin:8px 0 14px; letter-spacing:-.01em; text-wrap:balance; }
 .wwj-sect-head .wwj-sect-intro { font-size:15.5px; color:#1e3942; line-height:1.55; margin:0; }
 
@@ -54,7 +54,7 @@
 .wwj-booking-head strong { color:#f1c874; font-size:16px; font-weight:800; letter-spacing:.02em; }
 .wwj-booking-sched { color:#cfdde3; font-size:14px; line-height:1.5; margin:0 0 18px; }
 .wwj-booking-sched b { color:#fff; }
-.wwj-consult-booking .button { background:#e56f4a; color:#fff; border:0; width:100%; padding:14px; font-weight:800; }
+.wwj-consult-booking .button { background:#c04a28; color:#fff; border:0; width:100%; padding:14px; font-weight:800; }
 .wwj-consult-booking .button:hover { background:#c7442b; }
 .wwj-booking-note { color:#9fb4bb; font-size:12px; line-height:1.55; margin:14px 0 0; }
 
@@ -73,7 +73,7 @@
 .wwj-pkg { background:#fff; border:1px solid #e0dbcd; border-radius:14px; padding:22px 22px 24px; display:flex; flex-direction:column; }
 .wwj-pkg-feature { background:#102e3b; color:#fff; border-color:#102e3b; transform:translateY(-3px); box-shadow:0 16px 40px rgba(10,22,28,.12); }
 .wwj-pkg-tag { display:inline-block; font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; color:#16746e; background:#eaf6ef; padding:4px 10px; border-radius:999px; align-self:flex-start; }
-.wwj-pkg-feature .wwj-pkg-tag { background:#e56f4a; color:#fff; }
+.wwj-pkg-feature .wwj-pkg-tag { background:#c04a28; color:#fff; }
 .wwj-pkg h3 { font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:19px; color:#06161c; margin:12px 0 4px; letter-spacing:-.005em; }
 .wwj-pkg-feature h3 { color:#fff; }
 .wwj-pkg-time { font-size:12px; font-weight:800; color:#546974; letter-spacing:.02em; text-transform:uppercase; margin:0 0 12px; }
@@ -98,7 +98,7 @@
 .wwj-paths-chooser { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; max-width:860px; margin:0 auto; }
 .wwj-path-pick { display:block; background:#fff; border:1px solid #e0dbcd; border-radius:14px; padding:20px 22px; text-decoration:none; color:inherit; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
 .wwj-path-pick:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(10,22,28,.08); border-color:#16746e; }
-.wwj-path-pick-tag { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#e56f4a; margin-bottom:6px; }
+.wwj-path-pick-tag { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#c04a28; margin-bottom:6px; }
 .wwj-path-pick b { display:block; font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:22px; color:#06161c; margin-bottom:6px; letter-spacing:-.005em; line-height:1.15; }
 .wwj-path-pick small { display:block; font-size:14px; color:#1e3942; line-height:1.5; }
 @media (max-width:720px) { .wwj-paths-chooser { grid-template-columns:1fr; } }
@@ -107,7 +107,7 @@
 .wwj-path-b { background:#f6f1e5 !important; }
 .wwj-path-a { background:#fff !important; }
 .wwj-path-a .wwj-sect-head .eyebrow { color:#16746e; }
-.wwj-path-b .wwj-sect-head .eyebrow { color:#e56f4a; }
+.wwj-path-b .wwj-sect-head .eyebrow { color:#c04a28; }
 /* Path A now has only two options (people); render as 2 centered cards */
 .wwj-path-a .wwj-pkg-grid { grid-template-columns:repeat(2,1fr); max-width:800px; margin-inline:auto; }
 @media (max-width:900px) { .wwj-path-a .wwj-pkg-grid { grid-template-columns:1fr; } }
@@ -151,7 +151,7 @@
 .wwj-areas-cols h3 { font-family:'Inter','Nunito Sans',Arial,sans-serif; font-weight:800; font-size:15px; color:#16746e; margin:0 0 10px; letter-spacing:-.005em; text-transform:none; }
 .wwj-area-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:7px; }
 .wwj-area-list li { font-size:14.5px; color:#1e3942; line-height:1.55; padding-left:16px; position:relative; }
-.wwj-area-list li::before { content:"·"; position:absolute; left:0; color:#e56f4a; font-weight:900; font-size:18px; line-height:1; top:3px; }
+.wwj-area-list li::before { content:"·"; position:absolute; left:0; color:#c04a28; font-weight:900; font-size:18px; line-height:1; top:3px; }
 @media (max-width:720px) { .wwj-areas-cols { grid-template-columns:1fr; } }
 
 /* ---------- Limits ---------- */
@@ -192,7 +192,7 @@
 .wwj-final-inner h2 { font-family:'DM Serif Display',Georgia,serif; font-weight:400; color:#fff; font-size:clamp(24px,2.6vw,34px); margin:8px 0 12px; letter-spacing:-.01em; }
 .wwj-final-inner p { color:#eef7f5; margin:0; max-width:55ch; }
 .wwj-final-actions { display:flex; flex-direction:column; gap:12px; }
-.wwj-final-actions .button { background:#e56f4a; color:#fff; border:0; padding:14px 22px; font-weight:800; }
+.wwj-final-actions .button { background:#c04a28; color:#fff; border:0; padding:14px 22px; font-weight:800; }
 .wwj-final-actions .button:hover { background:#c7442b; }
 .wwj-final-actions .button.ghost { background:transparent; border:1.5px solid rgba(255,255,255,.4); color:#fff; }
 .wwj-final-actions .button.ghost:hover { background:rgba(255,255,255,.08); border-color:#fff; }
@@ -223,7 +223,7 @@
  font-weight:700; color:#06161c; font-size:17px; letter-spacing:-.005em;
  margin:0 0 10px; padding:0;
 }
-.wwj-fieldset legend small { color:#6a7a85; font-weight:400; font-size:13px; margin-left:4px; font-family:'Nunito Sans',system-ui,sans-serif; }
+.wwj-fieldset legend small { color:#5d7079; font-weight:400; font-size:13px; margin-left:4px; font-family:'Nunito Sans',system-ui,sans-serif; }
 
 .wwj-fieldset > label,
 .wwj-fieldset .wwj-check-group,
@@ -234,7 +234,7 @@
 
 /* Standard label + control */
 .wwj-form label { display:flex; flex-direction:column; gap:5px; font-size:11.5px; font-weight:800; color:#16746e; letter-spacing:.03em; text-transform:uppercase; }
-.wwj-form label em { color:#6a7a85; font-style:normal; font-weight:500; font-size:11px; margin-left:4px; text-transform:none; letter-spacing:0; }
+.wwj-form label em { color:#5d7079; font-style:normal; font-weight:500; font-size:11px; margin-left:4px; text-transform:none; letter-spacing:0; }
 .wwj-form input, .wwj-form select, .wwj-form textarea {
  font:inherit; font-size:14px; padding:10px 12px;
  border:1px solid #c9d6ce; border-radius:8px; background:#fff; color:#102e3b;
@@ -245,7 +245,7 @@
 .wwj-form textarea { min-height:110px; resize:vertical; line-height:1.5; }
 .wwj-form input:invalid:not(:placeholder-shown),
 .wwj-form select:invalid:not(:focus),
-.wwj-form textarea:invalid:not(:placeholder-shown) { border-color:#e56f4a; }
+.wwj-form textarea:invalid:not(:placeholder-shown) { border-color:#c04a28; }
 
 /* 2-column pair (name+email, role+org, etc.) */
 .wwj-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
@@ -288,20 +288,20 @@
 
 .wwj-check-group { display:flex; flex-direction:column; gap:6px; }
 .wwj-check-label { color:#16746e; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
-.wwj-check-label em { color:#6a7a85; font-style:normal; font-weight:500; font-size:11px; margin-left:4px; text-transform:none; letter-spacing:0; }
+.wwj-check-label em { color:#5d7079; font-style:normal; font-weight:500; font-size:11px; margin-left:4px; text-transform:none; letter-spacing:0; }
 
 /* "Other" open-text field below a check-list */
 .wwj-other-field { margin-top:12px; padding-top:12px; border-top:1px dashed #d6dfd9; }
 .wwj-other-field > span:first-child {
- color:#6a7a85; font-size:10.5px; font-weight:800; letter-spacing:.06em;
+ color:#5d7079; font-size:10.5px; font-weight:800; letter-spacing:.06em;
  text-transform:uppercase; display:block; margin-bottom:5px;
 }
 
 /* Field hint under a textarea */
-.wwj-field-hint { color:#6a7a85; font-size:12px; font-weight:400; text-transform:none; letter-spacing:normal; margin-top:-2px; }
+.wwj-field-hint { color:#5d7079; font-size:12px; font-weight:400; text-transform:none; letter-spacing:normal; margin-top:-2px; }
 
 /* File upload section */
-.wwj-fileset legend small { color:#6a7a85; font-weight:500; text-transform:none; letter-spacing:0; font-size:12px; display:block; margin-top:2px; }
+.wwj-fileset legend small { color:#5d7079; font-weight:500; text-transform:none; letter-spacing:0; font-size:12px; display:block; margin-top:2px; }
 .wwj-filepicker { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; padding:14px 16px; border:1.5px dashed #c9d4ce; border-radius:10px; background:#f5f6f3; cursor:pointer; transition:background .15s, border-color .15s; }
 .wwj-filepicker:hover { background:#eef2ec; border-color:#16746e; }
 .wwj-filepicker input[type="file"] { position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
@@ -312,9 +312,9 @@
 .wwj-file-list:empty { display:none; }
 .wwj-file-item { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 12px; background:#fff; border:1px solid #d4dfe2; border-radius:8px; font-size:13px; }
 .wwj-file-item .wwj-file-name { color:#0d3836; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1; }
-.wwj-file-item .wwj-file-size { color:#6a7a85; font-size:12px; white-space:nowrap; }
-.wwj-file-item .wwj-file-remove { background:transparent; border:0; color:#e56f4a; cursor:pointer; font-size:18px; line-height:1; padding:0 4px; font-weight:700; }
-.wwj-file-item.wwj-file-item-error { border-color:#e56f4a; background:#fff5ef; }
+.wwj-file-item .wwj-file-size { color:#5d7079; font-size:12px; white-space:nowrap; }
+.wwj-file-item .wwj-file-remove { background:transparent; border:0; color:#c04a28; cursor:pointer; font-size:18px; line-height:1; padding:0 4px; font-weight:700; }
+.wwj-file-item.wwj-file-item-error { border-color:#c04a28; background:#fff5ef; }
 .wwj-file-item.wwj-file-item-error .wwj-file-name { color:#c54c22; font-weight:700; }
 .wwj-file-item.wwj-file-item-error .wwj-file-size { color:#c54c22; }
 
@@ -326,15 +326,15 @@
 .wwj-check-group:has(input[required]) > .wwj-check-label::after,
 .wwj-fieldset[data-require-min] > legend::after,
 .wwj-check-group[data-require-min] > .wwj-check-label::after {
- content:' *'; color:#e56f4a; font-weight:900; margin-left:2px;
+ content:' *'; color:#c04a28; font-weight:900; margin-left:2px;
 }
 /* Error state on a check-group that didn't meet its min */
-.wwj-check-error .wwj-check-list { border-color:#e56f4a; background:#fff5ef; }
+.wwj-check-error .wwj-check-list { border-color:#c04a28; background:#fff5ef; }
 .wwj-check-error > legend,
 .wwj-check-error > .wwj-check-label { color:#c7442b; }
 /* Legend of the path chooser (one radio group across two options) */
 .wwj-path-chooser:has(input[required]) legend::after {
- content:' *'; color:#e56f4a; font-weight:900; margin-left:2px;
+ content:' *'; color:#c04a28; font-weight:900; margin-left:2px;
 }
 
 /* Dialog header language toggle */
@@ -343,7 +343,7 @@
 .wwj-dialog-lang button {
  background:transparent; border:0; cursor:pointer; padding:4px 10px;
  font:inherit; font-size:11px; font-weight:800; letter-spacing:.06em;
- color:#6a7a85; border-radius:999px; text-transform:uppercase;
+ color:#5d7079; border-radius:999px; text-transform:uppercase;
 }
 .wwj-dialog-lang button[aria-pressed="true"] { background:#16746e; color:#fff; }
 .wwj-dialog-lang button:hover:not([aria-pressed="true"]) { color:#06161c; }
@@ -351,7 +351,7 @@
 /* Submit footer */
 .wwj-form-footer { margin-top:22px; padding-top:16px; border-top:1px solid #ece4d2; }
 .wwj-form-footer .button.full {
- display:block; width:100%; background:#e56f4a; color:#fff; border:0;
+ display:block; width:100%; background:#c04a28; color:#fff; border:0;
  padding:14px; font-weight:800; font-size:15px; border-radius:10px; cursor:pointer;
 }
 .wwj-form-footer .button.full:hover { background:#c7442b; }
@@ -374,7 +374,7 @@
 /* Path labels: big, colour-coded so "For entrepreneurs" / "For organisations" can't be missed */
 .wwj-path-a,.wwj-path-b{scroll-margin-top:90px}
 .wwj-path-a .wwj-sect-head .eyebrow,.wwj-path-b .wwj-sect-head .eyebrow{display:inline-block;font-size:clamp(17px,2.2vw,22px);letter-spacing:.12em;padding:10px 22px;border-radius:999px;margin-bottom:14px;line-height:1.2}
-.wwj-path-a .wwj-sect-head .eyebrow{background:#fdf0e9;color:#b44a26;border:2px solid #e56f4a}
+.wwj-path-a .wwj-sect-head .eyebrow{background:#fdf0e9;color:#b44a26;border:2px solid #c04a28}
 .wwj-path-b .wwj-sect-head .eyebrow{background:#d8eee2;color:#0f5a55;border:2px solid #16746e}
 
 /* ===== Same look as the rest of the site (29 Oct) ===== */

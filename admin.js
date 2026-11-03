@@ -376,7 +376,7 @@ async function openDetail(id) {
   selectedId = id;
   listEl.querySelectorAll('.dash-card').forEach(el => el.classList.toggle('active', el.dataset.id === id));
 
-  detailBody.innerHTML = '<p style="color:#6a7a85">Loading…</p>';
+  detailBody.innerHTML = '<p style="color:#5d7079">Loading…</p>';
 
   const [briefRes, bookingsRes, eventsRes, attachmentsRes] = await Promise.all([
     supabase.from('crm_briefs').select('*').eq('contact_id', id).order('submitted_at', { ascending: false }).limit(1).maybeSingle(),
@@ -456,7 +456,7 @@ function renderDetail(c, brief, bookings, events, attachments) {
     <div class="dash-booking-card">
       <b>${fmtDateTime(b.scheduled_at)}</b>
       <small>Status: ${b.status}${b.meeting_url ? ` · <a href="${esc(b.meeting_url)}" target="_blank" rel="noopener">Join / meeting link ↗</a>` : ''}</small>
-    </div>`).join('') : '<p style="color:#6a7a85;font-size:13px;margin:0">No booking yet.</p>';
+    </div>`).join('') : '<p style="color:#5d7079;font-size:13px;margin:0">No booking yet.</p>';
 
   const subMetaBits = [];
   if (c.organisation)     subMetaBits.push(esc(c.organisation));
