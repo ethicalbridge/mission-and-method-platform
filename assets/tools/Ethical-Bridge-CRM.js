@@ -582,7 +582,7 @@ function campPeople(c) {
     if (e.event === 'delivered') p.delivered ||= at;
     else if (e.event === 'opened') { p.opened ||= at; p.opens++; }
     else if (e.event === 'clicked') { p.opened ||= at; if (e.url && !p.clicks.includes(e.url)) p.clicks.push(e.url); }
-    else if (/bounce/.test(e.event)) p.bounced = e.event === 'hard_bounce' ? 'Hard bounce' : 'Soft bounce';
+    else if (/bounce/.test(e.event)) p.bounced = e.event === 'hard_bounce' ? 'Hard bounce' : e.event === 'soft_bounce' ? 'Soft bounce' : 'Not delivered';
     else if (e.event === 'unsubscribed') p.unsub ||= at;
     else if (e.event === 'spam') p.spam ||= at;
   }
@@ -636,7 +636,7 @@ function campDetail(c) {
     .sort((a, b) => (!!b.p.clicks.length - !!a.p.clicks.length) || (!!b.p.opened - !!a.p.opened) || (a.org && b.org ? byCountry(a.org, b.org) : a.p.email.localeCompare(b.p.email)));
   const status = p => p.unsub ? '<span class="pill bad">Unsubscribed</span>' : p.spam ? '<span class="pill bad">Marked as spam</span>' : p.bounced ? `<span class="pill warn">${esc(p.bounced)}</span>` : p.clicks.length ? '<span class="pill">Clicked</span>' : p.opened ? '<span class="pill">Opened</span>' : p.delivered ? '<span class="pill dim">Delivered</span>' : '<span class="pill dim">No data yet</span>';
   return `<div class="tablewrap crm-table nl-people"><table><thead><tr><th>Organisation</th><th>Email</th><th>Result</th><th>First opened</th><th>Links clicked</th></tr></thead><tbody>
-    ${rows.map(({ p, org }) => `<tr><td>${org ? `<button class="link" data-action="org" data-id="${esc(org.id)}">${esc(org.name)}</button><span class="tiny">${esc(org.country)}</span>` : '<span class="muted">—</span>'}</td><td>${esc(p.email)}</td><td>${status(p)}</td><td class="tiny">${p.opened ? esc(fmtDT(p.opened)) : '—'}</td><td class="tiny">${p.clicks.map(u => esc(nlCampLink(u))).join('<br>') || '—'}</td></tr>`).join('') || '<tr><td colspan="5">No recipients recorded.</td></tr>'}
+    ${rows.map(({ p, org }) => `<tr><td>${org ? `<button class="link" data-action="org" data-id="${esc(org.id)}">${esc(org.name)}</button><span class="tiny">${esc(org.country)}</span>` : '<span class="muted">—</span>'}</td><td>${esc(p.email)}</td><td>${status(p)}</td><td class="tiny">${p.opened ? (new Date(p.opened).getTime() === new Date(c.sent_at).getTime() ? 'Yes (from Brevo’s report, time not recorded)' : esc(fmtDT(p.opened))) : '—'}</td><td class="tiny">${p.clicks.map(u => esc(nlCampLink(u))).join('<br>') || '—'}</td></tr>`).join('') || '<tr><td colspan="5">No recipients recorded.</td></tr>'}
   </tbody></table></div><p class="tiny muted">People shown were on the list when it was sent, plus anyone Brevo reported on. Opens can be undercounted: some email apps block tracking, and Apple Mail can count opens that didn’t happen.</p>`;
 }
 const toLocalInput = d => { if (!d) return ''; const x = new Date(d); return isNaN(x) ? '' : `${ymd(x)}T${pad2(x.getHours())}:${pad2(x.getMinutes())}`; };
