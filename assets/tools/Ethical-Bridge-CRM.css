@@ -166,4 +166,18 @@ table{border-collapse:collapse;width:100%}
 .nl-cand b { display: block; color: var(--deep); }
 .nl-cand span { font-size: 12px; color: var(--muted); }
 
-.nl-scope { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* Newsletter match colours: green = same email, amber = organisation found with another email, red = no match */
+.crm-conv tr.nl-same td { background: #EAF6EE; }
+.crm-conv tr.nl-other td { background: #FFF5E1; }
+.crm-conv tr.nl-none td { background: #FDEEEE; }
+.crm-conv tr.nl-same td:first-child { box-shadow: inset 4px 0 0 #2E8B57; }
+.crm-conv tr.nl-other td:first-child { box-shadow: inset 4px 0 0 #D99A00; }
+.crm-conv tr.nl-none td:first-child { box-shadow: inset 4px 0 0 #C0392B; }
+.nl-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.nl-dot.nl-same { background: #2E8B57; } .nl-dot.nl-other { background: #D99A00; } .nl-dot.nl-none { background: #C0392B; }
+.nl-quick > button.nl-same { border-left: 5px solid #2E8B57; } .nl-quick > button.nl-same b { color: #2E8B57; }
+.nl-quick > button.nl-other { border-left: 5px solid #D99A00; } .nl-quick > button.nl-other b { color: #B07C00; }
+.nl-quick > button.nl-none { border-left: 5px solid #C0392B; } .nl-quick > button.nl-none b { color: #C0392B; }
+.nl-legend { display: grid; gap: 4px; }
+.nl-legend i.nl-dot { font-style: normal; }

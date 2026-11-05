@@ -213,7 +213,7 @@ const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', int
 function render() {
   if (!S.code) return renderSignIn();
   if (!S.ws) { root.innerHTML = `<div class="shell crm"><p class="muted crm-loading">${S.loadError ? esc(S.loadError) + ' <button class="link" data-action="reload">Try again</button>' : 'Loading organisations and your outreach records…'}</p></div>`; return; }
-  const continentBar = ['Dashboard', 'Outreach', 'Conversations', 'Newsletter'].includes(S.view) ? renderContinentBar() : '';
+  const continentBar = ['Dashboard', 'Outreach', 'Conversations'].includes(S.view) ? renderContinentBar() : '';
   let body = '';
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
@@ -472,66 +472,63 @@ function matchSubscriber(s) {
   }
   return { org: null, how: '' };
 }
-function newsletterRows() { return (S.subs || []).map(sub => ({ sub, ...matchSubscriber(sub) })); }
+const NL_KIND = { same: 'Same email as in Ethical Bridge', other: 'Organisation found, different email', none: 'No match in Ethical Bridge' };
+const nlKind = r => !r.org ? 'none' : r.how === 'Same email as the profile' ? 'same' : 'other';
+function newsletterRows() { return (S.subs || []).map(sub => { const m = matchSubscriber(sub); return { sub, ...m, kind: nlKind(m) }; }); }
 function filteredNewsletter() {
   const f = S.nf, n = norm(f.name), e = norm(f.email);
   return newsletterRows().filter(r => {
     if (f.status === 'Subscribed' && !r.sub.subscribed) return false;
     if (f.status === 'Unsubscribed' && r.sub.subscribed) return false;
-    if (f.match === 'matched' && !r.org) return false;
-    if (f.match === 'unmatched' && (r.org || r.sub.org_id === '')) return false;
-    if (f.match === 'notorg' && r.sub.org_id !== '') return false;
-    if (S.continent !== 'All' && !(r.org && r.org.continent === S.continent)) return false;
+    if (f.match && r.kind !== f.match) return false;
     if (f.region && r.org?.region !== f.region) return false;
     if (f.country && r.org?.country !== f.country) return false;
     if (n && !norm(r.org?.name).includes(n) && !norm(`${r.sub.first_name} ${r.sub.last_name}`).includes(n)) return false;
     if (e && !norm(r.sub.email).includes(e)) return false;
     if (S.nfReplied && !(r.org && outreachOf(r.org.id).reply_status === 'Replied')) return false;
     return true;
-  }).sort((a, b) => (!a.org - !b.org) || (a.org && b.org ? byCountry(a.org, b.org) : a.sub.email.localeCompare(b.sub.email)));
+  }).sort((a, b) => ('same other none'.indexOf(a.kind) - 'same other none'.indexOf(b.kind)) || (a.org && b.org ? byCountry(a.org, b.org) : a.sub.email.localeCompare(b.sub.email)));
 }
 function renderNewsletter() {
   if (S.subs === null) return `<p class="muted crm-loading">Loading the newsletter list…</p>`;
   const rows = newsletterRows(), active = rows.filter(r => r.sub.subscribed);
-  const inSel = r => S.continent === 'All' || (r.org && r.org.continent === S.continent);
-  const base = active.filter(inSel), matched = base.filter(r => r.org);
-  const unmatched = S.continent === 'All' ? active.filter(r => !r.org && r.sub.org_id !== '').length : 0;
-  const notOrg = S.continent === 'All' ? active.filter(r => r.sub.org_id === '').length : 0;
-  const gone = rows.filter(r => !r.sub.subscribed && inSel(r)).length;
+  const matched = active.filter(r => r.org), count = k => active.filter(r => r.kind === k).length;
+  const gone = rows.filter(r => !r.sub.subscribed).length;
   const replied = matched.filter(r => outreachOf(r.org.id).reply_status === 'Replied').length;
   const regions = [...new Set(matched.map(r => r.org.region).filter(Boolean))].sort();
   const countries = [...new Set(matched.filter(r => !S.nf.region || r.org.region === S.nf.region).map(r => r.org.country).filter(Boolean))].sort();
   const list = filteredNewsletter(), f = S.nf;
   const sel = (key, items, all) => `<select data-nfilter="${key}" class="${f[key] && !(key === 'status' && f[key] === 'Subscribed') ? 'crm-on' : ''}">${opts(items, f[key], all)}</select>`;
-  const qb = (label, v, q, tone = '') => `<button type="button" data-nquick="${q}" class="${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
+  const qb = (label, v, q, tone = '') => `<button type="button" data-nquick="${q}" class="${tone}${(q === 'all' ? !f.match && !S.nfReplied && f.status === 'Subscribed' : q === 'replied' ? S.nfReplied : q === 'gone' ? f.status === 'Unsubscribed' : f.match === q && !S.nfReplied) ? ' active' : ''}"><b>${v}</b><span>${esc(label)}</span></button>`;
   const fmt = d => d ? fmtDate(d) : '—';
   const trs = list.map(r => {
     const s = r.sub, o = r.org, out = o ? outreachOf(o.id) : null;
-    return `<tr class="${s.subscribed ? '' : 'gone'}"><td>${o ? esc(o.country) : '<span class="muted">—</span>'}</td>
-      <td class="crm-org">${o ? `<button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button><span class="tiny">${esc(o.continent)}</span>` : '<span class="pill dim">No organisation matched</span>'}</td>
+    return `<tr class="nl-${r.kind}${s.subscribed ? '' : ' gone'}"><td>${o ? esc(o.country) : '<span class="muted">—</span>'}</td>
+      <td class="crm-org">${o ? `<button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button><span class="tiny">${esc(o.continent)}</span>` : (s.org_id === '' ? '<span class="pill dim">Team or individual</span>' : '<span class="pill dim">No organisation matched</span>')}</td>
       <td>${esc(s.email)}<span class="tiny nl-name">${esc([s.first_name, s.last_name].filter(Boolean).join(' '))}</span></td>
       <td>${s.subscribed ? esc(fmt(s.subscribed_at)) : `<span class="pill bad">Unsubscribed</span><br><span class="tiny">${esc(fmt(s.unsubscribed_at))}</span>`}</td>
-      <td class="tiny">${esc(r.how || '—')}</td>
+      <td class="tiny"><span class="nl-dot nl-${r.kind}"></span>${esc(NL_KIND[r.kind])}${r.how && r.kind === 'other' ? `<br><span class="muted">${esc(r.how)}</span>` : ''}</td>
       <td>${out ? `${out.reply_status === 'Replied' ? '<span class="pill">Replied</span>' : esc(out.reply_status === 'None' ? (out.email_status === 'Sent' ? 'Emailed' : 'Not emailed') : out.reply_status)}` : '<span class="muted">—</span>'}</td>
       <td><button class="button secondary small" data-action="nl-pick" data-id="${esc(s.id)}">${o ? 'Change' : 'Link'}</button></td></tr>`;
   });
   return `<section class="rowhead section-head"><h2>Newsletter</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><label class="button secondary nl-upload">Import Brevo CSV<input type="file" accept=".csv,text/csv" data-action="nl-csv" hidden></label><button class="button" data-action="export-nl">Export</button></div></section>
     ${S.subsError ? `<div class="notice warn" role="alert">${esc(S.subsError)}</div>` : ''}
-    ${S.continent === 'All' ? '' : `<div class="notice warn nl-scope"><span>Showing <b>${esc(S.continent)}</b> only: ${base.length} of ${active.length} subscribers. Subscribers in other continents, and those not matched to an organisation, are hidden.</span><button type="button" class="button small" data-continent="All">Show all ${active.length} subscribers</button></div>`}
     <section class="crm-groups crm-conv-groups">
-      <div class="crm-group crm-group-all crm-quick">${qb(S.continent === 'All' ? 'Subscribers' : 'Subscribers matched in ' + S.continent, base.length, 'all')}</div>
-      <div class="crm-group"><h3>Subscribers</h3><div class="crm-quick">${qb('Matched to an organisation', matched.length, 'matched')}${S.continent === 'All' ? qb('No organisation matched yet', unmatched, 'unmatched') + qb('Not an organisation (team, individuals)', notOrg, 'notorg') : ''}${qb('Also replied to our email', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
+      <div class="crm-group crm-group-all crm-quick">${qb('All subscribers', active.length, 'all')}</div>
+      <div class="crm-group"><h3>Match with Ethical Bridge</h3><div class="crm-quick nl-quick">${qb(NL_KIND.same, count('same'), 'same', 'nl-same')}${qb(NL_KIND.other, count('other'), 'other', 'nl-other')}${qb(NL_KIND.none, count('none'), 'none', 'nl-none')}</div></div>
+      <div class="crm-group"><h3>Engagement</h3><div class="crm-quick">${qb('Organisations that also replied', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
     </section>
-    <p class="tiny crm-hint">From the Brevo newsletter list. To add new sign-ups, export the list from Brevo and use “Import Brevo CSV”. Organisations are matched by email, the email they replied from, web domain or name; use “Link” to fix a match.</p>
+    <p class="tiny crm-hint nl-legend"><span><i class="nl-dot nl-same"></i>Green: the subscriber’s email is the one on the organisation’s Ethical Bridge profile.</span><span><i class="nl-dot nl-other"></i>Amber: we found the organisation through another email (the one they replied from, their web domain, their name, or linked by hand).</span><span><i class="nl-dot nl-none"></i>Red: no organisation in Ethical Bridge yet, including our own team addresses. Use “Link” to match one.</span></p>
+    <p class="tiny crm-hint">From the Brevo newsletter list. To add new sign-ups, export the list from Brevo and use “Import Brevo CSV”.</p>
     <section class="panel crm-filters"><div class="crm-frow"><b>General</b>
       <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
       <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
       <label><span>Name</span><input data-nfilter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Organisation or person"></label>
       <label><span>Email address</span><input data-nfilter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email)}" placeholder="Search by email"></label>
-      <label><span>Match</span>${sel('match', [['matched', 'Matched'], ['unmatched', 'Not matched yet'], ['notorg', 'Not an organisation']], 'All')}</label>
+      <label><span>Match</span>${sel('match', [['same', 'Same email (green)'], ['other', 'Different email (amber)'], ['none', 'No match (red)']], 'All')}</label>
       <label><span>Status</span>${sel('status', ['Subscribed', 'Unsubscribed'], 'All')}</label>
       <button class="button secondary small" data-action="clear-nfilters">Clear filters</button></div></section>
-    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Newsletter subscribers</span>${S.continent === 'All' ? '' : `<p class="tiny">Only subscribers matched to organisations in ${esc(S.continent)} are shown. Choose “All” to see the rest.</p>`}</div><span class="tiny"><b>${list.length}</b> subscribers</span></div>
+    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Newsletter subscribers</span></div><span class="tiny"><b>${list.length}</b> subscribers</span></div>
     <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'Subscriber', 'Subscribed', 'How matched', 'Outreach', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${trs.join('') || '<tr><td colspan="7">No subscribers match these filters.</td></tr>'}</tbody></table></div></section>`;
 }
@@ -575,8 +572,8 @@ async function importNewsletterCsv(file) {
   loadNewsletter();
 }
 function exportNewsletter() {
-  downloadCsv(`ethical-bridge-newsletter-${today()}.csv`, ['email', 'first_name', 'last_name', 'status', 'subscribed', 'organisation', 'continent', 'region', 'country', 'how_matched', 'reply_status'],
-    filteredNewsletter().map(r => [r.sub.email, r.sub.first_name, r.sub.last_name, r.sub.subscribed ? 'Subscribed' : 'Unsubscribed', (r.sub.subscribed_at || '').slice(0, 10), r.org?.name || '', r.org?.continent || '', r.org?.region || '', r.org?.country || '', r.how, r.org ? outreachOf(r.org.id).reply_status : '']));
+  downloadCsv(`ethical-bridge-newsletter-${today()}.csv`, ['email', 'first_name', 'last_name', 'status', 'subscribed', 'organisation', 'continent', 'region', 'country', 'match_group', 'how_matched', 'reply_status'],
+    filteredNewsletter().map(r => [r.sub.email, r.sub.first_name, r.sub.last_name, r.sub.subscribed ? 'Subscribed' : 'Unsubscribed', (r.sub.subscribed_at || '').slice(0, 10), r.org?.name || '', r.org?.continent || '', r.org?.region || '', r.org?.country || '', NL_KIND[r.kind], r.how, r.org ? outreachOf(r.org.id).reply_status : '']));
 }
 
 function orgModal(id) {
@@ -742,7 +739,7 @@ root.addEventListener('click', async e => {
   const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter],[data-nquick]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
-  if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { region: '', country: '', name: '', email: '', match: q === 'matched' || q === 'replied' ? 'matched' : q === 'unmatched' ? 'unmatched' : q === 'notorg' ? 'notorg' : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
+  if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
