@@ -78,7 +78,7 @@ const S = {
   f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
   mapF: { goal: '', role: '', type: '', engaged: '', q: '' }, trackQ: '', patFilter: '',
   msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '' },
-  subs: null, subsError: '', nf: { region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
+  subs: null, subsError: '', nf: { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
   modal: '', message: '', saving: 0, pat: null, patSection: 0,
 };
 const root = document.getElementById('app');
@@ -481,6 +481,7 @@ function filteredNewsletter() {
     if (f.status === 'Subscribed' && !r.sub.subscribed) return false;
     if (f.status === 'Unsubscribed' && r.sub.subscribed) return false;
     if (f.match && r.kind !== f.match) return false;
+    if (f.continent && r.org?.continent !== f.continent) return false;
     if (f.region && r.org?.region !== f.region) return false;
     if (f.country && r.org?.country !== f.country) return false;
     if (n && !norm(r.org?.name).includes(n) && !norm(`${r.sub.first_name} ${r.sub.last_name}`).includes(n)) return false;
@@ -495,8 +496,10 @@ function renderNewsletter() {
   const matched = active.filter(r => r.org), count = k => active.filter(r => r.kind === k).length;
   const gone = rows.filter(r => !r.sub.subscribed).length;
   const replied = new Set(matched.filter(r => outreachOf(r.org.id).reply_status === 'Replied').map(r => r.org.id)).size;
-  const regions = [...new Set(matched.map(r => r.org.region).filter(Boolean))].sort();
-  const countries = [...new Set(matched.filter(r => !S.nf.region || r.org.region === S.nf.region).map(r => r.org.country).filter(Boolean))].sort();
+  const continents = [...new Set(matched.map(r => r.org.continent).filter(Boolean))].sort();
+  const inCont = r => !S.nf.continent || r.org.continent === S.nf.continent;
+  const regions = [...new Set(matched.filter(inCont).map(r => r.org.region).filter(Boolean))].sort();
+  const countries = [...new Set(matched.filter(r => inCont(r) && (!S.nf.region || r.org.region === S.nf.region)).map(r => r.org.country).filter(Boolean))].sort();
   const list = filteredNewsletter(), f = S.nf;
   const sel = (key, items, all) => `<select data-nfilter="${key}" class="${f[key] && !(key === 'status' && f[key] === 'Subscribed') ? 'crm-on' : ''}">${opts(items, f[key], all)}</select>`;
   const qb = (label, v, q, tone = '') => `<button type="button" data-nquick="${q}" class="${tone}${(q === 'all' ? !f.match && !S.nfReplied && f.status === 'Subscribed' : q === 'replied' ? S.nfReplied : q === 'gone' ? f.status === 'Unsubscribed' : f.match === q && !S.nfReplied) ? ' active' : ''}"><b>${v}</b><span>${esc(label)}</span></button>`;
@@ -521,6 +524,7 @@ function renderNewsletter() {
     <p class="tiny crm-hint nl-legend"><span><i class="nl-dot nl-same"></i>Green: the subscriber’s email is the one on the organisation’s Ethical Bridge profile.</span><span><i class="nl-dot nl-other"></i>Amber: we found the organisation through another email (the one they replied from, their web domain, their name, or linked by hand).</span><span><i class="nl-dot nl-none"></i>Red: no organisation in Ethical Bridge yet, including our own team addresses. Use “Link” to match one.</span></p>
     <p class="tiny crm-hint">From the Brevo newsletter list. To add new sign-ups, export the list from Brevo and use “Import Brevo CSV”.</p>
     <section class="panel crm-filters"><div class="crm-frow"><b>General</b>
+      <label><span>Continent</span>${sel('continent', continents, 'All continents')}</label>
       <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
       <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
       <label><span>Name</span><input data-nfilter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Organisation or person"></label>
@@ -739,7 +743,7 @@ root.addEventListener('click', async e => {
   const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter],[data-nquick]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
-  if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
+  if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { continent: '', region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
@@ -758,7 +762,7 @@ root.addEventListener('click', async e => {
     case 'unpin': return setPin(id, false);
     case 'reload-nl': S.subs = null; render(); return loadNewsletter();
     case 'export-nl': return exportNewsletter();
-    case 'clear-nfilters': S.nf = { region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }; S.nfReplied = false; return render();
+    case 'clear-nfilters': S.nf = { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }; S.nfReplied = false; return render();
     case 'nl-pick': S.nlQuery = ''; return openModal(nlPickModal(id));
     case 'nl-link': return nlLink(id, t.dataset.org);
     case 'reload-msgs': S.msgs = null; render(); return loadMessages();
@@ -811,7 +815,7 @@ root.addEventListener('change', async e => {
   }
   if (t.dataset.filter && t.tagName === 'SELECT') { S.f[t.dataset.filter] = t.value; if (t.dataset.filter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.action === 'nl-csv' && t.files?.[0]) { const f = t.files[0]; t.value = ''; return importNewsletterCsv(f); }
-  if (t.dataset.nfilter && t.tagName === 'SELECT') { S.nf[t.dataset.nfilter] = t.value; if (t.dataset.nfilter === 'region') S.nf.country = ''; S.nfReplied = false; return render(); }
+  if (t.dataset.nfilter && t.tagName === 'SELECT') { S.nf[t.dataset.nfilter] = t.value; if (t.dataset.nfilter === 'continent') { S.nf.region = ''; S.nf.country = ''; } if (t.dataset.nfilter === 'region') S.nf.country = ''; S.nfReplied = false; return render(); }
   if (t.dataset.cfilter && t.tagName === 'SELECT') { S.cf[t.dataset.cfilter] = t.value; if (t.dataset.cfilter === 'region') S.cf.country = ''; return render(); }
   if (t.dataset.mapf && t.tagName === 'SELECT') { S.mapF[t.dataset.mapf] = t.value; return render(); }
   if (S.pat && (t.dataset.pat || t.dataset.score)) {
