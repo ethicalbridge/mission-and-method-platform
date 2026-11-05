@@ -30,7 +30,7 @@ const interviewLabel = v => v === 'Scheduled' ? 'Planned' : v;
 const EMAIL = ['Not sent', 'Sent'];
 const SOCIAL = ['Not contacted', 'Contacted', 'Contacted and friend request sent'];
 const REPLY = ['None', 'Replied', 'Automatic reply', 'Bounce back'];
-const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', interview_date: null, email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '' };
+const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', interview_date: null, email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '', ally: '' };
 const ORG_TYPES = ['Academic institution', 'Child-led org/group', 'Community-based org/group', 'International corporate', 'International NGO', 'Media', 'Membership-based org', 'National government/authority', 'National/local corporate', 'National/local CSO', 'Network/Coalition/Movement', 'Sub-national government/authority', 'UN/multilateral agency'];
 const ROLES = ['Strategic Partner', 'Challenger', 'Ally', 'Extraneous'];
 const STAGES = ['New', 'Introduced', 'In conversation', 'Active', 'Paused', 'Closed'];
@@ -80,7 +80,7 @@ const S = {
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
   f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
   mapF: { goal: '', role: '', type: '', engaged: '', q: '' }, trackQ: '', patFilter: '',
-  msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '' },
+  msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '', ally: '' },
   subs: null, subsError: '', nf: { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
   camps: null, cevents: [], campsError: '', nlView: 'Subscribers', campOpen: '', tlRange: 'all',
   modal: '', message: '', saving: 0, pat: null, patSection: 0,
@@ -342,6 +342,26 @@ function renderOrganisations() {
 // ---------- Conversations (one row per organisation that replied) ----------
 const CONV_STATUS = [['waiting', 'Waiting for my reply'], ['theirs', 'They wrote last'], ['mine', 'I replied last'], ['none', 'No emails saved yet']];
 const AUTO_RE = /^(automatic reply|auto(matic)?[ -]?(reply|response)|out of (the )?office|r[ée]ponse automatique|respuesta autom[áa]tica|resposta autom[áa]tica|abwesenheit)/i;
+// Strong allies: organisations that asked for a meeting, a call, a partnership or a collaboration with us.
+// 'strong' is set by hand (or confirmed from a suggestion); a reply matching ALLY_RE is only a suggestion until reviewed.
+const ALLY = [['strong', 'Strong allies'], ['suggested', 'Possible allies to review']];
+const ALLY_RE = new RegExp([
+  String.raw`\b(schedule|arrange|set up|have|available for|open to|happy to|like to|love to|welcome|request|propose|book)\b.{0,40}\b(meeting|call|chat|conversation)\b`,
+  String.raw`\b(virtual|online|zoom|video|brief|short|quick|introductory) (meeting|call)\b`,
+  String.raw`\b(reuni[oó]n|videollamada|llamada|reuni[aã]o|chamada|r[ée]union|visioconf[ée]rence)\b`,
+  String.raw`\bpartner(ship)? with (you|ethical bridge|your)\b`, String.raw`deeper partnership`, String.raw`strategic partners?\b(?!hips)`,
+  String.raw`\bexplor(e|ing) .{0,30}(collaboration|partnership|synerg|working together|cooperation)`,
+  String.raw`\bopen to (any )?(future |further )?(collaboration|partnership|cooperation)`, String.raw`\bcollaborate (with you|with ethical bridge|in the future)`,
+  String.raw`synerg`, String.raw`\bwork(ing)? together\b`, String.raw`trabajar juntos`, String.raw`trabalhar juntos`,
+  String.raw`alianza con`, String.raw`colaborar con ustedes`, String.raw`parceria com`, String.raw`partenariat avec`, String.raw`collaborer avec vous`,
+].join('|'), 'i');
+function allyHint(msgs) {
+  for (const m of msgs) {
+    const t = String(m.body || '').replace(/\s+/g, ' '), x = ALLY_RE.exec(t);
+    if (x) { const a = Math.max(0, x.index - 70), b = Math.min(t.length, x.index + x[0].length + 70); return (a ? '…' : '') + t.slice(a, b).trim() + (b < t.length ? '…' : ''); }
+  }
+  return '';
+}
 const snip = (t, n = 260) => { const x = String(t || '').replace(/\s+/g, ' ').trim(); return x.length > n ? x.slice(0, n).replace(/\s\S*$/, '') + '…' : x; };
 function conversations() {
   const by = new Map();
@@ -358,7 +378,9 @@ function conversations() {
     const last = all[all.length - 1] || null;
     const flagged = ins.some(m => m.flagged);
     const status = flagged ? 'waiting' : !last ? 'none' : last.direction === 'in' ? 'theirs' : 'mine';
-    out.push({ o, id, all, first, mine, back, last, flagged, status, nIn: ins.length, nOut: all.length - ins.length });
+    const mark = S.outreach.get(id)?.ally || '', hint = allyHint(real);
+    const ally = mark === 'strong' ? 'strong' : !mark && hint ? 'suggested' : '';
+    out.push({ o, id, all, first, mine, back, last, flagged, status, ally, mark, hint, nIn: ins.length, nOut: all.length - ins.length });
   }
   return out;
 }
@@ -367,7 +389,7 @@ function filteredConversations(list) {
   return list.filter(c => inContinent(c.o) && (!f.region || c.o.region === f.region) && (!f.country || c.o.country === f.country)
     && (!n || norm(c.o.name).includes(n) || norm(c.o.registered).includes(n))
     && (!e || norm(c.o.email).includes(e) || c.all.some(m => norm(m.from_addr).includes(e)))
-    && (!f.status || c.status === f.status))
+    && (!f.status || c.status === f.status) && (!f.ally || c.ally === f.ally))
     .sort((a, b) => byCountry(a.o, b.o));
 }
 function renderConversations() {
@@ -380,14 +402,16 @@ function renderConversations() {
   const list = filteredConversations(allConv);
   const f = S.cf;
   const sel = (key, items, all) => `<select data-cfilter="${key}" class="${f[key] ? 'crm-on' : ''}">${opts(items, f[key], all)}</select>`;
-  const qb = (label, v, key, tone = '') => `<button type="button" data-cquick="${key}" class="${(f.status || '') === key && !f.region && !f.country && !f.name && !f.email ? 'active' : ''} ${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
+  const qb = (label, v, key, tone = '') => `<button type="button" data-cquick="${key}" class="${(f.status || '') === key && !f.ally && !f.region && !f.country && !f.name && !f.email ? 'active' : ''} ${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
+  const ab = (label, v, key, tone = '') => `<button type="button" data-cally="${key}" class="${f.ally === key && !f.status && !f.region && !f.country && !f.name && !f.email ? 'active' : ''} ${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
+  const allyCount = k => base.filter(c => c.ally === k).length;
   const msgCell = (m, who) => m ? `<div class="crm-msg">${who ? `<span class="tiny">From ${esc(who)}</span>` : `<b>${esc(fmtDate(m.sent_at))}</b>`}<p>${esc(snip(m.body) || '(no text)')}</p></div>` : '<span class="muted">—</span>';
   const rows = list.map(c => {
     const st = CONV_STATUS.find(x => x[0] === c.status)[1];
     const fromName = c.first ? (c.first.from_name || c.first.from_addr) : '';
     return `<tr class="${c.status === 'waiting' ? 'waiting' : ''}">
       <td>${esc(c.o.country)}</td>
-      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button><span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
+      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${c.ally === 'strong' ? '<span class="crm-ally">🤝 Strong ally</span>' : c.ally === 'suggested' ? `<span class="crm-ally maybe" title="${esc(c.hint)}">Possible ally?</span>` : ''}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
       <td>${c.first ? esc(fmtDate(c.first.sent_at)) : '<span class="muted">—</span>'}</td>
       <td class="crm-text">${msgCell(c.first, fromName)}</td>
       <td class="crm-text">${c.mine ? msgCell(c.mine) : c.first ? '<span class="pill warn">Not answered yet</span>' : '<span class="muted">—</span>'}</td>
@@ -396,14 +420,15 @@ function renderConversations() {
       <td><button class="button secondary small" data-action="thread" data-id="${esc(c.id)}">Open (${c.all.length})</button></td></tr>`;
   });
   const active = Object.entries(f).filter(([, v]) => v);
-  const LBL = { region: 'Region', country: 'Country', name: 'Name', email: 'Email', status: 'Status' };
+  const LBL = { region: 'Region', country: 'Country', name: 'Name', email: 'Email', status: 'Status', ally: 'Allies' };
   return `<section class="rowhead section-head"><h2>Conversations</h2><div class="actions"><button class="button secondary" data-action="reload-msgs">Refresh</button><button class="button" data-action="export-conv">Export</button></div></section>
     ${S.msgsError ? `<div class="notice warn" role="alert">${esc(S.msgsError)}</div>` : ''}
     <section class="crm-groups crm-conv-groups">
       <div class="crm-group crm-group-all crm-quick">${qb('Organisations that replied', base.length, '')}</div>
       <div class="crm-group"><h3>Status</h3><div class="crm-quick">${qb('Waiting for my reply', count('waiting'), 'waiting', 'crm-q-wait')}${qb('They wrote last', count('theirs'), 'theirs')}${qb('I replied last', count('mine'), 'mine')}${count('none') ? qb('No emails saved yet', count('none'), 'none') : ''}</div></div>
+      <div class="crm-group"><h3>Allies</h3><div class="crm-quick">${ab('🤝 Strong allies', allyCount('strong'), 'strong', 'crm-q-ally')}${ab('Possible allies to review', allyCount('suggested'), 'suggested')}</div></div>
     </section>
-    <p class="tiny crm-hint">📌 “Waiting for my reply” are the emails you pinned (flagged) in your mailbox. Click a number to list those organisations.</p>
+    <p class="tiny crm-hint">📌 “Waiting for my reply” are the emails you pinned (flagged) in your mailbox. 🤝 “Strong allies” asked for a meeting, a call, a partnership or a collaboration; “Possible allies to review” are replies that mention one of these, to confirm or dismiss in the thread. Click a number to list those organisations.</p>
     <section class="panel crm-filters">
       <div class="crm-frow"><b>General</b>
         <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
@@ -411,10 +436,11 @@ function renderConversations() {
         <label><span>Organisation name</span><input data-cfilter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Search by name"></label>
         <label><span>Email address</span><input data-cfilter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email)}" placeholder="Search by email"></label>
         <label><span>Status</span>${sel('status', CONV_STATUS, 'All statuses')}</label>
+        <label><span>Allies</span>${sel('ally', ALLY, 'All organisations')}</label>
         <button class="button secondary small" data-action="clear-cfilters">Clear filters</button></div>
     </section>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email conversations</span><p class="tiny crm-legend"><i class="r"></i> Waiting for your reply (pinned in your mailbox) · sorted by country A–Z</p></div><span class="tiny"><b>${list.length}</b> organisations</span></div>
-    ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
+    ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : k === 'ally' ? ALLY.find(x => x[0] === v)?.[1] : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
     <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'They replied', 'What they said', 'My response', 'They replied back?', 'Status', 'Thread'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || '<tr><td colspan="8">No conversations match these filters.</td></tr>'}</tbody></table></div>
     <p class="tiny">Emails are copied from the hello@ethicalbridge.org mailbox (the continent “Replied” folders, the Inbox and your Sent folder). Quoted earlier messages and signatures below “On … wrote:” are trimmed.</p></section>`;
@@ -427,15 +453,20 @@ function threadModal(id) {
       <div class="crm-mail-body">${esc(m.body || '(no text)')}</div></article>`).join('');
   const o = c.o;
   return modal(o.name, `<p class="tiny">${esc([o.country, o.region, o.continent].filter(Boolean).join(' · '))}${o.email ? ' · ' + esc(o.email) : ''} · ${c.nIn} from them, ${c.nOut} from you</p>
-    <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}<button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
+    <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}${c.ally === 'strong' ? `<button class="button secondary" data-action="ally" data-ally="" data-id="${esc(id)}">Remove strong ally</button>` : `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">🤝 Mark as strong ally</button>`}${c.ally === 'suggested' ? `<button class="button secondary" data-action="ally" data-ally="no" data-id="${esc(id)}">Not an ally</button>` : ''}<button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
+    ${c.ally === 'suggested' ? `<p class="crm-ally-why"><b>Why it's suggested:</b> “${esc(c.hint)}”</p>` : ''}
     <p class="tiny">Pins changed here stay in the CRM; they don't change the pin in your mailbox.</p>
     <div class="crm-thread">${msgs || '<p class="muted">No emails saved for this organisation yet. It is listed because its reply is marked “Replied”.</p>'}</div>`);
 }
 function exportConversations() {
   const list = filteredConversations(conversations());
   downloadCsv(`ethical-bridge-conversations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
-    ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'last_email', 'messages'],
-    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], c.last?.sent_at.slice(0, 10) || '', c.all.length]));
+    ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'ally', 'last_email', 'messages'],
+    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], c.ally === 'strong' ? 'Strong ally' : c.ally === 'suggested' ? 'Possible ally' : '', c.last?.sent_at.slice(0, 10) || '', c.all.length]));
+}
+async function setAlly(id, ally) {
+  await saveOutreach(id, { ally });
+  S.modal = threadModal(id); render();
 }
 async function setPin(id, flagged) {
   try { await api('message.flag', { org_id: id, flagged }); } catch (e) { return flash('Could not save: ' + e.message); }
@@ -949,12 +980,13 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter],[data-nquick],[data-nlview]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-nlview')) { S.nlView = t.dataset.nlview; render(); return; }
   if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { continent: '', region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
-  if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-cally')) { S.cf = { region: '', country: '', name: '', email: '', status: '', ally: t.dataset.cally }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick, ally: '' }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.tab) { if (S.pat?.dirty && !confirm('Leave this assessment without saving?')) return; S.pat = null; S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
@@ -970,6 +1002,7 @@ root.addEventListener('click', async e => {
     case 'thread': return openModal(threadModal(id));
     case 'pin': return setPin(id, true);
     case 'unpin': return setPin(id, false);
+    case 'ally': return setAlly(id, t.dataset.ally || '');
     case 'reload-nl': S.subs = null; S.camps = null; peopleCache = null; render(); return loadNewsletter();
     case 'export-nl': return exportNewsletter();
     case 'export-tl': return exportTimeline();
@@ -987,7 +1020,7 @@ root.addEventListener('click', async e => {
     case 'nl-link': return nlLink(id, t.dataset.org);
     case 'reload-msgs': S.msgs = null; render(); return loadMessages();
     case 'export-conv': return exportConversations();
-    case 'clear-cfilters': S.cf = { region: '', country: '', name: '', email: '', status: '' }; return render();
+    case 'clear-cfilters': S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '' }; return render();
     case 'add-org': return openModal(addOrgModal());
     case 'export-orgs': return exportOrgs();
     case 'clear-filters': S.f = EMPTY_FILTERS(); S.page = 0; return render();

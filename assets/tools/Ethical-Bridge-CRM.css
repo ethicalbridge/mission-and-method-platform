@@ -230,3 +230,8 @@ tr.nl-wk-camp td { background: #fff5ec; }
 .nl-ev-camp { color: var(--coral); }
 .nl-ev-camp b, .nl-ev-sub b { color: var(--deep); }
 @media (max-width: 650px) { .nl-day { grid-template-columns: 1fr; gap: 4px; } }
+/* Strong allies (Conversations) */
+.crm-quick>button.crm-q-ally b{color:var(--teal)}
+.crm-ally{display:inline-block;margin:3px 0 2px;padding:1px 8px;border-radius:999px;font-size:.78rem;font-weight:700;background:#e3f1ef;color:var(--teal);border:1px solid #b5d9d3;display:table}
+.crm-ally.maybe{background:#fff6e0;color:#7a5600;border-color:#ecd28f;font-weight:600;cursor:help}
+.crm-ally-why{margin:6px 0 4px;padding:8px 10px;border-radius:8px;background:#fff6e0;border:1px solid #ecd28f;font-size:.88rem}
