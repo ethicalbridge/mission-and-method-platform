@@ -494,7 +494,7 @@ function renderNewsletter() {
   const rows = newsletterRows(), active = rows.filter(r => r.sub.subscribed);
   const matched = active.filter(r => r.org), count = k => active.filter(r => r.kind === k).length;
   const gone = rows.filter(r => !r.sub.subscribed).length;
-  const replied = matched.filter(r => outreachOf(r.org.id).reply_status === 'Replied').length;
+  const replied = new Set(matched.filter(r => outreachOf(r.org.id).reply_status === 'Replied').map(r => r.org.id)).size;
   const regions = [...new Set(matched.map(r => r.org.region).filter(Boolean))].sort();
   const countries = [...new Set(matched.filter(r => !S.nf.region || r.org.region === S.nf.region).map(r => r.org.country).filter(Boolean))].sort();
   const list = filteredNewsletter(), f = S.nf;
