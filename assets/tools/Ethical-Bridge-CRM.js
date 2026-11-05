@@ -513,7 +513,7 @@ function renderNewsletter() {
   });
   return `<section class="rowhead section-head"><h2>Newsletter</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><label class="button secondary nl-upload">Import Brevo CSV<input type="file" accept=".csv,text/csv" data-action="nl-csv" hidden></label><button class="button" data-action="export-nl">Export</button></div></section>
     ${S.subsError ? `<div class="notice warn" role="alert">${esc(S.subsError)}</div>` : ''}
-    <section class="crm-groups crm-conv-groups">
+    <section class="crm-groups crm-conv-groups nl-groups">
       <div class="crm-group crm-group-all crm-quick">${qb('All subscribers', active.length, 'all')}</div>
       <div class="crm-group"><h3>Match with Ethical Bridge</h3><div class="crm-quick nl-quick">${qb(NL_KIND.same, count('same'), 'same', 'nl-same')}${qb(NL_KIND.other, count('other'), 'other', 'nl-other')}${qb(NL_KIND.none, count('none'), 'none', 'nl-none')}</div></div>
       <div class="crm-group"><h3>Engagement</h3><div class="crm-quick">${qb('Organisations that also replied', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>

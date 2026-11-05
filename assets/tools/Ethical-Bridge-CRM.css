@@ -181,3 +181,6 @@ table{border-collapse:collapse;width:100%}
 .nl-quick > button.nl-none { border-left: 5px solid #C0392B; } .nl-quick > button.nl-none b { color: #C0392B; }
 .nl-legend { display: grid; gap: 4px; }
 .nl-legend i.nl-dot { font-style: normal; }
+.crm-groups.nl-groups { grid-template-columns: minmax(150px, .7fr) 3fr 1.6fr; }
+.nl-groups .crm-quick { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+@media(max-width:1100px){ .crm-groups.nl-groups { grid-template-columns: 1fr; } }
