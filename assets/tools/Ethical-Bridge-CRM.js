@@ -260,7 +260,7 @@ function renderDashboard() {
       ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
       ${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate · ' + s.interviewed + ' interviewed')}
       ${(() => { if (!S.subs) return card('Newsletter subscribers', '…', 'Live from Brevo'); const a = newsletterRows().filter(r => r.sub.subscribed); const m = a.filter(r => r.org && inContinent(r.org)).length; return card('Newsletter subscribers', a.length, m + ' matched to organisations' + (S.continent === 'All' ? '' : ' in ' + S.continent)); })()}
-      ${(() => { const c = sentCamps().slice(-1)[0]; if (!c) return card('Newsletters sent', S.camps ? 0 : '…', 'Brevo campaigns'); const x = campSummary(c); return card('Last newsletter', fmtDate(c.sent_at), `${num(x.sent)} sent · ${x.opened ? pct(x.opened, x.sent) + ' opened' : 'opens not in yet'}`); })()}
+      ${(() => { const c = sentCamps().slice(-1)[0]; if (!c) return card('Newsletters sent', S.camps ? 0 : '…', 'Brevo campaigns'); const x = campSummary(c); return card('Last newsletter', fmtDate(c.sent_at), `${num(x.sent)} sent · ${x.opened ? pct(x.opened, x.base) + ' opened' : 'opens not in yet'}`); })()}
       ${card('Stakeholders mapped', rec.stakeholder.length, rec.goal.filter(g => g.data.wording).length + ' / 4 CSP goals entered')}
       ${card('Partnership assessments', rec.assessment.length, rec.assessment.filter(a => a.data.status === 'Approved').length + ' approved')}
       ${card('Partnerships tracked', rec.partner.length, due ? due + ' follow-ups due' : 'No follow-ups due', due ? 'warn' : '')}
@@ -597,7 +597,8 @@ function campSummary(c) {
   // Brevo's report figures win when entered (they include opens from before tracking started).
   const best = k => r[k] != null ? Math.max(r[k], t[k]) : t[k];
   const sent = c.recipients || ppl.length;
-  return { sent, hasEvents, tracked: t, report: r, opened: best('opened'), clicked: best('clicked'), unsubscribed: best('unsubscribed'), bounced: best('bounced'), delivered: r.delivered ?? (t.delivered || null) };
+  const delivered = r.delivered ?? (t.delivered || null);
+  return { sent, base: delivered || sent, hasEvents, tracked: t, report: r, opened: best('opened'), clicked: best('clicked'), unsubscribed: best('unsubscribed'), bounced: best('bounced'), delivered };
 }
 function readLabel(sub) {
   const cs = sentCamps().filter(c => onListAt(sub, c)); if (!cs.length) return '—';
@@ -612,21 +613,21 @@ function renderSent() {
   const cs = [...(S.camps || [])].sort((a, b) => String(b.sent_at || '9').localeCompare(String(a.sent_at || '9')));
   const anyEvents = (S.cevents || []).length > 0;
   const sum = cs.filter(c => c.sent_at).map(campSummary);
-  const rate = (k) => { const s = sum.reduce((a, x) => a + (x.sent || 0), 0); return s ? pct(sum.reduce((a, x) => a + (x[k] || 0), 0), s) : '—'; };
+  const rate = (k) => { const s = sum.reduce((a, x) => a + (x.base || 0), 0); return s ? pct(sum.reduce((a, x) => a + (x[k] || 0), 0), s) : '—'; };
   const cards = cs.map(c => {
     const x = campSummary(c), open = S.campOpen === c.id;
     const stat = (label, v, of) => `<div><b>${v == null ? '—' : num(v)}</b><span>${esc(label)}${of && v != null ? ` · ${pct(v, of)}` : ''}</span></div>`;
     return `<article class="panel nl-camp${open ? ' open' : ''}">
       <div class="rowhead"><div><span class="eyebrow">${c.sent_at ? esc(fmtDT(c.sent_at)) : 'Not sent yet'}${c.brevo_id ? ` · Brevo #${esc(c.brevo_id)}` : ''}</span><h3>${esc(c.name)}</h3><p class="muted nl-subject">${esc(c.subject || '')}</p></div>
         <div class="actions"><button class="button secondary small" data-action="camp-edit" data-id="${esc(c.id)}">Edit</button><button class="button small" data-action="camp-toggle" data-id="${esc(c.id)}" aria-expanded="${open}">${open ? 'Hide people' : 'Who opened'}</button></div></div>
-      <div class="nl-stats">${stat('Sent to', x.sent)}${stat('Opened', x.opened, x.sent)}${stat('Clicked', x.clicked, x.sent)}${stat('Unsubscribed', x.unsubscribed, x.sent)}${stat('Bounced', x.bounced, x.sent)}</div>
+      <div class="nl-stats">${stat('Sent to', x.sent)}${stat('Delivered', x.delivered, x.sent)}${stat('Opened', x.opened, x.base)}${stat('Clicked', x.clicked, x.base)}${stat('Unsubscribed', x.unsubscribed, x.base)}${stat('Not delivered', x.bounced, x.sent)}</div>
       <p class="tiny muted">${esc(c.list_name || 'List not recorded')}${x.hasEvents ? ` · Tracked per person: ${x.tracked.opened} opened, ${x.tracked.clicked} clicked` : ' · No per-person events from Brevo yet'}${Object.keys(x.report).length ? ' · Totals include figures copied from Brevo’s report' : ''}</p>
       ${c.notes ? `<p class="tiny">${esc(c.notes)}</p>` : ''}
       ${open ? campDetail(c) : ''}</article>`;
   }).join('');
   return `<section class="rowhead section-head"><h2>Newsletters sent</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><button class="button" data-action="camp-add">Add newsletter</button></div></section>
     ${S.campsError ? `<div class="notice warn" role="alert">${esc(S.campsError)}</div>` : ''}
-    <section class="grid four crm-cards">${card('Newsletters sent', sum.length, sum.length ? 'Last: ' + fmtDate(cs.find(c => c.sent_at)?.sent_at) : 'None yet')}${card('Average open rate', rate('opened'), 'Of everyone it was sent to')}${card('Average click rate', rate('clicked'), 'Clicked at least one link')}${card('Unsubscribed after a newsletter', sum.reduce((a, x) => a + (x.unsubscribed || 0), 0), 'Across all newsletters')}</section>
+    <section class="grid four crm-cards">${card('Newsletters sent', sum.length, sum.length ? 'Last: ' + fmtDate(cs.find(c => c.sent_at)?.sent_at) : 'None yet')}${card('Average open rate', rate('opened'), 'Of emails delivered, as Brevo counts it')}${card('Average click rate', rate('clicked'), 'Of emails delivered, clicked at least one link')}${card('Unsubscribed after a newsletter', sum.reduce((a, x) => a + (x.unsubscribed || 0), 0), 'Across all newsletters')}</section>
     ${anyEvents ? '' : `<div class="notice" role="status">Opens and clicks per person appear here as soon as Brevo starts sending them. Until then, use “Edit” to copy the totals from Brevo’s campaign report.</div>`}
     ${cards || '<p class="muted">No newsletters recorded yet. Use “Add newsletter”.</p>'}`;
 }
@@ -648,7 +649,7 @@ function campModal(id) {
     ${field('Sent on (your time)', 'sent_at', toLocalInput(c.sent_at), 'datetime-local')}${field('Brevo campaign number (the #)', 'brevo_id', c.brevo_id ?? '', 'number')}
     ${field('List', 'list_name', c.list_name)}${field('Sent to (recipients)', 'recipients', c.recipients ?? '', 'number')}
     <p class="tiny field full"><b>Totals from Brevo’s report</b> (optional). In Brevo, open Marketing → Campaigns → this campaign, and copy the numbers. They’re used when they’re higher than what the CRM tracked itself.</p>
-    ${['delivered', 'opened', 'clicked', 'unsubscribed', 'bounced'].map(k => field(k[0].toUpperCase() + k.slice(1), 'r_' + k, r[k] ?? '', 'number')).join('')}
+    ${[['delivered', 'Delivered'], ['opened', 'Opened'], ['clicked', 'Clicked'], ['unsubscribed', 'Unsubscribed'], ['bounced', 'Not delivered (sent minus delivered)']].map(([k, l]) => field(l, 'r_' + k, r[k] ?? '', 'number')).join('')}
     ${field('Notes (what it was about)', 'notes', c.notes, 'area')}
     <div class="actions field full"><button class="button" type="submit">Save</button>${id ? `<button class="button danger" type="button" data-action="camp-delete" data-id="${esc(id)}">Delete</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div></form>`);
 }
