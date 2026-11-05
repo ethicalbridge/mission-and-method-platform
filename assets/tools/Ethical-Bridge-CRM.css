@@ -184,3 +184,49 @@ table{border-collapse:collapse;width:100%}
 .crm-groups.nl-groups { grid-template-columns: minmax(150px, .7fr) 3fr 1.6fr; }
 .nl-groups .crm-quick { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
 @media(max-width:1100px){ .crm-groups.nl-groups { grid-template-columns: 1fr; } }
+
+/* Newsletter tab: sub-views, newsletters sent, growth timeline (5 Nov 2026) */
+.nl-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 16px; border-bottom: 1px solid var(--line); }
+.nl-tabs button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 9px 14px; font: inherit; font-weight: 800; color: var(--muted); cursor: pointer; }
+.nl-tabs button:hover { color: var(--deep); }
+.nl-tabs button.active { color: var(--teal); border-bottom-color: var(--teal); }
+.nl-camp { margin-top: 14px; }
+.nl-camp h3 { margin: 4px 0 2px; font-size: 19px; color: var(--deep); }
+.nl-subject { margin: 0; font-size: 14px; }
+.nl-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 14px 0 8px; }
+.nl-stats > div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; }
+.nl-stats b { display: block; font-size: 22px; color: var(--teal); font-weight: 900; line-height: 1.1; }
+.nl-stats span { display: block; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; font-weight: 800; color: var(--muted); margin-top: 3px; }
+@media (max-width: 760px) { .nl-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.nl-people { margin-top: 10px; }
+.nl-people td .tiny { display: block; }
+.nl-range { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.nl-chart { margin: 0; overflow-x: auto; }
+.nl-chart svg { width: 100%; min-width: 640px; height: auto; display: block; }
+.nl-chart figcaption { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; color: var(--muted); }
+.nl-key { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.nl-key.o, .nl-bar-o { fill: #b9cbd6; background: #b9cbd6; }
+.nl-key.s, .nl-bar-s { fill: var(--teal); background: var(--teal); }
+.nl-key.t { background: var(--deep); height: 3px; vertical-align: 3px; }
+.nl-key.c { background: var(--coral); }
+.nl-line { fill: none; stroke: var(--deep); stroke-width: 2.5; stroke-linejoin: round; }
+.nl-dotp { fill: #fff; stroke: var(--deep); stroke-width: 2; }
+.nl-line-lab { font-size: 13px; font-weight: 900; fill: var(--deep); }
+.nl-base { stroke: var(--line); stroke-width: 1; }
+.nl-camp-line { stroke: var(--coral); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.nl-flag rect { fill: var(--coral); }
+.nl-flag path { fill: none; stroke: #fff; stroke-width: 1.4; }
+.nl-val { font-size: 11px; font-weight: 800; fill: var(--ink, #1d2b29); text-anchor: middle; }
+.nl-xl { font-size: 11px; fill: var(--muted); text-anchor: middle; }
+.nl-ax-title { font-size: 12px; font-weight: 900; fill: var(--deep); letter-spacing: .02em; }
+.nl-ax-line { fill: var(--muted); font-weight: 700; }
+tr.nl-wk-camp td { background: #fff5ec; }
+.nl-log { list-style: none; margin: 0; padding: 0; }
+.nl-day { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.nl-day:first-child { border-top: 0; }
+.nl-date { font-weight: 900; color: var(--deep); font-size: 14px; }
+.nl-day ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.nl-day li { margin: 2px 0; }
+.nl-ev-camp { color: var(--coral); }
+.nl-ev-camp b, .nl-ev-sub b { color: var(--deep); }
+@media (max-width: 650px) { .nl-day { grid-template-columns: 1fr; gap: 4px; } }

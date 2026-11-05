@@ -14,6 +14,9 @@
    - Outreach marks live in ebcrm_outreach (one row per workspace + organisation).
    - Campaigns, CSP goals, stakeholders, partnership records and PAT assessments live in
      ebcrm_records (kind + JSON data).
+   - Newsletter: subscribers in ebcrm_newsletter; newsletters sent in ebcrm_campaigns; per-person
+     Brevo events (delivered, opened, clicked, bounced, unsubscribed) in ebcrm_campaign_events, all
+     kept up to date by the ebcrm-brevo-webhook Edge Function.
 */
 import { PAT_SECTIONS } from './Ethical-Bridge-CRM-PAT.js';
 
@@ -79,6 +82,7 @@ const S = {
   mapF: { goal: '', role: '', type: '', engaged: '', q: '' }, trackQ: '', patFilter: '',
   msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '' },
   subs: null, subsError: '', nf: { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
+  camps: null, cevents: [], campsError: '', nlView: 'Subscribers', campOpen: '', tlRange: 'all',
   modal: '', message: '', saving: 0, pat: null, patSection: 0,
 };
 const root = document.getElementById('app');
@@ -124,9 +128,10 @@ async function loadMessages() {
 }
 
 async function loadNewsletter() {
-  S.subsError = '';
-  try { S.subs = (await api('newsletter')).subscribers; }
-  catch (e) { S.subs = S.subs || []; S.subsError = e?.message || 'Could not load the newsletter list.'; }
+  S.subsError = ''; S.campsError = '';
+  const [subs, camps] = await Promise.allSettled([api('newsletter'), api('campaigns')]);
+  if (subs.status === 'fulfilled') S.subs = subs.value.subscribers; else { S.subs = S.subs || []; S.subsError = subs.reason?.message || 'Could not load the newsletter list.'; }
+  if (camps.status === 'fulfilled') { S.camps = camps.value.campaigns; S.cevents = camps.value.events; } else { S.camps = S.camps || []; S.campsError = camps.reason?.message || 'Could not load the newsletters sent.'; }
   if (['Newsletter', 'Dashboard'].includes(S.view)) render();
 }
 
@@ -255,6 +260,7 @@ function renderDashboard() {
       ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
       ${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate · ' + s.interviewed + ' interviewed')}
       ${(() => { if (!S.subs) return card('Newsletter subscribers', '…', 'Live from Brevo'); const a = newsletterRows().filter(r => r.sub.subscribed); const m = a.filter(r => r.org && inContinent(r.org)).length; return card('Newsletter subscribers', a.length, m + ' matched to organisations' + (S.continent === 'All' ? '' : ' in ' + S.continent)); })()}
+      ${(() => { const c = sentCamps().slice(-1)[0]; if (!c) return card('Newsletters sent', S.camps ? 0 : '…', 'Brevo campaigns'); const x = campSummary(c); return card('Last newsletter', fmtDate(c.sent_at), `${num(x.sent)} sent · ${x.opened ? pct(x.opened, x.sent) + ' opened' : 'opens not in yet'}`); })()}
       ${card('Stakeholders mapped', rec.stakeholder.length, rec.goal.filter(g => g.data.wording).length + ' / 4 CSP goals entered')}
       ${card('Partnership assessments', rec.assessment.length, rec.assessment.filter(a => a.data.status === 'Approved').length + ' approved')}
       ${card('Partnerships tracked', rec.partner.length, due ? due + ' follow-ups due' : 'No follow-ups due', due ? 'warn' : '')}
@@ -490,7 +496,7 @@ function filteredNewsletter() {
     return true;
   }).sort((a, b) => ('same other none'.indexOf(a.kind) - 'same other none'.indexOf(b.kind)) || (a.org && b.org ? byCountry(a.org, b.org) : a.sub.email.localeCompare(b.sub.email)));
 }
-function renderNewsletter() {
+function renderSubscribers() {
   if (S.subs === null) return `<p class="muted crm-loading">Loading the newsletter list…</p>`;
   const rows = newsletterRows(), active = rows.filter(r => r.sub.subscribed);
   const matched = active.filter(r => r.org), count = k => active.filter(r => r.kind === k).length;
@@ -512,9 +518,10 @@ function renderNewsletter() {
       <td>${s.subscribed ? esc(fmt(s.subscribed_at)) : `<span class="pill bad">Unsubscribed</span><br><span class="tiny">${esc(fmt(s.unsubscribed_at))}</span>`}</td>
       <td class="tiny"><span class="nl-dot nl-${r.kind}"></span>${esc(NL_KIND[r.kind])}${r.how && r.kind === 'other' ? `<br><span class="muted">${esc(r.how)}</span>` : ''}</td>
       <td>${out ? `${out.reply_status === 'Replied' ? '<span class="pill">Replied</span>' : esc(out.reply_status === 'None' ? (out.email_status === 'Sent' ? 'Emailed' : 'Not emailed') : out.reply_status)}` : '<span class="muted">—</span>'}</td>
+      <td class="tiny">${esc(readLabel(s))}</td>
       <td><button class="button secondary small" data-action="nl-pick" data-id="${esc(s.id)}">${o ? 'Change' : 'Link'}</button></td></tr>`;
   });
-  return `<section class="rowhead section-head"><h2>Newsletter</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><label class="button secondary nl-upload">Import Brevo CSV<input type="file" accept=".csv,text/csv" data-action="nl-csv" hidden></label><button class="button" data-action="export-nl">Export</button></div></section>
+  return `<section class="rowhead section-head"><h2>Subscribers</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><label class="button secondary nl-upload">Import Brevo CSV<input type="file" accept=".csv,text/csv" data-action="nl-csv" hidden></label><button class="button" data-action="export-nl">Export</button></div></section>
     ${S.subsError ? `<div class="notice warn" role="alert">${esc(S.subsError)}</div>` : ''}
     <section class="crm-groups crm-conv-groups nl-groups">
       <div class="crm-group crm-group-all crm-quick">${qb('All subscribers', active.length, 'all')}</div>
@@ -522,7 +529,7 @@ function renderNewsletter() {
       <div class="crm-group"><h3>Engagement</h3><div class="crm-quick">${qb('Organisations that also replied', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
     </section>
     <p class="tiny crm-hint nl-legend"><span><i class="nl-dot nl-same"></i>Green: the subscriber’s email is the one on the organisation’s Ethical Bridge profile.</span><span><i class="nl-dot nl-other"></i>Amber: we found the organisation through another email (the one they replied from, their web domain, their name, or linked by hand).</span><span><i class="nl-dot nl-none"></i>Red: no organisation in Ethical Bridge yet, including our own team addresses. Use “Link” to match one.</span></p>
-    <p class="tiny crm-hint">From the Brevo newsletter list. To add new sign-ups, export the list from Brevo and use “Import Brevo CSV”.</p>
+    <p class="tiny crm-hint">From the Brevo newsletter list, kept up to date automatically by Brevo. Use “Import Brevo CSV” only if someone is missing.</p>
     <section class="panel crm-filters"><div class="crm-frow"><b>General</b>
       <label><span>Continent</span>${sel('continent', continents, 'All continents')}</label>
       <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
@@ -533,9 +540,210 @@ function renderNewsletter() {
       <label><span>Status</span>${sel('status', ['Subscribed', 'Unsubscribed'], 'All')}</label>
       <button class="button secondary small" data-action="clear-nfilters">Clear filters</button></div></section>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Newsletter subscribers</span></div><span class="tiny"><b>${list.length}</b> subscribers</span></div>
-    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'Subscriber', 'Subscribed', 'How matched', 'Outreach', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
-    <tbody>${trs.join('') || '<tr><td colspan="7">No subscribers match these filters.</td></tr>'}</tbody></table></div></section>`;
+    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'Subscriber', 'Subscribed', 'How matched', 'Outreach', 'Newsletters opened', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${trs.join('') || '<tr><td colspan="8">No subscribers match these filters.</td></tr>'}</tbody></table></div></section>`;
 }
+// ---------- Newsletter tab: Subscribers · Newsletters sent · Growth timeline ----------
+// Newsletters sent live in ebcrm_campaigns. Per-person events (delivered, opened, clicked, bounced, spam,
+// unsubscribed) arrive from Brevo through the ebcrm-brevo-webhook Edge Function into ebcrm_campaign_events.
+const NL_VIEWS = [['Subscribers', 'Subscribers'], ['Sent', 'Newsletters sent'], ['Timeline', 'Growth timeline']];
+function renderNewsletter() {
+  const tabs = `<nav class="nl-tabs" aria-label="Newsletter views">${NL_VIEWS.map(([k, l]) => `<button type="button" data-nlview="${k}" class="${S.nlView === k ? 'active' : ''}"${S.nlView === k ? ' aria-current="page"' : ''}>${esc(l)}</button>`).join('')}</nav>`;
+  const body = S.nlView === 'Sent' ? renderSent() : S.nlView === 'Timeline' ? renderTimeline() : renderSubscribers();
+  return tabs + body;
+}
+const pad2 = n => String(n).padStart(2, '0');
+const ymd = x => `${x.getFullYear()}-${pad2(x.getMonth() + 1)}-${pad2(x.getDate())}`;
+const dayKey = d => { if (!d) return ''; const s = String(d); if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; const x = new Date(s); return isNaN(x) ? '' : ymd(x); };
+const weekOf = k => { const x = new Date(k + 'T00:00:00'); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return ymd(x); }; // Monday
+const addDays = (k, n) => { const x = new Date(k + 'T00:00:00'); x.setDate(x.getDate() + n); return ymd(x); };
+const fmtDT = d => { if (!d) return '—'; const x = new Date(d); return isNaN(x) ? String(d) : x.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); };
+const fmtShort = k => new Date(k + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+const num = n => Number(n || 0).toLocaleString('en-GB');
+const sentCamps = () => (S.camps || []).filter(c => c.sent_at).sort((a, b) => a.sent_at.localeCompare(b.sent_at));
+// Was this subscriber on the list when the newsletter went out?
+function onListAt(sub, c) {
+  if (!c.sent_at) return false;
+  const t = c.sent_at;
+  if (sub.subscribed_at && new Date(sub.subscribed_at) > new Date(t)) return false;
+  if (sub.unsubscribed_at && new Date(sub.unsubscribed_at) <= new Date(t)) return false;
+  return sub.subscribed || !!sub.unsubscribed_at;
+}
+let peopleCache = null;
+function campPeople(c) {
+  if (!peopleCache || peopleCache.ev !== S.cevents) peopleCache = { ev: S.cevents, by: new Map() };
+  if (peopleCache.by.has(c.id)) return peopleCache.by.get(c.id);
+  const m = new Map();
+  const get = e => { if (!m.has(e)) m.set(e, { email: e, delivered: '', opened: '', opens: 0, clicks: [], bounced: '', unsub: '', spam: '' }); return m.get(e); };
+  for (const s of S.subs || []) if (onListAt(s, c)) get(String(s.email).toLowerCase());
+  for (const e of S.cevents || []) {
+    if (e.brevo_id !== c.brevo_id || !c.brevo_id) continue;
+    const p = get(e.email), at = e.occurred_at;
+    if (e.event === 'delivered') p.delivered ||= at;
+    else if (e.event === 'opened') { p.opened ||= at; p.opens++; }
+    else if (e.event === 'clicked') { p.opened ||= at; if (e.url && !p.clicks.includes(e.url)) p.clicks.push(e.url); }
+    else if (/bounce/.test(e.event)) p.bounced = e.event === 'hard_bounce' ? 'Hard bounce' : 'Soft bounce';
+    else if (e.event === 'unsubscribed') p.unsub ||= at;
+    else if (e.event === 'spam') p.spam ||= at;
+  }
+  const out = [...m.values()];
+  peopleCache.by.set(c.id, out);
+  return out;
+}
+function campSummary(c) {
+  const ppl = campPeople(c), hasEvents = (S.cevents || []).some(e => e.brevo_id === c.brevo_id && c.brevo_id);
+  const r = c.report || {};
+  const t = { delivered: ppl.filter(p => p.delivered).length, opened: ppl.filter(p => p.opened).length, clicked: ppl.filter(p => p.clicks.length).length, unsubscribed: ppl.filter(p => p.unsub).length, bounced: ppl.filter(p => p.bounced).length };
+  // Brevo's report figures win when entered (they include opens from before tracking started).
+  const best = k => r[k] != null ? Math.max(r[k], t[k]) : t[k];
+  const sent = c.recipients || ppl.length;
+  return { sent, hasEvents, tracked: t, report: r, opened: best('opened'), clicked: best('clicked'), unsubscribed: best('unsubscribed'), bounced: best('bounced'), delivered: r.delivered ?? (t.delivered || null) };
+}
+function readLabel(sub) {
+  const cs = sentCamps().filter(c => onListAt(sub, c)); if (!cs.length) return '—';
+  const e = String(sub.email).toLowerCase();
+  const opened = cs.filter(c => campPeople(c).find(p => p.email === e)?.opened).length;
+  return `${opened} of ${cs.length}`;
+}
+const nlCampLink = url => { try { const u = new URL(url); return (u.hostname.replace(/^www\./, '') + u.pathname).replace(/\/$/, ''); } catch { return url; } };
+
+function renderSent() {
+  if (S.camps === null) return `<p class="muted crm-loading">Loading the newsletters sent…</p>`;
+  const cs = [...(S.camps || [])].sort((a, b) => String(b.sent_at || '9').localeCompare(String(a.sent_at || '9')));
+  const anyEvents = (S.cevents || []).length > 0;
+  const sum = cs.filter(c => c.sent_at).map(campSummary);
+  const rate = (k) => { const s = sum.reduce((a, x) => a + (x.sent || 0), 0); return s ? pct(sum.reduce((a, x) => a + (x[k] || 0), 0), s) : '—'; };
+  const cards = cs.map(c => {
+    const x = campSummary(c), open = S.campOpen === c.id;
+    const stat = (label, v, of) => `<div><b>${v == null ? '—' : num(v)}</b><span>${esc(label)}${of && v != null ? ` · ${pct(v, of)}` : ''}</span></div>`;
+    return `<article class="panel nl-camp${open ? ' open' : ''}">
+      <div class="rowhead"><div><span class="eyebrow">${c.sent_at ? esc(fmtDT(c.sent_at)) : 'Not sent yet'}${c.brevo_id ? ` · Brevo #${esc(c.brevo_id)}` : ''}</span><h3>${esc(c.name)}</h3><p class="muted nl-subject">${esc(c.subject || '')}</p></div>
+        <div class="actions"><button class="button secondary small" data-action="camp-edit" data-id="${esc(c.id)}">Edit</button><button class="button small" data-action="camp-toggle" data-id="${esc(c.id)}" aria-expanded="${open}">${open ? 'Hide people' : 'Who opened'}</button></div></div>
+      <div class="nl-stats">${stat('Sent to', x.sent)}${stat('Opened', x.opened, x.sent)}${stat('Clicked', x.clicked, x.sent)}${stat('Unsubscribed', x.unsubscribed, x.sent)}${stat('Bounced', x.bounced, x.sent)}</div>
+      <p class="tiny muted">${esc(c.list_name || 'List not recorded')}${x.hasEvents ? ` · Tracked per person: ${x.tracked.opened} opened, ${x.tracked.clicked} clicked` : ' · No per-person events from Brevo yet'}${Object.keys(x.report).length ? ' · Totals include figures copied from Brevo’s report' : ''}</p>
+      ${c.notes ? `<p class="tiny">${esc(c.notes)}</p>` : ''}
+      ${open ? campDetail(c) : ''}</article>`;
+  }).join('');
+  return `<section class="rowhead section-head"><h2>Newsletters sent</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><button class="button" data-action="camp-add">Add newsletter</button></div></section>
+    ${S.campsError ? `<div class="notice warn" role="alert">${esc(S.campsError)}</div>` : ''}
+    <section class="grid four crm-cards">${card('Newsletters sent', sum.length, sum.length ? 'Last: ' + fmtDate(cs.find(c => c.sent_at)?.sent_at) : 'None yet')}${card('Average open rate', rate('opened'), 'Of everyone it was sent to')}${card('Average click rate', rate('clicked'), 'Clicked at least one link')}${card('Unsubscribed after a newsletter', sum.reduce((a, x) => a + (x.unsubscribed || 0), 0), 'Across all newsletters')}</section>
+    ${anyEvents ? '' : `<div class="notice" role="status">Opens and clicks per person appear here as soon as Brevo starts sending them. Until then, use “Edit” to copy the totals from Brevo’s campaign report.</div>`}
+    ${cards || '<p class="muted">No newsletters recorded yet. Use “Add newsletter”.</p>'}`;
+}
+function campDetail(c) {
+  const ix = new Map((S.subs || []).map(s => [String(s.email).toLowerCase(), s]));
+  const rows = campPeople(c).map(p => { const s = ix.get(p.email); const m = s ? matchSubscriber(s) : { org: null }; return { p, org: m.org }; })
+    .sort((a, b) => (!!b.p.clicks.length - !!a.p.clicks.length) || (!!b.p.opened - !!a.p.opened) || (a.org && b.org ? byCountry(a.org, b.org) : a.p.email.localeCompare(b.p.email)));
+  const status = p => p.unsub ? '<span class="pill bad">Unsubscribed</span>' : p.spam ? '<span class="pill bad">Marked as spam</span>' : p.bounced ? `<span class="pill warn">${esc(p.bounced)}</span>` : p.clicks.length ? '<span class="pill">Clicked</span>' : p.opened ? '<span class="pill">Opened</span>' : p.delivered ? '<span class="pill dim">Delivered</span>' : '<span class="pill dim">No data yet</span>';
+  return `<div class="tablewrap crm-table nl-people"><table><thead><tr><th>Organisation</th><th>Email</th><th>Result</th><th>First opened</th><th>Links clicked</th></tr></thead><tbody>
+    ${rows.map(({ p, org }) => `<tr><td>${org ? `<button class="link" data-action="org" data-id="${esc(org.id)}">${esc(org.name)}</button><span class="tiny">${esc(org.country)}</span>` : '<span class="muted">—</span>'}</td><td>${esc(p.email)}</td><td>${status(p)}</td><td class="tiny">${p.opened ? esc(fmtDT(p.opened)) : '—'}</td><td class="tiny">${p.clicks.map(u => esc(nlCampLink(u))).join('<br>') || '—'}</td></tr>`).join('') || '<tr><td colspan="5">No recipients recorded.</td></tr>'}
+  </tbody></table></div><p class="tiny muted">People shown were on the list when it was sent, plus anyone Brevo reported on. Opens can be undercounted: some email apps block tracking, and Apple Mail can count opens that didn’t happen.</p>`;
+}
+const toLocalInput = d => { if (!d) return ''; const x = new Date(d); return isNaN(x) ? '' : `${ymd(x)}T${pad2(x.getHours())}:${pad2(x.getMinutes())}`; };
+function campModal(id) {
+  const c = (S.camps || []).find(x => x.id === id) || { name: '', subject: '', sent_at: '', list_name: 'Ethical Bridge Newsletter (#3)', recipients: '', brevo_id: '', report: {}, notes: '' };
+  const r = c.report || {};
+  return modal(id ? 'Edit newsletter' : 'Add newsletter', `<form class="form" data-form="nlcamp" data-id="${esc(id || '')}">
+    ${field('Name', 'name', c.name, 'text', 'required')}${field('Subject line', 'subject', c.subject)}
+    ${field('Sent on (your time)', 'sent_at', toLocalInput(c.sent_at), 'datetime-local')}${field('Brevo campaign number (the #)', 'brevo_id', c.brevo_id ?? '', 'number')}
+    ${field('List', 'list_name', c.list_name)}${field('Sent to (recipients)', 'recipients', c.recipients ?? '', 'number')}
+    <p class="tiny field full"><b>Totals from Brevo’s report</b> (optional). In Brevo, open Marketing → Campaigns → this campaign, and copy the numbers. They’re used when they’re higher than what the CRM tracked itself.</p>
+    ${['delivered', 'opened', 'clicked', 'unsubscribed', 'bounced'].map(k => field(k[0].toUpperCase() + k.slice(1), 'r_' + k, r[k] ?? '', 'number')).join('')}
+    ${field('Notes (what it was about)', 'notes', c.notes, 'area')}
+    <div class="actions field full"><button class="button" type="submit">Save</button>${id ? `<button class="button danger" type="button" data-action="camp-delete" data-id="${esc(id)}">Delete</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div></form>`);
+}
+async function saveCamp(id, d) {
+  const campaign = { name: d.name, subject: d.subject, list_name: d.list_name, notes: d.notes, brevo_id: d.brevo_id, recipients: d.recipients, sent_at: d.sent_at ? new Date(d.sent_at).toISOString() : null,
+    report: Object.fromEntries(['delivered', 'opened', 'clicked', 'unsubscribed', 'bounced'].map(k => [k, d['r_' + k]]).filter(([, v]) => v !== '' && v != null)) };
+  try { const { row } = await api('campaign.save', { id: id || undefined, campaign }); S.camps = [...(S.camps || []).filter(x => x.id !== row.id), row]; peopleCache = null; S.modal = ''; flash('Newsletter saved.'); }
+  catch (e) { flash('Could not save: ' + e.message); }
+}
+
+// Growth timeline: outreach, replies, sign-ups, unsubscribes and newsletters, by day and by week.
+function timelineData() {
+  const days = new Map();
+  const d = k => { if (!days.has(k)) days.set(k, { outreach: 0, replies: new Set(), subs: [], unsubs: [], camps: [] }); return days.get(k); };
+  for (const [, r] of S.outreach) if (r.date_sent && r.email_status !== 'Not sent') { const k = dayKey(r.date_sent); if (k) d(k).outreach++; }
+  for (const m of S.msgs || []) if (m.direction === 'in' && m.sent_at) { const k = dayKey(m.sent_at); if (k) d(k).replies.add(m.org_id); }
+  for (const s of S.subs || []) {
+    if (s.subscribed_at) { const k = dayKey(s.subscribed_at); if (k) d(k).subs.push(s); }
+    if (s.unsubscribed_at) { const k = dayKey(s.unsubscribed_at); if (k) d(k).unsubs.push(s); }
+  }
+  for (const c of sentCamps()) d(dayKey(c.sent_at)).camps.push(c);
+  const keys = [...days.keys()].sort(); if (!keys.length) return { days, weeks: [] };
+  const end = weekOf(today() > keys[keys.length - 1] ? today() : keys[keys.length - 1]);
+  let start = weekOf(keys[0]);
+  if (S.tlRange !== 'all') { const lim = addDays(end, -7 * (Number(S.tlRange) - 1)); if (lim > start) start = lim; }
+  const before = (S.subs || []).filter(s => s.subscribed_at && dayKey(s.subscribed_at) < start).length - (S.subs || []).filter(s => s.unsubscribed_at && dayKey(s.unsubscribed_at) < start).length;
+  const weeks = []; let total = before;
+  for (let w = start; w <= end; w = addDays(w, 7)) {
+    const x = { week: w, outreach: 0, replies: 0, subs: 0, unsubs: 0, camps: [] };
+    for (let i = 0; i < 7; i++) { const v = days.get(addDays(w, i)); if (!v) continue; x.outreach += v.outreach; x.replies += v.replies.size; x.subs += v.subs.length; x.unsubs += v.unsubs.length; x.camps.push(...v.camps); }
+    total += x.subs - x.unsubs; x.total = total; weeks.push(x);
+  }
+  return { days, weeks, start };
+}
+function timelineChart(weeks) {
+  if (!weeks.length) return '';
+  const W = 960, L = 30, R = 46, step = (W - L - R) / weeks.length, bw = Math.max(6, Math.min(70, step - 8));
+  // Panel 1 (outreach) and panel 2 (subscribers): each has a title row, headroom for value labels, then bars.
+  const P1 = { top: 22, h: 110 }, P2 = { top: 22 + 110 + 58, h: 140 };
+  const base1 = P1.top + 18 + P1.h, base2 = P2.top + 18 + P2.h, H = base2 + 52;
+  const maxO = Math.max(1, ...weeks.map(w => w.outreach)), maxS = Math.max(1, ...weeks.map(w => w.subs)), maxT = Math.max(1, ...weeks.map(w => w.total));
+  const x = i => L + i * step + (step - bw) / 2, cx = i => x(i) + bw / 2;
+  const every = Math.ceil(weeks.length / 12);
+  const g = [];
+  g.push(`<text x="${L}" y="${P1.top - 6}" class="nl-ax-title">Organisations emailed per week</text>`);
+  g.push(`<text x="${L}" y="${P2.top - 6}" class="nl-ax-title">New subscribers per week <tspan class="nl-ax-line">— line: total subscribers</tspan></text>`);
+  weeks.forEach((w, i) => {
+    if (w.camps.length) g.push(`<line x1="${cx(i)}" x2="${cx(i)}" y1="${P1.top}" y2="${base2}" class="nl-camp-line"/>`);
+  });
+  weeks.forEach((w, i) => {
+    const h1 = (w.outreach / maxO) * P1.h, h2 = (w.subs / maxS) * P2.h;
+    if (w.outreach) g.push(`<rect x="${x(i)}" y="${base1 - h1}" width="${bw}" height="${h1}" rx="3" class="nl-bar-o"><title>Week of ${fmtShort(w.week)}: ${num(w.outreach)} organisations emailed</title></rect><text x="${cx(i)}" y="${base1 - h1 - 5}" class="nl-val">${num(w.outreach)}</text>`);
+    if (w.subs) g.push(`<rect x="${x(i)}" y="${base2 - h2}" width="${bw}" height="${h2}" rx="3" class="nl-bar-s"><title>Week of ${fmtShort(w.week)}: ${w.subs} new subscribers${w.unsubs ? ', ' + w.unsubs + ' unsubscribed' : ''}</title></rect><text x="${cx(i)}" y="${base2 - h2 - 5}" class="nl-val">+${w.subs}</text>`);
+    if (i % every === 0) g.push(`<text x="${cx(i)}" y="${base2 + 18}" class="nl-xl">${fmtShort(w.week)}</text>`);
+    if (w.camps.length) g.push(`<g class="nl-flag"><title>${esc(w.camps.map(c => c.name).join(', '))}</title><rect x="${cx(i) - 9}" y="${base2 + 26}" width="18" height="13" rx="2"/><path d="M${cx(i) - 9} ${base2 + 26} l9 6.5 l9 -6.5"/></g>`);
+  });
+  const ty = w => base2 - (w.total / maxT) * P2.h;
+  g.push(`<polyline points="${weeks.map((w, i) => `${cx(i)},${ty(w)}`).join(' ')}" class="nl-line"/>`);
+  weeks.forEach((w, i) => g.push(`<circle cx="${cx(i)}" cy="${ty(w)}" r="3" class="nl-dotp"><title>Week of ${fmtShort(w.week)}: ${w.total} subscribers in total</title></circle>`));
+  const li = weeks.length - 1;
+  g.push(`<text x="${cx(li) + 8}" y="${ty(weeks[li]) + 4}" class="nl-line-lab">${weeks[li].total}</text>`);
+  g.push(`<line x1="${L}" x2="${W - R}" y1="${base1}" y2="${base1}" class="nl-base"/><line x1="${L}" x2="${W - R}" y1="${base2}" y2="${base2}" class="nl-base"/>`);
+  return `<figure class="nl-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Weekly organisations emailed, new subscribers and total subscribers">${g.join('')}</svg>
+    <figcaption class="tiny"><span><i class="nl-key o"></i>Organisations emailed</span><span><i class="nl-key s"></i>New subscribers</span><span><i class="nl-key t"></i>Total subscribers</span><span><i class="nl-key c"></i>Newsletter sent</span></figcaption></figure>`;
+}
+function renderTimeline() {
+  if (S.subs === null || S.camps === null || S.msgs === null) return `<p class="muted crm-loading">Loading the timeline…</p>`;
+  const { days, weeks, start } = timelineData();
+  const sumW = k => weeks.reduce((a, w) => a + w[k], 0);
+  const emailed = sumW('outreach'), newSubs = sumW('subs');
+  const active = (S.subs || []).filter(s => s.subscribed).length;
+  const last30 = (S.subs || []).filter(s => s.subscribed_at && dayKey(s.subscribed_at) >= addDays(today(), -29)).length;
+  const range = `<label class="nl-range"><span>Show</span><select data-action="tl-range">${opts([['all', 'Everything'], ['13', 'Last 3 months'], ['8', 'Last 8 weeks'], ['4', 'Last 4 weeks']], S.tlRange)}</select></label>`;
+  const rows = [...weeks].reverse().map(w => `<tr${w.camps.length ? ' class="nl-wk-camp"' : ''}><td>${fmtDate(w.week)}</td><td>${num(w.outreach)}</td><td>${num(w.replies)}</td><td>${w.subs ? '<b>+' + w.subs + '</b>' : '0'}</td><td>${w.unsubs ? '−' + w.unsubs : '0'}</td><td>${w.total}</td><td>${w.outreach ? (w.subs / w.outreach * 100).toFixed(1) : '—'}</td><td class="tiny">${w.camps.map(c => esc(c.name)).join('<br>') || '—'}</td></tr>`).join('');
+  const log = [...days.entries()].filter(([k]) => k >= (start || '')).sort((a, b) => b[0].localeCompare(a[0])).map(([k, v]) => {
+    const items = [];
+    for (const c of v.camps) { const x = campSummary(c); items.push(`<li class="nl-ev-camp"><b>Newsletter sent:</b> ${esc(c.name)} to ${num(x.sent)} subscribers${x.opened ? ` · ${x.opened} opened` : ''} <button class="link" data-action="camp-goto" data-id="${esc(c.id)}">See who opened</button></li>`); }
+    if (v.subs.length) items.push(`<li class="nl-ev-sub"><b>${v.subs.length} new subscriber${v.subs.length > 1 ? 's' : ''}:</b> ${v.subs.map(s => { const o = matchSubscriber(s).org; return esc(o ? o.name : s.email); }).join(', ')}</li>`);
+    if (v.unsubs.length) items.push(`<li class="nl-ev-out"><b>${v.unsubs.length} unsubscribed:</b> ${v.unsubs.map(s => esc(s.email)).join(', ')}</li>`);
+    if (v.outreach) items.push(`<li class="nl-ev-out-mail"><b>${num(v.outreach)} organisations emailed</b> (outreach)</li>`);
+    if (v.replies.size) items.push(`<li><b>${v.replies.size} replies</b> from organisations</li>`);
+    return `<li class="nl-day"><span class="nl-date">${esc(fmtDate(k))}</span><ul>${items.join('')}</ul></li>`;
+  }).join('');
+  return `<section class="rowhead section-head"><h2>Growth timeline</h2><div class="actions">${range}<button class="button secondary" data-action="reload-nl">Refresh</button><button class="button" data-action="export-tl">Export</button></div></section>
+    <section class="grid four crm-cards">${card('Subscribers now', active, `+${last30} in the last 30 days`)}${card('Organisations emailed', num(emailed), S.tlRange === 'all' ? 'All outreach so far' : 'In this period')}${card('New subscribers', newSubs, emailed ? (newSubs / emailed * 100).toFixed(1) + ' per 100 organisations emailed' : 'In this period')}${card('Newsletters sent', weeks.reduce((a, w) => a + w.camps.length, 0), 'In this period')}</section>
+    <section class="panel">${timelineChart(weeks)}<p class="tiny muted">Weeks start on Monday. New subscribers usually follow outreach waves within a few days. The envelope marks the week a newsletter went out.</p></section>
+    <section class="panel"><div class="rowhead"><span class="eyebrow">Week by week</span></div><div class="tablewrap crm-table"><table><thead><tr><th>Week of</th><th>Organisations emailed</th><th>Replies</th><th>New subscribers</th><th>Unsubscribed</th><th>Total subscribers</th><th>Sign-ups per 100 emailed</th><th>Newsletters</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Nothing recorded yet.</td></tr>'}</tbody></table></div></section>
+    <section class="panel"><div class="rowhead"><span class="eyebrow">Day by day</span></div><ol class="nl-log">${log || '<li class="muted">Nothing recorded yet.</li>'}</ol></section>`;
+}
+function exportTimeline() {
+  const { weeks } = timelineData();
+  downloadCsv(`ethical-bridge-growth-${today()}.csv`, ['week_starting', 'organisations_emailed', 'replies', 'new_subscribers', 'unsubscribed', 'total_subscribers', 'signups_per_100_emailed', 'newsletters_sent'],
+    weeks.map(w => [w.week, w.outreach, w.replies, w.subs, w.unsubs, w.total, w.outreach ? (w.subs / w.outreach * 100).toFixed(1) : '', w.camps.map(c => c.name).join('; ')]));
+}
+
 function nlPickModal(id) {
   const s = (S.subs || []).find(x => x.id === id); if (!s) return '';
   const q = norm(S.nlQuery), d = mailDomain(s.email);
@@ -576,8 +784,8 @@ async function importNewsletterCsv(file) {
   loadNewsletter();
 }
 function exportNewsletter() {
-  downloadCsv(`ethical-bridge-newsletter-${today()}.csv`, ['email', 'first_name', 'last_name', 'status', 'subscribed', 'organisation', 'continent', 'region', 'country', 'match_group', 'how_matched', 'reply_status'],
-    filteredNewsletter().map(r => [r.sub.email, r.sub.first_name, r.sub.last_name, r.sub.subscribed ? 'Subscribed' : 'Unsubscribed', (r.sub.subscribed_at || '').slice(0, 10), r.org?.name || '', r.org?.continent || '', r.org?.region || '', r.org?.country || '', NL_KIND[r.kind], r.how, r.org ? outreachOf(r.org.id).reply_status : '']));
+  downloadCsv(`ethical-bridge-newsletter-${today()}.csv`, ['email', 'first_name', 'last_name', 'status', 'subscribed', 'organisation', 'continent', 'region', 'country', 'match_group', 'how_matched', 'reply_status', 'newsletters_opened'],
+    filteredNewsletter().map(r => [r.sub.email, r.sub.first_name, r.sub.last_name, r.sub.subscribed ? 'Subscribed' : 'Unsubscribed', (r.sub.subscribed_at || '').slice(0, 10), r.org?.name || '', r.org?.continent || '', r.org?.region || '', r.org?.country || '', NL_KIND[r.kind], r.how, r.org ? outreachOf(r.org.id).reply_status : '', readLabel(r.sub)]));
 }
 
 function orgModal(id) {
@@ -740,9 +948,10 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter],[data-nquick]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter],[data-nquick],[data-nlview]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-nlview')) { S.nlView = t.dataset.nlview; render(); return; }
   if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { continent: '', region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
@@ -760,8 +969,18 @@ root.addEventListener('click', async e => {
     case 'thread': return openModal(threadModal(id));
     case 'pin': return setPin(id, true);
     case 'unpin': return setPin(id, false);
-    case 'reload-nl': S.subs = null; render(); return loadNewsletter();
+    case 'reload-nl': S.subs = null; S.camps = null; peopleCache = null; render(); return loadNewsletter();
     case 'export-nl': return exportNewsletter();
+    case 'export-tl': return exportTimeline();
+    case 'camp-add': return openModal(campModal(''));
+    case 'camp-edit': return openModal(campModal(id));
+    case 'camp-toggle': S.campOpen = S.campOpen === id ? '' : id; return render();
+    case 'camp-goto': S.nlView = 'Sent'; S.campOpen = id; render(); window.scrollTo(0, 0); return;
+    case 'camp-delete': {
+      if (!confirm('Delete this newsletter from the CRM? Its per-person results are deleted too. Nothing changes in Brevo.')) return;
+      try { await api('campaign.delete', { id }); } catch (err) { return flash('Could not delete: ' + err.message); }
+      S.camps = (S.camps || []).filter(c => c.id !== id); peopleCache = null; S.modal = ''; return flash('Newsletter deleted.');
+    }
     case 'clear-nfilters': S.nf = { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }; S.nfReplied = false; return render();
     case 'nl-pick': S.nlQuery = ''; return openModal(nlPickModal(id));
     case 'nl-link': return nlLink(id, t.dataset.org);
@@ -805,6 +1024,7 @@ root.addEventListener('click', async e => {
 root.addEventListener('change', async e => {
   const t = e.target;
   if (t.dataset.action === 'pat-filter') { S.patFilter = t.value; return render(); }
+  if (t.dataset.action === 'tl-range') { S.tlRange = t.value; return render(); }
   if (t.dataset.out) {
     const field = t.dataset.out, id = t.dataset.id; let value = t.value;
     const patch = { [field]: (field === 'date_sent' || field === 'interview_date') ? (value || null) : value };
@@ -864,6 +1084,7 @@ root.addEventListener('submit', async e => {
       S.orgs.push(o); S.orgs.sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })); S.orgById.set(o.id, o); S.modal = ''; return flash(`${row.name} added.`);
     }
     if (kind === 'campaign') { if (await saveRecord('campaign', id, d)) { S.modal = ''; flash('Campaign saved.'); } return; }
+    if (kind === 'nlcamp') return saveCamp(id, d);
     if (kind === 'goal') { if (await saveRecord('goal', id, { ...d, goal: Number(form.dataset.goal) })) { S.modal = ''; flash('Goal saved.'); } return; }
     if (kind === 'stakeholder') { if (await saveRecord('stakeholder', id, d)) { S.modal = ''; flash('Stakeholder saved.'); } return; }
     if (kind === 'partner') { if (await saveRecord('partner', id, { ...d, org_id: orgIdFromName(d.org_id) })) { S.modal = ''; flash('Record saved.'); } return; }
