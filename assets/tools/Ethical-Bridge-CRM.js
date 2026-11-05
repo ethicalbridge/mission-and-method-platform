@@ -479,7 +479,8 @@ function filteredNewsletter() {
     if (f.status === 'Subscribed' && !r.sub.subscribed) return false;
     if (f.status === 'Unsubscribed' && r.sub.subscribed) return false;
     if (f.match === 'matched' && !r.org) return false;
-    if (f.match === 'unmatched' && r.org) return false;
+    if (f.match === 'unmatched' && (r.org || r.sub.org_id === '')) return false;
+    if (f.match === 'notorg' && r.sub.org_id !== '') return false;
     if (S.continent !== 'All' && !(r.org && r.org.continent === S.continent)) return false;
     if (f.region && r.org?.region !== f.region) return false;
     if (f.country && r.org?.country !== f.country) return false;
@@ -494,7 +495,8 @@ function renderNewsletter() {
   const rows = newsletterRows(), active = rows.filter(r => r.sub.subscribed);
   const inSel = r => S.continent === 'All' || (r.org && r.org.continent === S.continent);
   const base = active.filter(inSel), matched = base.filter(r => r.org);
-  const unmatched = S.continent === 'All' ? active.filter(r => !r.org).length : 0;
+  const unmatched = S.continent === 'All' ? active.filter(r => !r.org && r.sub.org_id !== '').length : 0;
+  const notOrg = S.continent === 'All' ? active.filter(r => r.sub.org_id === '').length : 0;
   const gone = rows.filter(r => !r.sub.subscribed && inSel(r)).length;
   const replied = matched.filter(r => outreachOf(r.org.id).reply_status === 'Replied').length;
   const regions = [...new Set(matched.map(r => r.org.region).filter(Boolean))].sort();
@@ -517,7 +519,7 @@ function renderNewsletter() {
     ${S.subsError ? `<div class="notice warn" role="alert">${esc(S.subsError)}</div>` : ''}
     <section class="crm-groups crm-conv-groups">
       <div class="crm-group crm-group-all crm-quick">${qb(S.continent === 'All' ? 'Subscribers' : 'Subscribers matched in ' + S.continent, base.length, 'all')}</div>
-      <div class="crm-group"><h3>Subscribers</h3><div class="crm-quick">${qb('Matched to an organisation', matched.length, 'matched')}${S.continent === 'All' ? qb('No organisation matched', unmatched, 'unmatched') : ''}${qb('Also replied to our email', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
+      <div class="crm-group"><h3>Subscribers</h3><div class="crm-quick">${qb('Matched to an organisation', matched.length, 'matched')}${S.continent === 'All' ? qb('No organisation matched yet', unmatched, 'unmatched') + qb('Not an organisation (team, individuals)', notOrg, 'notorg') : ''}${qb('Also replied to our email', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
     </section>
     <p class="tiny crm-hint">Live from the Brevo newsletter list: new sign-ups and unsubscribes arrive on their own. Organisations are matched by email, the email they replied from, web domain or name; use “Link” to fix a match.</p>
     <section class="panel crm-filters"><div class="crm-frow"><b>General</b>
@@ -525,7 +527,7 @@ function renderNewsletter() {
       <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
       <label><span>Name</span><input data-nfilter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Organisation or person"></label>
       <label><span>Email address</span><input data-nfilter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email)}" placeholder="Search by email"></label>
-      <label><span>Match</span>${sel('match', [['matched', 'Matched'], ['unmatched', 'Not matched']], 'All')}</label>
+      <label><span>Match</span>${sel('match', [['matched', 'Matched'], ['unmatched', 'Not matched yet'], ['notorg', 'Not an organisation']], 'All')}</label>
       <label><span>Status</span>${sel('status', ['Subscribed', 'Unsubscribed'], 'All')}</label>
       <button class="button secondary small" data-action="clear-nfilters">Clear filters</button></div></section>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Newsletter subscribers</span>${S.continent === 'All' ? '' : `<p class="tiny">Only subscribers matched to organisations in ${esc(S.continent)} are shown. Choose “All” to see the rest.</p>`}</div><span class="tiny"><b>${list.length}</b> subscribers</span></div>
@@ -739,7 +741,7 @@ root.addEventListener('click', async e => {
   const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter],[data-nquick]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
-  if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { region: '', country: '', name: '', email: '', match: q === 'matched' || q === 'replied' ? 'matched' : q === 'unmatched' ? 'unmatched' : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
+  if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { region: '', country: '', name: '', email: '', match: q === 'matched' || q === 'replied' ? 'matched' : q === 'unmatched' ? 'unmatched' : q === 'notorg' ? 'notorg' : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
