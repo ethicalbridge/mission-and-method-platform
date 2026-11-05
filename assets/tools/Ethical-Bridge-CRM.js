@@ -517,11 +517,12 @@ function renderNewsletter() {
   });
   return `<section class="rowhead section-head"><h2>Newsletter</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><label class="button secondary nl-upload">Import Brevo CSV<input type="file" accept=".csv,text/csv" data-action="nl-csv" hidden></label><button class="button" data-action="export-nl">Export</button></div></section>
     ${S.subsError ? `<div class="notice warn" role="alert">${esc(S.subsError)}</div>` : ''}
+    ${S.continent === 'All' ? '' : `<div class="notice warn nl-scope"><span>Showing <b>${esc(S.continent)}</b> only: ${base.length} of ${active.length} subscribers. Subscribers in other continents, and those not matched to an organisation, are hidden.</span><button type="button" class="button small" data-continent="All">Show all ${active.length} subscribers</button></div>`}
     <section class="crm-groups crm-conv-groups">
       <div class="crm-group crm-group-all crm-quick">${qb(S.continent === 'All' ? 'Subscribers' : 'Subscribers matched in ' + S.continent, base.length, 'all')}</div>
       <div class="crm-group"><h3>Subscribers</h3><div class="crm-quick">${qb('Matched to an organisation', matched.length, 'matched')}${S.continent === 'All' ? qb('No organisation matched yet', unmatched, 'unmatched') + qb('Not an organisation (team, individuals)', notOrg, 'notorg') : ''}${qb('Also replied to our email', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
     </section>
-    <p class="tiny crm-hint">Live from the Brevo newsletter list: new sign-ups and unsubscribes arrive on their own. Organisations are matched by email, the email they replied from, web domain or name; use “Link” to fix a match.</p>
+    <p class="tiny crm-hint">From the Brevo newsletter list. To add new sign-ups, export the list from Brevo and use “Import Brevo CSV”. Organisations are matched by email, the email they replied from, web domain or name; use “Link” to fix a match.</p>
     <section class="panel crm-filters"><div class="crm-frow"><b>General</b>
       <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
       <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
