@@ -22,11 +22,12 @@ const API = 'https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/ebcrm-api';
 // ---------- constants ----------
 const SECTIONS = ['Dashboard', 'Outreach', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
 const CONTINENTS = ['Africa', 'Asia', 'Europe', 'Oceania', 'The Americas'];
-const INTERVIEW = ['Not interviewed', 'Scheduled', 'Interviewed'];
+const INTERVIEW = [['Not interviewed', 'Not interviewed'], ['Interviewed', 'Interviewed'], ['Scheduled', 'Planned']]; // stored value 'Scheduled' is shown as 'Planned'
+const interviewLabel = v => v === 'Scheduled' ? 'Planned' : v;
 const EMAIL = ['Not sent', 'Sent'];
 const SOCIAL = ['Not contacted', 'Contacted', 'Contacted and friend request sent'];
 const REPLY = ['None', 'Replied', 'Automatic reply', 'Bounce back'];
-const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '' };
+const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', interview_date: null, email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '' };
 const ORG_TYPES = ['Academic institution', 'Child-led org/group', 'Community-based org/group', 'International corporate', 'International NGO', 'Media', 'Membership-based org', 'National government/authority', 'National/local corporate', 'National/local CSO', 'Network/Coalition/Movement', 'Sub-national government/authority', 'UN/multilateral agency'];
 const ROLES = ['Strategic Partner', 'Challenger', 'Ally', 'Extraneous'];
 const STAGES = ['New', 'Introduced', 'In conversation', 'Active', 'Paused', 'Closed'];
@@ -188,7 +189,7 @@ function filteredOrgs() {
 // Table order: country A–Z, then organisation name A–Z (organisations without a country last).
 const byCountry = (a, b) => (!a.country - !b.country) || a.country.localeCompare(b.country, 'en', { sensitivity: 'base' }) || a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
 const FILTER_LABELS = { region: 'Region', country: 'Country', name: 'Name', email: 'Email address', interview: 'Interview', emailStatus: 'Email', reply: 'Reply', ig: 'Instagram', fb: 'Facebook', li: 'LinkedIn' };
-const filterValueLabel = v => v === '__contacted' ? 'Any contact' : v === '__any' ? 'Any response' : v;
+const filterValueLabel = v => v === '__contacted' ? 'Any contact' : v === '__any' ? 'Any response' : interviewLabel(v);
 const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' });
 
 // ---------- shell ----------
@@ -236,7 +237,7 @@ function renderDashboard() {
       ${card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
       ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
       ${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate')}
-      ${card('Interviewed', s.interviewed, s.scheduled + ' scheduled')}
+      ${card('Interviewed', s.interviewed, s.scheduled + ' planned')}
       ${card('Stakeholders mapped', rec.stakeholder.length, rec.goal.filter(g => g.data.wording).length + ' / 4 CSP goals entered')}
       ${card('Partnership assessments', rec.assessment.length, rec.assessment.filter(a => a.data.status === 'Approved').length + ' approved')}
       ${card('Partnerships tracked', rec.partner.length, due ? due + ' follow-ups due' : 'No follow-ups due', due ? 'warn' : '')}
@@ -261,13 +262,13 @@ function renderOrganisations() {
   const replyItems = [['__any', 'Any response'], ...REPLY];
   const active = Object.entries(f).filter(([, v]) => v);
   const only = active.length === 1 ? active[0].join('=') : active.length ? '?' : '';
-  // Counter boxes: click one to show exactly those organisations (every other filter is cleared).
-  const counters = [
-    ['Organisations', s.orgs, ''], ['Scheduled', s.scheduled, 'interview=Scheduled'], ['Interviewed', s.interviewed, 'interview=Interviewed'],
-    ['Instagram', s.ig, 'ig=__contacted'], ['Facebook', s.fb, 'fb=__contacted'], ['LinkedIn', s.li, 'li=__contacted'],
-    ['Emails sent', s.sent, 'emailStatus=Sent'], ['Not yet emailed', s.orgs - s.sent, 'emailStatus=Not sent'], ['Recorded responses', responses, 'reply=__any'],
-    ['Replies', s.replied, 'reply=Replied'], ['Automatic replies', s.auto, 'reply=Automatic reply'], ['Bounce backs', s.bounce, 'reply=Bounce back'],
+  // Counter boxes, grouped: click one to show exactly those organisations (every other filter is cleared).
+  const groups = [
+    ['Social media', [['Instagram', s.ig, 'ig=__contacted'], ['Facebook', s.fb, 'fb=__contacted'], ['LinkedIn', s.li, 'li=__contacted']]],
+    ['Emails', [['Emails sent', s.sent, 'emailStatus=Sent'], ['Not yet emailed', s.orgs - s.sent, 'emailStatus=Not sent'], ['Replies', s.replied, 'reply=Replied'], ['Automatic replies', s.auto, 'reply=Automatic reply'], ['Bounce backs', s.bounce, 'reply=Bounce back']]],
+    ['Interview', [['Not interviewed', s.orgs - s.interviewed - s.scheduled, 'interview=Not interviewed'], ['Interviewed', s.interviewed, 'interview=Interviewed'], ['Planned', s.scheduled, 'interview=Scheduled']]],
   ];
+  const qbtn = ([l, v, q]) => `<button type="button" data-quick="${esc(q)}" class="${q === only ? 'active' : ''}" title="Show ${esc(l.toLowerCase())} in the table"><b>${v}</b><span>${esc(l)}</span></button>`;
   const rows = slice.map(o => {
     const r = outreachOf(o.id);
     const social = [r.instagram_status, r.facebook_status, r.linkedin_status].some(v => v !== 'Not contacted');
@@ -276,7 +277,7 @@ function renderOrganisations() {
     return `<tr class="${tone}">
       <td>${esc(o.continent)}</td><td>${esc(o.region)}</td><td>${esc(o.country)}</td>
       <td class="crm-org"><button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button>${o.own ? ' <span class="pill dim">Added here</span>' : ''}${o.website ? `<a class="tiny" href="${esc(o.website)}" target="_blank" rel="noopener noreferrer">Website ↗</a>` : ''}</td>
-      <td>${os('interview_status', INTERVIEW, r.interview_status)}</td>
+      <td>${os('interview_status', INTERVIEW, r.interview_status)}${r.interview_status === 'Scheduled' ? `<input type="date" class="crm-idate" data-out="interview_date" data-id="${esc(o.id)}" value="${esc(r.interview_date || '')}" aria-label="Interview date for ${esc(o.name)}" title="Interview date">` : ''}</td>
       <td><input data-out="contact_person" data-id="${esc(o.id)}" value="${esc(r.contact_person)}" aria-label="Personal contact for ${esc(o.name)}"></td>
       <td>${o.email ? esc(o.email) : '<span class="muted">—</span>'}</td><td>${esc(o.phone) || '<span class="muted">—</span>'}</td>
       <td><input data-out="personal_phone" data-id="${esc(o.id)}" value="${esc(r.personal_phone)}" aria-label="Personal phone for ${esc(o.name)}"></td>
@@ -286,7 +287,10 @@ function renderOrganisations() {
       <td>${os('reply_status', REPLY, r.reply_status)}</td></tr>`;
   });
   return `<section class="rowhead section-head"><h2>Outreach</h2><div class="actions"><button class="button secondary" data-action="add-org">+ Add organisation</button><button class="button" data-action="export-orgs">Export</button></div></section>
-    <section class="crm-stats crm-quick">${counters.map(([l, v, q]) => `<button type="button" data-quick="${esc(q)}" class="${q === only ? 'active' : ''}" title="Show ${esc(l.toLowerCase())} in the table"><b>${v}</b><span>${esc(l)}</span></button>`).join('')}</section>
+    <section class="crm-groups">
+      <div class="crm-group crm-group-all crm-quick">${qbtn(['Organisations', s.orgs, ''])}</div>
+      ${groups.map(([title, items]) => `<div class="crm-group"><h3>${esc(title)}</h3><div class="crm-quick">${items.map(qbtn).join('')}</div></div>`).join('')}
+    </section>
     <p class="tiny crm-hint">Click a number to list those organisations below.</p>
     <section class="panel crm-filters">
       <div class="crm-frow"><b>General</b>
@@ -294,13 +298,15 @@ function renderOrganisations() {
         <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
         <label><span>Organisation name</span><input data-filter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Search by name"></label>
         <label><span>Email address</span><input data-filter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email)}" placeholder="Search by email"></label></div>
-      <div class="crm-frow"><b>Outreach</b>
-        <label><span>Interview</span>${sel('interview', INTERVIEW, 'All interview statuses')}</label>
-        <label><span>Email</span>${sel('emailStatus', EMAIL, 'All emails')}</label>
-        <label><span>Reply</span>${sel('reply', replyItems, 'All')}</label>
+      <div class="crm-frow"><b>Social media</b>
         <label><span>Instagram</span>${sel('ig', socialItems, 'All')}</label>
         <label><span>Facebook</span>${sel('fb', socialItems, 'All')}</label>
-        <label><span>LinkedIn</span>${sel('li', socialItems, 'All')}</label>
+        <label><span>LinkedIn</span>${sel('li', socialItems, 'All')}</label></div>
+      <div class="crm-frow"><b>Emails</b>
+        <label><span>Email</span>${sel('emailStatus', EMAIL, 'All emails')}</label>
+        <label><span>Reply</span>${sel('reply', replyItems, 'All')}</label></div>
+      <div class="crm-frow"><b>Interview</b>
+        <label><span>Interview</span>${sel('interview', INTERVIEW, 'All interview statuses')}</label>
         <button class="button secondary small" data-action="clear-filters">Clear filters</button></div>
     </section>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Outreach workspace</span><p class="tiny crm-legend"><i class="g"></i> Contacted on Instagram, Facebook or LinkedIn <i class="o"></i> Email reply received</p></div><span class="tiny"><b>${list.length}</b> organisations${list.length > PAGE ? ` · showing ${S.page * PAGE + 1}–${S.page * PAGE + slice.length}` : ''}</span></div>
@@ -316,7 +322,7 @@ function orgModal(id) {
   const info = [['Registered name', o.registered], ['Location', [o.city, o.country, o.region, o.continent].filter(Boolean).join(', ')], ['Public email', o.email], ['Public phone', o.phone], ['Website', o.website]].filter(([, v]) => v);
   return modal(o.name, `<dl class="kv">${info.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === 'Website' ? `<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>
     <form class="form" data-form="org-outreach" data-id="${esc(id)}">
-      ${selectField('Interview', 'interview_status', INTERVIEW, r.interview_status, '')}${field('Personal contact', 'contact_person', r.contact_person)}${field('Personal phone', 'personal_phone', r.personal_phone)}
+      ${selectField('Interview', 'interview_status', INTERVIEW, r.interview_status, '')}${field('Interview date (if planned)', 'interview_date', r.interview_date || '', 'date')}${field('Personal contact', 'contact_person', r.contact_person)}${field('Personal phone', 'personal_phone', r.personal_phone)}
       ${selectField('Email status', 'email_status', EMAIL, r.email_status, '')}${field('Date sent', 'date_sent', r.date_sent || '', 'date')}${selectField('Reply', 'reply_status', REPLY, r.reply_status, '')}
       ${selectField('Instagram', 'instagram_status', SOCIAL, r.instagram_status, '')}${selectField('Facebook', 'facebook_status', SOCIAL, r.facebook_status, '')}${selectField('LinkedIn', 'linkedin_status', SOCIAL, r.linkedin_status, '')}
       ${field('Notes', 'notes', r.notes, 'area')}
@@ -334,8 +340,8 @@ function addOrgModal() {
 function exportOrgs() {
   const list = filteredOrgs();
   downloadCsv(`ethical-bridge-organisations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
-    ['continent', 'region', 'country', 'public_name', 'interview_status', 'contact_person', 'public_email', 'public_phone', 'personal_phone', 'email_status', 'date_sent', 'instagram_status', 'facebook_status', 'linkedin_status', 'reply_status', 'notes', 'website'],
-    list.map(o => { const r = outreachOf(o.id); return [o.continent, o.region, o.country, o.name, r.interview_status, r.contact_person, o.email, o.phone, r.personal_phone, r.email_status, r.date_sent || '', r.instagram_status, r.facebook_status, r.linkedin_status, r.reply_status, r.notes, o.website]; }));
+    ['continent', 'region', 'country', 'public_name', 'interview_status', 'interview_date', 'contact_person', 'public_email', 'public_phone', 'personal_phone', 'email_status', 'date_sent', 'instagram_status', 'facebook_status', 'linkedin_status', 'reply_status', 'notes', 'website'],
+    list.map(o => { const r = outreachOf(o.id); return [o.continent, o.region, o.country, o.name, interviewLabel(r.interview_status), r.interview_date || '', r.contact_person, o.email, o.phone, r.personal_phone, r.email_status, r.date_sent || '', r.instagram_status, r.facebook_status, r.linkedin_status, r.reply_status, r.notes, o.website]; }));
 }
 
 // ---------- Outreach ----------
@@ -523,7 +529,7 @@ root.addEventListener('change', async e => {
   if (t.dataset.action === 'pat-filter') { S.patFilter = t.value; return render(); }
   if (t.dataset.out) {
     const field = t.dataset.out, id = t.dataset.id; let value = t.value;
-    const patch = { [field]: field === 'date_sent' ? (value || null) : value };
+    const patch = { [field]: (field === 'date_sent' || field === 'interview_date') ? (value || null) : value };
     if (field === 'email_status' && value === 'Sent' && !outreachOf(id).date_sent) patch.date_sent = today();
     await saveOutreach(id, patch);
     if (['interview_status', 'email_status', 'reply_status', 'instagram_status', 'facebook_status', 'linkedin_status'].includes(field)) render();
@@ -564,7 +570,7 @@ root.addEventListener('submit', async e => {
       return loadAll();
     }
     if (kind === 'org-outreach') {
-      const patch = { ...d, date_sent: d.date_sent || null };
+      const patch = { ...d, date_sent: d.date_sent || null, interview_date: d.interview_date || null };
       await saveOutreach(id, patch); S.modal = ''; return flash('Saved.');
     }
     if (kind === 'add-org') {
