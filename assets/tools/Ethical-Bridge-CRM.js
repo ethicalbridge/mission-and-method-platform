@@ -354,7 +354,7 @@ function filteredConversations(list) {
     && (!n || norm(c.o.name).includes(n) || norm(c.o.registered).includes(n))
     && (!e || norm(c.o.email).includes(e) || c.all.some(m => norm(m.from_addr).includes(e)))
     && (!f.status || c.status === f.status))
-    .sort((a, b) => (b.flagged - a.flagged) || byCountry(a.o, b.o));
+    .sort((a, b) => byCountry(a.o, b.o));
 }
 function renderConversations() {
   if (S.msgs === null) return `<p class="muted crm-loading">Loading conversations…</p>`;
@@ -399,7 +399,7 @@ function renderConversations() {
         <label><span>Status</span>${sel('status', CONV_STATUS, 'All statuses')}</label>
         <button class="button secondary small" data-action="clear-cfilters">Clear filters</button></div>
     </section>
-    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email conversations</span><p class="tiny crm-legend"><i class="r"></i> Waiting for your reply (pinned in your mailbox) — shown first</p></div><span class="tiny"><b>${list.length}</b> organisations</span></div>
+    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email conversations</span><p class="tiny crm-legend"><i class="r"></i> Waiting for your reply (pinned in your mailbox) · sorted by country A–Z</p></div><span class="tiny"><b>${list.length}</b> organisations</span></div>
     ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
     <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'They replied', 'What they said', 'My response', 'They replied back?', 'Status', 'Thread'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || '<tr><td colspan="8">No conversations match these filters.</td></tr>'}</tbody></table></div>
