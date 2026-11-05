@@ -20,7 +20,7 @@ import { PAT_SECTIONS } from './Ethical-Bridge-CRM-PAT.js';
 const API = 'https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/ebcrm-api';
 
 // ---------- constants ----------
-const SECTIONS = ['Dashboard', 'Outreach', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
+const SECTIONS = ['Dashboard', 'Outreach', 'Conversations', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
 const CONTINENTS = ['Africa', 'Asia', 'Europe', 'Oceania', 'The Americas'];
 const INTERVIEW = [['Not interviewed', 'Not interviewed'], ['Interviewed', 'Interviewed'], ['Scheduled', 'Planned']]; // stored value 'Scheduled' is shown as 'Planned'
 const interviewLabel = v => v === 'Scheduled' ? 'Planned' : v;
@@ -77,6 +77,7 @@ const S = {
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
   f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
   mapF: { goal: '', role: '', type: '', engaged: '', q: '' }, trackQ: '', patFilter: '',
+  msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '' },
   modal: '', message: '', saving: 0, pat: null, patSection: 0,
 };
 const root = document.getElementById('app');
@@ -111,6 +112,14 @@ async function loadAll() {
     S.loadError = e?.message || 'Could not load the CRM.';
   }
   S.loading = false; render();
+  if (S.ws) loadMessages();
+}
+
+async function loadMessages() {
+  S.msgsError = '';
+  try { S.msgs = (await api('messages')).messages; }
+  catch (e) { S.msgs = S.msgs || []; S.msgsError = e?.message || 'Could not load the conversations.'; }
+  if (S.view === 'Conversations' || S.view === 'Dashboard') render();
 }
 
 function setSaving(delta) { S.saving += delta; const el = document.getElementById('save-state'); if (el) el.textContent = S.saving ? 'Saving…' : 'All changes saved'; }
@@ -196,12 +205,12 @@ const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', int
 function render() {
   if (!S.code) return renderSignIn();
   if (!S.ws) { root.innerHTML = `<div class="shell crm"><p class="muted crm-loading">${S.loadError ? esc(S.loadError) + ' <button class="link" data-action="reload">Try again</button>' : 'Loading organisations and your outreach records…'}</p></div>`; return; }
-  const continentBar = ['Dashboard', 'Outreach'].includes(S.view) ? renderContinentBar() : '';
+  const continentBar = ['Dashboard', 'Outreach', 'Conversations'].includes(S.view) ? renderContinentBar() : '';
   let body = '';
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
   else body = ({
-    'Dashboard': renderDashboard, 'Outreach': renderOutreach,
+    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': renderConversations,
     'Partnership mapping': renderMapping, 'Partnership assessment (PAT)': renderPat, 'Partnership tracking': renderTracking,
   })[S.view]();
   root.innerHTML = `<div class="shell crm">
@@ -232,7 +241,7 @@ function renderDashboard() {
   const list = continentOrgs(); const s = stats(list);
   const rec = S.records;
   const due = rec.partner.filter(p => p.data.next_follow_up && p.data.next_follow_up <= today() && p.data.stage !== 'Closed').length;
-  const steps = [['Research', 'Directory & mapping', 'Partnership mapping'], ['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Outreach'], ['Assess', 'Partnership assessment', 'Partnership assessment (PAT)'], ['Partner', 'Agree the relationship', 'Partnership tracking'], ['Track', 'Follow-ups & renewals', 'Partnership tracking']];
+  const steps = [['Research', 'Directory & mapping', 'Partnership mapping'], ['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Conversations'], ['Assess', 'Partnership assessment', 'Partnership assessment (PAT)'], ['Partner', 'Agree the relationship', 'Partnership tracking'], ['Track', 'Follow-ups & renewals', 'Partnership tracking']];
   return `<section class="grid four crm-cards">
       ${card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
       ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
@@ -241,7 +250,7 @@ function renderDashboard() {
       ${card('Stakeholders mapped', rec.stakeholder.length, rec.goal.filter(g => g.data.wording).length + ' / 4 CSP goals entered')}
       ${card('Partnership assessments', rec.assessment.length, rec.assessment.filter(a => a.data.status === 'Approved').length + ' approved')}
       ${card('Partnerships tracked', rec.partner.length, due ? due + ' follow-ups due' : 'No follow-ups due', due ? 'warn' : '')}
-      ${card('Campaigns logged', rec.campaign.length, 'Outbound email campaigns')}
+      ${(() => { const w = S.msgs ? conversations().filter(c => c.status === 'waiting' && inContinent(c.o)).length : null; return card('Waiting for my reply', w ?? '…', 'Pinned emails · see Conversations', w ? 'warn' : ''); })()}
     </section>
     <section class="panel"><span class="eyebrow">End-to-end workflow</span><h2>From discovery to lasting partnerships</h2>
       <ol class="crm-flow">${steps.map(([t, d, v], i) => `<li><button type="button" data-tab="${esc(v)}"><b>${i + 1}</b><span>${esc(t)}</span><small>${esc(d)}</small></button></li>`).join('')}</ol></section>`;
@@ -314,6 +323,110 @@ function renderOrganisations() {
     <div class="tablewrap crm-table"><table><thead><tr>${['Continent', 'Region', 'Country', 'Organisation', 'Interview', 'Personal contact', 'Public email', 'Public phone', 'Personal phone', 'Email status', 'Date sent', 'Instagram', 'Facebook', 'LinkedIn', 'Reply'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || `<tr><td colspan="15">${S.orgs.length ? 'No organisations match these filters.' : 'No organisations yet. Add your first one.'}</td></tr>`}</tbody></table></div>
     ${pages > 1 ? `<div class="crm-pager"><button class="button secondary small" data-page="${S.page - 1}" ${S.page ? '' : 'disabled'}>← Previous</button><span class="tiny">Page ${S.page + 1} of ${pages}</span><button class="button secondary small" data-page="${S.page + 1}" ${S.page < pages - 1 ? '' : 'disabled'}>Next →</button></div>` : ''}</section>`;
+}
+
+// ---------- Conversations (one row per organisation that replied) ----------
+const CONV_STATUS = [['waiting', 'Waiting for my reply'], ['theirs', 'They wrote last'], ['mine', 'I replied last'], ['none', 'No emails saved yet']];
+const AUTO_RE = /^(automatic reply|auto(matic)?[ -]?(reply|response)|out of (the )?office|r[ée]ponse automatique|respuesta autom[áa]tica|resposta autom[áa]tica|abwesenheit)/i;
+const snip = (t, n = 260) => { const x = String(t || '').replace(/\s+/g, ' ').trim(); return x.length > n ? x.slice(0, n).replace(/\s\S*$/, '') + '…' : x; };
+function conversations() {
+  const by = new Map();
+  for (const m of S.msgs || []) { if (!by.has(m.org_id)) by.set(m.org_id, []); by.get(m.org_id).push(m); }
+  const ids = new Set([...by.keys(), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied').map(r => r.org_id)]);
+  const out = [];
+  for (const id of ids) {
+    const o = S.orgById.get(id); if (!o) continue;
+    const all = (by.get(id) || []).slice().sort((a, b) => a.sent_at.localeCompare(b.sent_at));
+    const ins = all.filter(m => m.direction === 'in'), real = ins.filter(m => !AUTO_RE.test(m.subject || ''));
+    const first = real[0] || ins[0] || null;
+    const mine = first ? all.find(m => m.direction === 'out' && m.sent_at > first.sent_at) || null : null;
+    const back = mine ? ins.find(m => m.sent_at > mine.sent_at) || null : null;
+    const last = all[all.length - 1] || null;
+    const flagged = ins.some(m => m.flagged);
+    const status = flagged ? 'waiting' : !last ? 'none' : last.direction === 'in' ? 'theirs' : 'mine';
+    out.push({ o, id, all, first, mine, back, last, flagged, status, nIn: ins.length, nOut: all.length - ins.length });
+  }
+  return out;
+}
+function filteredConversations(list) {
+  const f = S.cf, n = norm(f.name), e = norm(f.email);
+  return list.filter(c => inContinent(c.o) && (!f.region || c.o.region === f.region) && (!f.country || c.o.country === f.country)
+    && (!n || norm(c.o.name).includes(n) || norm(c.o.registered).includes(n))
+    && (!e || norm(c.o.email).includes(e) || c.all.some(m => norm(m.from_addr).includes(e)))
+    && (!f.status || c.status === f.status))
+    .sort((a, b) => (b.flagged - a.flagged) || byCountry(a.o, b.o));
+}
+function renderConversations() {
+  if (S.msgs === null) return `<p class="muted crm-loading">Loading conversations…</p>`;
+  const allConv = conversations();
+  const base = allConv.filter(c => inContinent(c.o));
+  const count = k => base.filter(c => c.status === k).length;
+  const regions = [...new Set(base.map(c => c.o.region).filter(Boolean))].sort();
+  const countries = [...new Set(base.filter(c => !S.cf.region || c.o.region === S.cf.region).map(c => c.o.country).filter(Boolean))].sort();
+  const list = filteredConversations(allConv);
+  const f = S.cf;
+  const sel = (key, items, all) => `<select data-cfilter="${key}" class="${f[key] ? 'crm-on' : ''}">${opts(items, f[key], all)}</select>`;
+  const qb = (label, v, key, tone = '') => `<button type="button" data-cquick="${key}" class="${(f.status || '') === key && !f.region && !f.country && !f.name && !f.email ? 'active' : ''} ${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
+  const msgCell = (m, who) => m ? `<div class="crm-msg">${who ? `<span class="tiny">From ${esc(who)}</span>` : `<b>${esc(fmtDate(m.sent_at))}</b>`}<p>${esc(snip(m.body) || '(no text)')}</p></div>` : '<span class="muted">—</span>';
+  const rows = list.map(c => {
+    const st = CONV_STATUS.find(x => x[0] === c.status)[1];
+    const fromName = c.first ? (c.first.from_name || c.first.from_addr) : '';
+    return `<tr class="${c.status === 'waiting' ? 'waiting' : ''}">
+      <td>${esc(c.o.country)}</td>
+      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button><span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
+      <td>${c.first ? esc(fmtDate(c.first.sent_at)) : '<span class="muted">—</span>'}</td>
+      <td class="crm-text">${msgCell(c.first, fromName)}</td>
+      <td class="crm-text">${c.mine ? msgCell(c.mine) : c.first ? '<span class="pill warn">Not answered yet</span>' : '<span class="muted">—</span>'}</td>
+      <td>${c.back ? `<span class="pill">Yes</span><br><span class="tiny">${esc(fmtDate(c.back.sent_at))}</span>` : c.mine ? '<span class="pill dim">Not yet</span>' : '<span class="muted">—</span>'}</td>
+      <td>${c.status === 'waiting' ? '<span class="crm-pin" aria-hidden="true">📌</span> ' : ''}<b class="crm-st-${c.status}">${esc(st)}</b>${c.last ? `<br><span class="tiny">Last email ${esc(fmtDate(c.last.sent_at))}</span>` : ''}</td>
+      <td><button class="button secondary small" data-action="thread" data-id="${esc(c.id)}">Open (${c.all.length})</button></td></tr>`;
+  });
+  const active = Object.entries(f).filter(([, v]) => v);
+  const LBL = { region: 'Region', country: 'Country', name: 'Name', email: 'Email', status: 'Status' };
+  return `<section class="rowhead section-head"><h2>Conversations</h2><div class="actions"><button class="button secondary" data-action="reload-msgs">Refresh</button><button class="button" data-action="export-conv">Export</button></div></section>
+    ${S.msgsError ? `<div class="notice warn" role="alert">${esc(S.msgsError)}</div>` : ''}
+    <section class="crm-groups crm-conv-groups">
+      <div class="crm-group crm-group-all crm-quick">${qb('Organisations that replied', base.length, '')}</div>
+      <div class="crm-group"><h3>Status</h3><div class="crm-quick">${qb('Waiting for my reply', count('waiting'), 'waiting', 'crm-q-wait')}${qb('They wrote last', count('theirs'), 'theirs')}${qb('I replied last', count('mine'), 'mine')}${count('none') ? qb('No emails saved yet', count('none'), 'none') : ''}</div></div>
+    </section>
+    <p class="tiny crm-hint">📌 “Waiting for my reply” are the emails you pinned (flagged) in your mailbox. Click a number to list those organisations.</p>
+    <section class="panel crm-filters">
+      <div class="crm-frow"><b>General</b>
+        <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
+        <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
+        <label><span>Organisation name</span><input data-cfilter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Search by name"></label>
+        <label><span>Email address</span><input data-cfilter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email)}" placeholder="Search by email"></label>
+        <label><span>Status</span>${sel('status', CONV_STATUS, 'All statuses')}</label>
+        <button class="button secondary small" data-action="clear-cfilters">Clear filters</button></div>
+    </section>
+    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email conversations</span><p class="tiny crm-legend"><i class="r"></i> Waiting for your reply (pinned in your mailbox) — shown first</p></div><span class="tiny"><b>${list.length}</b> organisations</span></div>
+    ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
+    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'They replied', 'What they said', 'My response', 'They replied back?', 'Status', 'Thread'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.join('') || '<tr><td colspan="8">No conversations match these filters.</td></tr>'}</tbody></table></div>
+    <p class="tiny">Emails are copied from the hello@ethicalbridge.org mailbox (the continent “Replied” folders, the Inbox and your Sent folder). Quoted earlier messages and signatures below “On … wrote:” are trimmed.</p></section>`;
+}
+function threadModal(id) {
+  const c = conversations().find(x => x.id === id); if (!c) return '';
+  const msgs = c.all.map(m => `<article class="crm-mail ${m.direction}${m.flagged ? ' flagged' : ''}">
+      <header><b>${m.direction === 'in' ? esc(m.from_name || m.from_addr) : 'You (Ethical Bridge)'}</b><span class="tiny">${esc(new Date(m.sent_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }))}${m.flagged ? ' · 📌 pinned' : ''}</span></header>
+      <p class="tiny">${m.direction === 'in' ? esc(m.from_addr) : 'To ' + esc(m.to_addrs)}${m.subject ? ' · <b>' + esc(m.subject) + '</b>' : ''}</p>
+      <div class="crm-mail-body">${esc(m.body || '(no text)')}</div></article>`).join('');
+  const o = c.o;
+  return modal(o.name, `<p class="tiny">${esc([o.country, o.region, o.continent].filter(Boolean).join(' · '))}${o.email ? ' · ' + esc(o.email) : ''} · ${c.nIn} from them, ${c.nOut} from you</p>
+    <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}<button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
+    <p class="tiny">Pins changed here stay in the CRM; they don't change the pin in your mailbox.</p>
+    <div class="crm-thread">${msgs || '<p class="muted">No emails saved for this organisation yet. It is listed because its reply is marked “Replied”.</p>'}</div>`);
+}
+function exportConversations() {
+  const list = filteredConversations(conversations());
+  downloadCsv(`ethical-bridge-conversations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
+    ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'last_email', 'messages'],
+    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], c.last?.sent_at.slice(0, 10) || '', c.all.length]));
+}
+async function setPin(id, flagged) {
+  try { await api('message.flag', { org_id: id, flagged }); } catch (e) { return flash('Could not save: ' + e.message); }
+  for (const m of S.msgs || []) if (m.org_id === id && m.direction === 'in') m.flagged = flagged;
+  S.modal = threadModal(id); render();
 }
 
 function orgModal(id) {
@@ -476,12 +589,14 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.tab) { if (S.pat?.dirty && !confirm('Leave this assessment without saving?')) return; S.pat = null; S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
-  if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.page = 0; render(); return; }
+  if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.cf.region = ''; S.cf.country = ''; S.page = 0; render(); return; }
   if (t.dataset.page != null && t.dataset.page !== undefined && t.hasAttribute('data-page')) { S.page = Number(t.dataset.page); render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start' }); return; }
   if (t.hasAttribute('data-pat-section')) { S.patSection = Number(t.dataset.patSection); render(); root.querySelector('.crm-pat-body')?.scrollIntoView({ block: 'start' }); return; }
   const a = t.dataset.action, id = t.dataset.id;
@@ -490,6 +605,12 @@ root.addEventListener('click', async e => {
     case 'signout': if (S.pat?.dirty && !confirm('Lock the CRM without saving this assessment?')) return; S.pat = null; S.orgs = []; S.outreach = new Map(); return lockOut('The CRM is locked on this browser.');
     case 'close': return closeModal();
     case 'org': return openModal(orgModal(id));
+    case 'thread': return openModal(threadModal(id));
+    case 'pin': return setPin(id, true);
+    case 'unpin': return setPin(id, false);
+    case 'reload-msgs': S.msgs = null; render(); return loadMessages();
+    case 'export-conv': return exportConversations();
+    case 'clear-cfilters': S.cf = { region: '', country: '', name: '', email: '', status: '' }; return render();
     case 'add-org': return openModal(addOrgModal());
     case 'export-orgs': return exportOrgs();
     case 'clear-filters': S.f = EMPTY_FILTERS(); S.page = 0; return render();
@@ -536,6 +657,7 @@ root.addEventListener('change', async e => {
     return;
   }
   if (t.dataset.filter && t.tagName === 'SELECT') { S.f[t.dataset.filter] = t.value; if (t.dataset.filter === 'region') S.f.country = ''; S.page = 0; return render(); }
+  if (t.dataset.cfilter && t.tagName === 'SELECT') { S.cf[t.dataset.cfilter] = t.value; if (t.dataset.cfilter === 'region') S.cf.country = ''; return render(); }
   if (t.dataset.mapf && t.tagName === 'SELECT') { S.mapF[t.dataset.mapf] = t.value; return render(); }
   if (S.pat && (t.dataset.pat || t.dataset.score)) {
     if (t.dataset.score) { const a = (S.pat.data.answers ||= {}); a[t.dataset.score] = { ...(a[t.dataset.score] || {}), score: t.value }; }
@@ -548,6 +670,7 @@ root.addEventListener('change', async e => {
 root.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset.filter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.filter; filterTimer = setTimeout(() => { S.f[k] = t.value; S.page = 0; render(); const el = root.querySelector(`[data-filter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
+  if (t.dataset.cfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.cfilter; filterTimer = setTimeout(() => { S.cf[k] = t.value; render(); const el = root.querySelector(`[data-cfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.mapf && t.tagName === 'INPUT') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.mapF.q = t.value; render(); const el = root.querySelector('[data-mapf="q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.action === 'track-q') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.trackQ = t.value; render(); const el = root.querySelector('[data-action="track-q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (S.pat && (t.dataset.comment || (t.dataset.pat && t.tagName !== 'SELECT' && t.dataset.pat !== 'org_id'))) {

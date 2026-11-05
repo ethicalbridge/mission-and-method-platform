@@ -130,3 +130,28 @@ table{border-collapse:collapse;width:100%}
 .crm-group-all>button{display:flex;flex-direction:column;justify-content:center;background:#fff}
 .crm-group-all>button b{font-size:26px}
 .crm-groups+.crm-hint{margin-top:2px}
+
+/* Conversations */
+.crm-conv-groups{grid-template-columns:minmax(170px,1fr) 4fr}
+.crm-quick>button.crm-q-wait b{color:#b3261e}
+.crm-legend i.r{background:#fde4e1;border:1px solid #e6a59d}
+.crm-conv table{width:100%}
+.crm-conv td{vertical-align:top}
+.crm-conv td.crm-org .tiny{display:block;color:var(--muted);word-break:break-all}
+.crm-conv td.crm-text{min-width:240px;max-width:360px;white-space:normal}
+.crm-msg p{margin:3px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink)}
+.crm-conv tr.waiting td{background:#fde4e1}
+.crm-conv tr.waiting td:first-child{box-shadow:inset 4px 0 0 #b3261e}
+.crm-st-waiting{color:#b3261e}.crm-st-theirs{color:#88452b}.crm-st-mine{color:var(--teal)}.crm-st-none{color:var(--muted)}
+.crm-thread{display:grid;gap:10px;margin-top:12px}
+.crm-mail{border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:#fff;max-width:88%}
+.crm-mail.out{justify-self:end;background:#e9f3ed;border-color:#b9d6c6}
+.crm-mail.flagged{border-color:#e6a59d;box-shadow:inset 4px 0 0 #b3261e}
+.crm-mail header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.crm-mail>p{margin:2px 0 8px}
+.crm-mail-body{white-space:pre-wrap;font-size:13.5px;line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:1100px){.crm-conv-groups{grid-template-columns:1fr}}
+@media(max-width:650px){.crm-mail{max-width:100%}}
+.crm-conv td:nth-child(7){min-width:165px}
+.crm-conv td:nth-child(8) .button{white-space:nowrap}
+.crm-conv td:nth-child(3){white-space:nowrap}
