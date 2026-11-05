@@ -20,7 +20,7 @@ import { PAT_SECTIONS } from './Ethical-Bridge-CRM-PAT.js';
 const API = 'https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/ebcrm-api';
 
 // ---------- constants ----------
-const SECTIONS = ['Dashboard', 'Outreach', 'Conversations', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
+const SECTIONS = ['Dashboard', 'Outreach', 'Conversations', 'Newsletter', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
 const CONTINENTS = ['Africa', 'Asia', 'Europe', 'Oceania', 'The Americas'];
 const INTERVIEW = [['Not interviewed', 'Not interviewed'], ['Interviewed', 'Interviewed'], ['Scheduled', 'Planned']]; // stored value 'Scheduled' is shown as 'Planned'
 const interviewLabel = v => v === 'Scheduled' ? 'Planned' : v;
@@ -78,6 +78,7 @@ const S = {
   f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
   mapF: { goal: '', role: '', type: '', engaged: '', q: '' }, trackQ: '', patFilter: '',
   msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '' },
+  subs: null, subsError: '', nf: { region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
   modal: '', message: '', saving: 0, pat: null, patSection: 0,
 };
 const root = document.getElementById('app');
@@ -112,14 +113,21 @@ async function loadAll() {
     S.loadError = e?.message || 'Could not load the CRM.';
   }
   S.loading = false; render();
-  if (S.ws) loadMessages();
+  if (S.ws) { loadMessages(); loadNewsletter(); }
 }
 
 async function loadMessages() {
   S.msgsError = '';
   try { S.msgs = (await api('messages')).messages; }
   catch (e) { S.msgs = S.msgs || []; S.msgsError = e?.message || 'Could not load the conversations.'; }
-  if (S.view === 'Conversations' || S.view === 'Dashboard') render();
+  if (['Conversations', 'Dashboard', 'Newsletter'].includes(S.view)) render();
+}
+
+async function loadNewsletter() {
+  S.subsError = '';
+  try { S.subs = (await api('newsletter')).subscribers; }
+  catch (e) { S.subs = S.subs || []; S.subsError = e?.message || 'Could not load the newsletter list.'; }
+  if (['Newsletter', 'Dashboard'].includes(S.view)) render();
 }
 
 function setSaving(delta) { S.saving += delta; const el = document.getElementById('save-state'); if (el) el.textContent = S.saving ? 'Saving…' : 'All changes saved'; }
@@ -205,12 +213,12 @@ const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', int
 function render() {
   if (!S.code) return renderSignIn();
   if (!S.ws) { root.innerHTML = `<div class="shell crm"><p class="muted crm-loading">${S.loadError ? esc(S.loadError) + ' <button class="link" data-action="reload">Try again</button>' : 'Loading organisations and your outreach records…'}</p></div>`; return; }
-  const continentBar = ['Dashboard', 'Outreach', 'Conversations'].includes(S.view) ? renderContinentBar() : '';
+  const continentBar = ['Dashboard', 'Outreach', 'Conversations', 'Newsletter'].includes(S.view) ? renderContinentBar() : '';
   let body = '';
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
   else body = ({
-    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': renderConversations,
+    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': renderConversations, 'Newsletter': renderNewsletter,
     'Partnership mapping': renderMapping, 'Partnership assessment (PAT)': renderPat, 'Partnership tracking': renderTracking,
   })[S.view]();
   root.innerHTML = `<div class="shell crm">
@@ -245,8 +253,8 @@ function renderDashboard() {
   return `<section class="grid four crm-cards">
       ${card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
       ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
-      ${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate')}
-      ${card('Interviewed', s.interviewed, s.scheduled + ' planned')}
+      ${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate · ' + s.interviewed + ' interviewed')}
+      ${(() => { if (!S.subs) return card('Newsletter subscribers', '…', 'Live from Brevo'); const a = newsletterRows().filter(r => r.sub.subscribed); const m = a.filter(r => r.org && inContinent(r.org)).length; return card('Newsletter subscribers', a.length, m + ' matched to organisations' + (S.continent === 'All' ? '' : ' in ' + S.continent)); })()}
       ${card('Stakeholders mapped', rec.stakeholder.length, rec.goal.filter(g => g.data.wording).length + ' / 4 CSP goals entered')}
       ${card('Partnership assessments', rec.assessment.length, rec.assessment.filter(a => a.data.status === 'Approved').length + ' approved')}
       ${card('Partnerships tracked', rec.partner.length, due ? due + ' follow-ups due' : 'No follow-ups due', due ? 'warn' : '')}
@@ -429,6 +437,145 @@ async function setPin(id, flagged) {
   S.modal = threadModal(id); render();
 }
 
+// ---------- Newsletter (Brevo list, kept up to date by the Brevo webhook) ----------
+const FREE_MAIL = /^(gmail|googlemail|yahoo|ymail|hotmail|outlook|live|msn|icloud|me|mac|aol|proton|protonmail|pm|gmx|mail|yandex|zoho|qq|163|126|rocketmail|web|t-online|orange|free|laposte|libero|virgilio|wanadoo|btinternet|comcast|hey|fastmail)\./i;
+const mailDomain = e => String(e || '').toLowerCase().split('@')[1] || '';
+const webDomain = u => String(u || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[/?#]/)[0];
+const baseDomain = d => d.split('.').slice(-3).join('.').replace(/^(www|mail|info|contact)\./, '');
+let nlIndex = null;
+function newsletterIndex() {
+  if (nlIndex && nlIndex.orgs === S.orgs && nlIndex.msgs === S.msgs) return nlIndex;
+  const byEmail = new Map(), byDomain = new Map(), byName = new Map(), byMsg = new Map();
+  for (const o of S.orgs) {
+    for (const e of String(o.email || '').toLowerCase().split(/[\s;,|]+/).filter(x => x.includes('@'))) {
+      byEmail.set(e, o); const d = mailDomain(e); if (d && !FREE_MAIL.test(d)) byDomain.set(baseDomain(d), o);
+    }
+    const w = webDomain(o.website); if (w && !/facebook|instagram|linkedin|linktr|wix|wordpress|blogspot|google/.test(w)) byDomain.set(baseDomain(w), byDomain.get(baseDomain(w)) || o);
+    const n = norm(o.name).replace(/[^a-z0-9]+/g, ' ').trim(); if (n.length >= 6) byName.set(n, o);
+  }
+  for (const m of S.msgs || []) if (m.direction === 'in' && m.from_addr) { const o = S.orgById.get(m.org_id); if (o) byMsg.set(m.from_addr.toLowerCase(), o); }
+  nlIndex = { orgs: S.orgs, msgs: S.msgs, byEmail, byDomain, byName, byMsg };
+  return nlIndex;
+}
+function matchSubscriber(s) {
+  if (s.org_id === '') return { org: null, how: 'Marked as not an organisation' };
+  if (s.org_id) { const o = S.orgById.get(s.org_id); if (o) return { org: o, how: 'Linked by hand' }; }
+  const ix = newsletterIndex(), e = String(s.email || '').toLowerCase(), d = mailDomain(e);
+  if (ix.byEmail.has(e)) return { org: ix.byEmail.get(e), how: 'Same email as the profile' };
+  if (ix.byMsg.has(e)) return { org: ix.byMsg.get(e), how: 'Same email as their reply' };
+  if (d && !FREE_MAIL.test(d) && ix.byDomain.has(baseDomain(d))) return { org: ix.byDomain.get(baseDomain(d)), how: 'Same web domain' };
+  const a = s.attributes || {};
+  const orgField = Object.entries(a).find(([k]) => /org|company|empresa|entreprise|organi|ngo|ong/i.test(k))?.[1];
+  for (const cand of [orgField, `${s.first_name} ${s.last_name}`, s.first_name, s.last_name]) {
+    const n = norm(cand).replace(/[^a-z0-9]+/g, ' ').trim();
+    if (n.length >= 6 && ix.byName.has(n)) return { org: ix.byName.get(n), how: 'Same name as the organisation' };
+  }
+  return { org: null, how: '' };
+}
+function newsletterRows() { return (S.subs || []).map(sub => ({ sub, ...matchSubscriber(sub) })); }
+function filteredNewsletter() {
+  const f = S.nf, n = norm(f.name), e = norm(f.email);
+  return newsletterRows().filter(r => {
+    if (f.status === 'Subscribed' && !r.sub.subscribed) return false;
+    if (f.status === 'Unsubscribed' && r.sub.subscribed) return false;
+    if (f.match === 'matched' && !r.org) return false;
+    if (f.match === 'unmatched' && r.org) return false;
+    if (S.continent !== 'All' && !(r.org && r.org.continent === S.continent)) return false;
+    if (f.region && r.org?.region !== f.region) return false;
+    if (f.country && r.org?.country !== f.country) return false;
+    if (n && !norm(r.org?.name).includes(n) && !norm(`${r.sub.first_name} ${r.sub.last_name}`).includes(n)) return false;
+    if (e && !norm(r.sub.email).includes(e)) return false;
+    if (S.nfReplied && !(r.org && outreachOf(r.org.id).reply_status === 'Replied')) return false;
+    return true;
+  }).sort((a, b) => (!a.org - !b.org) || (a.org && b.org ? byCountry(a.org, b.org) : a.sub.email.localeCompare(b.sub.email)));
+}
+function renderNewsletter() {
+  if (S.subs === null) return `<p class="muted crm-loading">Loading the newsletter list…</p>`;
+  const rows = newsletterRows(), active = rows.filter(r => r.sub.subscribed);
+  const inSel = r => S.continent === 'All' || (r.org && r.org.continent === S.continent);
+  const base = active.filter(inSel), matched = base.filter(r => r.org);
+  const unmatched = S.continent === 'All' ? active.filter(r => !r.org).length : 0;
+  const gone = rows.filter(r => !r.sub.subscribed && inSel(r)).length;
+  const replied = matched.filter(r => outreachOf(r.org.id).reply_status === 'Replied').length;
+  const regions = [...new Set(matched.map(r => r.org.region).filter(Boolean))].sort();
+  const countries = [...new Set(matched.filter(r => !S.nf.region || r.org.region === S.nf.region).map(r => r.org.country).filter(Boolean))].sort();
+  const list = filteredNewsletter(), f = S.nf;
+  const sel = (key, items, all) => `<select data-nfilter="${key}" class="${f[key] && !(key === 'status' && f[key] === 'Subscribed') ? 'crm-on' : ''}">${opts(items, f[key], all)}</select>`;
+  const qb = (label, v, q, tone = '') => `<button type="button" data-nquick="${q}" class="${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
+  const fmt = d => d ? fmtDate(d) : '—';
+  const trs = list.map(r => {
+    const s = r.sub, o = r.org, out = o ? outreachOf(o.id) : null;
+    return `<tr class="${s.subscribed ? '' : 'gone'}"><td>${o ? esc(o.country) : '<span class="muted">—</span>'}</td>
+      <td class="crm-org">${o ? `<button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button><span class="tiny">${esc(o.continent)}</span>` : '<span class="pill dim">No organisation matched</span>'}</td>
+      <td>${esc(s.email)}<span class="tiny nl-name">${esc([s.first_name, s.last_name].filter(Boolean).join(' '))}</span></td>
+      <td>${s.subscribed ? esc(fmt(s.subscribed_at)) : `<span class="pill bad">Unsubscribed</span><br><span class="tiny">${esc(fmt(s.unsubscribed_at))}</span>`}</td>
+      <td class="tiny">${esc(r.how || '—')}</td>
+      <td>${out ? `${out.reply_status === 'Replied' ? '<span class="pill">Replied</span>' : esc(out.reply_status === 'None' ? (out.email_status === 'Sent' ? 'Emailed' : 'Not emailed') : out.reply_status)}` : '<span class="muted">—</span>'}</td>
+      <td><button class="button secondary small" data-action="nl-pick" data-id="${esc(s.id)}">${o ? 'Change' : 'Link'}</button></td></tr>`;
+  });
+  return `<section class="rowhead section-head"><h2>Newsletter</h2><div class="actions"><button class="button secondary" data-action="reload-nl">Refresh</button><label class="button secondary nl-upload">Import Brevo CSV<input type="file" accept=".csv,text/csv" data-action="nl-csv" hidden></label><button class="button" data-action="export-nl">Export</button></div></section>
+    ${S.subsError ? `<div class="notice warn" role="alert">${esc(S.subsError)}</div>` : ''}
+    <section class="crm-groups crm-conv-groups">
+      <div class="crm-group crm-group-all crm-quick">${qb(S.continent === 'All' ? 'Subscribers' : 'Subscribers matched in ' + S.continent, base.length, 'all')}</div>
+      <div class="crm-group"><h3>Subscribers</h3><div class="crm-quick">${qb('Matched to an organisation', matched.length, 'matched')}${S.continent === 'All' ? qb('No organisation matched', unmatched, 'unmatched') : ''}${qb('Also replied to our email', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
+    </section>
+    <p class="tiny crm-hint">Live from the Brevo newsletter list: new sign-ups and unsubscribes arrive on their own. Organisations are matched by email, the email they replied from, web domain or name; use “Link” to fix a match.</p>
+    <section class="panel crm-filters"><div class="crm-frow"><b>General</b>
+      <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
+      <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
+      <label><span>Name</span><input data-nfilter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Organisation or person"></label>
+      <label><span>Email address</span><input data-nfilter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email)}" placeholder="Search by email"></label>
+      <label><span>Match</span>${sel('match', [['matched', 'Matched'], ['unmatched', 'Not matched']], 'All')}</label>
+      <label><span>Status</span>${sel('status', ['Subscribed', 'Unsubscribed'], 'All')}</label>
+      <button class="button secondary small" data-action="clear-nfilters">Clear filters</button></div></section>
+    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Newsletter subscribers</span>${S.continent === 'All' ? '' : `<p class="tiny">Only subscribers matched to organisations in ${esc(S.continent)} are shown. Choose “All” to see the rest.</p>`}</div><span class="tiny"><b>${list.length}</b> subscribers</span></div>
+    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'Subscriber', 'Subscribed', 'How matched', 'Outreach', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${trs.join('') || '<tr><td colspan="7">No subscribers match these filters.</td></tr>'}</tbody></table></div></section>`;
+}
+function nlPickModal(id) {
+  const s = (S.subs || []).find(x => x.id === id); if (!s) return '';
+  const q = norm(S.nlQuery), d = mailDomain(s.email);
+  const cands = q.length >= 2 ? S.orgs.filter(o => norm(o.name).includes(q) || norm(o.email).includes(q) || norm(o.website).includes(q)).slice(0, 12)
+    : S.orgs.filter(o => d && !FREE_MAIL.test(d) && (norm(o.email).includes(d) || norm(o.website).includes(d))).slice(0, 8);
+  const cur = matchSubscriber(s);
+  return modal(`Link ${s.email}`, `<p class="tiny">${esc([s.first_name, s.last_name].filter(Boolean).join(' '))}${cur.org ? ` · now: <b>${esc(cur.org.name)}</b> (${esc(cur.how)})` : ' · no organisation matched yet'}</p>
+    <label class="field full"><span class="label">Search organisations by name, email or website</span><input data-nlsearch="${esc(id)}" value="${esc(S.nlQuery)}" placeholder="Type at least 2 letters"></label>
+    <div class="nl-cands">${cands.map(o => `<button type="button" class="nl-cand" data-action="nl-link" data-id="${esc(id)}" data-org="${esc(o.id)}"><b>${esc(o.name)}</b><span>${esc([o.country, o.email].filter(Boolean).join(' · '))}</span></button>`).join('') || '<p class="muted tiny">No suggestions yet. Search above.</p>'}</div>
+    <div class="actions"><button class="button secondary" data-action="nl-link" data-id="${esc(id)}" data-org="">Not an organisation</button>${s.org_id !== null && s.org_id !== undefined ? `<button class="button secondary" data-action="nl-link" data-id="${esc(id)}" data-org="__auto">Back to automatic matching</button>` : ''}<button class="button secondary" data-action="close">Cancel</button></div>`);
+}
+async function nlLink(id, org) {
+  const value = org === '__auto' ? null : org;
+  try { await api('newsletter.link', { id, org_id: value }); } catch (e) { return flash('Could not save: ' + e.message); }
+  const s = S.subs.find(x => x.id === id); if (s) s.org_id = value;
+  S.modal = ''; S.nlQuery = ''; flash('Saved.');
+}
+function parseCsv(text) {
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true; else if (c === ',' || c === ';') { row.push(cell); cell = ''; }
+    else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; } else if (c !== '\r') cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim()));
+}
+async function importNewsletterCsv(file) {
+  const rows = parseCsv(await file.text()); if (rows.length < 2) return flash('That file has no rows.');
+  const head = rows[0].map(h => h.trim().replace(/^﻿/, '')); const H = head.map(h => h.toLowerCase());
+  const col = re => H.findIndex(h => re.test(h));
+  const ie = col(/e-?mail/), ifn = col(/^(firstname|first name|prenom|prénom|nombre)$/), iln = col(/^(lastname|last name|nom|apellidos?)$/), id = col(/(added|created|creation|date)/);
+  if (ie < 0) return flash('No email column found in that file.');
+  const subs = rows.slice(1).map(r => ({ email: r[ie], first_name: ifn >= 0 ? r[ifn] : '', last_name: iln >= 0 ? r[iln] : '', subscribed_at: id >= 0 && !isNaN(Date.parse(r[id])) ? new Date(r[id]).toISOString() : null,
+    attributes: Object.fromEntries(head.map((h, i) => [h, r[i]]).filter(([h, v], i) => v && ![ie, ifn, iln].includes(i))) }));
+  try { const { imported } = await api('newsletter.import', { subscribers: subs }); flash(`${imported} subscribers imported.`); } catch (e) { return flash('Could not import: ' + e.message); }
+  loadNewsletter();
+}
+function exportNewsletter() {
+  downloadCsv(`ethical-bridge-newsletter-${today()}.csv`, ['email', 'first_name', 'last_name', 'status', 'subscribed', 'organisation', 'continent', 'region', 'country', 'how_matched', 'reply_status'],
+    filteredNewsletter().map(r => [r.sub.email, r.sub.first_name, r.sub.last_name, r.sub.subscribed ? 'Subscribed' : 'Unsubscribed', (r.sub.subscribed_at || '').slice(0, 10), r.org?.name || '', r.org?.continent || '', r.org?.region || '', r.org?.country || '', r.how, r.org ? outreachOf(r.org.id).reply_status : '']));
+}
+
 function orgModal(id) {
   const o = S.orgById.get(id); if (!o) return '';
   const r = outreachOf(id);
@@ -589,14 +736,15 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cunfilter],[data-nquick]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { region: '', country: '', name: '', email: '', match: q === 'matched' || q === 'replied' ? 'matched' : q === 'unmatched' ? 'unmatched' : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.tab) { if (S.pat?.dirty && !confirm('Leave this assessment without saving?')) return; S.pat = null; S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
-  if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.cf.region = ''; S.cf.country = ''; S.page = 0; render(); return; }
+  if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.cf.region = ''; S.cf.country = ''; S.nf.region = ''; S.nf.country = ''; S.page = 0; render(); return; }
   if (t.dataset.page != null && t.dataset.page !== undefined && t.hasAttribute('data-page')) { S.page = Number(t.dataset.page); render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start' }); return; }
   if (t.hasAttribute('data-pat-section')) { S.patSection = Number(t.dataset.patSection); render(); root.querySelector('.crm-pat-body')?.scrollIntoView({ block: 'start' }); return; }
   const a = t.dataset.action, id = t.dataset.id;
@@ -608,6 +756,11 @@ root.addEventListener('click', async e => {
     case 'thread': return openModal(threadModal(id));
     case 'pin': return setPin(id, true);
     case 'unpin': return setPin(id, false);
+    case 'reload-nl': S.subs = null; render(); return loadNewsletter();
+    case 'export-nl': return exportNewsletter();
+    case 'clear-nfilters': S.nf = { region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }; S.nfReplied = false; return render();
+    case 'nl-pick': S.nlQuery = ''; return openModal(nlPickModal(id));
+    case 'nl-link': return nlLink(id, t.dataset.org);
     case 'reload-msgs': S.msgs = null; render(); return loadMessages();
     case 'export-conv': return exportConversations();
     case 'clear-cfilters': S.cf = { region: '', country: '', name: '', email: '', status: '' }; return render();
@@ -657,6 +810,8 @@ root.addEventListener('change', async e => {
     return;
   }
   if (t.dataset.filter && t.tagName === 'SELECT') { S.f[t.dataset.filter] = t.value; if (t.dataset.filter === 'region') S.f.country = ''; S.page = 0; return render(); }
+  if (t.dataset.action === 'nl-csv' && t.files?.[0]) { const f = t.files[0]; t.value = ''; return importNewsletterCsv(f); }
+  if (t.dataset.nfilter && t.tagName === 'SELECT') { S.nf[t.dataset.nfilter] = t.value; if (t.dataset.nfilter === 'region') S.nf.country = ''; S.nfReplied = false; return render(); }
   if (t.dataset.cfilter && t.tagName === 'SELECT') { S.cf[t.dataset.cfilter] = t.value; if (t.dataset.cfilter === 'region') S.cf.country = ''; return render(); }
   if (t.dataset.mapf && t.tagName === 'SELECT') { S.mapF[t.dataset.mapf] = t.value; return render(); }
   if (S.pat && (t.dataset.pat || t.dataset.score)) {
@@ -670,6 +825,8 @@ root.addEventListener('change', async e => {
 root.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset.filter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.filter; filterTimer = setTimeout(() => { S.f[k] = t.value; S.page = 0; render(); const el = root.querySelector(`[data-filter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
+  if (t.dataset.nlsearch) { clearTimeout(filterTimer); const id = t.dataset.nlsearch; filterTimer = setTimeout(() => { S.nlQuery = t.value; S.modal = nlPickModal(id); render(); const el = root.querySelector('[data-nlsearch]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 200); return; }
+  if (t.dataset.nfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.nfilter; filterTimer = setTimeout(() => { S.nf[k] = t.value; render(); const el = root.querySelector(`[data-nfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.cfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.cfilter; filterTimer = setTimeout(() => { S.cf[k] = t.value; render(); const el = root.querySelector(`[data-cfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.mapf && t.tagName === 'INPUT') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.mapF.q = t.value; render(); const el = root.querySelector('[data-mapf="q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.action === 'track-q') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.trackQ = t.value; render(); const el = root.querySelector('[data-action="track-q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
