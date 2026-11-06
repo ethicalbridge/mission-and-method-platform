@@ -242,3 +242,33 @@ tr.nl-wk-camp td { background: #fff5ec; }
 /* Visited · relationship built */
 .crm-quick>button.crm-q-visited b{color:#7a4fb3}
 .crm-ally.visited{background:#efe8f8;color:#5b3a8c;border-color:#d3c3ec}
+/* Relationship map (6 Nov 2026) */
+.crm-rel-legend{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
+.crm-rel-legend button{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;cursor:pointer;text-align:left;transition:border-color .15s,opacity .15s}
+.crm-rel-legend button:hover{border-color:var(--c)}
+.crm-rel-legend button.off{opacity:.45;background:#f4f6f5}
+.crm-rel-legend button.off span{text-decoration:line-through}
+.crm-rel-legend i{width:14px;height:14px;border-radius:50%;background:var(--c);flex:none;box-shadow:0 0 0 2px #fff,0 0 0 3px var(--c)}
+.crm-rel-legend i.ring{background:#fff;box-shadow:inset 0 0 0 3px var(--c)}
+.crm-rel-legend b{font-size:20px;font-weight:900;color:var(--deep);line-height:1}
+.crm-rel-legend span{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.03em}
+.crm-relmap-wrap{position:relative;margin:0 0 8px}
+.crm-relmap{height:560px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#dfe9ee;z-index:0}
+.crm-relmap-reset{position:absolute;top:10px;right:10px;z-index:500;background:#fff}
+.crm-rel{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:800;color:var(--deep);white-space:nowrap}
+.crm-rel::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.crm-whys{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0}
+.crm-why{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.74rem;font-weight:700;background:var(--mint);color:var(--teal);border:1px solid #c5e0d3}
+.crm-reltable td.crm-text p{margin:4px 0 0;font-size:13px;color:var(--ink);max-width:560px}
+.crm-reltable td .tiny{display:block}
+.crm-relpop{display:grid;gap:5px;font-family:inherit}
+.crm-relpop strong{color:var(--deep);font-size:14px}
+.crm-relpop p{margin:2px 0;font-size:12.5px;line-height:1.4}
+.crm-relpop-actions{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.crm-relpop-actions .link{text-align:left;font-size:13px}
+.crm-reasons{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.crm-reasons label{font-size:14px;display:flex;gap:7px;align-items:center}
+.crm-ally-note{margin:8px 0;padding:8px 10px;border-radius:8px;background:var(--mint);border:1px solid #c5e0d3;font-size:.9rem}
+.crm-ally-note p{margin:4px 0 0}
+@media(max-width:700px){.crm-relmap{height:400px}.crm-rel-legend button{flex:1 1 140px}}
+.panel .crm-reltable th{color:#fff;border-bottom:0}

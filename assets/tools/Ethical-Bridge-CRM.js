@@ -1,7 +1,8 @@
 /* Ethical Bridge CRM — Impact Tool (Module 12 · Partnerships & Ecosystem Building).
 
-   Sections: Dashboard · Outreach (organisations, contacts and email campaigns) · Partnership mapping ·
-   Partnership assessment (PAT) · Partnership tracking.
+   Sections: Dashboard · Outreach (organisations, contacts and email campaigns) · Conversations ·
+   Relationship map · Newsletter. (6 Nov 2026: Partnership mapping, PAT and Partnership tracking removed at the
+   owner's request; their saved records stay in ebcrm_records.)
 
    Access: a private team code, checked on the server by the `ebcrm-api` Edge Function (only its
    SHA-256 digest is stored there; the code never appears in this file). The code is remembered
@@ -12,40 +13,26 @@
      ebcrm_directory_access). They are never copied into this database: one source of truth.
    - Organisations a workspace adds itself live in ebcrm_organisations.
    - Outreach marks live in ebcrm_outreach (one row per workspace + organisation).
-   - Campaigns, CSP goals, stakeholders, partnership records and PAT assessments live in
-     ebcrm_records (kind + JSON data).
+   - Logged email campaigns live in ebcrm_records (kind + JSON data). Older CSP goals, stakeholders,
+     partnership records and PAT assessments are still stored there but no longer shown.
+   - Relationship map: ally type (ebcrm_outreach.ally), why (ally_reasons) and a note (ally_note), set from
+     the email analysis or by hand; pins use the main office coordinates from the directory.
    - Newsletter: subscribers in ebcrm_newsletter; newsletters sent in ebcrm_campaigns; per-person
      Brevo events (delivered, opened, clicked, bounced, unsubscribed) in ebcrm_campaign_events, all
      kept up to date by the ebcrm-brevo-webhook Edge Function.
 */
-import { PAT_SECTIONS } from './Ethical-Bridge-CRM-PAT.js';
 
 const API = 'https://itzrnaxfllcztpzrgnoa.supabase.co/functions/v1/ebcrm-api';
 
 // ---------- constants ----------
-const SECTIONS = ['Dashboard', 'Outreach', 'Conversations', 'Newsletter', 'Partnership mapping', 'Partnership assessment (PAT)', 'Partnership tracking'];
+const SECTIONS = ['Dashboard', 'Outreach', 'Conversations', 'Relationship map', 'Newsletter'];
 const CONTINENTS = ['Africa', 'Asia', 'Europe', 'Oceania', 'The Americas'];
 const INTERVIEW = [['Not interviewed', 'Not interviewed'], ['Interviewed', 'Interviewed'], ['Scheduled', 'Planned']]; // stored value 'Scheduled' is shown as 'Planned'
 const interviewLabel = v => v === 'Scheduled' ? 'Planned' : v;
 const EMAIL = ['Not sent', 'Sent'];
 const SOCIAL = ['Not contacted', 'Contacted', 'Contacted and friend request sent'];
 const REPLY = ['None', 'Replied', 'Automatic reply', 'Bounce back'];
-const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', interview_date: null, email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '', ally: '' };
-const ORG_TYPES = ['Academic institution', 'Child-led org/group', 'Community-based org/group', 'International corporate', 'International NGO', 'Media', 'Membership-based org', 'National government/authority', 'National/local corporate', 'National/local CSO', 'Network/Coalition/Movement', 'Sub-national government/authority', 'UN/multilateral agency'];
-const ROLES = ['Strategic Partner', 'Challenger', 'Ally', 'Extraneous'];
-const STAGES = ['New', 'Introduced', 'In conversation', 'Active', 'Paused', 'Closed'];
-const STRENGTH = ['New', 'Developing', 'Strong', 'Strategic', 'At risk'];
-const PAT_STATUS = ['Draft', 'In review', 'Recommended', 'Approved', 'Declined'];
-const SCORE_LABELS = { '1': '1 · Major gaps', '2': '2 · Limited', '3': '3 · Partial', '4': '4 · Mostly in place', '5': '5 · Strong', 'na': 'Not applicable' };
-const PAT_PROFILE = [
-  ['partner_name', 'Partner name'], ['org_id', 'Directory organisation (optional)'], ['assessor', 'Assessor name(s)'], ['assessment_date', 'Assessment date', 'date'],
-  ['org_type', 'Type of organisation'], ['address', 'Address'], ['telephone', 'Telephone'], ['email', 'Email', 'email'], ['website', 'Website'],
-  ['primary_contact', 'Primary contact'], ['registration_number', 'Registration number'], ['geographic_areas', 'Geographic areas served'],
-  ['last_budget_usd', 'Last full year budget (USD)', 'number'], ['staff', 'Number of staff', 'number'], ['project_goal', 'Overall project goal', 'area'],
-  ['thematic_areas', 'Key thematic areas and interventions', 'area'], ['intervention_context', 'Intervention context', 'area'],
-  ['themes', 'Themes and cross-cutting themes', 'area'], ['funding_transfer_usd', 'Proposed funding transfer (USD)', 'number'], ['donor', 'Donor'],
-  ['implementation_geography', 'Proposed implementation geography', 'area'],
-];
+const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', interview_date: null, email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '', ally: '', ally_reasons: [], ally_note: '' };
 const PAGE = 100;
 const LS = { code: 'mm.ebcrm.code', continent: 'mm.ebcrm.continent' };
 
@@ -79,11 +66,11 @@ const S = {
   loading: true, loadError: '', directoryError: '', directoryLoadedAt: '',
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
   f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
-  mapF: { goal: '', role: '', type: '', engaged: '', q: '' }, trackQ: '', patFilter: '',
+  rf: { hide: [], reason: '', q: '' }, relView: null,
   msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '', ally: '' },
   subs: null, subsError: '', nf: { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
   camps: null, cevents: [], campsError: '', nlView: 'Subscribers', campOpen: '', tlRange: 'all',
-  modal: '', message: '', saving: 0, pat: null, patSection: 0,
+  modal: '', message: '', saving: 0,
 };
 const root = document.getElementById('app');
 
@@ -124,7 +111,7 @@ async function loadMessages() {
   S.msgsError = '';
   try { S.msgs = (await api('messages')).messages; }
   catch (e) { S.msgs = S.msgs || []; S.msgsError = e?.message || 'Could not load the conversations.'; }
-  if (['Conversations', 'Dashboard', 'Newsletter'].includes(S.view)) render();
+  if (['Conversations', 'Dashboard', 'Newsletter', 'Relationship map'].includes(S.view)) render();
 }
 
 async function loadNewsletter() {
@@ -218,20 +205,21 @@ const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', int
 function render() {
   if (!S.code) return renderSignIn();
   if (!S.ws) { root.innerHTML = `<div class="shell crm"><p class="muted crm-loading">${S.loadError ? esc(S.loadError) + ' <button class="link" data-action="reload">Try again</button>' : 'Loading organisations and your outreach records…'}</p></div>`; return; }
-  const continentBar = ['Dashboard', 'Outreach', 'Conversations'].includes(S.view) ? renderContinentBar() : '';
+  const continentBar = ['Dashboard', 'Outreach', 'Conversations', 'Relationship map'].includes(S.view) ? renderContinentBar() : '';
   let body = '';
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
   else body = ({
-    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': renderConversations, 'Newsletter': renderNewsletter,
-    'Partnership mapping': renderMapping, 'Partnership assessment (PAT)': renderPat, 'Partnership tracking': renderTracking,
+    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': renderConversations, 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
   })[S.view]();
+  unmountRelMap();
   root.innerHTML = `<div class="shell crm">
     <header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="crm-top-right"><span class="tiny">Workspace: <b>${esc(S.ws.name)}</b></span><span class="tiny" id="save-state">${S.saving ? 'Saving…' : 'All changes saved'}</span><a href="../../software.html">← Impact Tools</a></div></header>
-    <div class="hero crm-hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Partner, outreach &amp; partnerships</h1><p>${S.hasDirectory ? 'Organisations come live from the Ethical Bridge directory. Your outreach, mapping, assessments and partnership records are saved to this workspace.' : 'Add the organisations you work with, then track outreach, mapping, assessments and partnerships in one place.'}</p></div>
+    <div class="hero crm-hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Partner, outreach &amp; partnerships</h1><p>${S.hasDirectory ? 'Organisations come live from the Ethical Bridge directory. Your outreach, conversations and relationships are saved to this workspace.' : 'Add the organisations you work with, then track outreach, conversations and relationships in one place.'}</p></div>
     <nav class="nav" aria-label="CRM sections">${SECTIONS.map(t => `<button type="button" data-tab="${esc(t)}" class="${t === S.view ? 'active' : ''}"${t === S.view ? ' aria-current="page"' : ''}>${esc(t)}</button>`).join('')}</nav>
     <main id="main" tabindex="-1">${S.message ? `<div class="notice" role="status">${esc(S.message)}</div>` : ''}${S.directoryError ? `<div class="notice warn" role="alert">Directory: ${esc(S.directoryError)}</div>` : ''}${continentBar}${body}</main>
     <footer class="tiny">Ethical Bridge CRM · Method into Impact · Organisation details are edited on ethicalbridge.org, not here</footer></div>${S.modal}`;
+  if (S.view === 'Relationship map' && S.msgs !== null && !S.loading && !S.loadError) mountRelMap();
 }
 
 function renderContinentBar() {
@@ -252,21 +240,17 @@ function renderSignIn() {
 // ---------- Dashboard ----------
 function renderDashboard() {
   const list = continentOrgs(); const s = stats(list);
-  const rec = S.records;
-  const due = rec.partner.filter(p => p.data.next_follow_up && p.data.next_follow_up <= today() && p.data.stage !== 'Closed').length;
-  const steps = [['Research', 'Directory & mapping', 'Partnership mapping'], ['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Conversations'], ['Assess', 'Partnership assessment', 'Partnership assessment (PAT)'], ['Partner', 'Agree the relationship', 'Partnership tracking'], ['Track', 'Follow-ups & renewals', 'Partnership tracking']];
+  const steps = [['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Conversations'], ['Relate', 'Allies, visits & why', 'Relationship map'], ['Stay in touch', 'Newsletter', 'Newsletter']];
   return `<section class="grid four crm-cards">
       ${card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
       ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
       ${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate · ' + s.interviewed + ' interviewed')}
       ${(() => { if (!S.subs) return card('Newsletter subscribers', '…', 'Live from Brevo'); const a = newsletterRows().filter(r => r.sub.subscribed); const m = a.filter(r => r.org && inContinent(r.org)).length; return card('Newsletter subscribers', a.length, m + ' matched to organisations' + (S.continent === 'All' ? '' : ' in ' + S.continent)); })()}
       ${(() => { const c = sentCamps().slice(-1)[0]; if (!c) return card('Newsletters sent', S.camps ? 0 : '…', 'Brevo campaigns'); const x = campSummary(c); return card('Last newsletter', fmtDate(c.sent_at), `${num(x.sent)} sent · ${x.opened ? pct(x.opened, x.base) + ' opened' : 'opens not in yet'}`); })()}
-      ${card('Stakeholders mapped', rec.stakeholder.length, rec.goal.filter(g => g.data.wording).length + ' / 4 CSP goals entered')}
-      ${card('Partnership assessments', rec.assessment.length, rec.assessment.filter(a => a.data.status === 'Approved').length + ' approved')}
-      ${card('Partnerships tracked', rec.partner.length, due ? due + ' follow-ups due' : 'No follow-ups due', due ? 'warn' : '')}
+      ${(() => { if (!S.msgs) return card('Strong allies', '…', 'From the email analysis'); const r = relRows().filter(x => inContinent(x.o)); return card('Strong allies', r.filter(x => x.cat === 'strong').length, r.filter(x => x.cat === 'visited').length + ' visited · ' + r.filter(x => x.cat === 'possible').length + ' possible allies'); })()}
       ${(() => { const w = S.msgs ? conversations().filter(c => c.status === 'waiting' && inContinent(c.o)).length : null; return card('Waiting for my reply', w ?? '…', 'Pinned emails · see Conversations', w ? 'warn' : ''); })()}
     </section>
-    <section class="panel"><span class="eyebrow">End-to-end workflow</span><h2>From discovery to lasting partnerships</h2>
+    <section class="panel"><span class="eyebrow">End-to-end workflow</span><h2>From first email to lasting relationships</h2>
       <ol class="crm-flow">${steps.map(([t, d, v], i) => `<li><button type="button" data-tab="${esc(v)}"><b>${i + 1}</b><span>${esc(t)}</span><small>${esc(d)}</small></button></li>`).join('')}</ol></section>`;
 }
 
@@ -458,7 +442,8 @@ function threadModal(id) {
       <div class="crm-mail-body">${esc(m.body || '(no text)')}</div></article>`).join('');
   const o = c.o;
   return modal(o.name, `<p class="tiny">${esc([o.country, o.region, o.continent].filter(Boolean).join(' · '))}${o.email ? ' · ' + esc(o.email) : ''} · ${c.nIn} from them, ${c.nOut} from you</p>
-    <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}${c.ally === 'visited' ? `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">Remove visited (keep as strong ally)</button>` : `<button class="button secondary" data-action="ally" data-ally="visited" data-id="${esc(id)}">📍 Mark as visited</button>`}${c.ally === 'visited' ? '' : c.ally === 'strong' ? `<button class="button secondary" data-action="ally" data-ally="" data-id="${esc(id)}">Remove strong ally</button>` : `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">🤝 Mark as strong ally</button>`}${!['strong', 'visited'].includes(c.ally) && c.mark !== 'possible' ? `<button class="button secondary" data-action="ally" data-ally="possible" data-id="${esc(id)}">Possible ally</button>` : ''}${c.ally === 'suggested' ? `<button class="button secondary" data-action="ally" data-ally="no" data-id="${esc(id)}">Not an ally</button>` : ''}<button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
+    <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}${c.ally === 'visited' ? `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">Remove visited (keep as strong ally)</button>` : `<button class="button secondary" data-action="ally" data-ally="visited" data-id="${esc(id)}">📍 Mark as visited</button>`}${c.ally === 'visited' ? '' : c.ally === 'strong' ? `<button class="button secondary" data-action="ally" data-ally="" data-id="${esc(id)}">Remove strong ally</button>` : `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">🤝 Mark as strong ally</button>`}${!['strong', 'visited'].includes(c.ally) && c.mark !== 'possible' ? `<button class="button secondary" data-action="ally" data-ally="possible" data-id="${esc(id)}">Possible ally</button>` : ''}${c.ally === 'suggested' ? `<button class="button secondary" data-action="ally" data-ally="no" data-id="${esc(id)}">Not an ally</button>` : ''}<button class="button secondary" data-action="rel-edit" data-id="${esc(id)}">Ally type &amp; why</button><button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
+    ${(() => { const r = S.outreach.get(id) || {}; return (r.ally_reasons || []).length || r.ally_note ? `<div class="crm-ally-note"><b>Why:</b> <span class="crm-whys">${reasonChips(r.ally_reasons)}</span>${r.ally_note ? `<p>${esc(r.ally_note)}</p>` : ''}</div>` : ''; })()}
     ${c.o.removed ? `<p class="crm-removed-note"><b>Removed from the directory at their request (${esc(c.o.removed)}).</b> ${esc(c.o.removedReason || '')}</p>` : ''}
     ${c.ally === 'suggested' ? (c.mark === 'possible' ? `<p class="crm-ally-why"><b>Marked as a possible ally by hand.</b></p>` : `<p class="crm-ally-why"><b>Why it's suggested:</b> “${esc(c.hint)}”</p>`) : ''}
     <p class="tiny">Pins changed here stay in the CRM; they don't change the pin in your mailbox.</p>
@@ -468,7 +453,7 @@ function exportConversations() {
   const list = filteredConversations(conversations());
   downloadCsv(`ethical-bridge-conversations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
     ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'ally', 'last_email', 'messages'],
-    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], c.ally === 'strong' ? 'Strong ally' : c.ally === 'suggested' ? 'Possible ally' : '', c.last?.sent_at.slice(0, 10) || '', c.all.length]));
+    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], c.ally === 'visited' ? 'Visited' : c.ally === 'strong' ? 'Strong ally' : c.ally === 'suggested' ? 'Possible ally' : '', c.last?.sent_at.slice(0, 10) || '', c.all.length]));
 }
 async function setAlly(id, ally) {
   await saveOutreach(id, { ally });
@@ -878,103 +863,131 @@ function campaignModal(id) {
     <div class="actions field full"><button class="button" type="submit">${c ? 'Save campaign' : 'Log campaign'}</button>${c ? `<button class="button danger" type="button" data-action="delete-record" data-kind="campaign" data-id="${c.id}">Delete</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div></form>`);
 }
 
-// ---------- Partnership mapping ----------
-const goalOf = n => S.records.goal.find(g => Number(g.data.goal) === n);
-function renderMapping() {
-  const st = S.records.stakeholder; const m = S.mapF; const q = norm(m.q);
-  const list = st.filter(x => (!m.goal || String(x.data.goal) === m.goal) && (!m.role || x.data.role === m.role) && (!m.type || x.data.org_type === m.type) && (!m.engaged || x.data.previous_engagement === m.engaged) && (!q || norm([x.data.name, x.data.locations, x.data.manager, x.data.next_steps].join(' ')).includes(q)));
-  const roleCount = r => st.filter(x => x.data.role === r).length;
-  const names = (g, r) => st.filter(x => Number(x.data.goal) === g && x.data.role === r).map(x => esc(x.data.name)).join(', ') || '—';
-  return `<section class="panel"><span class="eyebrow">Partnership mapping</span><h2>Partner scoping overview</h2>
-    <div class="crm-stats">${[['Stakeholders', st.length], ['Goals with entries', [1, 2, 3, 4].filter(g => st.some(x => Number(x.data.goal) === g)).length + ' / 4'], ...ROLES.map(r => [r, roleCount(r)])].map(([l, v]) => `<div><b>${v}</b><span>${esc(l)}</span></div>`).join('')}</div></section>
-  <section class="panel"><h3>CSP goal areas</h3><div class="grid four">${[1, 2, 3, 4].map(n => { const g = goalOf(n)?.data || {}; const c = st.filter(x => Number(x.data.goal) === n).length; return `<button type="button" class="card crm-goal" data-action="edit-goal" data-goal="${n}"><span class="eyebrow">Goal ${n}</span><div class="metric">${c}</div><p>${c === 1 ? 'stakeholder' : 'stakeholders'}</p><p class="tiny">${esc(g.wording || 'Strategic goal not entered yet')}</p>${g.completed_by ? `<p class="tiny">Scoped by ${esc(g.completed_by)}${g.date_completed ? ' · ' + esc(fmtDate(g.date_completed)) : ''}</p>` : ''}</button>`; }).join('')}</div></section>
-  <section class="panel"><h3>CSP stakeholder map</h3><div class="tablewrap"><table><thead><tr><th>CSP goal</th><th>Strategic Partners</th><th>Challengers</th><th>Allies</th></tr></thead><tbody>${[1, 2, 3, 4].map(n => `<tr><td><b>Goal ${n}</b><br><span class="tiny">${esc(goalOf(n)?.data.wording || 'Goal not entered yet')}</span></td><td>${names(n, 'Strategic Partner')}</td><td>${names(n, 'Challenger')}</td><td>${names(n, 'Ally')}</td></tr>`).join('')}</tbody></table></div></section>
-  <section class="panel"><div class="rowhead"><h3>Filter stakeholders</h3></div>
-    <div class="crm-frow"><label><span>Search</span><input data-mapf="q" value="${esc(m.q)}" placeholder="Search this view"></label><label><span>Goal</span><select data-mapf="goal">${opts([1, 2, 3, 4].map(n => [String(n), 'Goal ' + n]), m.goal, 'All goals')}</select></label><label><span>Role</span><select data-mapf="role">${opts(ROLES, m.role, 'All roles')}</select></label><label><span>Organisation type</span><select data-mapf="type">${opts(ORG_TYPES, m.type, 'All organisation types')}</select></label><label><span>Previous engagement</span><select data-mapf="engaged">${opts(['Yes', 'No'], m.engaged, 'All')}</select></label><button class="button secondary small" data-action="clear-mapf">Clear filters</button></div>
-    <div class="rowhead"><span class="tiny">Stakeholders <b>${list.length}</b> of ${st.length}</span><div class="actions"><button class="button secondary" data-action="export-stakeholders">Export</button><button class="button" data-action="add-stakeholder">Add stakeholder</button></div></div>
-    <div class="tablewrap"><table><thead><tr><th>Goal</th><th>Stakeholder</th><th>Type</th><th>Locations</th><th>Previous engagement</th><th>Role</th><th>Relationship manager</th><th>Next steps</th><th></th></tr></thead><tbody>${list.map(x => { const d = x.data; return `<tr><td>${d.goal ? 'Goal ' + esc(d.goal) : '—'}</td><td><b>${esc(d.name)}</b></td><td>${esc(d.org_type)}</td><td>${esc(d.locations)}</td><td>${esc(d.previous_engagement)}</td><td>${d.role ? `<span class="pill">${esc(d.role)}</span>` : ''}</td><td>${esc(d.manager)}</td><td>${esc(d.next_steps)}</td><td><button class="link" data-action="edit-stakeholder" data-id="${x.id}">Edit</button></td></tr>`; }).join('') || `<tr><td colspan="9">${st.length ? 'No stakeholders match these filters.' : 'No stakeholders have been scoped yet. Add the first one to begin.'}</td></tr>`}</tbody></table></div></section>`;
-}
-function goalModal(n) {
-  const g = goalOf(n); const d = g?.data || {};
-  return modal(`CSP goal ${n}`, `<form class="form" data-form="goal" data-goal="${n}" data-id="${esc(g?.id || '')}">${field('Strategic goal', 'wording', d.wording, 'area')}${field('Date completed', 'date_completed', d.date_completed, 'date')}${field('Completed by / scoping lead', 'completed_by', d.completed_by)}
-    <div class="actions field full"><button class="button" type="submit">Save goal</button><button class="button secondary" type="button" data-action="close">Cancel</button></div></form>`, 'Enter the wording of this Country Strategic Plan goal and who completed its stakeholder scoping.');
-}
-function stakeholderModal(id) {
-  const x = S.records.stakeholder.find(s => s.id === id); const d = x?.data || {};
-  return modal(x ? 'Edit stakeholder' : 'Add stakeholder', `<form class="form" data-form="stakeholder" data-id="${esc(id || '')}">
-    <h3 class="field full">Stakeholder profile</h3>
-    ${selectField('CSP goal area', 'goal', [1, 2, 3, 4].map(n => [String(n), 'Goal ' + n]), d.goal)}
-    ${field('Stakeholder name', 'name', d.name, 'text', 'required list="crm-org-names"')}
-    ${field('Profile and website', 'profile', d.profile, 'area')}
-    ${selectField('Organisation type', 'org_type', ORG_TYPES, d.org_type)}${field('Size (staff, budget, offices)', 'size', d.size)}${field('Locations / regions where present', 'locations', d.locations)}
-    <h3 class="field full">Relationship and contribution</h3>
-    ${selectField('Previous engagement with us?', 'previous_engagement', ['Yes', 'No'], d.previous_engagement)}
-    ${field('Current relationship', 'current_relationship', d.current_relationship, 'area')}${field('Collaboration, alignment and knowledge sharing', 'collaboration', d.collaboration, 'area')}
-    <h3 class="field full">Relationship ownership and next steps</h3>
-    ${selectField('Stakeholder role', 'role', ROLES, d.role)}${field('Relationship manager / liaison', 'manager', d.manager)}${field('Next steps', 'next_steps', d.next_steps, 'area')}
-    <div class="actions field full"><button class="button" type="submit">Save stakeholder</button>${x ? `<button class="button danger" type="button" data-action="delete-record" data-kind="stakeholder" data-id="${x.id}">Delete</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div></form>${orgDatalist()}`);
-}
-const orgDatalist = () => `<datalist id="crm-org-names">${S.orgs.slice(0, 5000).map(o => `<option value="${esc(o.name)}">`).join('')}</datalist>`;
-
-// ---------- PAT ----------
-function patScores(d) {
-  const answers = d.answers || {};
-  const areas = PAT_SECTIONS.map(sec => {
-    let sum = 0, scored = 0, na = 0;
-    for (const q of sec.questions) { const v = answers[q.id]?.score; if (v === 'na') na++; else if (v) { sum += Number(v); scored++; } }
-    return { n: sec.n, short: sec.short, sum, scored, na, total: sec.questions.length, max: sec.questions.length * 5, avg: scored ? sum / scored : null };
+// ---------- Relationship map (organisations that replied, removed, visited, strong and possible allies) ----------
+// One pin per organisation, at its main office, coloured by its strongest tie with us. Each organisation's
+// "Ally type & why" (ally + ally_reasons + ally_note in ebcrm_outreach) comes from the email analysis or is set by hand.
+const REL = [
+  ['visited', 'Visited · relationship built', '#6b46a8'],
+  ['strong', 'Strong allies', '#116b68'],
+  ['possible', 'Possible allies', '#e0a019'],
+  ['replied', 'Replied', '#8a9aa6'],
+  ['removed', 'Removed at their request', '#c0392b'],
+];
+const REL_ORDER = ['visited', 'strong', 'possible', 'replied', 'removed'];
+const REASONS = [['call', 'Call or meeting'], ['visit', 'Visit / met in person'], ['collab', 'Partnership or further work'], ['handova', 'Handova'], ['jobs', 'Jobs & Opportunities'], ['fundova', 'Funding (Fundova)'], ['story', 'Interview, video or story'], ['network', 'Networking · Local Impact Alliance'], ['promote', 'Promotion · featuring us']];
+const ALLY_MARKS = [['', 'Not reviewed (replied)'], ['visited', 'Visited · relationship built'], ['strong', 'Strong ally'], ['possible', 'Possible ally'], ['no', 'Not an ally']];
+const relColor = k => REL.find(x => x[0] === k)[2];
+const relLabel = k => REL.find(x => x[0] === k)[1];
+const reasonLabel = k => REASONS.find(x => x[0] === k)?.[1] || k;
+const reasonChips = list => (list || []).map(k => `<span class="crm-why">${esc(reasonLabel(k))}</span>`).join('');
+function relRows() {
+  return conversations().map(c => {
+    const r = S.outreach.get(c.id) || {};
+    const cat = c.o.removed ? 'removed' : c.ally === 'visited' ? 'visited' : c.ally === 'strong' ? 'strong' : c.ally === 'suggested' ? 'possible' : 'replied';
+    return { ...c, cat, reasons: r.ally_reasons || [], note: r.ally_note || '' };
   });
-  const sum = areas.reduce((a, b) => a + b.sum, 0), scored = areas.reduce((a, b) => a + b.scored, 0), na = areas.reduce((a, b) => a + b.na, 0);
-  return { areas, sum, scored, answered: scored + na, total: 109, max: 545, avg: scored ? sum / scored : null };
 }
-const avgTxt = v => v == null ? '—' : v.toFixed(1);
-function renderPat() {
-  if (S.pat) return renderPatEditor();
-  const list = S.records.assessment.filter(a => !S.patFilter || a.id === S.patFilter);
-  return `<section class="panel"><div class="rowhead"><div><span class="eyebrow">Partner assessment</span><h2>Partnership Assessment Tool</h2><p class="muted">Score each assessment area from 1 to 5, record the evidence, and review the partner’s overall position.</p></div><button class="button" data-action="new-pat">+ New assessment</button></div>
-    <div class="crm-frow"><label><span>Filter by partner</span><select data-action="pat-filter">${opts(S.records.assessment.map(a => [a.id, a.data.partner_name || 'Untitled assessment']), S.patFilter, 'All partners')}</select></label><span class="tiny">Partners assessed <b>${S.records.assessment.length}</b></span></div></section>
-    <section class="crm-pat-list">${list.map(a => { const sc = patScores(a.data); return `<article class="panel crm-pat-card"><div class="rowhead"><div><h3>${esc(a.data.partner_name || 'Untitled assessment')}</h3><span class="pill">${esc(a.data.status || 'Draft')}</span> <span class="tiny">${esc(fmtDate(a.data.assessment_date))}${a.data.assessor ? ' · ' + esc(a.data.assessor) : ''}</span></div><div class="crm-pat-score"><b>${avgTxt(sc.avg)}</b> / 5<br><span class="tiny">${sc.sum} / ${sc.max} possible points · ${sc.answered}/${sc.total} scored</span></div></div>
-      <div class="crm-pat-areas">${sc.areas.map(x => `<div><span>${esc(x.short)}</span><b>${avgTxt(x.avg)}</b></div>`).join('')}</div>
-      <button class="link" data-action="open-pat" data-id="${a.id}">View assessment →</button></article>`; }).join('') || '<div class="empty">No partner assessments yet. Start one with “+ New assessment”.</div>'}</section>`;
+const hasPin = o => Number.isFinite(o.lat) && Number.isFinite(o.lng) && o.lat !== null && o.lng !== null;
+function relFiltered(all) {
+  const f = S.rf, q = norm(f.q);
+  return all.filter(x => !f.hide.includes(x.cat) && (!f.reason || x.reasons.includes(f.reason))
+    && (!q || norm(x.o.name).includes(q) || norm(x.o.country).includes(q) || norm(x.note).includes(q)))
+    .sort((a, b) => REL_ORDER.indexOf(a.cat) - REL_ORDER.indexOf(b.cat) || byCountry(a.o, b.o));
 }
-function renderPatEditor() {
-  const d = S.pat.data; const sc = patScores(d);
-  const nav = ['Partner & scope', ...PAT_SECTIONS.map(s => `${s.n}. ${s.title}`), '9. Capacity Strengthening Plan', '10. Recommendation'];
-  const i = S.patSection;
-  let body = '';
-  if (i === 0) body = `<h3>Partner &amp; proposed scope of work</h3><p class="muted">Capture the partner profile and proposed work before assessing capacity.</p><div class="form" data-pat-form>${PAT_PROFILE.map(([k, l, t]) => k === 'org_id' ? `<label class="field"><span class="label">${esc(l)}</span><input data-pat="${k}" list="crm-org-names" value="${esc(d[k] ? (S.orgById.get(d[k])?.name || d[k]) : '')}"></label>` : t === 'area' ? `<label class="field full"><span class="label">${esc(l)}</span><textarea data-pat="${k}">${esc(d[k])}</textarea></label>` : `<label class="field"><span class="label">${esc(l)}</span><input data-pat="${k}" type="${t || 'text'}" value="${esc(d[k])}"></label>`).join('')}</div>${orgDatalist()}`;
-  else if (i <= 8) {
-    const sec = PAT_SECTIONS[i - 1]; const a = sc.areas[i - 1];
-    body = `<h3>${sec.n}. ${esc(sec.title)}</h3><p class="muted">Record a score and the evidence behind it. Leave an item blank if it has not been assessed.</p><p class="tiny">${a.sum} / ${a.max} possible · ${a.scored + a.na}/${a.total} scored · Average ${avgTxt(a.avg)} / 5</p>
-      ${sec.questions.map(q => { const ans = (d.answers || {})[q.id] || {}; return `<div class="crm-q"><div class="crm-q-head"><span class="crm-q-no">${esc(q.no)}</span><span class="tiny">${esc(q.cat)}</span></div><p>${esc(q.q)}</p>${q.g ? `<details><summary>Guidance and verification prompts</summary><div class="crm-guidance">${esc(q.g).replace(/\n/g, '<br>')}</div></details>` : ''}
-        <div class="crm-q-row"><label><span class="label">Score (1–5)</span><select data-score="${q.id}">${opts(Object.entries(SCORE_LABELS), ans.score, 'Not scored')}</select></label><label class="grow"><span class="label">Comments / action</span><textarea data-comment="${q.id}" rows="2">${esc(ans.comment)}</textarea></label></div></div>`; }).join('')}`;
-  } else if (i === 9) body = `<h3>Capacity Strengthening Plan</h3><p class="muted">Agree priority actions with the partner, including responsibility and timing. Use the assessment evidence above to guide the plan.</p><label class="field full"><span class="label">Actions, owners, milestones and support required</span><textarea data-pat="plan" rows="10">${esc(d.plan)}</textarea></label>`;
-  else body = `<h3>Recommendation</h3><p class="muted">Document the team’s recommendation and conditions. This decision should follow review of the qualification, scope and capacity evidence.</p><div class="form"><label class="field"><span class="label">Assessment status</span><select data-pat="status">${opts(PAT_STATUS, d.status || 'Draft')}</select></label><label class="field full"><span class="label">Recommendation and rationale</span><textarea data-pat="recommendation">${esc(d.recommendation)}</textarea></label><label class="field full"><span class="label">Conditions and risk mitigation</span><textarea data-pat="conditions">${esc(d.conditions)}</textarea></label><label class="field full"><span class="label">Reviewers, sign-off and date</span><textarea data-pat="signoff">${esc(d.signoff)}</textarea></label></div>`;
-  return `<section class="panel crm-pat-head"><div class="rowhead"><div><button class="link" data-action="close-pat">← All assessments</button><h2>${esc(d.partner_name || 'New assessment')}</h2><span class="tiny">${sc.answered}/${sc.total} scored${S.pat.dirty ? ' · <b>Unsaved changes</b>' : ''}</span></div><div class="actions"><button class="button" data-action="save-pat">Save assessment</button>${S.pat.id ? '<button class="button secondary" data-action="print">Print / save PDF</button><button class="button danger" data-action="delete-pat">Delete</button>' : ''}</div></div>
-    <div class="crm-stats"><div><b>${avgTxt(sc.avg)} / 5</b><span>Overall average</span></div><div><b>${sc.sum} / ${sc.max}</b><span>Total score</span></div><div><b>${sc.answered} / ${sc.total}</b><span>Coverage</span></div>${sc.areas.map(a => `<div><b>${avgTxt(a.avg)}</b><span>${String(a.n).padStart(2, '0')} ${esc(a.short)} · ${a.sum}/${a.max}</span></div>`).join('')}</div>
-    <p class="tiny">Unanswered and N/A questions do not lower averages. Scores: 1 major gaps · 2 limited · 3 partial · 4 mostly in place · 5 strong.</p></section>
-    <div class="crm-pat-layout"><nav class="crm-pat-nav" aria-label="Assessment sections">${nav.map((t, k) => `<button type="button" class="${k === i ? 'active' : ''}" data-pat-section="${k}">${esc(t)}</button>`).join('')}</nav>
-    <section class="panel crm-pat-body">${body}<div class="actions"><button class="button secondary" data-pat-section="${Math.max(0, i - 1)}" ${i ? '' : 'disabled'}>Previous</button><button class="button secondary" data-pat-section="${Math.min(nav.length - 1, i + 1)}" ${i < nav.length - 1 ? '' : 'disabled'}>Next section →</button></div></section></div>`;
+function renderRelMap() {
+  if (S.msgs === null) return `<p class="muted crm-loading">Loading conversations…</p>`;
+  const all = relRows().filter(x => inContinent(x.o));
+  const list = relFiltered(all), noPin = list.filter(x => !hasPin(x.o)).length;
+  const n = k => all.filter(x => x.cat === k).length;
+  const f = S.rf;
+  const rows = list.map(x => `<tr>
+      <td>${esc(x.o.country)}</td>
+      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(x.id)}">${esc(x.o.name)}</button>${hasPin(x.o) ? '' : '<span class="tiny">No map location</span>'}</td>
+      <td><span class="crm-rel" style="--c:${relColor(x.cat)}">${esc(relLabel(x.cat))}</span>${x.mark === 'no' ? '<span class="tiny">Marked “not an ally”</span>' : x.ally === 'suggested' && x.mark !== 'possible' ? '<span class="tiny">Suggested from their reply</span>' : ''}</td>
+      <td class="crm-text">${x.reasons.length || x.note ? `<div class="crm-whys">${reasonChips(x.reasons)}</div>${x.note ? `<p>${esc(x.note)}</p>` : ''}` : '<span class="muted">—</span>'}</td>
+      <td><button class="button secondary small" data-action="rel-edit" data-id="${esc(x.id)}">Edit</button></td></tr>`);
+  return `<section class="rowhead section-head"><h2>Relationship map</h2><div class="actions"><button class="button secondary" data-action="reload-msgs">Refresh</button><button class="button" data-action="rel-export">Export</button></div></section>
+    ${S.msgsError ? `<div class="notice warn" role="alert">${esc(S.msgsError)}</div>` : ''}
+    <section class="crm-rel-legend" aria-label="Show or hide on the map">${REL.map(([k, l, c]) => `<button type="button" data-relcat="${k}" class="${f.hide.includes(k) ? 'off' : ''}" aria-pressed="${!f.hide.includes(k)}" style="--c:${c}"><i class="${k === 'removed' ? 'ring' : ''}"></i><b>${n(k)}</b><span>${esc(l)}</span></button>`).join('')}</section>
+    <section class="panel crm-filters"><div class="crm-frow"><b>Filter</b>
+      <label><span>Why they're an ally</span><select data-relreason class="${f.reason ? 'crm-on' : ''}">${opts(REASONS, f.reason, 'Any reason')}</select></label>
+      <label><span>Search</span><input data-relq class="${f.q ? 'crm-on' : ''}" value="${esc(f.q)}" placeholder="Name, country or note"></label>
+      <button class="button secondary small" data-action="rel-clear">Clear filters</button>
+      <span class="tiny"><b>${list.length}</b> of ${all.length} organisations${noPin ? ` · ${noPin} without a map location (listed below)` : ''}</span></div></section>
+    <section class="crm-relmap-wrap"><div id="crm-relmap" class="crm-relmap" role="region" aria-label="Map of organisations by relationship"></div>
+      <button type="button" class="button secondary small crm-relmap-reset" data-action="rel-reset">Fit all pins</button></section>
+    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a colour above to show or hide that group. Pins sit on each organisation's main office.</p>
+    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Ally type &amp; why</span><p class="tiny crm-legend">Strongest tie first: visited, strong, possible, replied, removed · then country A–Z</p></div></div>
+    <div class="tablewrap crm-table crm-reltable"><table><thead><tr>${['Country', 'Organisation', 'Relationship', 'Ally type & why', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.join('') || '<tr><td colspan="5">No organisations match these filters.</td></tr>'}</tbody></table></div>
+    <p class="tiny">Strong allies asked for a call or meeting, a visit, a partnership or further work together. Possible allies showed interest in Handova, Jobs &amp; Opportunities, funding, networking or collaboration. The reasons and notes come from a review of every email they sent us (6 Nov 2026); change them with Edit.</p></section>`;
+}
+function relModal(id) {
+  const x = relRows().find(r => r.id === id); if (!x) return '';
+  return modal(x.o.name, `<p class="tiny">${esc([x.o.city, x.o.country].filter(Boolean).join(', '))} · <span class="crm-rel" style="--c:${relColor(x.cat)}">${esc(relLabel(x.cat))}</span></p>
+    ${x.o.removed ? `<p class="crm-removed-note"><b>Removed from the directory at their request (${esc(x.o.removed)}).</b> ${esc(x.o.removedReason || '')}</p>` : ''}
+    <form class="form" data-form="relally" data-id="${esc(id)}">
+      ${selectField('Ally type', 'ally', ALLY_MARKS, x.mark || (x.cat === 'visited' ? 'visited' : ''), '', true)}
+      <fieldset class="field full crm-reasons"><legend class="label">Why (tick all that apply)</legend>${REASONS.map(([k, l]) => `<label><input type="checkbox" name="r_${k}" ${x.reasons.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset>
+      ${field('Note (what they said or asked for)', 'ally_note', x.note, 'area')}
+      <div class="actions field full"><button class="button" type="submit">Save</button><button class="button secondary" type="button" data-action="thread" data-id="${esc(id)}">Open conversation</button><button class="button secondary" type="button" data-action="close">Cancel</button></div>
+    </form>`, 'Organisations interviewed in person count as visited unless marked “Not an ally”.');
+}
+function exportRel() {
+  const list = relFiltered(relRows().filter(x => inContinent(x.o)));
+  downloadCsv(`ethical-bridge-relationships-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
+    ['continent', 'region', 'country', 'organisation', 'relationship', 'why', 'note', 'email', 'last_email'],
+    list.map(x => [x.o.continent, x.o.region, x.o.country, x.o.name, relLabel(x.cat), x.reasons.map(reasonLabel).join('; '), x.note, x.o.email || x.first?.from_addr || '', x.last?.sent_at.slice(0, 10) || '']));
 }
 
-// ---------- Partnership tracking ----------
-const TRACK_FIELDS = [['org_id', 'Directory organisation (optional)'], ['partner', 'Partner / relationship', 'text', 'required'], ['relationship_type', 'Relationship type'], ['started', 'Relationship started', 'date'], ['last_contact', 'Last contact', 'date'], ['next_follow_up', 'Next follow-up', 'date'], ['review_date', 'Review / renewal date', 'date'], ['primary_contact', 'Primary contact'], ['contact_email', 'Contact email', 'email'], ['contact_phone', 'Contact phone'], ['communication_prefs', 'Communication preferences'], ['shared_objectives', 'Shared objectives', 'area'], ['commitments', 'Commitments and promises', 'area'], ['other_dates', 'Other important dates'], ['important_info', 'Important relationship information', 'area'], ['risks', 'Risks / sensitivities', 'area'], ['next_step', 'Next step']];
-function renderTracking() {
-  const q = norm(S.trackQ);
-  const list = S.records.partner.filter(p => !q || norm(Object.values(p.data).join(' ')).includes(q)).sort((a, b) => String(a.data.next_follow_up || '9999').localeCompare(String(b.data.next_follow_up || '9999')));
-  return `<section class="panel"><div class="rowhead"><div><span class="eyebrow">Connected records</span><h2>Partnership tracking</h2></div><div class="actions"><button class="button secondary" data-action="export-partners">Export</button><button class="button" data-action="add-partner">+ Add record</button></div></div>
-    <div class="crm-frow"><label><span>Search</span><input data-action="track-q" value="${esc(S.trackQ)}" placeholder="Search this view"></label><span class="tiny"><b>${list.length}</b> of ${S.records.partner.length} records</span></div>
-    <div class="tablewrap"><table><thead><tr>${['Partner', 'Stage', 'Relationship', 'Primary contact', 'Started', 'Last contact', 'Next follow-up', 'Review / renewal', 'Next step', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${list.map(p => { const d = p.data; const overdue = d.next_follow_up && d.next_follow_up <= today() && d.stage !== 'Closed'; return `<tr><td><b>${esc(d.partner)}</b>${d.relationship_type ? `<br><span class="tiny">${esc(d.relationship_type)}</span>` : ''}</td><td>${d.stage ? `<span class="pill ${d.stage === 'Paused' ? 'warn' : d.stage === 'Closed' ? 'dim' : ''}">${esc(d.stage)}</span>` : ''}</td><td>${d.strength ? `<span class="pill ${d.strength === 'At risk' ? 'bad' : ''}">${esc(d.strength)}</span>` : ''}</td><td>${esc(d.primary_contact)}${d.contact_email ? `<br><span class="tiny">${esc(d.contact_email)}</span>` : ''}</td><td>${esc(fmtDate(d.started))}</td><td>${esc(fmtDate(d.last_contact))}</td><td class="${overdue ? 'crm-overdue' : ''}">${esc(fmtDate(d.next_follow_up))}${overdue ? ' · due' : ''}</td><td>${esc(fmtDate(d.review_date))}</td><td>${esc(d.next_step)}</td><td><button class="link" data-action="edit-partner" data-id="${p.id}">Edit</button></td></tr>`; }).join('') || '<tr><td colspan="10">No records yet. Add the partnerships you are building.</td></tr>'}</tbody></table></div></section>`;
+// Leaflet is loaded the first time the map opens (same library and tiles as ethicalbridge.org).
+let leafletReady = null, relMap = null, relFit = null;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  if (leafletReady) return leafletReady;
+  leafletReady = new Promise((resolve, reject) => {
+    const css = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css' });
+    const js = Object.assign(document.createElement('script'), { src: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', async: true });
+    js.onload = () => resolve(); js.onerror = () => { leafletReady = null; reject(new Error('The map library could not load.')); };
+    document.head.append(css, js);
+  });
+  return leafletReady;
 }
-function partnerModal(id, prefill = {}) {
-  const p = S.records.partner.find(x => x.id === id); const d = p?.data || { stage: 'New', strength: 'New', ...prefill };
-  return modal(p ? 'Edit partnership record' : 'Add to Partnership tracking', `<form class="form" data-form="partner" data-id="${esc(id || '')}">
-    ${TRACK_FIELDS.slice(0, 3).map(([k, l, t, x]) => k === 'org_id' ? `<label class="field"><span class="label">${esc(l)}</span><input name="org_id" list="crm-org-names" value="${esc(d.org_id ? (S.orgById.get(d.org_id)?.name || d.org_id) : '')}"></label>` : field(l, k, d[k], t || 'text', x || '')).join('')}
-    ${selectField('Relationship stage', 'stage', STAGES, d.stage)}${selectField('Relationship strength', 'strength', STRENGTH, d.strength)}
-    ${TRACK_FIELDS.slice(3).map(([k, l, t]) => field(l, k, d[k], t || 'text')).join('')}
-    <div class="actions field full"><button class="button" type="submit">Save record</button>${p ? `<button class="button danger" type="button" data-action="delete-record" data-kind="partner" data-id="${p.id}">Delete</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div></form>${orgDatalist()}`);
+function unmountRelMap() {
+  if (!relMap) return;
+  try { S.relView = { c: relMap.getCenter(), z: relMap.getZoom() }; relMap.remove(); } catch { /* already gone */ }
+  relMap = null;
 }
-const orgIdFromName = v => { const s = String(v || '').trim(); if (!s) return ''; const o = S.orgs.find(x => x.name === s) || S.orgById.get(s); return o ? o.id : s; };
+async function mountRelMap() {
+  try { await loadLeaflet(); } catch (e) { const el = document.getElementById('crm-relmap'); if (el) el.innerHTML = `<p class="muted crm-loading">${esc(e.message)} The table below still lists every organisation.</p>`; return; }
+  const el = document.getElementById('crm-relmap'); if (!el || relMap) return;
+  const L = window.L;
+  relMap = L.map(el, { worldCopyJump: true, minZoom: 1, zoomSnap: .25, scrollWheelZoom: false, maxBounds: [[-85.05, -100000], [85.05, 100000]], maxBoundsViscosity: 1 });
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19, attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, USGS, Intermap, INCREMENT P, NRCan, METI, NASA, NGA, EPA, USDA',
+  }).addTo(relMap);
+  relMap.on('click', () => relMap.scrollWheelZoom.enable());
+  const list = relFiltered(relRows().filter(x => inContinent(x.o))).filter(x => hasPin(x.o));
+  // Draw the weakest ties first so allies sit on top where pins overlap.
+  const layer = L.featureGroup().addTo(relMap);
+  [...list].reverse().forEach(x => {
+    const c = relColor(x.cat), removed = x.cat === 'removed', big = x.cat === 'visited' || x.cat === 'strong';
+    L.circleMarker([x.o.lat, x.o.lng], removed ? { radius: 7, color: c, weight: 2.5, fillColor: '#fff', fillOpacity: 1 } : { radius: big ? 8 : 6.5, color: '#fff', weight: 1.5, fillColor: c, fillOpacity: .95 })
+      .bindPopup(`<div class="crm-relpop"><strong>${esc(x.o.name)}</strong><span class="tiny">${esc([x.o.city, x.o.country].filter(Boolean).join(', '))}</span>
+        <span class="crm-rel" style="--c:${c}">${esc(relLabel(x.cat))}</span>${x.reasons.length ? `<div class="crm-whys">${reasonChips(x.reasons)}</div>` : ''}${x.note ? `<p>${esc(x.note)}</p>` : ''}
+        <div class="crm-relpop-actions"><button type="button" class="link" data-pop="thread" data-id="${esc(x.id)}">Open conversation (${x.all.length})</button><button type="button" class="link" data-pop="rel-edit" data-id="${esc(x.id)}">Edit ally type &amp; why</button></div></div>`, { minWidth: 240, maxWidth: 300 })
+      .addTo(layer);
+  });
+  relFit = () => { const b = layer.getBounds(); if (b.isValid()) relMap.fitBounds(b, { padding: [28, 28], maxZoom: 6 }); else relMap.setView([15, 20], 2); };
+  if (S.relView) relMap.setView(S.relView.c, S.relView.z); else relFit();
+  // Leaflet stops clicks inside popups from bubbling, so popup buttons get their own listener.
+  relMap.on('popupopen', e => {
+    e.popup.getElement()?.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-pop]'); if (!b) return;
+      openModal(b.dataset.pop === 'thread' ? threadModal(b.dataset.id) : relModal(b.dataset.id));
+    });
+  });
+}
 
 // ---------- modal ----------
 function modal(title, body, intro = '') {
@@ -986,23 +999,23 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-relcat')) { const k = t.dataset.relcat, h = S.rf.hide; S.rf.hide = h.includes(k) ? h.filter(x => x !== k) : [...h, k]; S.relView = null; render(); return; }
   if (t.hasAttribute('data-nlview')) { S.nlView = t.dataset.nlview; render(); return; }
   if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { continent: '', region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cally')) { S.cf = { region: '', country: '', name: '', email: '', status: '', ally: t.dataset.cally }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick, ally: '' }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
-  if (t.dataset.tab) { if (S.pat?.dirty && !confirm('Leave this assessment without saving?')) return; S.pat = null; S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.tab) { S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
   if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.cf.region = ''; S.cf.country = ''; S.nf.region = ''; S.nf.country = ''; S.page = 0; render(); return; }
   if (t.dataset.page != null && t.dataset.page !== undefined && t.hasAttribute('data-page')) { S.page = Number(t.dataset.page); render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start' }); return; }
-  if (t.hasAttribute('data-pat-section')) { S.patSection = Number(t.dataset.patSection); render(); root.querySelector('.crm-pat-body')?.scrollIntoView({ block: 'start' }); return; }
   const a = t.dataset.action, id = t.dataset.id;
   switch (a) {
     case 'reload': return loadAll();
-    case 'signout': if (S.pat?.dirty && !confirm('Lock the CRM without saving this assessment?')) return; S.pat = null; S.orgs = []; S.outreach = new Map(); return lockOut('The CRM is locked on this browser.');
+    case 'signout': S.orgs = []; S.outreach = new Map(); return lockOut('The CRM is locked on this browser.');
     case 'close': return closeModal();
     case 'org': return openModal(orgModal(id));
     case 'thread': return openModal(threadModal(id));
@@ -1026,20 +1039,16 @@ root.addEventListener('click', async e => {
     case 'nl-link': return nlLink(id, t.dataset.org);
     case 'reload-msgs': S.msgs = null; render(); return loadMessages();
     case 'export-conv': return exportConversations();
+    case 'rel-edit': return openModal(relModal(id));
+    case 'rel-export': return exportRel();
+    case 'rel-clear': S.rf = { hide: [], reason: '', q: '' }; S.relView = null; return render();
+    case 'rel-reset': if (relFit) relFit(); return;
     case 'clear-cfilters': S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '' }; return render();
     case 'add-org': return openModal(addOrgModal());
     case 'export-orgs': return exportOrgs();
     case 'clear-filters': S.f = EMPTY_FILTERS(); S.page = 0; return render();
     case 'add-campaign': return openModal(campaignModal());
     case 'edit-campaign': return openModal(campaignModal(id));
-    case 'edit-goal': return openModal(goalModal(Number(t.dataset.goal)));
-    case 'add-stakeholder': return openModal(stakeholderModal());
-    case 'edit-stakeholder': return openModal(stakeholderModal(id));
-    case 'clear-mapf': S.mapF = { goal: '', role: '', type: '', engaged: '', q: '' }; return render();
-    case 'export-stakeholders': return downloadCsv(`ethical-bridge-stakeholders-${today()}.csv`, ['Goal', 'Strategic goal', 'Stakeholder', 'Profile and website', 'Organisation type', 'Size', 'Locations', 'Previous engagement', 'Current relationship', 'Collaboration', 'Role', 'Relationship manager', 'Next steps'], S.records.stakeholder.map(x => { const d = x.data; return [d.goal, goalOf(Number(d.goal))?.data.wording || '', d.name, d.profile, d.org_type, d.size, d.locations, d.previous_engagement, d.current_relationship, d.collaboration, d.role, d.manager, d.next_steps]; }));
-    case 'add-partner': return openModal(partnerModal());
-    case 'edit-partner': return openModal(partnerModal(id));
-    case 'export-partners': return downloadCsv(`ethical-bridge-partnerships-${today()}.csv`, ['Stage', 'Relationship strength', ...TRACK_FIELDS.map(f => f[1])], S.records.partner.map(p => [p.data.stage, p.data.strength, ...TRACK_FIELDS.map(([k]) => k === 'org_id' ? (S.orgById.get(p.data.org_id)?.name || p.data.org_id || '') : p.data[k] || '')]));
     case 'delete-record': {
       const kind = t.dataset.kind; if (!confirm('Delete this record? This cannot be undone.')) return;
       if (await deleteRecord(kind, id)) { S.modal = ''; flash('Deleted.'); } return;
@@ -1049,21 +1058,12 @@ root.addEventListener('click', async e => {
       try { await api('org.delete', { id }); } catch (err) { return flash('Could not delete: ' + err.message); }
       S.orgs = S.orgs.filter(o => o.rowId !== id); S.orgById.delete('own:' + id); S.outreach.delete('own:' + id); S.modal = ''; return flash('Organisation deleted.');
     }
-    case 'new-pat': S.pat = { id: null, data: { status: 'Draft', assessment_date: today(), answers: {} }, dirty: true }; S.patSection = 0; return render();
-    case 'open-pat': { const r = S.records.assessment.find(x => x.id === id); S.pat = { id: r.id, data: structuredClone(r.data), dirty: false }; S.patSection = 0; return render(); }
-    case 'close-pat': if (S.pat?.dirty && !confirm('Leave this assessment without saving?')) return; S.pat = null; return render();
-    case 'save-pat': {
-      if (!String(S.pat.data.partner_name || '').trim()) { S.patSection = 0; render(); return flash('Add the partner name before saving.'); }
-      const row = await saveRecord('assessment', S.pat.id, S.pat.data); if (row) { S.pat = { id: row.id, data: structuredClone(row.data), dirty: false }; flash('Assessment saved.'); } return;
-    }
-    case 'delete-pat': if (!confirm('Delete this assessment? This cannot be undone.')) return; if (await deleteRecord('assessment', S.pat.id)) { S.pat = null; flash('Assessment deleted.'); } return;
     case 'print': return window.print();
   }
 });
 
 root.addEventListener('change', async e => {
   const t = e.target;
-  if (t.dataset.action === 'pat-filter') { S.patFilter = t.value; return render(); }
   if (t.dataset.action === 'tl-range') { S.tlRange = t.value; return render(); }
   if (t.dataset.out) {
     const field = t.dataset.out, id = t.dataset.id; let value = t.value;
@@ -1076,14 +1076,8 @@ root.addEventListener('change', async e => {
   if (t.dataset.filter && t.tagName === 'SELECT') { S.f[t.dataset.filter] = t.value; if (t.dataset.filter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.action === 'nl-csv' && t.files?.[0]) { const f = t.files[0]; t.value = ''; return importNewsletterCsv(f); }
   if (t.dataset.nfilter && t.tagName === 'SELECT') { S.nf[t.dataset.nfilter] = t.value; if (t.dataset.nfilter === 'continent') { S.nf.region = ''; S.nf.country = ''; } if (t.dataset.nfilter === 'region') S.nf.country = ''; S.nfReplied = false; return render(); }
+  if (t.hasAttribute('data-relreason')) { S.rf.reason = t.value; S.relView = null; return render(); }
   if (t.dataset.cfilter && t.tagName === 'SELECT') { S.cf[t.dataset.cfilter] = t.value; if (t.dataset.cfilter === 'region') S.cf.country = ''; return render(); }
-  if (t.dataset.mapf && t.tagName === 'SELECT') { S.mapF[t.dataset.mapf] = t.value; return render(); }
-  if (S.pat && (t.dataset.pat || t.dataset.score)) {
-    if (t.dataset.score) { const a = (S.pat.data.answers ||= {}); a[t.dataset.score] = { ...(a[t.dataset.score] || {}), score: t.value }; }
-    else S.pat.data[t.dataset.pat] = t.dataset.pat === 'org_id' ? orgIdFromName(t.value) : t.value;
-    if (t.dataset.pat === 'org_id' && !S.pat.data.partner_name) { const o = S.orgById.get(S.pat.data.org_id); if (o) Object.assign(S.pat.data, { partner_name: o.name, email: S.pat.data.email || o.email, telephone: S.pat.data.telephone || o.phone, website: S.pat.data.website || o.website }); }
-    S.pat.dirty = true; return render();
-  }
 });
 
 root.addEventListener('input', e => {
@@ -1091,14 +1085,8 @@ root.addEventListener('input', e => {
   if (t.dataset.filter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.filter; filterTimer = setTimeout(() => { S.f[k] = t.value; S.page = 0; render(); const el = root.querySelector(`[data-filter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.nlsearch) { clearTimeout(filterTimer); const id = t.dataset.nlsearch; filterTimer = setTimeout(() => { S.nlQuery = t.value; S.modal = nlPickModal(id); render(); const el = root.querySelector('[data-nlsearch]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 200); return; }
   if (t.dataset.nfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.nfilter; filterTimer = setTimeout(() => { S.nf[k] = t.value; render(); const el = root.querySelector(`[data-nfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
+  if (t.hasAttribute('data-relq')) { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.rf.q = t.value; S.relView = null; render(); const el = root.querySelector('[data-relq]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.cfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.cfilter; filterTimer = setTimeout(() => { S.cf[k] = t.value; render(); const el = root.querySelector(`[data-cfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
-  if (t.dataset.mapf && t.tagName === 'INPUT') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.mapF.q = t.value; render(); const el = root.querySelector('[data-mapf="q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
-  if (t.dataset.action === 'track-q') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.trackQ = t.value; render(); const el = root.querySelector('[data-action="track-q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
-  if (S.pat && (t.dataset.comment || (t.dataset.pat && t.tagName !== 'SELECT' && t.dataset.pat !== 'org_id'))) {
-    if (t.dataset.comment) { const a = (S.pat.data.answers ||= {}); a[t.dataset.comment] = { ...(a[t.dataset.comment] || {}), comment: t.value }; }
-    else S.pat.data[t.dataset.pat] = t.value;
-    if (!S.pat.dirty) { S.pat.dirty = true; const h = root.querySelector('.crm-pat-head .tiny'); if (h && !h.innerHTML.includes('Unsaved')) h.innerHTML += ' · <b>Unsaved changes</b>'; }
-  }
 });
 
 root.addEventListener('submit', async e => {
@@ -1125,14 +1113,15 @@ root.addEventListener('submit', async e => {
     }
     if (kind === 'campaign') { if (await saveRecord('campaign', id, d)) { S.modal = ''; flash('Campaign saved.'); } return; }
     if (kind === 'nlcamp') return saveCamp(id, d);
-    if (kind === 'goal') { if (await saveRecord('goal', id, { ...d, goal: Number(form.dataset.goal) })) { S.modal = ''; flash('Goal saved.'); } return; }
-    if (kind === 'stakeholder') { if (await saveRecord('stakeholder', id, d)) { S.modal = ''; flash('Stakeholder saved.'); } return; }
-    if (kind === 'partner') { if (await saveRecord('partner', id, { ...d, org_id: orgIdFromName(d.org_id) })) { S.modal = ''; flash('Record saved.'); } return; }
+    if (kind === 'relally') {
+      const ally_reasons = REASONS.map(([k]) => k).filter(k => d['r_' + k]);
+      await saveOutreach(id, { ally: d.ally || '', ally_reasons, ally_note: String(d.ally_note || '').trim() }); S.modal = ''; return flash('Saved.');
+    }
   } finally { if (btn?.isConnected) btn.disabled = false; }
 });
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.modal) closeModal(); });
-window.addEventListener('beforeunload', e => { if (S.pat?.dirty || S.saving) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('beforeunload', e => { if (S.saving) { e.preventDefault(); e.returnValue = ''; } });
 
 // ---------- boot ----------
 if (S.code) loadAll(); else render();
