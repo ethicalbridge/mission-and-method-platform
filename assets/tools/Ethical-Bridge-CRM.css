@@ -272,3 +272,6 @@ tr.nl-wk-camp td { background: #fff5ec; }
 .crm-ally-note p{margin:4px 0 0}
 @media(max-width:700px){.crm-relmap{height:400px}.crm-rel-legend button{flex:1 1 140px}}
 .panel .crm-reltable th{color:#fff;border-bottom:0}
+.crm-conv-src{flex-direction:column;gap:8px}
+.crm-conv-src>button{flex:1}
+.crm-conv-src>button+button b{font-size:20px;color:var(--muted)}
