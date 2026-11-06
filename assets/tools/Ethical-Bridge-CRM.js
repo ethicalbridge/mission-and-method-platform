@@ -344,7 +344,7 @@ const CONV_STATUS = [['waiting', 'Waiting for my reply'], ['theirs', 'They wrote
 const AUTO_RE = /^(automatic reply|auto(matic)?[ -]?(reply|response)|out of (the )?office|r[ée]ponse automatique|respuesta autom[áa]tica|resposta autom[áa]tica|abwesenheit)/i;
 // Strong allies: organisations that asked for a meeting, a call, a partnership or a collaboration with us.
 // 'strong' is set by hand (or confirmed from a suggestion); a reply matching ALLY_RE is only a suggestion until reviewed.
-const ALLY = [['strong', 'Strong allies'], ['suggested', 'Possible allies']];
+const ALLY = [['visited', 'Visited · relationship built'], ['strong', 'Strong allies'], ['suggested', 'Possible allies']];
 const ALLY_RE = new RegExp([
   String.raw`\b(schedule|arrange|set up|have|available for|open to|happy to|like to|love to|welcome|request|propose|book)\b.{0,40}\b(meeting|call|chat|conversation)\b`,
   String.raw`\b(virtual|online|zoom|video|brief|short|quick|introductory) (meeting|call)\b`,
@@ -369,7 +369,7 @@ function conversations() {
   const by = new Map();
   for (const m of S.msgs || []) { if (!by.has(m.org_id)) by.set(m.org_id, []); by.get(m.org_id).push(m); }
   // Organisations you marked as allies always appear, even before any email is saved.
-  const ids = new Set([...by.keys(), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.ally === 'strong' || r.ally === 'possible').map(r => r.org_id)]);
+  const ids = new Set([...by.keys(), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally)).map(r => r.org_id)]);
   const out = [];
   for (const id of ids) {
     const o = S.orgById.get(id); if (!o) continue;
@@ -382,7 +382,9 @@ function conversations() {
     const flagged = ins.some(m => m.flagged);
     const status = flagged ? 'waiting' : !last ? 'none' : last.direction === 'in' ? 'theirs' : 'mine';
     const mark = S.outreach.get(id)?.ally || '', hint = allyHint(real);
-    const ally = mark === 'strong' ? 'strong' : mark === 'possible' || (!mark && hint) ? 'suggested' : '';
+    // Visited · relationship built: organisations met in person (marked, or recorded as interviewed).
+    const visited = mark === 'visited' || (S.outreach.get(id)?.interview_status === 'Interviewed' && mark !== 'no');
+    const ally = visited ? 'visited' : mark === 'strong' ? 'strong' : mark === 'possible' || (!mark && hint) ? 'suggested' : '';
     out.push({ o, id, all, first, mine, back, last, flagged, status, ally, mark, hint, nIn: ins.length, nOut: all.length - ins.length });
   }
   return out;
@@ -414,7 +416,7 @@ function renderConversations() {
     const fromName = c.first ? (c.first.from_name || c.first.from_addr) : '';
     return `<tr class="${c.status === 'waiting' ? 'waiting' : ''}">
       <td>${esc(c.o.country)}</td>
-      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${removedBadge(c.o)}${c.ally === 'strong' ? '<span class="crm-ally">🤝 Strong ally</span>' : c.ally === 'suggested' ? `<span class="crm-ally maybe" title="${esc(c.mark === 'possible' ? 'Marked by hand' : c.hint)}">${c.mark === 'possible' ? 'Possible ally' : 'Possible ally?'}</span>` : ''}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
+      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${removedBadge(c.o)}${c.ally === 'visited' ? '<span class="crm-ally visited">📍 Visited · relationship built</span>' : c.ally === 'strong' ? '<span class="crm-ally">🤝 Strong ally</span>' : c.ally === 'suggested' ? `<span class="crm-ally maybe" title="${esc(c.mark === 'possible' ? 'Marked by hand' : c.hint)}">${c.mark === 'possible' ? 'Possible ally' : 'Possible ally?'}</span>` : ''}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
       <td>${c.first ? esc(fmtDate(c.first.sent_at)) : '<span class="muted">—</span>'}</td>
       <td class="crm-text">${msgCell(c.first, fromName)}</td>
       <td class="crm-text">${c.mine ? msgCell(c.mine) : c.first ? '<span class="pill warn">Not answered yet</span>' : '<span class="muted">—</span>'}</td>
@@ -429,9 +431,9 @@ function renderConversations() {
     <section class="crm-groups crm-conv-groups">
       <div class="crm-group crm-group-all crm-quick">${qb('Organisations that replied', base.length, '')}</div>
       <div class="crm-group"><h3>Status</h3><div class="crm-quick">${qb('Waiting for my reply', count('waiting'), 'waiting', 'crm-q-wait')}${qb('They wrote last', count('theirs'), 'theirs')}${qb('I replied last', count('mine'), 'mine')}${count('none') ? qb('No emails saved yet', count('none'), 'none') : ''}</div></div>
-      <div class="crm-group"><h3>Allies</h3><div class="crm-quick">${ab('🤝 Strong allies', allyCount('strong'), 'strong', 'crm-q-ally')}${ab('Possible allies', allyCount('suggested'), 'suggested')}</div></div>
+      <div class="crm-group"><h3>Allies</h3><div class="crm-quick">${ab('📍 Visited · relationship built', allyCount('visited'), 'visited', 'crm-q-visited')}${ab('🤝 Strong allies', allyCount('strong'), 'strong', 'crm-q-ally')}${ab('Possible allies', allyCount('suggested'), 'suggested')}</div></div>
     </section>
-    <p class="tiny crm-hint">📌 “Waiting for my reply” are the emails you pinned (flagged) in your mailbox. 🤝 “Strong allies” asked for a meeting, a call, a partnership or a collaboration; “Possible allies” are ones you marked by hand, plus replies that mention a meeting or collaboration, to confirm or dismiss in the thread. Click a number to list those organisations.</p>
+    <p class="tiny crm-hint">📌 “Waiting for my reply” are the emails you pinned (flagged) in your mailbox. 📍 “Visited · relationship built” are organisations you met in person (interviewed on a field mission). 🤝 “Strong allies” asked for a meeting, a call, a partnership or a collaboration; “Possible allies” are ones you marked by hand, plus replies that mention a meeting or collaboration, to confirm or dismiss in the thread. Click a number to list those organisations.</p>
     <section class="panel crm-filters">
       <div class="crm-frow"><b>General</b>
         <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
@@ -456,7 +458,7 @@ function threadModal(id) {
       <div class="crm-mail-body">${esc(m.body || '(no text)')}</div></article>`).join('');
   const o = c.o;
   return modal(o.name, `<p class="tiny">${esc([o.country, o.region, o.continent].filter(Boolean).join(' · '))}${o.email ? ' · ' + esc(o.email) : ''} · ${c.nIn} from them, ${c.nOut} from you</p>
-    <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}${c.ally === 'strong' ? `<button class="button secondary" data-action="ally" data-ally="" data-id="${esc(id)}">Remove strong ally</button>` : `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">🤝 Mark as strong ally</button>`}${c.ally !== 'strong' && c.mark !== 'possible' ? `<button class="button secondary" data-action="ally" data-ally="possible" data-id="${esc(id)}">Possible ally</button>` : ''}${c.ally === 'suggested' ? `<button class="button secondary" data-action="ally" data-ally="no" data-id="${esc(id)}">Not an ally</button>` : ''}<button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
+    <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}${c.ally === 'visited' ? `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">Remove visited (keep as strong ally)</button>` : `<button class="button secondary" data-action="ally" data-ally="visited" data-id="${esc(id)}">📍 Mark as visited</button>`}${c.ally === 'visited' ? '' : c.ally === 'strong' ? `<button class="button secondary" data-action="ally" data-ally="" data-id="${esc(id)}">Remove strong ally</button>` : `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">🤝 Mark as strong ally</button>`}${!['strong', 'visited'].includes(c.ally) && c.mark !== 'possible' ? `<button class="button secondary" data-action="ally" data-ally="possible" data-id="${esc(id)}">Possible ally</button>` : ''}${c.ally === 'suggested' ? `<button class="button secondary" data-action="ally" data-ally="no" data-id="${esc(id)}">Not an ally</button>` : ''}<button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
     ${c.o.removed ? `<p class="crm-removed-note"><b>Removed from the directory at their request (${esc(c.o.removed)}).</b> ${esc(c.o.removedReason || '')}</p>` : ''}
     ${c.ally === 'suggested' ? (c.mark === 'possible' ? `<p class="crm-ally-why"><b>Marked as a possible ally by hand.</b></p>` : `<p class="crm-ally-why"><b>Why it's suggested:</b> “${esc(c.hint)}”</p>`) : ''}
     <p class="tiny">Pins changed here stay in the CRM; they don't change the pin in your mailbox.</p>

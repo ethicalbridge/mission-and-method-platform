@@ -238,3 +238,6 @@ tr.nl-wk-camp td { background: #fff5ec; }
 /* Removed from the directory at the organisation's request */
 .crm-removed{display:table;margin:3px 0 2px;padding:1px 8px;border-radius:999px;font-size:.78rem;font-weight:700;background:#fbe9e7;color:#9a2b1c;border:1px solid #efbcb3;cursor:help}
 .crm-removed-note{margin:0 0 10px;padding:8px 10px;border-radius:8px;background:#fbe9e7;border:1px solid #efbcb3;color:#5c1a10;font-size:.9rem}
+/* Visited · relationship built */
+.crm-quick>button.crm-q-visited b{color:#7a4fb3}
+.crm-ally.visited{background:#efe8f8;color:#5b3a8c;border-color:#d3c3ec}
