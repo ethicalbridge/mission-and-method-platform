@@ -132,7 +132,8 @@ table{border-collapse:collapse;width:100%}
 .crm-groups+.crm-hint{margin-top:2px}
 
 /* Conversations */
-.crm-conv-groups{grid-template-columns:minmax(170px,1fr) 4fr}
+.crm-conv-groups{grid-template-columns:minmax(170px,1fr) 4fr 3fr}
+@media(max-width:1400px){.crm-conv-groups{grid-template-columns:minmax(170px,1fr) 4fr}.crm-conv-groups>.crm-group:last-child{grid-column:1/-1}}
 .crm-quick>button.crm-q-wait b{color:#b3261e}
 .crm-legend i.r{background:#fde4e1;border:1px solid #e6a59d}
 .crm-conv table{width:100%}
