@@ -368,7 +368,8 @@ const snip = (t, n = 260) => { const x = String(t || '').replace(/\s+/g, ' ').tr
 function conversations() {
   const by = new Map();
   for (const m of S.msgs || []) { if (!by.has(m.org_id)) by.set(m.org_id, []); by.get(m.org_id).push(m); }
-  const ids = new Set([...by.keys(), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied').map(r => r.org_id)]);
+  // Organisations you marked as allies always appear, even before any email is saved.
+  const ids = new Set([...by.keys(), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.ally === 'strong' || r.ally === 'possible').map(r => r.org_id)]);
   const out = [];
   for (const id of ids) {
     const o = S.orgById.get(id); if (!o) continue;
