@@ -299,7 +299,7 @@ function renderOrganisations() {
     const os = (field, items, val) => `<select data-out="${field}" data-id="${esc(o.id)}" aria-label="${esc(field)} for ${esc(o.name)}">${opts(items, val)}</select>`;
     return `<tr class="${tone}">
       <td>${esc(o.continent)}</td><td>${esc(o.region)}</td><td>${esc(o.country)}</td>
-      <td class="crm-org"><button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button>${o.own ? ' <span class="pill dim">Added here</span>' : ''}${o.website ? `<a class="tiny" href="${esc(o.website)}" target="_blank" rel="noopener noreferrer">Website ↗</a>` : ''}</td>
+      <td class="crm-org"><button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button>${o.own ? ' <span class="pill dim">Added here</span>' : ''}${removedBadge(o)}${o.website ? `<a class="tiny" href="${esc(o.website)}" target="_blank" rel="noopener noreferrer">Website ↗</a>` : ''}</td>
       <td>${os('interview_status', INTERVIEW, r.interview_status)}${r.interview_status === 'Scheduled' ? `<input type="date" class="crm-idate" data-out="interview_date" data-id="${esc(o.id)}" value="${esc(r.interview_date || '')}" aria-label="Interview date for ${esc(o.name)}" title="Interview date">` : ''}</td>
       <td><input data-out="contact_person" data-id="${esc(o.id)}" value="${esc(r.contact_person)}" aria-label="Personal contact for ${esc(o.name)}"></td>
       <td>${o.email ? esc(o.email) : '<span class="muted">—</span>'}</td><td>${esc(o.phone) || '<span class="muted">—</span>'}</td>
@@ -362,6 +362,8 @@ function allyHint(msgs) {
   }
   return '';
 }
+// Organisations taken out of the public directory at their own request stay in the CRM so their history isn't lost.
+const removedBadge = o => o && o.removed ? `<span class="crm-removed" title="${esc(o.removedReason || '')}">Removed from directory at their request · ${esc(o.removed)}</span>` : '';
 const snip = (t, n = 260) => { const x = String(t || '').replace(/\s+/g, ' ').trim(); return x.length > n ? x.slice(0, n).replace(/\s\S*$/, '') + '…' : x; };
 function conversations() {
   const by = new Map();
@@ -411,7 +413,7 @@ function renderConversations() {
     const fromName = c.first ? (c.first.from_name || c.first.from_addr) : '';
     return `<tr class="${c.status === 'waiting' ? 'waiting' : ''}">
       <td>${esc(c.o.country)}</td>
-      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${c.ally === 'strong' ? '<span class="crm-ally">🤝 Strong ally</span>' : c.ally === 'suggested' ? `<span class="crm-ally maybe" title="${esc(c.hint)}">Possible ally?</span>` : ''}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
+      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${removedBadge(c.o)}${c.ally === 'strong' ? '<span class="crm-ally">🤝 Strong ally</span>' : c.ally === 'suggested' ? `<span class="crm-ally maybe" title="${esc(c.hint)}">Possible ally?</span>` : ''}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
       <td>${c.first ? esc(fmtDate(c.first.sent_at)) : '<span class="muted">—</span>'}</td>
       <td class="crm-text">${msgCell(c.first, fromName)}</td>
       <td class="crm-text">${c.mine ? msgCell(c.mine) : c.first ? '<span class="pill warn">Not answered yet</span>' : '<span class="muted">—</span>'}</td>
@@ -454,6 +456,7 @@ function threadModal(id) {
   const o = c.o;
   return modal(o.name, `<p class="tiny">${esc([o.country, o.region, o.continent].filter(Boolean).join(' · '))}${o.email ? ' · ' + esc(o.email) : ''} · ${c.nIn} from them, ${c.nOut} from you</p>
     <div class="actions">${c.nIn ? (c.flagged ? `<button class="button" data-action="unpin" data-id="${esc(id)}">Mark as answered (remove pin)</button>` : `<button class="button secondary" data-action="pin" data-id="${esc(id)}">📌 Mark as waiting for my reply</button>`) : ''}${c.ally === 'strong' ? `<button class="button secondary" data-action="ally" data-ally="" data-id="${esc(id)}">Remove strong ally</button>` : `<button class="button secondary" data-action="ally" data-ally="strong" data-id="${esc(id)}">🤝 Mark as strong ally</button>`}${c.ally === 'suggested' ? `<button class="button secondary" data-action="ally" data-ally="no" data-id="${esc(id)}">Not an ally</button>` : ''}<button class="button secondary" data-action="org" data-id="${esc(id)}">Outreach marks</button></div>
+    ${c.o.removed ? `<p class="crm-removed-note"><b>Removed from the directory at their request (${esc(c.o.removed)}).</b> ${esc(c.o.removedReason || '')}</p>` : ''}
     ${c.ally === 'suggested' ? `<p class="crm-ally-why"><b>Why it's suggested:</b> “${esc(c.hint)}”</p>` : ''}
     <p class="tiny">Pins changed here stay in the CRM; they don't change the pin in your mailbox.</p>
     <div class="crm-thread">${msgs || '<p class="muted">No emails saved for this organisation yet. It is listed because its reply is marked “Replied”.</p>'}</div>`);
@@ -824,7 +827,7 @@ function orgModal(id) {
   const o = S.orgById.get(id); if (!o) return '';
   const r = outreachOf(id);
   const info = [['Registered name', o.registered], ['Location', [o.city, o.country, o.region, o.continent].filter(Boolean).join(', ')], ['Public email', o.email], ['Public phone', o.phone], ['Website', o.website]].filter(([, v]) => v);
-  return modal(o.name, `<dl class="kv">${info.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === 'Website' ? `<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>
+  return modal(o.name, `${o.removed ? `<p class="crm-removed-note"><b>Removed from the directory at their request (${esc(o.removed)}).</b> ${esc(o.removedReason || '')} Don't publish or contact them again without their consent.</p>` : ''}<dl class="kv">${info.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === 'Website' ? `<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>
     <form class="form" data-form="org-outreach" data-id="${esc(id)}">
       ${selectField('Interview', 'interview_status', INTERVIEW, r.interview_status, '')}${field('Interview date (if planned)', 'interview_date', r.interview_date || '', 'date')}${field('Personal contact', 'contact_person', r.contact_person)}${field('Personal phone', 'personal_phone', r.personal_phone)}
       ${selectField('Email status', 'email_status', EMAIL, r.email_status, '')}${field('Date sent', 'date_sent', r.date_sent || '', 'date')}${selectField('Reply', 'reply_status', REPLY, r.reply_status, '')}
