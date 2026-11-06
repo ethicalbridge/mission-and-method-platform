@@ -339,6 +339,7 @@ const ALLY_RE = new RegExp([
   String.raw`synerg`, String.raw`\bwork(ing)? together\b`, String.raw`trabajar juntos`, String.raw`trabalhar juntos`,
   String.raw`alianza con`, String.raw`colaborar con ustedes`, String.raw`parceria com`, String.raw`partenariat avec`, String.raw`collaborer avec vous`,
 ].join('|'), 'i');
+const REVIEWED_UNTIL = '2026-11-06T10:00:00Z';
 function allyHint(msgs) {
   for (const m of msgs) {
     const t = String(m.body || '').replace(/\s+/g, ' '), x = ALLY_RE.exec(t);
@@ -365,7 +366,8 @@ function conversations() {
     const last = all[all.length - 1] || null;
     const flagged = ins.some(m => m.flagged);
     const status = flagged ? 'waiting' : !last ? 'none' : last.direction === 'in' ? 'theirs' : 'mine';
-    const mark = S.outreach.get(id)?.ally || '', hint = allyHint(real);
+    // Every reply up to 6 Nov 2026 was reviewed by hand (ally + reasons), so the keyword guess only looks at newer replies.
+    const mark = S.outreach.get(id)?.ally || '', hint = allyHint(real.filter(m => m.sent_at > REVIEWED_UNTIL));
     // Visited · relationship built: organisations met in person (marked, or recorded as interviewed).
     const visited = mark === 'visited' || (S.outreach.get(id)?.interview_status === 'Interviewed' && mark !== 'no');
     const ally = visited ? 'visited' : mark === 'strong' ? 'strong' : mark === 'possible' || (!mark && hint) ? 'suggested' : '';
