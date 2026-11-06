@@ -354,7 +354,9 @@ function conversations() {
   const by = new Map();
   for (const m of S.msgs || []) { if (!by.has(m.org_id)) by.set(m.org_id, []); by.get(m.org_id).push(m); }
   // Organisations you marked as allies always appear, even before any email is saved.
-  const ids = new Set([...by.keys(), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally)).map(r => r.org_id)]);
+  // Automatic replies and bounce backs aren't conversations: they stay out unless the organisation was visited or marked as an ally.
+  const keep = id => { const r = S.outreach.get(id); return !r || !['Automatic reply', 'Bounce back'].includes(r.reply_status) || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally); };
+  const ids = new Set([...[...by.keys()].filter(keep), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally)).map(r => r.org_id)]);
   const out = [];
   for (const id of ids) {
     const o = S.orgById.get(id); if (!o) continue;
