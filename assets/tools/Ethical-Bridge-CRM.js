@@ -386,6 +386,17 @@ function filteredConversations(list) {
     && (!f.src || (f.src === 'email') === (outreachOf(c.id).reply_status === 'Replied')))
     .sort((a, b) => byCountry(a.o, b.o));
 }
+// 'Ally & why' column: the ally type plus the reasons and note saved with "Ally type & why".
+const allyLabel = c => c.ally === 'visited' ? 'Visited' : c.ally === 'strong' ? 'Strong ally' : c.ally === 'suggested' ? (c.mark === 'possible' ? 'Possible ally' : 'Possible ally?') : '';
+const allyWhyText = c => { const r = S.outreach.get(c.id) || {}; return [(r.ally_reasons || []).map(reasonLabel).join(', '), r.ally_note || (c.ally === 'suggested' && c.mark !== 'possible' ? c.hint : '')].filter(Boolean).join(' — '); };
+function allyCell(c) {
+  if (!c.ally) return '<span class="muted">—</span>';
+  const r = S.outreach.get(c.id) || {};
+  const badge = c.ally === 'visited' ? '<span class="crm-ally visited">📍 Visited · relationship built</span>' : c.ally === 'strong' ? '<span class="crm-ally">🤝 Strong ally</span>' : `<span class="crm-ally maybe">${c.mark === 'possible' ? 'Possible ally' : 'Possible ally?'}</span>`;
+  const chips = (r.ally_reasons || []).length ? `<div class="crm-whys">${reasonChips(r.ally_reasons)}</div>` : '';
+  const why = r.ally_note ? `<p class="tiny crm-ally-short">${esc(r.ally_note)}</p>` : c.ally === 'suggested' && c.mark !== 'possible' && c.hint ? `<p class="tiny crm-ally-short">Suggested from their email: “${esc(c.hint)}”</p>` : '';
+  return `${badge}${chips}${why}<button type="button" class="link tiny" data-action="rel-edit" data-id="${esc(c.id)}">Edit why</button>`;
+}
 function renderConversations() {
   if (S.msgs === null) return `<p class="muted crm-loading">Loading conversations…</p>`;
   const allConv = conversations();
@@ -408,7 +419,8 @@ function renderConversations() {
     const fromName = c.first ? (c.first.from_name || c.first.from_addr) : '';
     return `<tr class="${c.status === 'waiting' ? 'waiting' : ''}">
       <td>${esc(c.o.country)}</td>
-      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${removedBadge(c.o)}${c.ally === 'visited' ? '<span class="crm-ally visited">📍 Visited · relationship built</span>' : c.ally === 'strong' ? '<span class="crm-ally">🤝 Strong ally</span>' : c.ally === 'suggested' ? `<span class="crm-ally maybe" title="${esc(c.mark === 'possible' ? 'Marked by hand' : c.hint)}">${c.mark === 'possible' ? 'Possible ally' : 'Possible ally?'}</span>` : ''}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
+      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${removedBadge(c.o)}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
+      <td class="crm-allycell">${allyCell(c)}</td>
       <td>${c.first ? esc(fmtDate(c.first.sent_at)) : '<span class="muted">—</span>'}</td>
       <td class="crm-text">${msgCell(c.first, fromName)}</td>
       <td class="crm-text">${c.mine ? msgCell(c.mine) : c.first ? '<span class="pill warn">Not answered yet</span>' : '<span class="muted">—</span>'}</td>
@@ -438,8 +450,8 @@ function renderConversations() {
     </section>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email conversations</span><p class="tiny crm-legend"><i class="r"></i> Waiting for your reply (pinned in your mailbox) · sorted by country A–Z</p></div><span class="tiny"><b>${list.length}</b> organisations</span></div>
     ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'src' ? (v === 'email' ? 'Replied by email' : 'Met in person only') : k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : k === 'ally' ? ALLY.find(x => x[0] === v)?.[1] : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
-    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'They replied', 'What they said', 'My response', 'They replied back?', 'Status', 'Thread'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
-    <tbody>${rows.join('') || '<tr><td colspan="8">No conversations match these filters.</td></tr>'}</tbody></table></div>
+    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'Ally &amp; why', 'They replied', 'What they said', 'My response', 'They replied back?', 'Status', 'Thread'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.join('') || '<tr><td colspan="9">No conversations match these filters.</td></tr>'}</tbody></table></div>
     <p class="tiny">Emails are copied from the hello@ethicalbridge.org mailbox (the continent “Replied” folders, the Inbox and your Sent folder). Quoted earlier messages and signatures below “On … wrote:” are trimmed.</p></section>`;
 }
 function threadModal(id) {
@@ -460,8 +472,8 @@ function threadModal(id) {
 function exportConversations() {
   const list = filteredConversations(conversations());
   downloadCsv(`ethical-bridge-conversations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
-    ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'ally', 'last_email', 'messages'],
-    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], c.ally === 'visited' ? 'Visited' : c.ally === 'strong' ? 'Strong ally' : c.ally === 'suggested' ? 'Possible ally' : '', c.last?.sent_at.slice(0, 10) || '', c.all.length]));
+    ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'ally', 'why', 'last_email', 'messages'],
+    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], allyLabel(c), allyWhyText(c), c.last?.sent_at.slice(0, 10) || '', c.all.length]));
 }
 async function setAlly(id, ally) {
   await saveOutreach(id, { ally });
