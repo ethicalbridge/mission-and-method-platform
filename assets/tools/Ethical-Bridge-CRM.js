@@ -32,7 +32,7 @@ const interviewLabel = v => v === 'Scheduled' ? 'Planned' : v;
 const EMAIL = ['Not sent', 'Sent'];
 const SOCIAL = ['Not contacted', 'Contacted', 'Contacted and friend request sent'];
 const REPLY = ['None', 'Replied', 'Automatic reply', 'Bounce back'];
-const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', interview_date: null, email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '', ally: '', ally_reasons: [], ally_note: '' };
+const DEFAULT_OUTREACH = { interview_status: 'Not interviewed', interview_date: null, email_status: 'Not sent', date_sent: null, instagram_status: 'Not contacted', facebook_status: 'Not contacted', linkedin_status: 'Not contacted', reply_status: 'None', contact_person: '', personal_phone: '', notes: '', ally: '', ally_reasons: [], ally_note: '', conversions: [], conversion_note: '' };
 const PAGE = 100;
 const LS = { code: 'mm.ebcrm.code', continent: 'mm.ebcrm.continent' };
 
@@ -355,8 +355,9 @@ function conversations() {
   for (const m of S.msgs || []) { if (!by.has(m.org_id)) by.set(m.org_id, []); by.get(m.org_id).push(m); }
   // Organisations you marked as allies always appear, even before any email is saved.
   // Automatic replies and bounce backs aren't conversations: they stay out unless the organisation was visited or marked as an ally.
-  const keep = id => { const r = S.outreach.get(id); return !r || !['Automatic reply', 'Bounce back'].includes(r.reply_status) || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally); };
-  const ids = new Set([...[...by.keys()].filter(keep), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally)).map(r => r.org_id)]);
+  // Organisations already using one of our initiatives (conversion) always appear too.
+  const keep = id => { const r = S.outreach.get(id); return !r || !['Automatic reply', 'Bounce back'].includes(r.reply_status) || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally) || (r.conversions || []).length; };
+  const ids = new Set([...[...by.keys()].filter(keep), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally) || (r.conversions || []).length).map(r => r.org_id)]);
   const out = [];
   for (const id of ids) {
     const o = S.orgById.get(id); if (!o) continue;
@@ -373,7 +374,8 @@ function conversations() {
     // Visited · relationship built: organisations met in person (marked, or recorded as interviewed).
     const visited = mark === 'visited' || (S.outreach.get(id)?.interview_status === 'Interviewed' && mark !== 'no');
     const ally = visited ? 'visited' : mark === 'strong' ? 'strong' : mark === 'possible' || (!mark && hint) ? 'suggested' : '';
-    out.push({ o, id, all, first, mine, back, last, flagged, status, ally, mark, hint, nIn: ins.length, nOut: all.length - ins.length });
+    const conv = S.outreach.get(id)?.conversions || [];
+    out.push({ o, id, all, first, mine, back, last, flagged, status, ally, mark, hint, conv, nIn: ins.length, nOut: all.length - ins.length });
   }
   return out;
 }
@@ -383,9 +385,30 @@ function filteredConversations(list) {
     && (!n || norm(c.o.name).includes(n) || norm(c.o.registered).includes(n))
     && (!e || norm(c.o.email).includes(e) || c.all.some(m => norm(m.from_addr).includes(e)))
     && (!f.status || c.status === f.status) && (!f.ally || c.ally === f.ally)
+    && (!f.conv || (f.conv === 'any' ? c.conv.length > 0 : c.conv.includes(f.conv)))
     && (!f.src || (f.src === 'email') === (outreachOf(c.id).reply_status === 'Replied')))
     .sort((a, b) => byCountry(a.o, b.o));
 }
+// Conversion: the stage of the marketing funnel where an organisation starts using one of our initiatives.
+const CONVERSIONS = [['handova', 'Handova', 'Registered on Handova (skills volunteering) or posted a need there'], ['fundova', 'Fundova', 'Using Fundova to find funding opportunities'], ['jobs', 'Jobs portal', 'Posting or using the Jobs & Opportunities portal']];
+const convLabel = k => CONVERSIONS.find(x => x[0] === k)?.[1] || k;
+const CONV_TIP = 'Conversion: the organisation has started using one of our initiatives (Handova, Fundova or the Jobs & Opportunities portal). It is the step after awareness and engagement in the marketing funnel.';
+function convCell(c) {
+  const r = S.outreach.get(c.id) || {};
+  if (!c.conv.length) return `<span class="muted">—</span><br><button type="button" class="link tiny" data-action="rel-edit" data-id="${esc(c.id)}">Add</button>`;
+  return `<div class="crm-whys">${c.conv.map(k => `<span class="crm-conv-chip" title="${esc(CONVERSIONS.find(x => x[0] === k)?.[2] || '')}">✓ ${esc(convLabel(k))}</span>`).join('')}</div>${r.conversion_note ? `<p class="tiny crm-ally-short">${esc(r.conversion_note)}</p>` : ''}<button type="button" class="link tiny" data-action="rel-edit" data-id="${esc(c.id)}">Edit</button>`;
+}
+const CONV_HEADS = [
+  ['Country', 'Where the organisation’s main office is.'],
+  ['Organisation', 'Name in the Ethical Bridge directory and its public email. Click the name to open the whole email thread.'],
+  ['Ally &amp; why', 'Engagement: how close the relationship is (visited, strong ally, possible ally) and why: what they mentioned, such as a call, Handova, the jobs portal or a partnership. Use “Edit why” to change it.'],
+  ['Conversion', CONV_TIP],
+  ['They replied', 'Date of their first reply to our outreach email.'],
+  ['What they said', 'The start of their first reply.'],
+  ['My response', 'Your first answer to them, after their reply.'],
+  ['They replied back?', 'Whether they wrote again after your answer.'],
+  ['Status', 'Who wrote last. 📌 Waiting for my reply = the email is pinned (flagged) in your mailbox.'],
+  ['Thread', 'Open every email exchanged with this organisation.']];
 // 'Ally & why' column: the ally type plus the reasons and note saved with "Ally type & why".
 const allyLabel = c => c.ally === 'visited' ? 'Visited' : c.ally === 'strong' ? 'Strong ally' : c.ally === 'suggested' ? (c.mark === 'possible' ? 'Possible ally' : 'Possible ally?') : '';
 const allyWhyText = c => { const r = S.outreach.get(c.id) || {}; return [(r.ally_reasons || []).map(reasonLabel).join(', '), r.ally_note || (c.ally === 'suggested' && c.mark !== 'possible' ? c.hint : '')].filter(Boolean).join(' — '); };
@@ -410,6 +433,8 @@ function renderConversations() {
   const qb = (label, v, key, tone = '') => `<button type="button" data-cquick="${key}" class="${(f.status || '') === key && !f.ally && !f.region && !f.country && !f.name && !f.email ? 'active' : ''} ${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
   const ab = (label, v, key, tone = '') => `<button type="button" data-cally="${key}" class="${f.ally === key && !f.status && !f.region && !f.country && !f.name && !f.email ? 'active' : ''} ${tone}"><b>${v}</b><span>${esc(label)}</span></button>`;
   const allyCount = k => base.filter(c => c.ally === k).length;
+  const cb = (label, v, key, tip) => `<button type="button" data-cconv="${key}" title="${esc(tip)}" class="${f.conv === key && !f.status && !f.ally && !f.region && !f.country && !f.name && !f.email ? 'active' : ''}"><b>${v}</b><span>${esc(label)}</span></button>`;
+  const convCount = k => base.filter(c => k === 'any' ? c.conv.length : c.conv.includes(k)).length;
   // 'Organisations that replied' counts the same reply mark as the Outreach 'Replies' box, so the two always match.
   const replied = base.filter(c => outreachOf(c.id).reply_status === 'Replied').length;
   const sb = (label, v, key) => `<button type="button" data-csrc="${key}" class="${f.src === key && !f.status && !f.ally && !f.region && !f.country && !f.name && !f.email ? 'active' : ''}"><b>${v}</b><span>${esc(label)}</span></button>`;
@@ -421,6 +446,7 @@ function renderConversations() {
       <td>${esc(c.o.country)}</td>
       <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${removedBadge(c.o)}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
       <td class="crm-allycell">${allyCell(c)}</td>
+      <td class="crm-convcell">${convCell(c)}</td>
       <td>${c.first ? esc(fmtDate(c.first.sent_at)) : '<span class="muted">—</span>'}</td>
       <td class="crm-text">${msgCell(c.first, fromName)}</td>
       <td class="crm-text">${c.mine ? msgCell(c.mine) : c.first ? '<span class="pill warn">Not answered yet</span>' : '<span class="muted">—</span>'}</td>
@@ -429,15 +455,16 @@ function renderConversations() {
       <td><button class="button secondary small" data-action="thread" data-id="${esc(c.id)}">Open (${c.all.length})</button></td></tr>`;
   });
   const active = Object.entries(f).filter(([, v]) => v);
-  const LBL = { region: 'Region', country: 'Country', name: 'Name', email: 'Email', status: 'Status', ally: 'Allies', src: 'Contact' };
+  const LBL = { region: 'Region', country: 'Country', name: 'Name', email: 'Email', status: 'Status', ally: 'Allies', src: 'Contact', conv: 'Conversion' };
   return `<section class="rowhead section-head"><h2>Conversations</h2><div class="actions"><button class="button secondary" data-action="reload-msgs">Refresh</button><button class="button" data-action="export-conv">Export</button></div></section>
     ${S.msgsError ? `<div class="notice warn" role="alert">${esc(S.msgsError)}</div>` : ''}
     <section class="crm-groups crm-conv-groups">
       <div class="crm-group crm-group-all crm-quick crm-conv-src">${sb('Organisations that replied', replied, 'email')}${sb('Met in person, no email reply', base.length - replied, 'inperson')}</div>
       <div class="crm-group"><h3>Status</h3><div class="crm-quick">${qb('Waiting for my reply', count('waiting'), 'waiting', 'crm-q-wait')}${qb('They wrote last', count('theirs'), 'theirs')}${qb('I replied last', count('mine'), 'mine')}</div></div>
+      <div class="crm-group crm-q-conv"><h3 title="${esc(CONV_TIP)}">Conversion <span class="crm-info" aria-hidden="true">ⓘ</span></h3><div class="crm-quick">${cb('Using any initiative', convCount('any'), 'any', CONV_TIP)}${CONVERSIONS.map(([k, l, tip]) => cb(l, convCount(k), k, tip)).join('')}</div></div>
       <div class="crm-group"><h3>Allies</h3><div class="crm-quick">${ab('📍 Visited · relationship built', allyCount('visited'), 'visited', 'crm-q-visited')}${ab('🤝 Strong allies', allyCount('strong'), 'strong', 'crm-q-ally')}${ab('Possible allies', allyCount('suggested'), 'suggested')}</div></div>
     </section>
-    <p class="tiny crm-hint">“Organisations that replied” uses the same reply mark as the Replies box in Outreach, so the two numbers match. “Met in person, no email reply” are organisations you visited that haven’t written back by email. 📌 “Waiting for my reply” are the emails you pinned (flagged) in your mailbox. 📍 “Visited · relationship built” are organisations you met in person (interviewed on a field mission). 🤝 “Strong allies” asked for a meeting, a call, a partnership or a collaboration; “Possible allies” are ones you marked by hand, plus replies that mention a meeting or collaboration, to confirm or dismiss in the thread. Click a number to list those organisations.</p>
+    <p class="tiny crm-hint">“Organisations that replied” uses the same reply mark as the Replies box in Outreach, so the two numbers match. “Met in person, no email reply” are organisations you visited that haven’t written back by email. 📌 “Waiting for my reply” are the emails you pinned (flagged) in your mailbox. 📍 “Visited · relationship built” are organisations you met in person (interviewed on a field mission). 🤝 “Strong allies” asked for a meeting, a call, a partnership or a collaboration; “Possible allies” are ones you marked by hand, plus replies that mention a meeting or collaboration, to confirm or dismiss in the thread. ✓ “Conversion” are organisations that have started using one of our initiatives (Handova, Fundova or the Jobs & Opportunities portal): the step after engagement in the marketing funnel. Hover over a column title or box for what it means. Click a number to list those organisations.</p>
     <section class="panel crm-filters">
       <div class="crm-frow"><b>General</b>
         <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
@@ -449,9 +476,9 @@ function renderConversations() {
         <button class="button secondary small" data-action="clear-cfilters">Clear filters</button></div>
     </section>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email conversations</span><p class="tiny crm-legend"><i class="r"></i> Waiting for your reply (pinned in your mailbox) · sorted by country A–Z</p></div><span class="tiny"><b>${list.length}</b> organisations</span></div>
-    ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'src' ? (v === 'email' ? 'Replied by email' : 'Met in person only') : k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : k === 'ally' ? ALLY.find(x => x[0] === v)?.[1] : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
-    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${['Country', 'Organisation', 'Ally &amp; why', 'They replied', 'What they said', 'My response', 'They replied back?', 'Status', 'Thread'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
-    <tbody>${rows.join('') || '<tr><td colspan="9">No conversations match these filters.</td></tr>'}</tbody></table></div>
+    ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'src' ? (v === 'email' ? 'Replied by email' : 'Met in person only') : k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : k === 'ally' ? ALLY.find(x => x[0] === v)?.[1] : k === 'conv' ? (v === 'any' ? 'Using any initiative' : convLabel(v)) : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
+    <div class="tablewrap crm-table crm-conv"><table><thead><tr>${CONV_HEADS.map(([h, tip]) => `<th title="${esc(tip)}"><span class="crm-th-tip">${h}</span></th>`).join('')}</tr></thead>
+    <tbody>${rows.join('') || '<tr><td colspan="10">No conversations match these filters.</td></tr>'}</tbody></table></div>
     <p class="tiny">Emails are copied from the hello@ethicalbridge.org mailbox (the continent “Replied” folders, the Inbox and your Sent folder). Quoted earlier messages and signatures below “On … wrote:” are trimmed.</p></section>`;
 }
 function threadModal(id) {
@@ -472,8 +499,8 @@ function threadModal(id) {
 function exportConversations() {
   const list = filteredConversations(conversations());
   downloadCsv(`ethical-bridge-conversations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
-    ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'ally', 'why', 'last_email', 'messages'],
-    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], allyLabel(c), allyWhyText(c), c.last?.sent_at.slice(0, 10) || '', c.all.length]));
+    ['continent', 'region', 'country', 'organisation', 'email', 'they_replied', 'what_they_said', 'my_response_date', 'my_response', 'they_replied_back', 'status', 'ally', 'why', 'conversion', 'last_email', 'messages'],
+    list.map(c => [c.o.continent, c.o.region, c.o.country, c.o.name, c.o.email || c.first?.from_addr || '', c.first?.sent_at.slice(0, 10) || '', c.first?.body || '', c.mine?.sent_at.slice(0, 10) || '', c.mine?.body || '', c.back ? 'Yes ' + c.back.sent_at.slice(0, 10) : c.mine ? 'Not yet' : '', CONV_STATUS.find(x => x[0] === c.status)[1], allyLabel(c), allyWhyText(c), c.conv.map(convLabel).join('; '), c.last?.sent_at.slice(0, 10) || '', c.all.length]));
 }
 async function setAlly(id, ally) {
   await saveOutreach(id, { ally });
@@ -950,6 +977,7 @@ function relModal(id) {
       ${selectField('Ally type', 'ally', ALLY_MARKS, x.mark || (x.cat === 'visited' ? 'visited' : ''), '', true)}
       <fieldset class="field full crm-reasons"><legend class="label">Why (tick all that apply)</legend>${REASONS.map(([k, l]) => `<label><input type="checkbox" name="r_${k}" ${x.reasons.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset>
       ${field('Note (what they said or asked for)', 'ally_note', x.note, 'area')}
+      ${(() => { const r = S.outreach.get(id) || {}; const cv = r.conversions || []; return `<fieldset class="field full crm-reasons"><legend class="label" title="${esc(CONV_TIP)}">Conversion: initiatives they already use</legend>${CONVERSIONS.map(([k, l, tip]) => `<label title="${esc(tip)}"><input type="checkbox" name="cv_${k}" ${cv.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset>${field('Conversion note (for example, when they registered)', 'conversion_note', r.conversion_note || '', 'area')}`; })()}
       <div class="actions field full"><button class="button" type="submit">Save</button><button class="button secondary" type="button" data-action="thread" data-id="${esc(id)}">Open conversation</button><button class="button secondary" type="button" data-action="close">Cancel</button></div>
     </form>`, 'Organisations interviewed in person count as visited unless marked “Not an ally”.');
 }
@@ -1019,13 +1047,14 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat],[data-csrc]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat],[data-csrc],[data-cconv]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-relcat')) { const k = t.dataset.relcat, h = S.rf.hide; S.rf.hide = h.includes(k) ? h.filter(x => x !== k) : [...h, k]; S.relView = null; render(); return; }
   if (t.hasAttribute('data-nlview')) { S.nlView = t.dataset.nlview; render(); return; }
   if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { continent: '', region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cally')) { S.cf = { region: '', country: '', name: '', email: '', status: '', ally: t.dataset.cally }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-cconv')) { S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '', conv: t.dataset.cconv }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-csrc')) { S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '', src: t.dataset.csrc }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick, ally: '' }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
@@ -1136,7 +1165,8 @@ root.addEventListener('submit', async e => {
     if (kind === 'nlcamp') return saveCamp(id, d);
     if (kind === 'relally') {
       const ally_reasons = REASONS.map(([k]) => k).filter(k => d['r_' + k]);
-      await saveOutreach(id, { ally: d.ally || '', ally_reasons, ally_note: String(d.ally_note || '').trim() }); S.modal = ''; return flash('Saved.');
+      const conversions = CONVERSIONS.map(([k]) => k).filter(k => d['cv_' + k]);
+      await saveOutreach(id, { ally: d.ally || '', ally_reasons, ally_note: String(d.ally_note || '').trim(), conversions, conversion_note: String(d.conversion_note || '').trim() }); S.modal = ''; return flash('Saved.');
     }
   } finally { if (btn?.isConnected) btn.disabled = false; }
 });
