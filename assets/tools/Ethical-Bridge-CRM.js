@@ -1007,7 +1007,7 @@ function renderRelMap() {
       <span class="tiny"><b>${list.length}</b> of ${all.length} organisations${noPin ? ` · ${noPin} without a map location (listed below)` : ''}</span></div></section>
     <section class="crm-relmap-wrap"><div id="crm-relmap" class="crm-relmap" role="region" aria-label="Map of organisations by relationship"></div>
       <button type="button" class="button secondary small crm-relmap-reset" data-action="rel-reset">Fit all pins</button></section>
-    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a colour above to show or hide that group. Pins sit on each organisation's main office.</p>
+    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a colour above to show only that group; click more colours to add them, or click a selected one again to remove it. Pins sit on each organisation's main office.</p>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Ally type &amp; why</span><p class="tiny crm-legend">Strongest tie first: visited, strong, possible, replied, removed · then country A–Z</p></div></div>
     <div class="tablewrap crm-table crm-reltable"><table><thead><tr>${['Country', 'Organisation', 'Relationship', 'Ally type & why', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || '<tr><td colspan="5">No organisations match these filters.</td></tr>'}</tbody></table></div>
