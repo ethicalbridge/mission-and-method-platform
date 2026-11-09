@@ -51,11 +51,12 @@
     },
     {
      "id": "people",
-     "name": "People",
+     "name": "People and inclusion",
      "slugs": [
       "safer-recruitment-procedure",
       "disciplinary-and-grievance-procedure",
       "equality-diversity-and-inclusion-policy",
+      "gender-equality-disability-and-social-inclusion-policy-and-procedure",
       "health-safety-and-lone-working-policy"
      ]
     },
@@ -410,6 +411,16 @@
    "label": "Form",
    "description": "A supporter sign-up and donor consent form that lets people choose exactly how your organisation may contact them, records tax relief and regular gifts, and explains how their data is used.",
    "pages": 7,
+   "status": "new"
+  },
+  {
+   "slug": "gender-equality-disability-and-social-inclusion-policy-and-procedure",
+   "title": "Gender Equality, Disability and Social Inclusion (GEDSI) Policy and Procedure",
+   "category": "Policies & procedures",
+   "type": "Policy and procedure",
+   "label": "Policy and procedure",
+   "description": "How your organisation makes sure women and girls, people with disabilities and other groups who are often left out can take part in, shape and benefit from your programmes, with step-by-step tools for every project.",
+   "pages": 18,
    "status": "new"
   },
   {

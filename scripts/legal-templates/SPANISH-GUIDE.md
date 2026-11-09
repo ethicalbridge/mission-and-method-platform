@@ -62,6 +62,7 @@ Course names stay in English, as on the website: "Course 4 · Protect" → "Curs
 | employment-contract | Contrato de Trabajo |
 | environmental-policy | Política Ambiental |
 | equality-diversity-and-inclusion-policy | Política de Igualdad, Diversidad e Inclusión |
+| gender-equality-disability-and-social-inclusion-policy-and-procedure | Política y Procedimiento de Igualdad de Género, Discapacidad e Inclusión Social (GEDSI) |
 | expenses-and-per-diem-policy | Política de Gastos y Viáticos |
 | finance-procedures | Procedimientos Financieros |
 | financial-controls-policy | Política de Controles Financieros |

@@ -11,7 +11,7 @@ purpose: Una política de igualdad, diversidad e inclusión establece cómo evit
 who_asks: Financiadores institucionales y fundaciones; agencias de las Naciones Unidas y ONG internacionales antes de establecer una alianza; personas candidatas a un empleo; tu órgano de gobierno
 time: De 2 a 3 horas para adaptarla; 30 minutos para que un órgano de gobierno la apruebe
 course: Curso 2 · Organise, Módulo 4 (Personas y cultura)
-related: Código de Conducta; Política y Procedimiento contra el Acoso, la Intimidación y el Hostigamiento; Política y Procedimiento de Salvaguarda; Procedimiento de Quejas y Retroalimentación; Política y Procedimiento de Denuncia de Irregularidades; Política de Protección de Datos; Contrato de Trabajo; Acuerdo de Voluntariado; Términos de Referencia del Órgano de Gobierno; Procedimiento de Contratación Segura
+related: Código de Conducta; Política y Procedimiento contra el Acoso, la Intimidación y el Hostigamiento; Política y Procedimiento de Salvaguarda; Procedimiento de Quejas y Retroalimentación; Política y Procedimiento de Denuncia de Irregularidades; Política de Protección de Datos; Contrato de Trabajo; Acuerdo de Voluntariado; Términos de Referencia del Órgano de Gobierno; Procedimiento de Contratación Segura; Política y Procedimiento de Igualdad de Género, Discapacidad e Inclusión Social (GEDSI)
 ---
 
 ::: note Proporcional a nuestro tamaño
@@ -114,7 +114,7 @@ Un **ajuste razonable** es un cambio que elimina una barrera para una persona co
 
 ## 5. Programas inclusivos y participación
 
-Las personas a las que atendemos son expertas en su propia vida. Nosotros:
+Las personas a las que atendemos son expertas en su propia vida. Nuestra Política y Procedimiento de Igualdad de Género, Discapacidad e Inclusión Social (GEDSI) explica, paso a paso, cómo lo incorporamos en cada proyecto. Nosotros:
 
 - las implicamos en el diseño, la ejecución y la revisión de nuestros programas, y les pagamos de forma justa por su tiempo cuando actúan como asesoras o investigadoras;
 - averiguamos quién no participa y por qué, por ejemplo mujeres con hijos pequeños, personas mayores, personas con discapacidad, personas de grupos minoritarios o personas de zonas remotas, y cambiamos nuestra forma de trabajar para llegar a ellas;
@@ -222,6 +222,7 @@ El órgano de gobierno acuerda hasta [[tres]] acciones para el año siguiente. R
 # Documentos relacionados
 
 - Código de Conducta
+- Política y Procedimiento de Igualdad de Género, Discapacidad e Inclusión Social (GEDSI)
 - Política y Procedimiento contra el Acoso, la Intimidación y el Hostigamiento
 - Política y Procedimiento de Salvaguarda
 - Procedimiento de Quejas y Retroalimentación

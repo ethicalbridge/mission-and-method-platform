@@ -1,6 +1,6 @@
 # Legal template library
 
-Sources for the 59 Word templates published on legal-templates*.html, in English and Spanish.
+Sources for the 60 Word templates published on legal-templates*.html, in English and Spanish.
 
 - `src/<slug>.md`: one template each, in the markup described in `WRITING-GUIDE.md`
   (`[[placeholder]]` = yellow field, `::: adapt` = orange guidance box, `::: note` / `::: glance` = boxes kept in the document).
@@ -26,5 +26,7 @@ Typical update:
 Paid files are served from the private Supabase Storage bucket `templates` (`en/`, `es/`, `packs/`) through the
 `template-files` edge function, which returns a two-minute link after the test code (later: after a purchase).
 Only the three free templates stay in `assets/legal-templates/` on the public site.
-To publish new versions: commit the rebuilt files to a short-lived branch, run the function's `import` action with that
-commit (see docs/production-access.md), then delete the branch.
+To publish new versions: commit the rebuilt files to a short-lived branch (`git add -f`), push it, then run
+`IMPORT_TOKEN=... node scripts/legal-templates/publish.mjs --sha <commit> --slugs <slug,slug> --packs <pack,pack>`
+(it copies the files into storage and rebuilds the English and Spanish pack zips), then delete the branch.
+A new template also needs its `template:<slug>` row in `mip_products` and its key added to its pack and to `full-library`.

@@ -88,7 +88,7 @@ function renderCourses(keys, state) {
 async function renderTemplates(keys) {
   const box = $('acc-templates');
   const wanted = keys.filter(k => k.startsWith('template:') || k.startsWith('pack-') || k === 'essentials' || k === 'full-library');
-  if (!wanted.length) { box.innerHTML = `<p class="acc-empty">No templates yet. <a href="legal-templates.html">Browse the 59 templates</a> or <a href="prices.html#templates">see the packs</a>. Three are free.</p>`; return; }
+  if (!wanted.length) { box.innerHTML = `<p class="acc-empty">No templates yet. <a href="legal-templates.html">Browse the 60 templates</a> or <a href="prices.html#templates">see the packs</a>. Three are free.</p>`; return; }
   const { data: prods } = await mip.from('mip_products').select('key,kind,name,files').in('key', wanted);
   const byKey = Object.fromEntries((prods || []).map(p => [p.key, p]));
   const packs = wanted.filter(k => byKey[k]?.kind === 'pack');
