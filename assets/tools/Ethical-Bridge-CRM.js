@@ -62,8 +62,8 @@ const formData = form => Object.fromEntries(new FormData(form).entries());
 // ---------- state ----------
 const S = {
   code: lsGet(LS.code), ws: null, hasDirectory: false, // private team code only (5 Nov 2026: public code 1234 removed because the CRM now holds email conversations)
-  orgs: [], orgById: new Map(), outreach: new Map(), records: { campaign: [], goal: [], stakeholder: [], partner: [], assessment: [], university: [] },
-  area: lsGet(LS.area) === 'Universities' ? 'Universities' : 'Organisations', uf: { continent: '', country: '', status: '', q: '' },
+  orgs: [], orgById: new Map(), allOrgs: [], unis: [], outreach: new Map(), records: { campaign: [], goal: [], stakeholder: [], partner: [], assessment: [], university: [] },
+  area: lsGet(LS.area) === 'Universities' ? 'Universities' : 'Organisations',
   loading: true, loadError: '', directoryError: '', directoryLoadedAt: '',
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
   f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
@@ -93,9 +93,10 @@ async function loadAll() {
     const body = await api('load');
     S.ws = body.workspace; S.hasDirectory = body.hasDirectory; S.directoryError = body.directoryError; S.directoryLoadedAt = body.directoryLoadedAt;
     const directory = body.directory.map(o => ({ ...o, own: false })), own = body.organisations, outreach = body.outreach, records = body.records;
-    S.orgs = [...directory, ...own.map(o => ({ id: 'own:' + o.id, rowId: o.id, name: o.name, continent: o.continent, region: o.region, country: o.country, city: o.city, email: o.email, phone: o.phone, website: o.website, own: true }))]
-      .sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }));
-    S.orgById = new Map(S.orgs.map(o => [o.id, o]));
+    const mine = own.map(ownOrg);
+    S.allOrgs = [...directory, ...mine.filter(o => !o.uni)].sort(byName);
+    S.unis = mine.filter(o => o.uni).sort(byName);
+    applyArea();
     S.outreach = new Map(outreach.map(r => [r.org_id, r]));
     S.records = { campaign: [], goal: [], stakeholder: [], partner: [], assessment: [], university: [] };
     for (const r of records) (S.records[r.kind] ||= []).push(r);
@@ -207,23 +208,24 @@ function render() {
   if (!S.code) return renderSignIn();
   if (!S.ws) { root.innerHTML = `<div class="shell crm"><p class="muted crm-loading">${S.loadError ? esc(S.loadError) + ' <button class="link" data-action="reload">Try again</button>' : 'Loading organisations and your outreach records…'}</p></div>`; return; }
   const uni = S.area === 'Universities';
-  const continentBar = !uni && ['Dashboard', 'Outreach', 'Conversations', 'Relationship map'].includes(S.view) ? renderContinentBar() : '';
+  const continentBar = ['Dashboard', 'Outreach', 'Conversations', 'Relationship map'].includes(S.view) ? renderContinentBar() : '';
   let body = '';
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
-  else if (uni) body = renderUniversities();
   else body = ({
     'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': renderConversations, 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
   })[S.view]();
+  if (uni) body = uniWords(body);
+  const bar = uni ? uniWords(continentBar) : continentBar;
   unmountRelMap();
   root.innerHTML = `<div class="shell crm">
     <header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><div class="crm-top-right"><span class="tiny">Workspace: <b>${esc(S.ws.name)}</b></span><span class="tiny" id="save-state">${S.saving ? 'Saving…' : 'All changes saved'}</span><a href="../../software.html">← Impact Tools</a></div></header>
-    <div class="hero crm-hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Partner, outreach &amp; partnerships</h1><p>${uni ? 'Universities we contact to promote Handova to students, staff and alumni. Everything you save here stays in this workspace.' : S.hasDirectory ? 'Organisations come live from the Ethical Bridge directory. Your outreach, conversations and relationships are saved to this workspace.' : 'Add the organisations you work with, then track outreach, conversations and relationships in one place.'}</p></div>
+    <div class="hero crm-hero"><span class="eyebrow">Relationships · Ethical Bridge CRM</span><h1>Partner, outreach &amp; partnerships</h1><p>${uni ? 'Universities we contact to promote Handova to students, staff and alumni. Add them here; your outreach, conversations and relationships with them are saved to this workspace.' : S.hasDirectory ? 'Organisations come live from the Ethical Bridge directory. Your outreach, conversations and relationships are saved to this workspace.' : 'Add the organisations you work with, then track outreach, conversations and relationships in one place.'}</p></div>
     ${renderAreaSwitch()}
-    ${uni ? '' : `<nav class="nav" aria-label="CRM sections">${SECTIONS.map(t => `<button type="button" data-tab="${esc(t)}" class="${t === S.view ? 'active' : ''}"${t === S.view ? ' aria-current="page"' : ''}>${esc(t)}</button>`).join('')}</nav>`}
-    <main id="main" tabindex="-1">${S.message ? `<div class="notice" role="status">${esc(S.message)}</div>` : ''}${S.directoryError ? `<div class="notice warn" role="alert">Directory: ${esc(S.directoryError)}</div>` : ''}${continentBar}${body}</main>
-    <footer class="tiny">Ethical Bridge CRM · Method into Impact · Organisation details are edited on ethicalbridge.org, not here</footer></div>${S.modal}`;
-  if (!uni && S.view === 'Relationship map' && S.msgs !== null && !S.loading && !S.loadError) mountRelMap();
+    ${`<nav class="nav" aria-label="CRM sections">${SECTIONS.filter(t => !uni || t !== 'Newsletter').map(t => `<button type="button" data-tab="${esc(t)}" class="${t === S.view ? 'active' : ''}"${t === S.view ? ' aria-current="page"' : ''}>${esc(t)}</button>`).join('')}</nav>`}
+    <main id="main" tabindex="-1">${S.message ? `<div class="notice" role="status">${esc(S.message)}</div>` : ''}${S.directoryError ? `<div class="notice warn" role="alert">Directory: ${esc(S.directoryError)}</div>` : ''}${bar}${body}</main>
+    <footer class="tiny">Ethical Bridge CRM · Method into Impact · ${uni ? 'Universities and their details are added and edited here' : 'Organisation details are edited on ethicalbridge.org, not here'}</footer></div>${uni && S.modal ? uniWords(S.modal) : S.modal}`;
+  if (S.view === 'Relationship map' && S.msgs !== null && !S.loading && !S.loadError) mountRelMap();
 }
 
 function renderContinentBar() {
@@ -234,99 +236,30 @@ function renderContinentBar() {
 }
 
 // ---------- Organisations / Universities ----------
+const byName = (a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
+const numOrNull = v => v === null || v === undefined || v === '' || !Number.isFinite(Number(v)) ? null : Number(v);
+const ownOrg = o => ({ id: 'own:' + o.id, rowId: o.id, name: o.name, continent: o.continent, region: o.region, country: o.country, city: o.city, email: o.email, phone: o.phone, website: o.website, own: true, uni: o.kind === 'university', unit: o.unit || '', unit_type: o.unit_type || '', lat: numOrNull(o.lat), lng: numOrNull(o.lng) });
+const isUni = () => S.area === 'Universities';
+// In the Universities area the same screens speak of universities: swap the words in visible text and tooltips only.
+const UNI_WORDS = [[/Organisations/g, 'Universities'], [/organisations/g, 'universities'], [/Organisation/g, 'University'], [/organisation/g, 'university']];
+const swapWords = t => UNI_WORDS.reduce((x, [re, w]) => x.replace(re, w), t);
+const uniWords = html => html.split(/(<textarea[\s\S]*?<\/textarea>)/).map((part, i) => i % 2 ? part
+  : part.replace(/>([^<]+)</g, (m, t) => '>' + swapWords(t) + '<').replace(/ (title|placeholder)="([^"]*)"/g, (m, k, v) => ` ${k}="${swapWords(v)}"`)).join('');
+const W = (org, uni) => isUni() ? uni : org; // wording per area
+// Both areas use the same tabs and tools: the active area decides which list S.orgs holds.
+function applyArea() {
+  S.orgs = isUni() ? S.unis : S.allOrgs;
+  S.orgById = new Map(S.orgs.map(o => [o.id, o]));
+  if (isUni() && S.view === 'Newsletter') S.view = 'Dashboard';
+}
+const UNIT_TYPES = ['Careers service', 'Volunteering office', 'Faculty or department', 'International office', 'Student union or society', 'Alumni office', 'Research centre', 'Other'];
 // Two areas share the CRM: Organisations (the directory, outreach, conversations, map, newsletter) and
 // Universities, contacted from Nov 2026 to promote Handova to students and staff (records of kind "university").
 function renderAreaSwitch() {
-  const n = S.records.university.length;
+  const n = S.unis.length;
   const b = (area, title, sub, count) => `<button type="button" data-area="${area}" class="${S.area === area ? 'active' : ''}"${S.area === area ? ' aria-current="page"' : ''}><span class="crm-area-t">${title}</span><span class="crm-area-n">${count}</span><span class="crm-area-s">${sub}</span></button>`;
-  return `<nav class="crm-area" aria-label="CRM areas">${b('Organisations', 'Organisations', 'Directory, outreach, conversations, map and newsletter', S.orgs.length)}${b('Universities', 'Universities', 'Reaching out to promote Handova to students and staff', n)}</nav>`;
+  return `<nav class="crm-area" aria-label="CRM areas">${b('Organisations', 'Organisations', 'Directory, outreach, conversations, map and newsletter', S.allOrgs.length)}${b('Universities', 'Universities', 'Promoting Handova to students, staff and alumni: outreach, conversations and map', n)}</nav>`;
 }
-const UNI_STATUS = [
-  ['To contact', 'Found, not contacted yet'],
-  ['Contacted', 'We wrote or called; no answer yet'],
-  ['Replied', 'They answered'],
-  ['Meeting', 'A call or meeting is planned or done'],
-  ['Promoting Handova', 'They share Handova with students or staff (conversion)'],
-  ['Not interested', 'They said no, or not now']];
-const UNI_CHANNEL = ['Email', 'LinkedIn', 'Contact form', 'Phone', 'In person', 'Introduction'];
-const UNI_TYPE = ['Careers service', 'Volunteering office', 'Faculty or department', 'International office', 'Student union or society', 'Alumni office', 'Other'];
-const uniTip = st => UNI_STATUS.find(x => x[0] === st)?.[1] || '';
-const uniRows = () => S.records.university.map(r => ({ id: r.id, ...r.data }));
-function uniFiltered() {
-  const f = S.uf, q = norm(f.q);
-  return uniRows().filter(u => (!f.continent || u.continent === f.continent) && (!f.country || u.country === f.country) && (!f.status || (u.status || 'To contact') === f.status)
-    && (!q || [u.name, u.city, u.country, u.unit, u.contact_name, u.email, u.notes].some(v => norm(v).includes(q))))
-    .sort((a, b) => String(a.country || '').localeCompare(String(b.country || ''), 'en') || String(a.name || '').localeCompare(String(b.name || ''), 'en'));
-}
-function renderUniversities() {
-  const all = uniRows(), list = uniFiltered(), f = S.uf;
-  const count = st => all.filter(u => (u.status || 'To contact') === st).length;
-  const signups = all.reduce((t, u) => t + (Number(u.handova_signups) || 0), 0);
-  const contacted = all.filter(u => (u.status || 'To contact') !== 'To contact').length;
-  const sb = (label, v, st, tip, tone = '') => `<button type="button" data-ustatus="${esc(st)}" title="${esc(tip)}" class="${tone}${f.status === st ? ' active' : ''}"><b>${v}</b><span>${esc(label)}</span></button>`;
-  const countries = [...new Set(all.filter(u => !f.continent || u.continent === f.continent).map(u => u.country).filter(Boolean))].sort();
-  const sel = (k, items, blank) => `<select data-ufilter="${k}">${opts(items, f[k], blank)}</select>`;
-  const rows = list.map(u => {
-    const st = u.status || 'To contact';
-    return `<tr>
-      <td>${esc(u.country || '—')}${u.city ? `<br><span class="tiny">${esc(u.city)}</span>` : ''}</td>
-      <td class="crm-org"><b>${esc(u.name)}</b>${u.unit ? `<span class="tiny">${esc(u.unit)}${u.unit_type ? ' · ' + esc(u.unit_type) : ''}</span>` : u.unit_type ? `<span class="tiny">${esc(u.unit_type)}</span>` : ''}${u.website ? `<a class="tiny" href="${esc(/^https?:/i.test(u.website) ? u.website : 'https://' + u.website)}" target="_blank" rel="noopener">${esc(String(u.website).replace(/^https?:\/\//i, '').replace(/\/$/, ''))}</a>` : ''}</td>
-      <td>${u.contact_name ? `<b>${esc(u.contact_name)}</b>` : '<span class="muted">—</span>'}${u.contact_role ? `<span class="tiny">${esc(u.contact_role)}</span>` : ''}${u.email ? `<span class="tiny">${esc(u.email)}</span>` : ''}${u.phone ? `<span class="tiny">${esc(u.phone)}</span>` : ''}</td>
-      <td class="crm-statuscell"><span class="crm-uni-st st-${esc(norm(st).replace(/\W+/g, '-'))}" title="${esc(uniTip(st))}">${esc(st)}</span>${u.date_contacted ? `<span class="tiny">Contacted ${esc(fmtDate(u.date_contacted))}${u.channel ? ' · ' + esc(u.channel) : ''}</span>` : ''}</td>
-      <td>${u.next_step ? esc(u.next_step) : '<span class="muted">—</span>'}${u.next_date ? `<span class="tiny"><b>${esc(fmtDate(u.next_date))}</b></span>` : ''}</td>
-      <td class="crm-num">${Number(u.handova_signups) ? `<b>${Number(u.handova_signups)}</b>` : '<span class="muted">0</span>'}</td>
-      <td class="crm-text"><p class="tiny crm-ally-short">${esc(u.notes || '')}</p></td>
-      <td><button class="button secondary small" data-action="uni-edit" data-id="${esc(u.id)}">Edit</button></td></tr>`;
-  });
-  const HEADS = [['Country', 'Where the university is.'], ['University', 'Name, the office or department we work with, and the website.'], ['Contact', 'The person we write to: name, role, email and phone.'],
-    ['Status', 'Where they are in the funnel: To contact → Contacted → Replied → Meeting → Promoting Handova (conversion), or Not interested. The date and channel of first contact are below.'],
-    ['Next step', 'What we do next, and when.'], ['Handova sign-ups', 'Students or staff from this university who registered on Handova as volunteers.'], ['Notes', 'Anything else worth remembering.'], ['', '']];
-  return `<section class="rowhead section-head"><div><h2>Universities</h2><p class="muted">Universities we reach out to so they promote Handova (https://handova.org) to students, staff and alumni as skilled volunteers.</p></div><div class="actions"><button class="button secondary" data-action="uni-export">Export</button><button class="button" data-action="uni-add">Add university</button></div></section>
-    <section class="crm-groups crm-uni-groups">
-      <div class="crm-group crm-group-all crm-quick">${sb('Universities', all.length, '', 'Every university saved here', '')}<button type="button" class="nl-plain" title="Students and staff from these universities who registered on Handova"><b>${signups}</b><span>Handova sign-ups</span></button></div>
-      <div class="crm-group"><h3 title="Each university moves along these steps of the marketing funnel">Funnel <span class="crm-info" aria-hidden="true">ⓘ</span></h3><div class="crm-quick">${UNI_STATUS.map(([st, tip]) => sb(st, count(st), st, tip, st === 'Promoting Handova' ? 'conv' : st === 'Not interested' ? 'dim' : '')).join('')}</div>
-        <p class="tiny">${contacted} of ${all.length} contacted · ${pct(count('Replied') + count('Meeting') + count('Promoting Handova'), contacted)} answered · ${count('Promoting Handova')} promoting Handova</p></div>
-    </section>
-    <section class="panel crm-filters"><div class="crm-frow"><b>Find</b>
-      <label><span>Continent</span>${sel('continent', CONTINENTS, 'All continents')}</label>
-      <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
-      <label><span>Status</span>${sel('status', UNI_STATUS.map(x => x[0]), 'All')}</label>
-      <label><span>Search</span><input data-ufilter="q" value="${esc(f.q)}" placeholder="University, contact, email…"></label>
-      <button class="button secondary small" data-action="uni-clear">Clear filters</button></div></section>
-    <section class="panel"><div class="rowhead"><span class="eyebrow">Universities</span><span class="tiny"><b>${list.length}</b> of ${all.length}</span></div>
-      <div class="table-wrap crm-conv crm-uni"><table><thead><tr>${HEADS.map(([h, tip]) => `<th${tip ? ` title="${esc(tip)}"` : ''}>${h ? `<span class="crm-th-tip">${esc(h)}</span>` : ''}</th>`).join('')}</tr></thead>
-      <tbody>${rows.join('') || `<tr><td colspan="8">${all.length ? 'No universities match these filters.' : 'No universities yet. Use “Add university” to save the first one.'}</td></tr>`}</tbody></table></div></section>`;
-}
-function uniModal(id) {
-  const u = id ? uniRows().find(x => x.id === id) || {} : { status: 'To contact' };
-  return modal(id ? u.name || 'University' : 'Add university', `<form class="form" data-form="uni" ${id ? `data-id="${esc(id)}"` : ''}>
-    ${field('University', 'name', u.name, 'text', 'required')}
-    ${field('Website', 'website', u.website)}
-    ${selectField('Continent', 'continent', CONTINENTS, u.continent)}
-    ${field('Country', 'country', u.country)}
-    ${field('City', 'city', u.city)}
-    ${selectField('Office or department type', 'unit_type', UNI_TYPE, u.unit_type)}
-    ${field('Office or department name', 'unit', u.unit)}
-    ${field('Contact name', 'contact_name', u.contact_name)}
-    ${field('Contact role', 'contact_role', u.contact_role)}
-    ${field('Email', 'email', u.email, 'email')}
-    ${field('Phone', 'phone', u.phone)}
-    ${selectField('Status', 'status', UNI_STATUS.map(x => [x[0], x[0] + ' · ' + x[1]]), u.status || 'To contact', '')}
-    ${field('Date first contacted', 'date_contacted', u.date_contacted, 'date')}
-    ${selectField('Channel', 'channel', UNI_CHANNEL, u.channel)}
-    ${field('Next step', 'next_step', u.next_step)}
-    ${field('Next step date', 'next_date', u.next_date, 'date')}
-    ${field('Handova sign-ups (students or staff)', 'handova_signups', u.handova_signups, 'number', 'min="0"')}
-    ${field('Notes', 'notes', u.notes, 'area')}
-    <div class="actions field full"><button class="button" type="submit">Save</button>${id ? `<button class="button secondary" type="button" data-action="uni-delete" data-id="${esc(id)}">Delete</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div>
-  </form>`, 'Universities we contact to promote Handova to students and staff.');
-}
-function exportUniversities() {
-  const list = uniFiltered();
-  downloadCsv(`ethical-bridge-universities-${today()}.csv`, ['continent', 'country', 'city', 'university', 'office_type', 'office', 'website', 'contact_name', 'contact_role', 'email', 'phone', 'status', 'date_contacted', 'channel', 'next_step', 'next_date', 'handova_signups', 'notes'],
-    list.map(u => [u.continent, u.country, u.city, u.name, u.unit_type, u.unit, u.website, u.contact_name, u.contact_role, u.email, u.phone, u.status || 'To contact', u.date_contacted, u.channel, u.next_step, u.next_date, u.handova_signups, u.notes]));
-}
-
 // ---------- access code ----------
 function renderSignIn() {
   root.innerHTML = `<div class="shell crm"><header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><a href="../../software.html">← Impact Tools</a></header>
@@ -338,13 +271,13 @@ function renderSignIn() {
 // ---------- Dashboard ----------
 function renderDashboard() {
   const list = continentOrgs(); const s = stats(list);
-  const steps = [['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Conversations'], ['Relate', 'Allies, visits & why', 'Relationship map'], ['Stay in touch', 'Newsletter', 'Newsletter']];
+  const steps = [['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Conversations'], ['Relate', 'Allies, visits & why', 'Relationship map'], ['Stay in touch', 'Newsletter', 'Newsletter']].filter(x => !isUni() || x[2] !== 'Newsletter');
   return `<section class="grid four crm-cards">
-      ${card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
-      ${card('Organisations emailed', s.sent, pct(s.sent, s.orgs) + ' of this selection')}
+      ${isUni() ? card('Universities', s.orgs, 'Added to this workspace') : card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
+      ${card(W('Organisations emailed', 'Universities emailed'), s.sent, pct(s.sent, s.orgs) + ' of this selection')}
       ${card('Replies', s.replied, pct(s.replied, s.sent) + ' reply rate · ' + s.interviewed + ' interviewed')}
-      ${(() => { if (!S.subs) return card('Newsletter subscribers', '…', 'Live from Brevo'); const a = newsletterRows().filter(r => r.sub.subscribed); const m = a.filter(r => r.org && inContinent(r.org)).length; return card('Newsletter subscribers', a.length, m + ' matched to organisations' + (S.continent === 'All' ? '' : ' in ' + S.continent)); })()}
-      ${(() => { const c = sentCamps().slice(-1)[0]; if (!c) return card('Newsletters sent', S.camps ? 0 : '…', 'Brevo campaigns'); const x = campSummary(c); return card('Last newsletter', fmtDate(c.sent_at), `${num(x.sent)} sent · ${x.opened ? pct(x.opened, x.base) + ' opened' : 'opens not in yet'}`); })()}
+      ${isUni() ? (() => { const c = continentOrgs().filter(o => (outreachOf(o.id).conversions || []).includes('handova')).length; return card('Promoting Handova', c, 'Universities that share Handova (conversion)'); })() : (() => { if (!S.subs) return card('Newsletter subscribers', '…', 'Live from Brevo'); const a = newsletterRows().filter(r => r.sub.subscribed); const m = a.filter(r => r.org && inContinent(r.org)).length; return card('Newsletter subscribers', a.length, m + ' matched to organisations' + (S.continent === 'All' ? '' : ' in ' + S.continent)); })()}
+      ${isUni() ? '' : (() => { const c = sentCamps().slice(-1)[0]; if (!c) return card('Newsletters sent', S.camps ? 0 : '…', 'Brevo campaigns'); const x = campSummary(c); return card('Last newsletter', fmtDate(c.sent_at), `${num(x.sent)} sent · ${x.opened ? pct(x.opened, x.base) + ' opened' : 'opens not in yet'}`); })()}
       ${(() => { if (!S.msgs) return card('Strong allies', '…', 'From the email analysis'); const r = relRows().filter(x => inContinent(x.o)); return card('Strong allies', r.filter(x => x.cat === 'strong').length, r.filter(x => x.cat === 'visited').length + ' visited · ' + r.filter(x => x.cat === 'possible').length + ' possible allies'); })()}
       ${(() => { const w = S.msgs ? conversations().filter(c => c.status === 'waiting' && inContinent(c.o)).length : null; return card('Waiting for my reply', w ?? '…', 'Pinned emails · see Conversations', w ? 'warn' : ''); })()}
     </section>
@@ -391,7 +324,7 @@ function renderOrganisations() {
       <td>${os('instagram_status', SOCIAL, r.instagram_status)}</td><td>${os('facebook_status', SOCIAL, r.facebook_status)}</td><td>${os('linkedin_status', SOCIAL, r.linkedin_status)}</td>
       <td>${os('reply_status', REPLY, r.reply_status)}</td></tr>`;
   });
-  return `<section class="rowhead section-head"><h2>Outreach</h2><div class="actions"><button class="button secondary" data-action="add-org">+ Add organisation</button><button class="button" data-action="export-orgs">Export</button></div></section>
+  return `<section class="rowhead section-head"><h2>Outreach</h2><div class="actions"><button class="button secondary" data-action="add-org">+ Add ${W('organisation', 'university')}</button><button class="button" data-action="export-orgs">Export</button></div></section>
     <section class="crm-groups">
       <div class="crm-group crm-group-all crm-quick">${qbtn(['Organisations', s.orgs, ''])}</div>
       ${groups.map(([title, items]) => `<div class="crm-group"><h3>${esc(title)}</h3><div class="crm-quick">${items.map(qbtn).join('')}</div></div>`).join('')}
@@ -955,22 +888,39 @@ function exportNewsletter() {
 function orgModal(id) {
   const o = S.orgById.get(id); if (!o) return '';
   const r = outreachOf(id);
-  const info = [['Registered name', o.registered], ['Location', [o.city, o.country, o.region, o.continent].filter(Boolean).join(', ')], ['Public email', o.email], ['Public phone', o.phone], ['Website', o.website]].filter(([, v]) => v);
+  const info = [['Registered name', o.registered], ['Office or department', [o.unit, o.unit_type].filter(Boolean).join(' · ')], ['Location', [o.city, o.country, o.region, o.continent].filter(Boolean).join(', ')], ['Public email', o.email], ['Public phone', o.phone], ['Website', o.website]].filter(([, v]) => v);
   return modal(o.name, `${o.removed ? `<p class="crm-removed-note"><b>Removed from the directory at their request (${esc(o.removed)}).</b> ${esc(o.removedReason || '')} Don't publish or contact them again without their consent.</p>` : ''}<dl class="kv">${info.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === 'Website' ? `<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>
     <form class="form" data-form="org-outreach" data-id="${esc(id)}">
       ${selectField('Interview', 'interview_status', INTERVIEW, r.interview_status, '')}${field('Interview date (if planned)', 'interview_date', r.interview_date || '', 'date')}${field('Personal contact', 'contact_person', r.contact_person)}${field('Personal phone', 'personal_phone', r.personal_phone)}
       ${selectField('Email status', 'email_status', EMAIL, r.email_status, '')}${field('Date sent', 'date_sent', r.date_sent || '', 'date')}${selectField('Reply', 'reply_status', REPLY, r.reply_status, '')}
       ${selectField('Instagram', 'instagram_status', SOCIAL, r.instagram_status, '')}${selectField('Facebook', 'facebook_status', SOCIAL, r.facebook_status, '')}${selectField('LinkedIn', 'linkedin_status', SOCIAL, r.linkedin_status, '')}
       ${field('Notes', 'notes', r.notes, 'area')}
-      <div class="actions field full"><button class="button" type="submit">Save</button>${o.own ? `<button class="button danger" type="button" data-action="delete-org" data-id="${esc(o.rowId)}">Delete organisation</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div>
+      <div class="actions field full"><button class="button" type="submit">Save</button>${o.own ? `<button class="button secondary" type="button" data-action="edit-org" data-id="${esc(id)}">Edit details</button><button class="button danger" type="button" data-action="delete-org" data-id="${esc(o.rowId)}">Delete ${o.uni ? 'university' : 'organisation'}</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div>
       ${o.own ? '' : '<p class="tiny field full">Name, contact details and location come from the Ethical Bridge directory. Correct them on ethicalbridge.org.</p>'}
     </form>`);
 }
 
+// Add or edit an organisation (or university) added in the CRM. Universities also keep the office we work with
+// and a map pin (latitude and longitude: right-click the place in Google Maps to copy them).
+function ownOrgFields(o = {}) {
+  const u = isUni() || o.uni;
+  return `${field(u ? 'University name' : 'Organisation name', 'name', o.name || '', 'text', 'required')}
+    ${u ? selectField('Office or department type', 'unit_type', UNIT_TYPES, o.unit_type || '') + field('Office or department name', 'unit', o.unit || '') : ''}
+    ${selectField('Continent', 'continent', CONTINENTS, o.continent ?? (S.continent === 'All' ? '' : S.continent))}${field('Region', 'region', o.region || '')}${field('Country', 'country', o.country || '')}${field('City', 'city', o.city || '')}
+    ${field(u ? 'Email (office or contact)' : 'Public email', 'email', o.email || '', 'email')}${field(u ? 'Phone' : 'Public phone', 'phone', o.phone || '')}${field('Website', 'website', o.website || '', 'url', 'placeholder="https://"')}
+    ${field('Latitude (for the map)', 'lat', o.lat ?? '', 'number', 'min="-90" max="90"')}${field('Longitude (for the map)', 'lng', o.lng ?? '', 'number', 'min="-180" max="180"')}`;
+}
 function addOrgModal() {
-  return modal('Add organisation', `<form class="form" data-form="add-org">${field('Organisation name', 'name', '', 'text', 'required')}${selectField('Continent', 'continent', CONTINENTS, S.continent === 'All' ? '' : S.continent)}${field('Region', 'region')}${field('Country', 'country')}${field('City', 'city')}${field('Public email', 'email', '', 'email')}${field('Public phone', 'phone')}${field('Website', 'website', '', 'url', 'placeholder="https://"')}
-    <div class="actions field full"><button class="button" type="submit">Add organisation</button><button class="button secondary" type="button" data-action="close">Cancel</button></div></form>`,
-  S.hasDirectory ? 'Use this for organisations that are not in the Ethical Bridge directory. Directory organisations appear automatically.' : '');
+  const u = isUni();
+  return modal(u ? 'Add university' : 'Add organisation', `<form class="form" data-form="add-org">${ownOrgFields()}
+    <div class="actions field full"><button class="button" type="submit">${u ? 'Add university' : 'Add organisation'}</button><button class="button secondary" type="button" data-action="close">Cancel</button></div></form>`,
+  u ? 'Universities we contact to promote Handova to students, staff and alumni. Latitude and longitude place it on the Relationship map: in Google Maps, right-click the place and click the numbers to copy them.'
+    : S.hasDirectory ? 'Use this for organisations that are not in the Ethical Bridge directory. Directory organisations appear automatically.' : '');
+}
+function editOwnOrgModal(id) {
+  const o = S.orgById.get(id); if (!o?.own) return '';
+  return modal(`Edit ${o.name}`, `<form class="form" data-form="edit-org" data-id="${esc(id)}">${ownOrgFields(o)}
+    <div class="actions field full"><button class="button" type="submit">Save</button><button class="button secondary" type="button" data-action="org" data-id="${esc(id)}">Back</button></div></form>`);
 }
 
 function exportOrgs() {
@@ -1141,7 +1091,7 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat],[data-csrc],[data-cconv],[data-area],[data-ustatus]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat],[data-csrc],[data-cconv],[data-area]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-relcat')) { const k = t.dataset.relcat, h = S.rf.hide; S.rf.hide = h.includes(k) ? h.filter(x => x !== k) : [...h, k]; S.relView = null; render(); return; }
@@ -1153,9 +1103,8 @@ root.addEventListener('click', async e => {
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick, ally: '' }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
-  if (t.hasAttribute('data-area')) { S.area = t.dataset.area; lsSet(LS.area, S.area); S.modal = ''; render(); window.scrollTo(0, 0); return; }
-  if (t.hasAttribute('data-ustatus')) { S.uf = { continent: '', country: '', status: t.dataset.ustatus, q: '' }; render(); return; }
-  if (t.dataset.tab) { S.area = 'Organisations'; lsSet(LS.area, S.area); S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
+  if (t.hasAttribute('data-area')) { S.area = t.dataset.area; lsSet(LS.area, S.area); S.f = EMPTY_FILTERS(); S.page = 0; S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '' }; S.relView = null; applyArea(); S.modal = ''; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.tab) { S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
   if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.cf.region = ''; S.cf.country = ''; S.nf.region = ''; S.nf.country = ''; S.page = 0; render(); return; }
   if (t.dataset.page != null && t.dataset.page !== undefined && t.hasAttribute('data-page')) { S.page = Number(t.dataset.page); render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start' }); return; }
   const a = t.dataset.action, id = t.dataset.id;
@@ -1164,6 +1113,7 @@ root.addEventListener('click', async e => {
     case 'signout': S.orgs = []; S.outreach = new Map(); return lockOut('The CRM is locked on this browser.');
     case 'close': return closeModal();
     case 'org': return openModal(orgModal(id));
+    case 'edit-org': return openModal(editOwnOrgModal(id));
     case 'thread': return openModal(threadModal(id));
     case 'pin': return setPin(id, true);
     case 'unpin': return setPin(id, false);
@@ -1185,11 +1135,6 @@ root.addEventListener('click', async e => {
     case 'nl-link': return nlLink(id, t.dataset.org);
     case 'reload-msgs': S.msgs = null; render(); return loadMessages();
     case 'export-conv': return exportConversations();
-    case 'uni-add': return openModal(uniModal(null));
-    case 'uni-edit': return openModal(uniModal(id));
-    case 'uni-export': return exportUniversities();
-    case 'uni-clear': S.uf = { continent: '', country: '', status: '', q: '' }; return render();
-    case 'uni-delete': { const u = uniRows().find(x => x.id === id); if (!confirm(`Delete ${u?.name || 'this university'}? This cannot be undone.`)) return; if (await deleteRecord('university', id)) { S.modal = ''; flash('University deleted.'); } return; }
     case 'rel-edit': return openModal(relModal(id));
     case 'rel-export': return exportRel();
     case 'rel-clear': S.rf = { hide: [], reason: '', q: '' }; S.relView = null; return render();
@@ -1205,9 +1150,10 @@ root.addEventListener('click', async e => {
       if (await deleteRecord(kind, id)) { S.modal = ''; flash('Deleted.'); } return;
     }
     case 'delete-org': {
-      if (!confirm('Delete this organisation and its outreach marks?')) return;
+      const what = isUni() ? 'university' : 'organisation';
+      if (!confirm(`Delete this ${what} and its outreach marks?`)) return;
       try { await api('org.delete', { id }); } catch (err) { return flash('Could not delete: ' + err.message); }
-      S.orgs = S.orgs.filter(o => o.rowId !== id); S.orgById.delete('own:' + id); S.outreach.delete('own:' + id); S.modal = ''; return flash('Organisation deleted.');
+      S.allOrgs = S.allOrgs.filter(o => o.rowId !== id); S.unis = S.unis.filter(o => o.rowId !== id); S.outreach.delete('own:' + id); applyArea(); S.modal = ''; return flash(what === 'university' ? 'University deleted.' : 'Organisation deleted.');
     }
     case 'print': return window.print();
   }
@@ -1227,7 +1173,6 @@ root.addEventListener('change', async e => {
   if (t.dataset.filter && t.tagName === 'SELECT') { S.f[t.dataset.filter] = t.value; if (t.dataset.filter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.action === 'nl-csv' && t.files?.[0]) { const f = t.files[0]; t.value = ''; return importNewsletterCsv(f); }
   if (t.dataset.nfilter && t.tagName === 'SELECT') { S.nf[t.dataset.nfilter] = t.value; if (t.dataset.nfilter === 'continent') { S.nf.region = ''; S.nf.country = ''; } if (t.dataset.nfilter === 'region') S.nf.country = ''; S.nfReplied = false; return render(); }
-  if (t.dataset.ufilter && t.tagName === 'SELECT') { S.uf[t.dataset.ufilter] = t.value; if (t.dataset.ufilter === 'continent') S.uf.country = ''; return render(); }
   if (t.hasAttribute('data-relreason')) { S.rf.reason = t.value; S.relView = null; return render(); }
   if (t.dataset.cfilter && t.tagName === 'SELECT') { S.cf[t.dataset.cfilter] = t.value; if (t.dataset.cfilter === 'region') S.cf.country = ''; return render(); }
 });
@@ -1237,7 +1182,6 @@ root.addEventListener('input', e => {
   if (t.dataset.filter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.filter; filterTimer = setTimeout(() => { S.f[k] = t.value; S.page = 0; render(); const el = root.querySelector(`[data-filter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.nlsearch) { clearTimeout(filterTimer); const id = t.dataset.nlsearch; filterTimer = setTimeout(() => { S.nlQuery = t.value; S.modal = nlPickModal(id); render(); const el = root.querySelector('[data-nlsearch]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 200); return; }
   if (t.dataset.nfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.nfilter; filterTimer = setTimeout(() => { S.nf[k] = t.value; render(); const el = root.querySelector(`[data-nfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
-  if (t.dataset.ufilter === 'q') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.uf.q = t.value; render(); const el = root.querySelector('[data-ufilter="q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.hasAttribute('data-relq')) { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.rf.q = t.value; S.relView = null; render(); const el = root.querySelector('[data-relq]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.cfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.cfilter; filterTimer = setTimeout(() => { S.cf[k] = t.value; render(); const el = root.querySelector(`[data-cfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
 });
@@ -1260,16 +1204,17 @@ root.addEventListener('submit', async e => {
     }
     if (kind === 'add-org') {
       let row;
-      try { ({ row } = await api('org.add', { org: d })); } catch (err) { return flash('Could not add: ' + err.message); }
-      const o = { id: 'own:' + row.id, rowId: row.id, name: row.name, continent: row.continent, region: row.region, country: row.country, city: row.city, email: row.email, phone: row.phone, website: row.website, own: true };
-      S.orgs.push(o); S.orgs.sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })); S.orgById.set(o.id, o); S.modal = ''; return flash(`${row.name} added.`);
+      try { ({ row } = await api('org.add', { org: { ...d, kind: isUni() ? 'university' : 'organisation' } })); } catch (err) { return flash('Could not add: ' + err.message); }
+      const o = ownOrg(row);
+      if (o.uni) { S.unis.push(o); S.unis.sort(byName); } else { S.allOrgs.push(o); S.allOrgs.sort(byName); }
+      applyArea(); S.modal = ''; return flash(`${row.name} added.`);
     }
-    if (kind === 'uni') {
-      const data = Object.fromEntries(Object.entries(d).map(([k, v]) => [k, String(v ?? '').trim()]));
-      if (!data.name) return flash('Give the university a name.');
-      data.handova_signups = data.handova_signups === '' ? '' : Math.max(0, Math.round(Number(data.handova_signups) || 0));
-      if (await saveRecord('university', id, data)) { S.modal = ''; flash(`${data.name} saved.`); }
-      return;
+    if (kind === 'edit-org') {
+      const cur = S.orgById.get(id); if (!cur) return;
+      let row;
+      try { ({ row } = await api('org.update', { id: cur.rowId, org: d })); } catch (err) { return flash('Could not save: ' + err.message); }
+      const o = ownOrg(row), list = o.uni ? S.unis : S.allOrgs, i = list.findIndex(x => x.id === o.id);
+      if (i >= 0) list[i] = o; list.sort(byName); applyArea(); S.modal = orgModal(o.id); return flash(`${row.name} saved.`);
     }
     if (kind === 'campaign') { if (await saveRecord('campaign', id, d)) { S.modal = ''; flash('Campaign saved.'); } return; }
     if (kind === 'nlcamp') return saveCamp(id, d);
