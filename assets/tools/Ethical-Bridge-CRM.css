@@ -310,3 +310,28 @@ tr.nl-wk-camp td { background: #fff5ec; }
 .crm-uni-st.st-promoting-handova{background:#efe8f8;color:#5b3a8c}.crm-uni-st.st-not-interested{background:#f6e9e9;color:#8a3b3b}
 .crm-quick button.conv b{color:#5b3a8c}.crm-quick button.dim b{color:#8a3b3b}
 .crm-quick .nl-plain{cursor:default}
+/* 9 Nov 2026: universities conversion pipeline (Attract, Convince, Close, Grow) */
+.crm-uphases{grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,.8fr)}
+@media(max-width:1500px){.crm-uphases{grid-template-columns:repeat(2,minmax(0,1fr))}.crm-uphases>.crm-group:last-child{grid-column:1/-1}}
+@media(max-width:800px){.crm-uphases{grid-template-columns:1fr}}
+.crm-uphase{border-top:5px solid var(--pc)}
+.crm-uphase h3{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.crm-uphase h3 .link{font:inherit;color:var(--pc);text-transform:inherit;letter-spacing:inherit}
+.crm-uphase-n{font-size:1.4rem;font-weight:900;color:var(--pc)}
+.crm-uphase .crm-quick{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}
+.crm-uphase .crm-quick b{color:var(--pc)}
+.crm-uphase-pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.78rem;font-weight:800;color:#fff;background:var(--pc);cursor:help}
+.crm-ustage{display:block;font-weight:800;color:var(--deep,#123c48);cursor:help}
+.crm-upipe td .tiny{display:block;color:var(--muted)}
+.crm-upipe td .tiny.crm-late,.crm-upipe .crm-late b{color:#b42318}
+.crm-touches{display:flex;gap:4px;flex-wrap:nowrap}
+.crm-touches button{font:inherit;font-size:.72rem;font-weight:800;border:1px solid #c9d6dd;background:#fff;color:#6b7785;border-radius:7px;padding:3px 6px;cursor:pointer}
+.crm-touches button.done{background:#123c48;border-color:#123c48;color:#fff}
+.crm-ufunnel ol{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:3px}
+.crm-ufunnel li{display:grid;grid-template-columns:52px 1fr 60px;align-items:center;gap:10px;width:var(--w);margin:0 auto;background:var(--pc);color:#fff;border-radius:7px;padding:3px 12px;cursor:help;font-size:.88rem}
+.crm-ufunnel li b{font-size:1rem}
+.crm-ufunnel li span{font-weight:700;font-size:.9rem}
+.crm-ufunnel li em{font-style:normal;font-size:.8rem;opacity:.85;text-align:right}
+.crm-ureview{grid-template-columns:1fr}
+.crm-ureview .crm-quick{grid-template-columns:repeat(auto-fit,minmax(170px,240px))}
+.crm-reasons input[type=date]{margin-left:6px}

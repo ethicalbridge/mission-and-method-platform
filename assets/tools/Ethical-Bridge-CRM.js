@@ -213,7 +213,7 @@ function render() {
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
   else body = ({
-    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': renderConversations, 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
+    'Dashboard': renderDashboard, 'Outreach': () => isUni() ? renderUniPipeline() : renderOutreach(), 'Conversations': renderConversations, 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
   })[S.view]();
   if (uni) body = uniWords(body);
   const bar = uni ? uniWords(continentBar) : continentBar;
@@ -260,6 +260,151 @@ function renderAreaSwitch() {
   const b = (area, title, sub, count) => `<button type="button" data-area="${area}" class="${S.area === area ? 'active' : ''}"${S.area === area ? ' aria-current="page"' : ''}><span class="crm-area-t">${title}</span><span class="crm-area-n">${count}</span><span class="crm-area-s">${sub}</span></button>`;
   return `<nav class="crm-area" aria-label="CRM areas">${b('Organisations', 'Organisations', 'Directory, outreach, conversations, map and newsletter', S.allOrgs.length)}${b('Universities', 'Universities', 'Promoting Handova to students, staff and alumni: outreach, conversations and map', n)}</nav>`;
 }
+// ---------- Universities: the Handova conversion pipeline ----------
+// From "Handova · Conversion and marketing phases" (Nov 2026): nine stages in four phases, plus Not now and Lost.
+// Each university's pipeline is a record of kind "university" holding { org_id, status, … }.
+const UPHASES = [['Attract', 'Get noticed: first contact and follow-ups until they reply', '#4f74a8'], ['Convince', 'Build trust: discovery call and pilot proposal', '#2f5784'], ['Close', 'Sign, run and review the free 3-month pilot', '#1d3a5f'], ['Grow', 'Paid Programme or Impact Partner, then renewal', '#3aa676']];
+const USTAGES = [
+  ['Not contacted', 'Attract', '1 · Target', 'Pick a priority contact and find a named person and email.', 'A named person and email'],
+  ['Contacted', 'Attract', '2 · First contact', 'LinkedIn note on day 0, first email with the offer on day 2; warm introductions where possible.', 'A reply, a click or a page visit'],
+  ['Replied', 'Attract', '3 · Follow-up', 'Day 7 with a live need, day 14 with a result or case study, a pause, one restart on day 45.', 'They reply, ask for more or book a call'],
+  ['Call booked', 'Convince', '4 · Discovery call', '20 minutes: their programme, credit rules, cohort size, start date, who signs and when budgets are set.', 'They want a pilot and name a cohort and a contact'],
+  ['Proposal sent', 'Convince', '5 · Proposal', 'Tailored pilot proposal within 48 hours, with the agreement draft and the safety documents.', 'The person who can sign approves it'],
+  ['Pilot signed', 'Close', '6 · Pilot signed', 'Founding Partner pilot agreement signed: start date, capped cohort, named academic contact.', 'Signature and start date'],
+  ['Pilot running', 'Close', '7 · Pilot running', 'Onboarding in week 1, weekly check-ins, mid-pilot check-in in week 6, certificates and reports in week 12.', 'Students finish needs and organisations rate the work'],
+  ['Pilot review', 'Close', '8 · Review and paid offer', 'Pilot report and the paid offer at the income-band price with the Founding Partner discount.', 'The budget holder agrees'],
+  ['Paid partner', 'Grow', '9 · Paid partner and renewal', 'Programme or Impact Partner agreement, termly reports, renewal talks 60 days before the year ends.', 'Signed paid agreement; then renewal']];
+const UOUT = [['Not now', 'They said not now: note the reason and the month to come back'], ['Lost', 'They said no: note the reason (reviewed each quarter)']];
+const TOUCHES = [['d0', 'Day 0', 'LinkedIn note'], ['d2', 'Day 2', 'First email with the offer pack'], ['d7', 'Day 7', 'Follow-up with a live need'], ['d14', 'Day 14', 'Last follow-up with a result or case study'], ['d45', 'Day 45', 'One restart with news']];
+const UPRIORITY = [['A', 'A · priority'], ['B', 'B'], ['C', 'C']];
+const UTIER = ['Programme Partner', 'Impact Partner'];
+const stageIdx = st => USTAGES.findIndex(x => x[0] === st);
+const stageOf = st => USTAGES.find(x => x[0] === st);
+const phaseOf = st => st === 'Not now' || st === 'Lost' ? st : stageOf(st)?.[1] || 'Attract';
+const phaseColor = ph => UPHASES.find(x => x[0] === ph)?.[2] || '#8a96a3';
+const pipeRec = id => S.records.university.find(r => r.data?.org_id === id);
+const pipeOf = id => ({ status: 'Not contacted', touches: {}, ...(pipeRec(id)?.data || {}) });
+const daysSince = d => d ? Math.max(0, Math.floor((Date.now() - new Date(String(d).slice(0, 10) + "T00:00:00")) / 864e5)) : null;
+const S_UF = () => ({ phase: '', status: '', country: '', priority: '', q: '', due: '' });
+if (!S.uf) S.uf = S_UF();
+async function savePipe(id, patch) {
+  const rec = pipeRec(id), cur = pipeOf(id), next = { ...cur, ...patch, org_id: id };
+  if (patch.status && patch.status !== cur.status) next.stage_since = today();
+  const row = await saveRecord('university', rec?.id, next);
+  if (!row) return false;
+  // Keep the shared outreach marks in step, so Dashboard, Conversations and the map agree with the pipeline.
+  const i = stageIdx(next.status), r = outreachOf(id), o = {};
+  if (i >= 1 && r.email_status !== 'Sent') { o.email_status = 'Sent'; o.date_sent = r.date_sent || next.touches?.d2 || today(); }
+  if (i >= 2 && r.reply_status !== 'Replied') o.reply_status = 'Replied';
+  if (i >= 5 && !(r.conversions || []).includes('handova')) o.conversions = [...(r.conversions || []), 'handova'];
+  if (Object.keys(o).length) await saveOutreach(id, o);
+  return true;
+}
+function uniPipeRows() {
+  return continentOrgs().map(o => ({ o, p: pipeOf(o.id) }));
+}
+function uniFiltered(rows) {
+  const f = S.uf, q = norm(f.q), t = today();
+  return rows.filter(({ o, p }) => (!f.phase || phaseOf(p.status) === f.phase) && (!f.status || p.status === f.status) && (!f.country || o.country === f.country) && (!f.priority || p.priority === f.priority)
+    && (!f.due || (f.due === 'overdue' ? p.next_date && p.next_date < t && !['Lost'].includes(p.status) : f.due === 'none' ? !p.next_step && !['Lost', 'Paid partner'].includes(p.status) : true))
+    && (!q || [o.name, o.unit, o.city, o.country, p.contact_name, p.contact_email, p.next_step].some(v => norm(v).includes(q))))
+    .sort((a, b) => (stageIdx(b.p.status) - stageIdx(a.p.status)) || String(a.o.country || '').localeCompare(String(b.o.country || ''), 'en') || byName(a.o, b.o));
+}
+function uniFunnel(rows) {
+  // How many universities reached each stage (or went past it); Not now and Lost count up to the stage they reached.
+  const reached = USTAGES.map((st, i) => rows.filter(({ p }) => Math.max(stageIdx(p.status), Number.isInteger(p.reached) ? p.reached : -1) >= i).length);
+  return reached;
+}
+function renderUniDashboard(steps) {
+  const rows = uniPipeRows(), t = today();
+  const inPhase = ph => rows.filter(({ p }) => phaseOf(p.status) === ph).length;
+  const at = st => rows.filter(({ p }) => p.status === st).length;
+  const pilots = at('Pilot signed') + at('Pilot running') + at('Pilot review');
+  const income = rows.filter(({ p }) => ['Pilot running', 'Pilot review'].includes(p.status)).reduce((x, { p }) => x + (Number(p.price) || 0), 0);
+  const overdue = rows.filter(({ p }) => p.next_date && p.next_date < t && p.status !== 'Lost').length;
+  return `<section class="grid four crm-cards">
+      ${card('Universities', rows.length, 'Added to this workspace')}
+      ${UPHASES.map(([ph, tip]) => card(ph, inPhase(ph), tip)).join('')}
+      ${card('Pilots', pilots, `${at('Pilot running')} running · ${at('Pilot review')} in review`)}
+      ${card('Paid partners', at('Paid partner'), income ? `US$${num(income)} expected a year from pilots` : 'Programme or Impact Partners')}
+      ${card('Next step overdue', overdue, 'Open conversations past their date', overdue ? 'warn' : '')}
+    </section>
+    <section class="panel"><span class="eyebrow">End-to-end workflow</span><h2>From first contact to a paid partnership</h2>
+      <ol class="crm-flow">${UPHASES.map(([ph, tip], i) => `<li><button type="button" data-tab="Outreach" data-uqtab="phase=${ph}"><b>${i + 1}</b><span>${esc(ph)}</span><small>${esc(tip)}</small></button></li>`).join('')}</ol></section>`;
+}
+function renderUniPipeline() {
+  const rows = uniPipeRows(), list = uniFiltered(rows), f = S.uf, t = today();
+  const at = st => rows.filter(({ p }) => p.status === st).length;
+  const inPhase = ph => rows.filter(({ p }) => phaseOf(p.status) === ph).length;
+  const reached = uniFunnel(rows);
+  const overdue = rows.filter(({ p }) => p.next_date && p.next_date < t && p.status !== 'Lost').length;
+  const noStep = rows.filter(({ p }) => !p.next_step && !['Lost', 'Paid partner', 'Not contacted'].includes(p.status)).length;
+  const income = rows.filter(({ p }) => ['Pilot running', 'Pilot review'].includes(p.status)).reduce((s, { p }) => s + (Number(p.price) || 0), 0);
+  const fb = (label, v, key, val, tip, extra = '') => `<button type="button" data-uq="${key}=${esc(val)}" title="${esc(tip)}" class="${f[key] === val && Object.entries(f).filter(([k, x]) => x && k !== key).length === 0 ? 'active' : ''}" ${extra}><b>${v}</b><span>${esc(label)}</span></button>`;
+  const phaseBox = ([ph, tip, c]) => `<div class="crm-group crm-uphase" style="--pc:${c}"><h3 title="${esc(tip)}"><button type="button" class="link" data-uq="phase=${ph}">${ph}</button> <span class="crm-uphase-n">${inPhase(ph)}</span></h3>
+      <div class="crm-quick">${USTAGES.filter(x => x[1] === ph).map(([st, , lbl, what, next]) => fb(lbl.replace(/^\d+ · /, ''), at(st), 'status', st, `${lbl} (${st}): ${what} Moves on when: ${next}.`)).join('')}</div></div>`;
+  const countries = [...new Set(rows.map(r => r.o.country).filter(Boolean))].sort();
+  const sel = (k, items, blank) => `<select data-uf="${k}" class="${f[k] ? 'crm-on' : ''}">${opts(items, f[k], blank)}</select>`;
+  const funnel = USTAGES.map(([st, ph, lbl], i) => `<li style="--pc:${phaseColor(ph)};--w:${Math.max(28, 100 - i * 8)}%" title="${esc(lbl)}: ${reached[i]} reached this stage${i ? ` · ${pct(reached[i], reached[i - 1])} of the previous stage` : ''}"><b>${reached[i]}</b><span>${esc(lbl.replace(/^\d+ · /, ''))}</span>${i ? `<em>${pct(reached[i], reached[i - 1])}</em>` : ''}</li>`).join('');
+  const touchCell = (o, p) => `<div class="crm-touches">${TOUCHES.map(([k, d, what]) => `<button type="button" data-touch="${k}" data-id="${esc(o.id)}" class="${p.touches?.[k] ? 'done' : ''}" title="${esc(`${d}: ${what}${p.touches?.[k] ? ' · done ' + fmtDate(p.touches[k]) : ' · click when done'}`)}">${esc(d.replace('Day ', 'D'))}</button>`).join('')}</div>`;
+  const body = list.map(({ o, p }) => {
+    const ph = phaseOf(p.status), st = stageOf(p.status), days = daysSince(p.stage_since), late = p.next_date && p.next_date < t && p.status !== 'Lost';
+    return `<tr>
+      <td>${esc(o.country || '—')}${o.city ? `<span class="tiny">${esc(o.city)}</span>` : ''}</td>
+      <td class="crm-org"><button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button>${o.unit ? `<span class="tiny">${esc(o.unit)}${o.unit_type ? ' · ' + esc(o.unit_type) : ''}</span>` : ''}${p.contact_name ? `<span class="tiny"><b>${esc(p.contact_name)}</b>${p.contact_role ? ', ' + esc(p.contact_role) : ''}</span>` : ''}${p.contact_email || o.email ? `<span class="tiny">${esc(p.contact_email || o.email)}</span>` : ''}${p.priority ? `<span class="pill dim" title="Priority from Annex A">Priority ${esc(p.priority)}</span>` : ''}${p.warm ? ' <span class="pill" title="Warm contact or introduction">Warm</span>' : ''}</td>
+      <td><span class="crm-uphase-pill" style="--pc:${phaseColor(ph)}" title="${esc(UPHASES.find(x => x[0] === ph)?.[1] || UOUT.find(x => x[0] === ph)?.[1] || '')}">${esc(ph)}</span></td>
+      <td><span class="crm-ustage" title="${esc(st ? `${st[3]} Moves on when: ${st[4]}.` : UOUT.find(x => x[0] === p.status)?.[1] || '')}">${esc(st ? st[2] : p.status)}</span><span class="tiny">${esc(p.status)}${days !== null ? ` · ${days} day${days === 1 ? '' : 's'} here` : ''}</span>${p.reason ? `<span class="tiny">${esc(p.reason)}${p.come_back ? ' · back in ' + esc(p.come_back) : ''}</span>` : ''}</td>
+      <td>${touchCell(o, p)}</td>
+      <td>${p.next_step ? esc(p.next_step) : '<span class="muted">—</span>'}${p.next_date ? `<span class="tiny ${late ? 'crm-late' : ''}"><b>${esc(fmtDate(p.next_date))}</b>${late ? ' · overdue' : ''}</span>` : ''}</td>
+      <td>${p.call_date ? `<span class="tiny">Call ${esc(fmtDate(p.call_date))}</span>` : ''}${p.proposal_date ? `<span class="tiny">Proposal ${esc(fmtDate(p.proposal_date))}</span>` : ''}${p.pilot_start ? `<span class="tiny">Pilot ${esc(fmtDate(p.pilot_start))}${p.pilot_end ? ' – ' + esc(fmtDate(p.pilot_end)) : ''}</span>` : ''}${p.cohort ? `<span class="tiny">${esc(p.cohort)} students</span>` : ''}${p.needs_done ? `<span class="tiny">${esc(p.needs_done)} needs done${p.rating ? ' · ' + esc(p.rating) + '/5' : ''}</span>` : ''}${!p.call_date && !p.proposal_date && !p.pilot_start && !p.cohort ? '<span class="muted">—</span>' : ''}</td>
+      <td>${p.tier ? `<b>${esc(p.tier)}</b>` : '<span class="muted">—</span>'}${p.price ? `<span class="tiny">US$${num(p.price)} a year${p.income_band ? ' · ' + esc(p.income_band) : ''}</span>` : p.income_band ? `<span class="tiny">${esc(p.income_band)}</span>` : ''}${p.renewal_date ? `<span class="tiny">Renewal ${esc(fmtDate(p.renewal_date))}</span>` : ''}</td>
+      <td><button class="button secondary small" data-action="pipe-edit" data-id="${esc(o.id)}">Update</button></td></tr>`;
+  });
+  const HEADS = [['Country', 'Where the university is.'], ['University', 'University, the office or department, the named contact and priority. Click the name for its outreach marks and details.'],
+    ['Phase', 'Attract → Convince → Close → Grow (from the conversion and marketing phases), or Not now / Lost.'], ['Stage', 'One of the nine stages, its status and how many days it has been there. Hover for what happens and when it moves on.'],
+    ['Outreach sequence', 'Four touches over three weeks, then a pause: D0 LinkedIn note, D2 first email with the offer, D7 follow-up with a live need, D14 last follow-up with a result, D45 one restart. Click a day when it is done.'],
+    ['Next step', 'What happens next and when. Red when the date has passed.'], ['Call, proposal & pilot', 'Discovery call, proposal, pilot dates, cohort, needs completed and rating.'], ['Paid partner', 'Tier (Programme or Impact Partner), yearly price and income band, renewal date.'], ['', '']];
+  return `<section class="rowhead section-head"><div><h2>Outreach pipeline</h2><p class="muted">Every university moves through four phases and nine stages, from the first contact to a paid partnership and its renewal. Click a number to list those universities.</p></div><div class="actions"><button class="button secondary" data-action="add-org">+ Add university</button><button class="button" data-action="pipe-export">Export</button></div></section>
+    <section class="crm-groups crm-uphases">${UPHASES.map(phaseBox).join('')}
+      <div class="crm-group crm-uphase" style="--pc:#8a96a3"><h3 title="Universities that said not now or no">Paused or lost</h3><div class="crm-quick">${UOUT.map(([st, tip]) => fb(st, at(st), 'status', st, tip)).join('')}</div></div></section>
+    <section class="panel crm-ufunnel"><div class="rowhead"><span class="eyebrow">Funnel · reached each stage</span><span class="tiny" title="Pilots running or in review, times their yearly price">Expected income: <b>US$${num(income)}</b> a year</span></div><ol>${funnel}</ol></section>
+    <section class="crm-groups crm-ureview"><div class="crm-group"><h3 title="What to review each Friday">Friday review</h3><div class="crm-quick">${fb('Next step overdue', overdue, 'due', 'overdue', 'Open conversations whose next-step date has passed')}${fb('No next step', noStep, 'due', 'none', 'Open conversations without a next step')}</div></div></section>
+    <section class="panel crm-filters"><div class="crm-frow"><b>Find</b>
+      <label><span>Phase</span>${sel('phase', [...UPHASES.map(x => x[0]), 'Not now', 'Lost'], 'All phases')}</label>
+      <label><span>Stage</span>${sel('status', [...USTAGES.map(x => [x[0], x[2]]), ...UOUT.map(x => x[0])], 'All stages')}</label>
+      <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
+      <label><span>Priority</span>${sel('priority', UPRIORITY, 'Any')}</label>
+      <label><span>Search</span><input data-uf="q" value="${esc(f.q)}" placeholder="University, contact, next step…"></label>
+      <button class="button secondary small" data-action="pipe-clear">Clear filters</button></div></section>
+    <section class="panel"><div class="rowhead"><span class="eyebrow">Universities</span><span class="tiny"><b>${list.length}</b> of ${rows.length}</span></div>
+      <div class="table-wrap crm-conv crm-upipe"><table><thead><tr>${HEADS.map(([h, tip]) => `<th${tip ? ` title="${esc(tip)}"` : ''}>${h ? `<span class="crm-th-tip">${esc(h)}</span>` : ''}</th>`).join('')}</tr></thead>
+      <tbody>${body.join('') || `<tr><td colspan="9">${rows.length ? 'No universities match these filters.' : 'No universities yet. Use “+ Add university” to add the first one.'}</td></tr>`}</tbody></table></div></section>`;
+}
+function pipeModal(id) {
+  const o = S.orgById.get(id); if (!o) return '';
+  const p = pipeOf(id);
+  const stageItems = [...USTAGES.map(([st, ph, lbl]) => [st, `${ph} · ${lbl} (${st})`]), ...UOUT.map(([st]) => [st, st])];
+  return modal(`${o.name}: pipeline`, `<form class="form" data-form="pipe" data-id="${esc(id)}">
+    ${selectField('Stage', 'status', stageItems, p.status, '', true)}
+    ${selectField('Priority', 'priority', UPRIORITY, p.priority || '', 'Not set')}
+    <label class="field"><span class="label">Warm contact or introduction</span><select name="warm">${opts([['', 'No'], ['1', 'Yes']], p.warm ? '1' : '')}</select></label>
+    ${field('Contact name', 'contact_name', p.contact_name || '')}${field('Contact role', 'contact_role', p.contact_role || '')}${field('Contact email', 'contact_email', p.contact_email || '', 'email')}${field('LinkedIn', 'linkedin', p.linkedin || '', 'url', 'placeholder="https://"')}
+    <fieldset class="field full crm-reasons"><legend class="label">Outreach sequence (date each touch was done)</legend>${TOUCHES.map(([k, d, what]) => `<label title="${esc(what)}">${esc(d)} · ${esc(what)} <input type="date" name="t_${k}" value="${esc(p.touches?.[k] || '')}"></label>`).join('')}</fieldset>
+    ${field('Next step', 'next_step', p.next_step || '')}${field('Next step date', 'next_date', p.next_date || '', 'date')}
+    ${field('Discovery call date', 'call_date', p.call_date || '', 'date')}${field('Proposal sent on', 'proposal_date', p.proposal_date || '', 'date')}
+    ${field('Pilot start', 'pilot_start', p.pilot_start || '', 'date')}${field('Pilot end', 'pilot_end', p.pilot_end || '', 'date')}
+    ${field('Cohort (students)', 'cohort', p.cohort || '', 'number', 'min="0"')}${field('Needs completed', 'needs_done', p.needs_done || '', 'number', 'min="0"')}${field('Average rating (of 5)', 'rating', p.rating || '', 'number', 'min="0" max="5"')}
+    ${selectField('Paid tier', 'tier', UTIER, p.tier || '', 'Not yet')}${field('Income band', 'income_band', p.income_band || '')}${field('Yearly price (US$)', 'price', p.price || '', 'number', 'min="0"')}${field('Renewal date', 'renewal_date', p.renewal_date || '', 'date')}
+    ${field('Reason (for Not now or Lost)', 'reason', p.reason || '')}${field('Month to come back (Not now)', 'come_back', p.come_back || '', 'month')}
+    <div class="actions field full"><button class="button" type="submit">Save</button><button class="button secondary" type="button" data-action="close">Cancel</button></div></form>`,
+  'Move the university to its current stage. Dates and notes help the Friday review: stage counts, conversion between stages, days at each stage and the next step for every open conversation.');
+}
+function exportPipeline() {
+  const list = uniFiltered(uniPipeRows());
+  downloadCsv(`ethical-bridge-universities-pipeline-${today()}.csv`, ['continent', 'country', 'city', 'university', 'office', 'office_type', 'priority', 'warm', 'contact_name', 'contact_role', 'contact_email', 'phase', 'stage', 'status', 'days_at_stage', ...TOUCHES.map(x => x[1].toLowerCase().replace(' ', '_')), 'next_step', 'next_date', 'call_date', 'proposal_date', 'pilot_start', 'pilot_end', 'cohort', 'needs_done', 'rating', 'tier', 'income_band', 'price_usd', 'renewal_date', 'reason', 'come_back'],
+    list.map(({ o, p }) => [o.continent, o.country, o.city, o.name, o.unit, o.unit_type, p.priority, p.warm ? 'yes' : '', p.contact_name, p.contact_role, p.contact_email || o.email, phaseOf(p.status), stageOf(p.status)?.[2] || p.status, p.status, daysSince(p.stage_since) ?? '', ...TOUCHES.map(([k]) => p.touches?.[k] || ''), p.next_step, p.next_date, p.call_date, p.proposal_date, p.pilot_start, p.pilot_end, p.cohort, p.needs_done, p.rating, p.tier, p.income_band, p.price, p.renewal_date, p.reason, p.come_back]));
+}
+
 // ---------- access code ----------
 function renderSignIn() {
   root.innerHTML = `<div class="shell crm"><header class="top"><a class="brand" href="../../software.html">Mission <em>&</em> Method</a><a href="../../software.html">← Impact Tools</a></header>
@@ -272,6 +417,7 @@ function renderSignIn() {
 function renderDashboard() {
   const list = continentOrgs(); const s = stats(list);
   const steps = [['Contact', 'Email & social outreach', 'Outreach'], ['Engage', 'Replies & interviews', 'Conversations'], ['Relate', 'Allies, visits & why', 'Relationship map'], ['Stay in touch', 'Newsletter', 'Newsletter']].filter(x => !isUni() || x[2] !== 'Newsletter');
+  if (isUni()) return renderUniDashboard(steps);
   return `<section class="grid four crm-cards">
       ${isUni() ? card('Universities', s.orgs, 'Added to this workspace') : card(S.hasDirectory ? 'Published organisations' : 'Organisations', s.orgs, S.hasDirectory ? 'Live from the Ethical Bridge directory' : 'Added to this workspace')}
       ${card(W('Organisations emailed', 'Universities emailed'), s.sent, pct(s.sent, s.orgs) + ' of this selection')}
@@ -1091,7 +1237,7 @@ function closeModal() { S.modal = ''; render(); }
 // ---------- events ----------
 let filterTimer = null;
 root.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat],[data-csrc],[data-cconv],[data-area]'); if (!t) return;
+  const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat],[data-csrc],[data-cconv],[data-area],[data-uq],[data-touch]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   // Map legend: click selects that category (others hide); click more to add them; click a selected one to drop it. None selected = show all.
@@ -1104,7 +1250,12 @@ root.addEventListener('click', async e => {
   if (t.hasAttribute('data-cquick')) { S.cf = { region: '', country: '', name: '', email: '', status: t.dataset.cquick, ally: '' }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
   if (t.hasAttribute('data-cunfilter')) { S.cf[t.dataset.cunfilter] = ''; if (t.dataset.cunfilter === 'region') S.cf.country = ''; return render(); }
   if (t.hasAttribute('data-unfilter')) { S.f[t.dataset.unfilter] = ''; if (t.dataset.unfilter === 'region') S.f.country = ''; S.page = 0; return render(); }
+  if (t.hasAttribute('data-uq')) { const [k, v] = t.dataset.uq.split('='); S.uf = { ...S_UF(), [k]: v }; render(); root.querySelector('.crm-upipe')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+  if (t.hasAttribute('data-touch')) { const id = t.dataset.id, k = t.dataset.touch, p = pipeOf(id), touches = { ...(p.touches || {}) }; if (touches[k]) delete touches[k]; else touches[k] = today();
+    const patch = { touches }; if (touches[k] && p.status === 'Not contacted') patch.status = 'Contacted';
+    await savePipe(id, patch); render(); return; }
   if (t.hasAttribute('data-area')) { S.area = t.dataset.area; lsSet(LS.area, S.area); S.f = EMPTY_FILTERS(); S.page = 0; S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '' }; S.relView = null; applyArea(); S.modal = ''; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.uqtab) { const [k, v] = t.dataset.uqtab.split('='); S.uf = { ...S_UF(), [k]: v }; }
   if (t.dataset.tab) { S.view = t.dataset.tab; S.modal = ''; render(); window.scrollTo(0, 0); return; }
   if (t.dataset.continent) { S.continent = t.dataset.continent; lsSet(LS.continent, S.continent); S.f.region = ''; S.f.country = ''; S.cf.region = ''; S.cf.country = ''; S.nf.region = ''; S.nf.country = ''; S.page = 0; render(); return; }
   if (t.dataset.page != null && t.dataset.page !== undefined && t.hasAttribute('data-page')) { S.page = Number(t.dataset.page); render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start' }); return; }
@@ -1136,6 +1287,9 @@ root.addEventListener('click', async e => {
     case 'nl-link': return nlLink(id, t.dataset.org);
     case 'reload-msgs': S.msgs = null; render(); return loadMessages();
     case 'export-conv': return exportConversations();
+    case 'pipe-edit': return openModal(pipeModal(id));
+    case 'pipe-export': return exportPipeline();
+    case 'pipe-clear': S.uf = S_UF(); return render();
     case 'rel-edit': return openModal(relModal(id));
     case 'rel-export': return exportRel();
     case 'rel-clear': S.rf = { show: [], reason: '', q: '' }; S.relView = null; return render();
@@ -1154,6 +1308,7 @@ root.addEventListener('click', async e => {
       const what = isUni() ? 'university' : 'organisation';
       if (!confirm(`Delete this ${what} and its outreach marks?`)) return;
       try { await api('org.delete', { id }); } catch (err) { return flash('Could not delete: ' + err.message); }
+      { const pr = pipeRec('own:' + id); if (pr) await deleteRecord('university', pr.id); }
       S.allOrgs = S.allOrgs.filter(o => o.rowId !== id); S.unis = S.unis.filter(o => o.rowId !== id); S.outreach.delete('own:' + id); applyArea(); S.modal = ''; return flash(what === 'university' ? 'University deleted.' : 'Organisation deleted.');
     }
     case 'print': return window.print();
@@ -1174,6 +1329,7 @@ root.addEventListener('change', async e => {
   if (t.dataset.filter && t.tagName === 'SELECT') { S.f[t.dataset.filter] = t.value; if (t.dataset.filter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.action === 'nl-csv' && t.files?.[0]) { const f = t.files[0]; t.value = ''; return importNewsletterCsv(f); }
   if (t.dataset.nfilter && t.tagName === 'SELECT') { S.nf[t.dataset.nfilter] = t.value; if (t.dataset.nfilter === 'continent') { S.nf.region = ''; S.nf.country = ''; } if (t.dataset.nfilter === 'region') S.nf.country = ''; S.nfReplied = false; return render(); }
+  if (t.dataset.uf && t.tagName === 'SELECT') { S.uf[t.dataset.uf] = t.value; return render(); }
   if (t.hasAttribute('data-relreason')) { S.rf.reason = t.value; S.relView = null; return render(); }
   if (t.dataset.cfilter && t.tagName === 'SELECT') { S.cf[t.dataset.cfilter] = t.value; if (t.dataset.cfilter === 'region') S.cf.country = ''; return render(); }
 });
@@ -1183,6 +1339,7 @@ root.addEventListener('input', e => {
   if (t.dataset.filter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.filter; filterTimer = setTimeout(() => { S.f[k] = t.value; S.page = 0; render(); const el = root.querySelector(`[data-filter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.nlsearch) { clearTimeout(filterTimer); const id = t.dataset.nlsearch; filterTimer = setTimeout(() => { S.nlQuery = t.value; S.modal = nlPickModal(id); render(); const el = root.querySelector('[data-nlsearch]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 200); return; }
   if (t.dataset.nfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.nfilter; filterTimer = setTimeout(() => { S.nf[k] = t.value; render(); const el = root.querySelector(`[data-nfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
+  if (t.dataset.uf === 'q') { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.uf.q = t.value; render(); const el = root.querySelector('[data-uf="q"]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.hasAttribute('data-relq')) { clearTimeout(filterTimer); filterTimer = setTimeout(() => { S.rf.q = t.value; S.relView = null; render(); const el = root.querySelector('[data-relq]'); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
   if (t.dataset.cfilter && t.tagName === 'INPUT') { clearTimeout(filterTimer); const k = t.dataset.cfilter; filterTimer = setTimeout(() => { S.cf[k] = t.value; render(); const el = root.querySelector(`[data-cfilter="${k}"]`); el?.focus(); el?.setSelectionRange(el.value.length, el.value.length); }, 250); return; }
 });
@@ -1209,6 +1366,16 @@ root.addEventListener('submit', async e => {
       const o = ownOrg(row);
       if (o.uni) { S.unis.push(o); S.unis.sort(byName); } else { S.allOrgs.push(o); S.allOrgs.sort(byName); }
       applyArea(); S.modal = ''; return flash(`${row.name} added.`);
+    }
+    if (kind === 'pipe') {
+      const touches = Object.fromEntries(TOUCHES.map(([k]) => [k, d['t_' + k] || '']).filter(([, v]) => v));
+      const keys = ['status', 'priority', 'contact_name', 'contact_role', 'contact_email', 'linkedin', 'next_step', 'next_date', 'call_date', 'proposal_date', 'pilot_start', 'pilot_end', 'cohort', 'needs_done', 'rating', 'tier', 'income_band', 'price', 'renewal_date', 'reason', 'come_back'];
+      const patch = Object.fromEntries(keys.map(k => [k, String(d[k] ?? '').trim()]));
+      patch.warm = d.warm === '1'; patch.touches = touches;
+      const cur = pipeOf(id);
+      if (['Not now', 'Lost'].includes(patch.status) && !['Not now', 'Lost'].includes(cur.status)) patch.reached = stageIdx(cur.status);
+      if (await savePipe(id, patch)) { S.modal = ''; flash('Pipeline saved.'); }
+      return;
     }
     if (kind === 'edit-org') {
       const cur = S.orgById.get(id); if (!cur) return;
