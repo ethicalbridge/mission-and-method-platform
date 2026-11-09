@@ -403,12 +403,10 @@ const CONV_HEADS = [
   ['Organisation', 'Name in the Ethical Bridge directory and its public email. Click the name to open the whole email thread.'],
   ['Ally &amp; why', 'Engagement: how close the relationship is (visited, strong ally, possible ally) and why: what they mentioned, such as a call, Handova, the jobs portal or a partnership. Use “Edit why” to change it.'],
   ['Conversion', CONV_TIP],
-  ['They replied', 'Date of their first reply to our outreach email.'],
-  ['What they said', 'The start of their first reply.'],
+  ['First reply', 'Their first reply to our outreach email: the date (in bold), who wrote it and the start of what they said.'],
   ['My response', 'Your first answer to them, after their reply.'],
-  ['They replied back?', 'Whether they wrote again after your answer.'],
-  ['Status', 'Who wrote last. 📌 Waiting for my reply = the email is pinned (flagged) in your mailbox.'],
-  ['Thread', 'Open every email exchanged with this organisation.']];
+  ['Status', 'Who wrote last, and the date of the last email. 📌 Waiting for my reply = the email is pinned (flagged) in your mailbox.'],
+  ['Thread', 'Open every email exchanged with this organisation, in order.']];
 // 'Ally & why' column: the ally type plus the reasons and note saved with "Ally type & why".
 const allyLabel = c => c.ally === 'visited' ? 'Visited' : c.ally === 'strong' ? 'Strong ally' : c.ally === 'suggested' ? (c.mark === 'possible' ? 'Possible ally' : 'Possible ally?') : '';
 const allyWhyText = c => { const r = S.outreach.get(c.id) || {}; return [(r.ally_reasons || []).map(reasonLabel).join(', '), r.ally_note || (c.ally === 'suggested' && c.mark !== 'possible' ? c.hint : '')].filter(Boolean).join(' — '); };
@@ -438,7 +436,7 @@ function renderConversations() {
   // 'Organisations that replied' counts the same reply mark as the Outreach 'Replies' box, so the two always match.
   const replied = base.filter(c => outreachOf(c.id).reply_status === 'Replied').length;
   const sb = (label, v, key) => `<button type="button" data-csrc="${key}" class="${f.src === key && !f.status && !f.ally && !f.region && !f.country && !f.name && !f.email ? 'active' : ''}"><b>${v}</b><span>${esc(label)}</span></button>`;
-  const msgCell = (m, who) => m ? `<div class="crm-msg">${who ? `<span class="tiny">From ${esc(who)}</span>` : `<b>${esc(fmtDate(m.sent_at))}</b>`}<p>${esc(snip(m.body) || '(no text)')}</p></div>` : '<span class="muted">—</span>';
+  const msgCell = (m, who) => m ? `<div class="crm-msg"><b>${esc(fmtDate(m.sent_at))}</b>${who ? `<span class="tiny">From ${esc(who)}</span>` : ''}<p>${esc(snip(m.body) || '(no text)')}</p></div>` : '<span class="muted">—</span>';
   const rows = list.map(c => {
     const st = CONV_STATUS.find(x => x[0] === c.status)[1];
     const fromName = c.first ? (c.first.from_name || c.first.from_addr) : '';
@@ -447,12 +445,10 @@ function renderConversations() {
       <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(c.id)}">${esc(c.o.name)}</button>${removedBadge(c.o)}<span class="tiny">${esc(c.o.email || c.first?.from_addr || '')}</span></td>
       <td class="crm-allycell">${allyCell(c)}</td>
       <td class="crm-convcell">${convCell(c)}</td>
-      <td>${c.first ? esc(fmtDate(c.first.sent_at)) : '<span class="muted">—</span>'}</td>
       <td class="crm-text">${msgCell(c.first, fromName)}</td>
       <td class="crm-text">${c.mine ? msgCell(c.mine) : c.first ? '<span class="pill warn">Not answered yet</span>' : '<span class="muted">—</span>'}</td>
-      <td>${c.back ? `<span class="pill">Yes</span><br><span class="tiny">${esc(fmtDate(c.back.sent_at))}</span>` : c.mine ? '<span class="pill dim">Not yet</span>' : '<span class="muted">—</span>'}</td>
-      <td>${c.status === 'waiting' ? '<span class="crm-pin" aria-hidden="true">📌</span> ' : ''}<b class="crm-st-${c.status}">${esc(c.status === 'none' ? (outreachOf(c.id).reply_status === 'Replied' ? 'Replied, email not saved in the CRM' : 'Met in person, no email reply') : st)}</b>${c.last ? `<br><span class="tiny">Last email ${esc(fmtDate(c.last.sent_at))}</span>` : ''}</td>
-      <td><button class="button secondary small" data-action="thread" data-id="${esc(c.id)}">Open (${c.all.length})</button></td></tr>`;
+      <td class="crm-statuscell">${c.status === 'waiting' ? '<span class="crm-pin" aria-hidden="true">📌</span> ' : ''}<b class="crm-st-${c.status}">${esc(c.status === 'none' ? (outreachOf(c.id).reply_status === 'Replied' ? 'Replied, email not saved in the CRM' : 'Met in person, no email reply') : st)}</b>${c.last ? `<br><span class="tiny">Last email ${esc(fmtDate(c.last.sent_at))}</span>` : ''}</td>
+      <td class="crm-threadcell"><button class="button secondary small" data-action="thread" data-id="${esc(c.id)}">Open (${c.all.length})</button></td></tr>`;
   });
   const active = Object.entries(f).filter(([, v]) => v);
   const LBL = { region: 'Region', country: 'Country', name: 'Name', email: 'Email', status: 'Status', ally: 'Allies', src: 'Contact', conv: 'Conversion' };
@@ -478,7 +474,7 @@ function renderConversations() {
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Email conversations</span><p class="tiny crm-legend"><i class="r"></i> Waiting for your reply (pinned in your mailbox) · sorted by country A–Z</p></div><span class="tiny"><b>${list.length}</b> organisations</span></div>
     ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-cunfilter="${esc(k)}" title="Remove this filter">${esc(LBL[k])}: ${esc(k === 'src' ? (v === 'email' ? 'Replied by email' : 'Met in person only') : k === 'status' ? CONV_STATUS.find(x => x[0] === v)?.[1] : k === 'ally' ? ALLY.find(x => x[0] === v)?.[1] : k === 'conv' ? (v === 'any' ? 'Using any initiative' : convLabel(v)) : v)} <b aria-hidden="true">✕</b></button>`).join('')}</div>` : ''}
     <div class="tablewrap crm-table crm-conv"><table><thead><tr>${CONV_HEADS.map(([h, tip]) => `<th title="${esc(tip)}"><span class="crm-th-tip">${h}</span></th>`).join('')}</tr></thead>
-    <tbody>${rows.join('') || '<tr><td colspan="10">No conversations match these filters.</td></tr>'}</tbody></table></div>
+    <tbody>${rows.join('') || '<tr><td colspan="8">No conversations match these filters.</td></tr>'}</tbody></table></div>
     <p class="tiny">Emails are copied from the hello@ethicalbridge.org mailbox (the continent “Replied” folders, the Inbox and your Sent folder). Quoted earlier messages and signatures below “On … wrote:” are trimmed.</p></section>`;
 }
 function threadModal(id) {
