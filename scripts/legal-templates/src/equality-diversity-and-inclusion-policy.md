@@ -11,7 +11,7 @@ purpose: An equality, diversity and inclusion policy sets out how you prevent di
 who_asks: Institutional and foundation funders; UN agencies and international NGOs before partnering; job applicants; your board
 time: 2–3 hours to adapt; 30 minutes for a board to approve
 course: Course 2 · Organise, Module 4 (people and culture)
-related: Code of Conduct; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Safeguarding Policy and Procedure; Complaints and Feedback Procedure; Whistleblowing Policy and Procedure; Data Protection Policy; Employment Contract; Volunteer Agreement; Governing Body Terms of Reference; Safer Recruitment Procedure
+related: Code of Conduct; Anti-Harassment, Intimidation and Bullying Policy and Procedure; Safeguarding Policy and Procedure; Complaints and Feedback Procedure; Whistleblowing Policy and Procedure; Data Protection Policy; Employment Contract; Volunteer Agreement; Governing Body Terms of Reference; Safer Recruitment Procedure; Gender Equality, Disability and Social Inclusion (GEDSI) Policy and Procedure
 ---
 
 ::: note Proportionate to our size
@@ -114,7 +114,7 @@ A **reasonable adjustment** is a change that removes a barrier for a disabled pe
 
 ## 5. Inclusive programmes and participation
 
-The people we serve are experts in their own lives. We:
+The people we serve are experts in their own lives. Our Gender Equality, Disability and Social Inclusion (GEDSI) Policy and Procedure sets out how we build this into every project, step by step. We:
 
 - involve them in designing, running and reviewing our programmes, and pay them fairly for their time where they act as advisers or researchers;
 - find out who is not taking part and why, for example women with young children, older people, disabled people, people from minority groups or people in remote areas, and change how we work to reach them;
@@ -222,6 +222,7 @@ The board agrees up to [[three]] actions for the coming year. We review this pol
 # Related documents
 
 - Code of Conduct
+- Gender Equality, Disability and Social Inclusion (GEDSI) Policy and Procedure
 - Anti-Harassment, Intimidation and Bullying Policy and Procedure
 - Safeguarding Policy and Procedure
 - Complaints and Feedback Procedure
