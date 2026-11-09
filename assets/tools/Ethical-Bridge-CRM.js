@@ -213,7 +213,7 @@ function render() {
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
   else body = ({
-    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': () => isUni() ? renderUniPipeline() + '<div class="crm-uconv-sep"></div>' + renderConversations() : renderConversations(), 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
+    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': () => isUni() ? renderUniPipeline() : renderConversations(), 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
   })[S.view]();
   if (uni) body = uniWords(body);
   const bar = uni ? uniWords(continentBar) : continentBar;
@@ -370,6 +370,7 @@ function renderUniPipeline() {
       <div class="crm-group crm-uphase" style="--pc:#8a96a3;--n:2"><h3 title="Universities that said not now or no">Paused or lost</h3><div class="crm-quick">${UOUT.map(([st, tip]) => fb(st, at(st), 'status', st, tip)).join('')}</div></div></section>
     <section class="panel crm-ufunnel"><div class="rowhead"><span class="eyebrow">Funnel · reached each stage</span><span class="tiny" title="Pilots running or in review, times their yearly price">Expected income: <b>US$${num(income)}</b> a year</span></div><ol>${funnel}</ol></section>
     <section class="crm-groups crm-ureview"><div class="crm-group"><h3 title="What to review each Friday">Friday review</h3><div class="crm-quick">${fb('Next step overdue', overdue, 'due', 'overdue', 'Open conversations whose next-step date has passed')}${fb('No next step', noStep, 'due', 'none', 'Open conversations without a next step')}</div></div></section>
+    <section class="rowhead section-head crm-uconv-head"><div><h2>Conversations</h2><p class="muted">Every university you are talking to, where it is in the pipeline and what happens next.</p></div></section>
     <section class="panel crm-filters"><div class="crm-frow"><b>Find</b>
       <label><span>Phase</span>${sel('phase', [...UPHASES.map(x => x[0]), 'Not now', 'Lost'], 'All phases')}</label>
       <label><span>Stage</span>${sel('status', [...USTAGES.map(x => [x[0], x[2]]), ...UOUT.map(x => x[0])], 'All stages')}</label>
