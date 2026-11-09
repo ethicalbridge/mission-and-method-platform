@@ -67,7 +67,7 @@ const S = {
   loading: true, loadError: '', directoryError: '', directoryLoadedAt: '',
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
   f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
-  rf: { hide: [], reason: '', q: '' }, relView: null,
+  rf: { show: [], reason: '', q: '' }, relView: null,
   msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '', ally: '' },
   subs: null, subsError: '', nf: { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
   camps: null, cevents: [], campsError: '', nlView: 'Subscribers', campOpen: '', tlRange: 'all',
@@ -981,7 +981,7 @@ function relRows() {
 const hasPin = o => Number.isFinite(o.lat) && Number.isFinite(o.lng) && o.lat !== null && o.lng !== null;
 function relFiltered(all) {
   const f = S.rf, q = norm(f.q);
-  return all.filter(x => !f.hide.includes(x.cat) && (!f.reason || x.reasons.includes(f.reason))
+  return all.filter(x => (!f.show.length || f.show.includes(x.cat)) && (!f.reason || x.reasons.includes(f.reason))
     && (!q || norm(x.o.name).includes(q) || norm(x.o.country).includes(q) || norm(x.note).includes(q)))
     .sort((a, b) => REL_ORDER.indexOf(a.cat) - REL_ORDER.indexOf(b.cat) || byCountry(a.o, b.o));
 }
@@ -999,7 +999,7 @@ function renderRelMap() {
       <td><button class="button secondary small" data-action="rel-edit" data-id="${esc(x.id)}">Edit</button></td></tr>`);
   return `<section class="rowhead section-head"><h2>Relationship map</h2><div class="actions"><button class="button secondary" data-action="reload-msgs">Refresh</button><button class="button" data-action="rel-export">Export</button></div></section>
     ${S.msgsError ? `<div class="notice warn" role="alert">${esc(S.msgsError)}</div>` : ''}
-    <section class="crm-rel-legend" aria-label="Show or hide on the map">${REL.map(([k, l, c]) => `<button type="button" data-relcat="${k}" class="${f.hide.includes(k) ? 'off' : ''}" aria-pressed="${!f.hide.includes(k)}" style="--c:${c}"><i class="${k === 'removed' ? 'ring' : ''}"></i><b>${n(k)}</b><span>${esc(l)}</span></button>`).join('')}</section>
+    <section class="crm-rel-legend" aria-label="Choose what to show on the map">${REL.map(([k, l, c]) => `<button type="button" data-relcat="${k}" class="${f.show.includes(k) ? 'on' : f.show.length ? 'off' : ''}" aria-pressed="${f.show.includes(k)}" title="${f.show.includes(k) ? 'Click to stop showing only these' : 'Click to show only these (click more to add them)'}" style="--c:${c}"><i class="${k === 'removed' ? 'ring' : ''}"></i><b>${n(k)}</b><span>${esc(l)}</span></button>`).join('')}</section>
     <section class="panel crm-filters"><div class="crm-frow"><b>Filter</b>
       <label><span>Why they're an ally</span><select data-relreason class="${f.reason ? 'crm-on' : ''}">${opts(REASONS, f.reason, 'Any reason')}</select></label>
       <label><span>Search</span><input data-relq class="${f.q ? 'crm-on' : ''}" value="${esc(f.q)}" placeholder="Name, country or note"></label>
@@ -1094,7 +1094,8 @@ root.addEventListener('click', async e => {
   const t = e.target.closest('[data-tab],[data-continent],[data-page],[data-action],[data-pat-section],[data-quick],[data-unfilter],[data-cquick],[data-cally],[data-cunfilter],[data-nquick],[data-nlview],[data-relcat],[data-csrc],[data-cconv],[data-area]'); if (!t) return;
   if (t.matches('select,input,textarea')) return;
   if (t.hasAttribute('data-quick')) { const [k, v] = t.dataset.quick.split('='); S.f = EMPTY_FILTERS(); if (k) S.f[k] = v; S.page = 0; render(); root.querySelector('.crm-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
-  if (t.hasAttribute('data-relcat')) { const k = t.dataset.relcat, h = S.rf.hide; S.rf.hide = h.includes(k) ? h.filter(x => x !== k) : [...h, k]; S.relView = null; render(); return; }
+  // Map legend: click selects that category (others hide); click more to add them; click a selected one to drop it. None selected = show all.
+  if (t.hasAttribute('data-relcat')) { const k = t.dataset.relcat, sh = S.rf.show; S.rf.show = sh.includes(k) ? sh.filter(x => x !== k) : [...sh, k]; S.relView = null; render(); return; }
   if (t.hasAttribute('data-nlview')) { S.nlView = t.dataset.nlview; render(); return; }
   if (t.hasAttribute('data-nquick')) { const q = t.dataset.nquick; S.nf = { continent: '', region: '', country: '', name: '', email: '', match: ['same', 'other', 'none'].includes(q) ? q : '', status: q === 'gone' ? 'Unsubscribed' : 'Subscribed' }; S.nfReplied = q === 'replied'; render(); return; }
   if (t.hasAttribute('data-cally')) { S.cf = { region: '', country: '', name: '', email: '', status: '', ally: t.dataset.cally }; render(); root.querySelector('.crm-conv')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
@@ -1137,7 +1138,7 @@ root.addEventListener('click', async e => {
     case 'export-conv': return exportConversations();
     case 'rel-edit': return openModal(relModal(id));
     case 'rel-export': return exportRel();
-    case 'rel-clear': S.rf = { hide: [], reason: '', q: '' }; S.relView = null; return render();
+    case 'rel-clear': S.rf = { show: [], reason: '', q: '' }; S.relView = null; return render();
     case 'rel-reset': if (relFit) relFit(); return;
     case 'clear-cfilters': S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '' }; return render();
     case 'add-org': return openModal(addOrgModal());
