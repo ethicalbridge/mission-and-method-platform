@@ -213,7 +213,7 @@ function render() {
   if (S.loading) body = `<p class="muted crm-loading">Loading organisations and your outreach records…</p>`;
   else if (S.loadError) body = `<div class="notice warn" role="alert">${esc(S.loadError)} <button class="link" data-action="reload">Try again</button></div>`;
   else body = ({
-    'Dashboard': renderDashboard, 'Outreach': () => isUni() ? renderUniPipeline() : renderOutreach(), 'Conversations': renderConversations, 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
+    'Dashboard': renderDashboard, 'Outreach': renderOutreach, 'Conversations': () => isUni() ? renderUniPipeline() + '<div class="crm-uconv-sep"></div>' + renderConversations() : renderConversations(), 'Relationship map': renderRelMap, 'Newsletter': renderNewsletter,
   })[S.view]();
   if (uni) body = uniWords(body);
   const bar = uni ? uniWords(continentBar) : continentBar;
@@ -241,7 +241,8 @@ const numOrNull = v => v === null || v === undefined || v === '' || !Number.isFi
 const ownOrg = o => ({ id: 'own:' + o.id, rowId: o.id, name: o.name, continent: o.continent, region: o.region, country: o.country, city: o.city, email: o.email, phone: o.phone, website: o.website, own: true, uni: o.kind === 'university', unit: o.unit || '', unit_type: o.unit_type || '', lat: numOrNull(o.lat), lng: numOrNull(o.lng) });
 const isUni = () => S.area === 'Universities';
 // In the Universities area the same screens speak of universities: swap the words in visible text and tooltips only.
-const UNI_WORDS = [[/Organisations/g, 'Universities'], [/organisations/g, 'universities'], [/Organisation/g, 'University'], [/organisation/g, 'university']];
+const UNI_WORDS = [[/Organisations/g, 'Universities'], [/organisations/g, 'universities'], [/Organisation/g, 'University'], [/organisation/g, 'university'],
+  [/Not interviewed/g, 'Not contacted'], [/Interview date \(if planned\)/g, 'Contact date (if planned)'], [/Interviewed/g, 'Contacted'], [/interviewed/g, 'contacted'], [/INTERVIEWED/g, 'CONTACTED'], [/Interview\b/g, 'Contacted'], [/interview\b/g, 'contacted']];
 const swapWords = t => UNI_WORDS.reduce((x, [re, w]) => x.replace(re, w), t);
 const uniWords = html => html.split(/(<textarea[\s\S]*?<\/textarea>)/).map((part, i) => i % 2 ? part
   : part.replace(/>([^<]+)</g, (m, t) => '>' + swapWords(t) + '<').replace(/ (title|placeholder)="([^"]*)"/g, (m, k, v) => ` ${k}="${swapWords(v)}"`)).join('');
@@ -330,7 +331,7 @@ function renderUniDashboard(steps) {
       ${card('Next step overdue', overdue, 'Open conversations past their date', overdue ? 'warn' : '')}
     </section>
     <section class="panel"><span class="eyebrow">End-to-end workflow</span><h2>From first contact to a paid partnership</h2>
-      <ol class="crm-flow">${UPHASES.map(([ph, tip], i) => `<li><button type="button" data-tab="Outreach" data-uqtab="phase=${ph}"><b>${i + 1}</b><span>${esc(ph)}</span><small>${esc(tip)}</small></button></li>`).join('')}</ol></section>`;
+      <ol class="crm-flow">${UPHASES.map(([ph, tip], i) => `<li><button type="button" data-tab="Conversations" data-uqtab="phase=${ph}"><b>${i + 1}</b><span>${esc(ph)}</span><small>${esc(tip)}</small></button></li>`).join('')}</ol></section>`;
 }
 function renderUniPipeline() {
   const rows = uniPipeRows(), list = uniFiltered(rows), f = S.uf, t = today();
@@ -364,7 +365,7 @@ function renderUniPipeline() {
     ['Phase', 'Attract → Convince → Close → Grow (from the conversion and marketing phases), or Not now / Lost.'], ['Stage', 'One of the nine stages, its status and how many days it has been there. Hover for what happens and when it moves on.'],
     ['Outreach sequence', 'Four touches over three weeks, then a pause: D0 LinkedIn note, D2 first email with the offer, D7 follow-up with a live need, D14 last follow-up with a result, D45 one restart. Click a day when it is done.'],
     ['Next step', 'What happens next and when. Red when the date has passed.'], ['Call, proposal & pilot', 'Discovery call, proposal, pilot dates, cohort, needs completed and rating.'], ['Paid partner', 'Tier (Programme or Impact Partner), yearly price and income band, renewal date.'], ['', '']];
-  return `<section class="rowhead section-head"><div><h2>Outreach pipeline</h2><p class="muted">Every university moves through four phases and nine stages, from the first contact to a paid partnership and its renewal. Click a number to list those universities.</p></div><div class="actions"><button class="button secondary" data-action="add-org">+ Add university</button><button class="button" data-action="pipe-export">Export</button></div></section>
+  return `<section class="rowhead section-head"><div><h2>Conversion pipeline</h2><p class="muted">Every university moves through four phases and nine stages, from the first contact to a paid partnership and its renewal. Click a number to list those universities.</p></div><div class="actions"><button class="button secondary" data-action="add-org">+ Add university</button><button class="button" data-action="pipe-export">Export</button></div></section>
     <section class="crm-groups crm-uphases">${UPHASES.map(phaseBox).join('')}
       <div class="crm-group crm-uphase" style="--pc:#8a96a3;--n:2"><h3 title="Universities that said not now or no">Paused or lost</h3><div class="crm-quick">${UOUT.map(([st, tip]) => fb(st, at(st), 'status', st, tip)).join('')}</div></div></section>
     <section class="panel crm-ufunnel"><div class="rowhead"><span class="eyebrow">Funnel · reached each stage</span><span class="tiny" title="Pilots running or in review, times their yearly price">Expected income: <b>US$${num(income)}</b> a year</span></div><ol>${funnel}</ol></section>
@@ -533,8 +534,9 @@ function conversations() {
   // Organisations you marked as allies always appear, even before any email is saved.
   // Automatic replies and bounce backs aren't conversations: they stay out unless the organisation was visited or marked as an ally.
   // Organisations already using one of our initiatives (conversion) always appear too.
-  const keep = id => { const r = S.outreach.get(id); return !r || !['Automatic reply', 'Bounce back'].includes(r.reply_status) || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally) || (r.conversions || []).length; };
-  const ids = new Set([...[...by.keys()].filter(keep), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || r.interview_status === 'Interviewed' || ['visited', 'strong', 'possible'].includes(r.ally) || (r.conversions || []).length).map(r => r.org_id)]);
+  const met = r => !isUni() && r.interview_status === 'Interviewed'; // for universities this mark means "contacted", not met in person
+  const keep = id => { const r = S.outreach.get(id); return !r || !['Automatic reply', 'Bounce back'].includes(r.reply_status) || met(r) || ['visited', 'strong', 'possible'].includes(r.ally) || (r.conversions || []).length; };
+  const ids = new Set([...[...by.keys()].filter(keep), ...[...S.outreach.values()].filter(r => r.reply_status === 'Replied' || met(r) || ['visited', 'strong', 'possible'].includes(r.ally) || (r.conversions || []).length).map(r => r.org_id)]);
   const out = [];
   for (const id of ids) {
     const o = S.orgById.get(id); if (!o) continue;
@@ -549,7 +551,7 @@ function conversations() {
     // Every reply up to 6 Nov 2026 was reviewed by hand (ally + reasons), so the keyword guess only looks at newer replies.
     const mark = S.outreach.get(id)?.ally || '', hint = allyHint(real.filter(m => m.sent_at > REVIEWED_UNTIL));
     // Visited · relationship built: organisations met in person (marked, or recorded as interviewed).
-    const visited = mark === 'visited' || (S.outreach.get(id)?.interview_status === 'Interviewed' && mark !== 'no');
+    const visited = mark === 'visited' || (!isUni() && S.outreach.get(id)?.interview_status === 'Interviewed' && mark !== 'no');
     const ally = visited ? 'visited' : mark === 'strong' ? 'strong' : mark === 'possible' || (!mark && hint) ? 'suggested' : '';
     const conv = S.outreach.get(id)?.conversions || [];
     out.push({ o, id, all, first, mine, back, last, flagged, status, ally, mark, hint, conv, nIn: ins.length, nOut: all.length - ins.length });
