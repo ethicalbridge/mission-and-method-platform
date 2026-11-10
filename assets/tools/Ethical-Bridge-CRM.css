@@ -340,3 +340,5 @@ tr.nl-wk-camp td { background: #fff5ec; }
 .crm-reasons input[type=date]{margin-left:6px}
 .crm-uconv-sep{height:1px;background:var(--line,#dde5e2);margin:28px 0}
 .crm-uconv-head{margin-top:28px}
+.crm-rel-legend i.hv{background:#cfd8dc;box-shadow:0 0 0 3px var(--c)}
+.crm-hvtag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#2b6cb01a;border:1px solid #2b6cb0;color:#2b6cb0;font-size:.7rem;font-weight:800;vertical-align:middle}
