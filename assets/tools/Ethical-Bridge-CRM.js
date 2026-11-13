@@ -855,7 +855,7 @@ function renderSubscribers() {
       <div class="crm-group"><h3>Engagement</h3><div class="crm-quick">${qb('Organisations that also replied', replied, 'replied')}${qb('Unsubscribed', gone, 'gone')}</div></div>
     </section>
     <p class="tiny crm-hint nl-legend"><span><i class="nl-dot nl-same"></i>Green: the subscriber’s email is the one on the organisation’s Ethical Bridge profile.</span><span><i class="nl-dot nl-other"></i>Amber: we found the organisation through another email (the one they replied from, their web domain, their name, or linked by hand).</span><span><i class="nl-dot nl-none"></i>Red: no organisation in Ethical Bridge yet, including our own team addresses. Use “Link” to match one.</span></p>
-    <p class="tiny crm-hint">From the Brevo newsletter list, last brought up to date on 6 November 2026. Brevo is not yet sending new sign-ups here on its own: to add new ones, export the list from Brevo and use “Import Brevo CSV”.</p>
+    <p class="tiny crm-hint">From the Brevo newsletter list, last brought up to date on 14 November 2026. Brevo is not yet sending new sign-ups here on its own: to add new ones, export the list from Brevo and use “Import Brevo CSV”.</p>
     <section class="panel crm-filters"><div class="crm-frow"><b>General</b>
       <label><span>Continent</span>${sel('continent', continents, 'All continents')}</label>
       <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
