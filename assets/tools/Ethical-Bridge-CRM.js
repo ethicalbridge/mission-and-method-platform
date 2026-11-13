@@ -1202,11 +1202,11 @@ const REL = [
   ['possible', 'Possible allies', '#e0a019'],
   ['replied', 'Replied', '#8a9aa6'],
   ['removed', 'Removed at their request', '#c0392b'],
-  ['handova', 'Handova', '#2b6cb0'],
+  ['handova', 'Handova', '#e8590c'],
 ];
 // 'handova' is not a relationship level: it marks organisations that use Handova (conversions in ebcrm_outreach),
-// whatever their tie with us. Their pins keep their relationship colour and get a blue outline.
-const HV_COLOR = '#2b6cb0';
+// whatever their tie with us. Their pins keep their relationship colour and get an orange outline.
+const HV_COLOR = '#e8590c';
 const REL_ORDER = ['visited', 'strong', 'possible', 'replied', 'removed'];
 const REASONS = [['call', 'Call or meeting'], ['visit', 'Visit / met in person'], ['collab', 'Partnership or further work'], ['handova', 'Handova'], ['jobs', 'Jobs & Opportunities'], ['fundova', 'Funding (Fundova)'], ['story', 'Interview, video or story'], ['network', 'Networking · Local Impact Alliance'], ['promote', 'Promotion · featuring us']];
 const ALLY_MARKS = [['', 'Not reviewed (replied)'], ['visited', 'Visited · relationship built'], ['strong', 'Strong ally'], ['possible', 'Possible ally'], ['no', 'Not an ally']];
