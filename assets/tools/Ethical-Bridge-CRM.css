@@ -342,3 +342,10 @@ tr.nl-wk-camp td { background: #fff5ec; }
 .crm-uconv-head{margin-top:28px}
 .crm-rel-legend i.hv{background:#cfd8dc;box-shadow:0 0 0 3px var(--c)}
 .crm-hvtag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#2b6cb01a;border:1px solid #2b6cb0;color:#2b6cb0;font-size:.7rem;font-weight:800;vertical-align:middle}
+/* Universities outreach table (13 Nov 2026): contact research columns */
+.crm-utable td{vertical-align:top}
+.crm-utable td.tiny{font-size:12px;max-width:220px;white-space:normal}
+.crm-utable td.crm-unote{min-width:220px;max-width:300px;color:var(--muted)}
+.crm-utable input{width:170px}
+.crm-utable input[type=email]{width:210px}
+.crm-utable td.crm-org{min-width:200px;max-width:260px}
