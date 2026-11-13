@@ -66,7 +66,7 @@ const S = {
   area: lsGet(LS.area) === 'Universities' ? 'Universities' : 'Organisations',
   loading: true, loadError: '', directoryError: '', directoryLoadedAt: '',
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
-  f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' }, page: 0,
+  f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '', priority: '', list: '' }, page: 0,
   rf: { show: [], reason: '', q: '' }, relView: null,
   msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '', ally: '' },
   subs: null, subsError: '', nf: { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
@@ -184,8 +184,12 @@ function filteredOrgs() {
   return continentOrgs().filter(o => {
     if (f.region && o.region !== f.region) return false;
     if (f.country && o.country !== f.country) return false;
-    if (n && !norm(o.name).includes(n) && !norm(o.registered).includes(n)) return false;
-    if (e && !norm(o.email).includes(e)) return false;
+    const p = o.uni ? pipeOf(o.id) : null;
+    if (n && !norm(o.name).includes(n) && !norm(o.registered).includes(n) && !(p && [o.unit, p.contact_name, p.ref].some(v => norm(v).includes(n)))) return false;
+    if (e === '__none') { if (o.email || (p && (p.contact_email || p.other_email))) return false; }
+    else if (e && !norm(o.email).includes(e) && !(p && [p.contact_email, p.other_email].some(v => norm(v).includes(e)))) return false;
+    if (p && f.priority && (p.priority || '') !== (f.priority === '__none' ? '' : f.priority)) return false;
+    if (p && f.list && p.list !== f.list) return false;
     const r = outreachOf(o.id);
     const is = (want, have, none) => !want || (want === '__contacted' || want === '__any' ? have !== none : have === want);
     if (f.interview && r.interview_status !== f.interview) return false;
@@ -199,9 +203,9 @@ function filteredOrgs() {
 }
 // Table order: country A–Z, then organisation name A–Z (organisations without a country last).
 const byCountry = (a, b) => (!a.country - !b.country) || a.country.localeCompare(b.country, 'en', { sensitivity: 'base' }) || a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
-const FILTER_LABELS = { region: 'Region', country: 'Country', name: 'Name', email: 'Email address', interview: 'Interview', emailStatus: 'Email', reply: 'Reply', ig: 'Instagram', fb: 'Facebook', li: 'LinkedIn' };
+const FILTER_LABELS = { region: 'Region', country: 'Country', name: 'Name', email: 'Email address', interview: 'Interview', emailStatus: 'Email', reply: 'Reply', ig: 'Instagram', fb: 'Facebook', li: 'LinkedIn', priority: 'Priority', list: 'List' };
 const filterValueLabel = v => v === '__contacted' ? 'Any contact' : v === '__any' ? 'Any response' : interviewLabel(v);
-const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '' });
+const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '', priority: '', list: '' });
 
 // ---------- shell ----------
 function render() {
@@ -308,7 +312,7 @@ function uniFiltered(rows) {
   const f = S.uf, q = norm(f.q), t = today();
   return rows.filter(({ o, p }) => (!f.phase || phaseOf(p.status) === f.phase) && (!f.status || p.status === f.status) && (!f.country || o.country === f.country) && (!f.priority || p.priority === f.priority)
     && (!f.due || (f.due === 'overdue' ? p.next_date && p.next_date < t && !['Lost'].includes(p.status) : f.due === 'none' ? !p.next_step && !['Lost', 'Paid partner'].includes(p.status) : true))
-    && (!q || [o.name, o.unit, o.city, o.country, p.contact_name, p.contact_email, p.next_step].some(v => norm(v).includes(q))))
+    && (!q || [o.name, o.unit, o.city, o.country, p.ref, p.who_to_approach, p.contact_name, p.contact_email, p.other_email, p.next_step].some(v => norm(v).includes(q))))
     .sort((a, b) => (stageIdx(b.p.status) - stageIdx(a.p.status)) || String(a.o.country || '').localeCompare(String(b.o.country || ''), 'en') || byName(a.o, b.o));
 }
 function uniFunnel(rows) {
@@ -390,7 +394,9 @@ function pipeModal(id) {
     ${selectField('Stage', 'status', stageItems, p.status, '', true)}
     ${selectField('Priority', 'priority', UPRIORITY, p.priority || '', 'Not set')}
     <label class="field"><span class="label">Warm contact or introduction</span><select name="warm">${opts([['', 'No'], ['1', 'Yes']], p.warm ? '1' : '')}</select></label>
-    ${field('Contact name', 'contact_name', p.contact_name || '')}${field('Contact role', 'contact_role', p.contact_role || '')}${field('Contact email', 'contact_email', p.contact_email || '', 'email')}${field('LinkedIn', 'linkedin', p.linkedin || '', 'url', 'placeholder="https://"')}
+    ${field('ID', 'ref', p.ref || '')}${selectField('List', 'list', UNI_LISTS, p.list || '', 'Not set')}${field('Who to approach', 'who_to_approach', p.who_to_approach || '')}
+    ${field('Contact name', 'contact_name', p.contact_name || '')}${field('Contact role', 'contact_role', p.contact_role || '')}${field('Contact email', 'contact_email', p.contact_email || '', 'email')}${field('Other email', 'other_email', p.other_email || '', 'email')}${field('LinkedIn', 'linkedin', p.linkedin || '', 'url', 'placeholder="https://"')}
+    ${field('Where found (page with the email)', 'where_found', p.where_found || '', 'url', 'placeholder="https://"')}${field('Programme page', 'programme_page', p.programme_page || '', 'url', 'placeholder="https://"')}${field('Note', 'source_note', p.source_note || '', 'area')}
     <fieldset class="field full crm-reasons"><legend class="label">Outreach sequence (date each touch was done)</legend>${TOUCHES.map(([k, d, what]) => `<label title="${esc(what)}">${esc(d)} · ${esc(what)} <input type="date" name="t_${k}" value="${esc(p.touches?.[k] || '')}"></label>`).join('')}</fieldset>
     ${field('Next step', 'next_step', p.next_step || '')}${field('Next step date', 'next_date', p.next_date || '', 'date')}
     ${field('Discovery call date', 'call_date', p.call_date || '', 'date')}${field('Proposal sent on', 'proposal_date', p.proposal_date || '', 'date')}
@@ -435,6 +441,7 @@ function renderDashboard() {
 
 // ---------- Outreach: organisations & contacts (first part of the Outreach tab) ----------
 function renderOrganisations() {
+  if (isUni()) return renderUniOutreach();
   const base = continentOrgs(); const s = stats(base);
   const regions = [...new Set(base.map(o => o.region).filter(Boolean))].sort();
   const countries = [...new Set(base.filter(o => !S.f.region || o.region === S.f.region).map(o => o.country).filter(Boolean))].sort();
@@ -499,6 +506,80 @@ function renderOrganisations() {
     ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-unfilter="${esc(k)}" title="Remove this filter">${esc(FILTER_LABELS[k])}: ${esc(filterValueLabel(v))} <b aria-hidden="true">✕</b></button>`).join('')}${active.length > 1 ? '<button type="button" class="link" data-action="clear-filters">Clear all</button>' : ''}</div>` : ''}
     <div class="tablewrap crm-table"><table><thead><tr>${['Continent', 'Region', 'Country', 'Organisation', 'Interview', 'Personal contact', 'Public email', 'Public phone', 'Personal phone', 'Email status', 'Date sent', 'Instagram', 'Facebook', 'LinkedIn', 'Reply'].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || `<tr><td colspan="15">${S.orgs.length ? 'No organisations match these filters.' : 'No organisations yet. Add your first one.'}</td></tr>`}</tbody></table></div>
+    ${pages > 1 ? `<div class="crm-pager"><button class="button secondary small" data-page="${S.page - 1}" ${S.page ? '' : 'disabled'}>← Previous</button><span class="tiny">Page ${S.page + 1} of ${pages}</span><button class="button secondary small" data-page="${S.page + 1}" ${S.page < pages - 1 ? '' : 'disabled'}>Next →</button></div>` : ''}</section>`;
+}
+
+
+// ---------- Outreach: universities (13 Nov 2026) ----------
+// Universities are contacted by email only, so this table has no phone or social media columns. Each row carries the
+// contact research from "Handova university contacts with emails" (Nov 2026): row ID, priority, list, the office to
+// approach, the named contact and emails, and where they were found. These fields live in the university's pipeline record.
+const UNI_LISTS = ['Map (A2)', 'Global (A3)', 'Networks (A4)'];
+const UNI_HEADS = [['Continent', ''], ['Region', ''], ['Country', ''], ['ID', 'Row ID in the university contact list: U = university or centre, N = network or association.'],
+  ['Priority', 'A strong fit and a hook Handova can use now · B good fit, hook needs adapting · C weak fit'], ['List', 'Map (A2) universities with a placement scheme · Global (A3) centres and programmes worldwide · Networks (A4)'],
+  ['University', 'Click the name for its email marks, notes and details.'], ['Centre or programme', 'The centre, programme or office this row is about.'], ['Who to approach', 'The office or role that fits the Handova pitch.'],
+  ['Contact name', 'Named person, from the university’s own pages. Edit it here.'], ['Role', ''], ['Email', 'Write to this address. Edit it here.'], ['Other email', 'Office address to copy, or a second contact.'],
+  ['Where found', 'Page where the email is written: check it before sending.'], ['Note', 'What to check: outdated names, office-only addresses and other caveats.'], ['Programme page', 'Page that confirms the programme or hook.'],
+  ['Email status', ''], ['Date sent', '']];
+const linkCell = u => u ? `<a class="tiny" href="${esc(u)}" target="_blank" rel="noopener noreferrer" title="${esc(u)}">${esc(u.replace(/^https?:\/\/(www\.)?/, '').split('/')[0])} ↗</a>` : '<span class="muted">—</span>';
+function renderUniOutreach() {
+  const base = continentOrgs(); const s = stats(base);
+  const regions = [...new Set(base.map(o => o.region).filter(Boolean))].sort();
+  const countries = [...new Set(base.filter(o => !S.f.region || o.region === S.f.region).map(o => o.country).filter(Boolean))].sort();
+  const list = filteredOrgs();
+  const pages = Math.max(1, Math.ceil(list.length / PAGE)); if (S.page >= pages) S.page = pages - 1;
+  const slice = list.slice(S.page * PAGE, S.page * PAGE + PAGE);
+  const f = S.f;
+  const sel = (key, items, all) => `<select data-filter="${key}" class="${f[key] ? 'crm-on' : ''}">${opts(items, f[key], all)}</select>`;
+  const replyItems = [['__any', 'Any response'], ...REPLY];
+  const active = Object.entries(f).filter(([, v]) => v);
+  const only = active.length === 1 ? active[0].join('=') : active.length ? '?' : '';
+  const pri = k => base.filter(o => (pipeOf(o.id).priority || '') === k).length;
+  const withEmail = base.filter(o => pipeOf(o.id).contact_email || o.email).length;
+  const groups = [
+    ['Contacts', [['With an email', withEmail, 'email=@'], ['No email yet', s.orgs - withEmail, 'email=__none']]],
+    ['Priority', [['A · priority', pri('A'), 'priority=A'], ['B', pri('B'), 'priority=B'], ['C', pri('C'), 'priority=C'], ['Networks', base.filter(o => pipeOf(o.id).list === 'Networks (A4)').length, 'list=Networks (A4)']]],
+    ['Emails', [['Emails sent', s.sent, 'emailStatus=Sent'], ['Not yet emailed', s.orgs - s.sent, 'emailStatus=Not sent'], ['Replies', s.replied, 'reply=Replied'], ['Automatic replies', s.auto, 'reply=Automatic reply'], ['Bounce backs', s.bounce, 'reply=Bounce back']]],
+  ];
+  const qbtn = ([l, v, q]) => `<button type="button" data-quick="${esc(q)}" class="${q === only ? 'active' : ''}" title="Show ${esc(l.toLowerCase())} in the table"><b>${v}</b><span>${esc(l)}</span></button>`;
+  const rows = slice.map(o => {
+    const r = outreachOf(o.id), p = pipeOf(o.id);
+    const os = (field, items, val) => `<select data-out="${field}" data-id="${esc(o.id)}" aria-label="${esc(field)} for ${esc(o.name)}">${opts(items, val)}</select>`;
+    const pin = (k, label, type = 'text') => `<input type="${type}" data-pipe="${k}" data-id="${esc(o.id)}" value="${esc(p[k] || '')}" aria-label="${esc(label)} for ${esc(o.name)}">`;
+    return `<tr class="${r.reply_status === 'Replied' ? 'reply' : ''}">
+      <td>${esc(o.continent)}</td><td>${esc(o.region)}</td><td>${esc(o.country)}</td>
+      <td class="tiny">${esc(p.ref || '')}</td><td>${p.priority ? `<span class="pill dim">${esc(p.priority)}</span>` : '<span class="muted">—</span>'}${p.warm ? ' <span class="pill" title="Warm contact or introduction">Warm</span>' : ''}</td><td class="tiny">${esc(p.list || '')}</td>
+      <td class="crm-org"><button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button></td>
+      <td class="tiny">${esc(o.unit || '')}</td><td class="tiny">${esc(p.who_to_approach || '')}</td>
+      <td>${pin('contact_name', 'Contact name')}</td><td>${pin('contact_role', 'Role')}</td><td>${pin('contact_email', 'Email', 'email')}</td><td>${pin('other_email', 'Other email', 'email')}</td>
+      <td>${linkCell(p.where_found)}</td><td class="tiny crm-unote">${esc(p.source_note || '')}</td><td>${linkCell(p.programme_page || o.website)}</td>
+      <td>${os('email_status', EMAIL, r.email_status)}</td>
+      <td><input type="date" data-out="date_sent" data-id="${esc(o.id)}" value="${esc(r.date_sent || '')}" aria-label="Date sent to ${esc(o.name)}"></td></tr>`;
+  });
+  return `<section class="rowhead section-head"><h2>Outreach</h2><div class="actions"><button class="button secondary" data-action="add-org">+ Add university</button><button class="button" data-action="export-orgs">Export</button></div></section>
+    <section class="crm-groups">
+      <div class="crm-group crm-group-all crm-quick">${qbtn(['Universities', s.orgs, ''])}</div>
+      ${groups.map(([title, items]) => `<div class="crm-group"><h3>${esc(title)}</h3><div class="crm-quick">${items.map(qbtn).join('')}</div></div>`).join('')}
+    </section>
+    <p class="tiny crm-hint">Click a number to list those universities below.</p>
+    <section class="panel crm-filters">
+      <div class="crm-frow"><b>General</b>
+        <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
+        <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
+        <label><span>Priority</span>${sel('priority', [...UPRIORITY, ['__none', 'None (networks)']], 'Any')}</label>
+        <label><span>List</span>${sel('list', UNI_LISTS, 'All lists')}</label></div>
+      <div class="crm-frow"><b>Search</b>
+        <label><span>University, centre or contact</span><input data-filter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Search by name"></label>
+        <label><span>Email address</span><input data-filter="email" class="${f.email ? 'crm-on' : ''}" value="${esc(f.email === "__none" ? "" : f.email)}" placeholder="Search by email"></label></div>
+      <div class="crm-frow"><b>Emails</b>
+        <label><span>Email</span>${sel('emailStatus', EMAIL, 'All emails')}</label>
+        <label><span>Reply</span>${sel('reply', replyItems, 'All')}</label>
+        <button class="button secondary small" data-action="clear-filters">Clear filters</button></div>
+    </section>
+    <section class="panel"><div class="rowhead"><div><span class="eyebrow">Outreach workspace</span><p class="tiny crm-legend"><i class="o"></i> Email reply received</p></div><span class="tiny"><b>${list.length}</b> universities${list.length > PAGE ? ` · showing ${S.page * PAGE + 1}–${S.page * PAGE + slice.length}` : ''}</span></div>
+    ${active.length ? `<div class="crm-active" role="status"><span>Showing only:</span>${active.map(([k, v]) => `<button type="button" data-unfilter="${esc(k)}" title="Remove this filter">${esc(FILTER_LABELS[k])}: ${esc(v === '__none' ? 'None' : v === '@' ? 'Any' : filterValueLabel(v))} <b aria-hidden="true">✕</b></button>`).join('')}${active.length > 1 ? '<button type="button" class="link" data-action="clear-filters">Clear all</button>' : ''}</div>` : ''}
+    <div class="tablewrap crm-table crm-utable"><table><thead><tr>${UNI_HEADS.map(([h, tip]) => `<th${tip ? ` title="${esc(tip)}"` : ''}>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.join('') || `<tr><td colspan="${UNI_HEADS.length}">${S.orgs.length ? 'No universities match these filters.' : 'No universities yet. Add your first one.'}</td></tr>`}</tbody></table></div>
     ${pages > 1 ? `<div class="crm-pager"><button class="button secondary small" data-page="${S.page - 1}" ${S.page ? '' : 'disabled'}>← Previous</button><span class="tiny">Page ${S.page + 1} of ${pages}</span><button class="button secondary small" data-page="${S.page + 1}" ${S.page < pages - 1 ? '' : 'disabled'}>Next →</button></div>` : ''}</section>`;
 }
 
@@ -1034,17 +1115,23 @@ function exportNewsletter() {
     filteredNewsletter().map(r => [r.sub.email, r.sub.first_name, r.sub.last_name, r.sub.subscribed ? 'Subscribed' : 'Unsubscribed', (r.sub.subscribed_at || '').slice(0, 10), r.org?.name || '', r.org?.continent || '', r.org?.region || '', r.org?.country || '', NL_KIND[r.kind], r.how, r.org ? outreachOf(r.org.id).reply_status : '', readLabel(r.sub)]));
 }
 
+// Contact research shown at the top of a university's details.
+function uniInfo(id) {
+  const p = pipeOf(id);
+  const rows = [['ID', p.ref], ['Priority', p.priority], ['List', p.list], ['Who to approach', p.who_to_approach], ['Contact', [p.contact_name, p.contact_role].filter(Boolean).join(', ')], ['Email', p.contact_email], ['Other email', p.other_email], ['Where found', p.where_found], ['Note', p.source_note], ['Programme page', p.programme_page], ['Stage', p.status]].filter(([, v]) => v);
+  return rows.length ? `<dl class="kv">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${/^https?:\/\//.test(v) ? `<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>` : '';
+}
 function orgModal(id) {
   const o = S.orgById.get(id); if (!o) return '';
   const r = outreachOf(id);
-  const info = [['Registered name', o.registered], ['Office or department', [o.unit, o.unit_type].filter(Boolean).join(' · ')], ['Location', [o.city, o.country, o.region, o.continent].filter(Boolean).join(', ')], ['Public email', o.email], ['Public phone', o.phone], ['Website', o.website]].filter(([, v]) => v);
+  const info = [['Registered name', o.registered], ['Office or department', [o.unit, o.unit_type].filter(Boolean).join(' · ')], ['Location', [o.city, o.country, o.region, o.continent].filter(Boolean).join(', ')], ...(o.uni ? [] : [['Public email', o.email], ['Public phone', o.phone], ['Website', o.website]])].filter(([, v]) => v);
   return modal(o.name, `${o.removed ? `<p class="crm-removed-note"><b>Removed from the directory at their request (${esc(o.removed)}).</b> ${esc(o.removedReason || '')} Don't publish or contact them again without their consent.</p>` : ''}<dl class="kv">${info.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === 'Website' ? `<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>
-    <form class="form" data-form="org-outreach" data-id="${esc(id)}">
-      ${selectField('Interview', 'interview_status', INTERVIEW, r.interview_status, '')}${field('Interview date (if planned)', 'interview_date', r.interview_date || '', 'date')}${field('Personal contact', 'contact_person', r.contact_person)}${field('Personal phone', 'personal_phone', r.personal_phone)}
+    ${o.uni ? uniInfo(id) : ''}<form class="form" data-form="org-outreach" data-id="${esc(id)}">
+      ${o.uni ? `${selectField('Email status', 'email_status', EMAIL, r.email_status, '')}${field('Date sent', 'date_sent', r.date_sent || '', 'date')}${selectField('Reply', 'reply_status', REPLY, r.reply_status, '')}${field('Notes', 'notes', r.notes, 'area')}` : `${selectField('Interview', 'interview_status', INTERVIEW, r.interview_status, '')}${field('Interview date (if planned)', 'interview_date', r.interview_date || '', 'date')}${field('Personal contact', 'contact_person', r.contact_person)}${field('Personal phone', 'personal_phone', r.personal_phone)}
       ${selectField('Email status', 'email_status', EMAIL, r.email_status, '')}${field('Date sent', 'date_sent', r.date_sent || '', 'date')}${selectField('Reply', 'reply_status', REPLY, r.reply_status, '')}
       ${selectField('Instagram', 'instagram_status', SOCIAL, r.instagram_status, '')}${selectField('Facebook', 'facebook_status', SOCIAL, r.facebook_status, '')}${selectField('LinkedIn', 'linkedin_status', SOCIAL, r.linkedin_status, '')}
-      ${field('Notes', 'notes', r.notes, 'area')}
-      <div class="actions field full"><button class="button" type="submit">Save</button>${o.own ? `<button class="button secondary" type="button" data-action="edit-org" data-id="${esc(id)}">Edit details</button><button class="button danger" type="button" data-action="delete-org" data-id="${esc(o.rowId)}">Delete ${o.uni ? 'university' : 'organisation'}</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div>
+      ${field('Notes', 'notes', r.notes, 'area')}`}
+      <div class="actions field full"><button class="button" type="submit">Save</button>${o.uni ? `<button class="button secondary" type="button" data-action="pipe-edit" data-id="${esc(id)}">Contact &amp; pipeline</button>` : ''}${o.own ? `<button class="button secondary" type="button" data-action="edit-org" data-id="${esc(id)}">Edit details</button><button class="button danger" type="button" data-action="delete-org" data-id="${esc(o.rowId)}">Delete ${o.uni ? 'university' : 'organisation'}</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div>
       ${o.own ? '' : '<p class="tiny field full">Name, contact details and location come from the Ethical Bridge directory. Correct them on ethicalbridge.org.</p>'}
     </form>`);
 }
@@ -1056,7 +1143,7 @@ function ownOrgFields(o = {}) {
   return `${field(u ? 'University name' : 'Organisation name', 'name', o.name || '', 'text', 'required')}
     ${u ? selectField('Office or department type', 'unit_type', UNIT_TYPES, o.unit_type || '') + field('Office or department name', 'unit', o.unit || '') : ''}
     ${selectField('Continent', 'continent', CONTINENTS, o.continent ?? (S.continent === 'All' ? '' : S.continent))}${field('Region', 'region', o.region || '')}${field('Country', 'country', o.country || '')}${field('City', 'city', o.city || '')}
-    ${field(u ? 'Email (office or contact)' : 'Public email', 'email', o.email || '', 'email')}${field(u ? 'Phone' : 'Public phone', 'phone', o.phone || '')}${field('Website', 'website', o.website || '', 'url', 'placeholder="https://"')}
+    ${field(u ? 'Email (office or contact)' : 'Public email', 'email', o.email || '', 'email')}${u ? '' : field('Public phone', 'phone', o.phone || '')}${field('Website', 'website', o.website || '', 'url', 'placeholder="https://"')}
     ${field('Latitude (for the map)', 'lat', o.lat ?? '', 'number', 'min="-90" max="90"')}${field('Longitude (for the map)', 'lng', o.lng ?? '', 'number', 'min="-180" max="180"')}`;
 }
 function addOrgModal() {
@@ -1074,6 +1161,9 @@ function editOwnOrgModal(id) {
 
 function exportOrgs() {
   const list = filteredOrgs();
+  if (isUni()) return downloadCsv(`ethical-bridge-universities-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
+    ['continent', 'region', 'country', 'id', 'priority', 'list', 'university', 'centre_or_programme', 'who_to_approach', 'contact_name', 'role', 'email', 'other_email', 'where_found', 'note', 'programme_page', 'email_status', 'date_sent', 'reply_status', 'stage'],
+    list.map(o => { const r = outreachOf(o.id), p = pipeOf(o.id); return [o.continent, o.region, o.country, p.ref, p.priority, p.list, o.name, o.unit, p.who_to_approach, p.contact_name, p.contact_role, p.contact_email || o.email, p.other_email, p.where_found, p.source_note, p.programme_page || o.website, r.email_status, r.date_sent || '', r.reply_status, p.status]; }));
   downloadCsv(`ethical-bridge-organisations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
     ['continent', 'region', 'country', 'public_name', 'interview_status', 'interview_date', 'contact_person', 'public_email', 'public_phone', 'personal_phone', 'email_status', 'date_sent', 'instagram_status', 'facebook_status', 'linkedin_status', 'reply_status', 'notes', 'website'],
     list.map(o => { const r = outreachOf(o.id); return [o.continent, o.region, o.country, o.name, interviewLabel(r.interview_status), r.interview_date || '', r.contact_person, o.email, o.phone, r.personal_phone, r.email_status, r.date_sent || '', r.instagram_status, r.facebook_status, r.linkedin_status, r.reply_status, r.notes, o.website]; }));
@@ -1333,6 +1423,7 @@ root.addEventListener('change', async e => {
     if (['interview_status', 'email_status', 'reply_status', 'instagram_status', 'facebook_status', 'linkedin_status'].includes(field)) render();
     return;
   }
+  if (t.dataset.pipe) { await savePipe(t.dataset.id, { [t.dataset.pipe]: String(t.value || '').trim() }); return; }
   if (t.dataset.filter && t.tagName === 'SELECT') { S.f[t.dataset.filter] = t.value; if (t.dataset.filter === 'region') S.f.country = ''; S.page = 0; return render(); }
   if (t.dataset.action === 'nl-csv' && t.files?.[0]) { const f = t.files[0]; t.value = ''; return importNewsletterCsv(f); }
   if (t.dataset.nfilter && t.tagName === 'SELECT') { S.nf[t.dataset.nfilter] = t.value; if (t.dataset.nfilter === 'continent') { S.nf.region = ''; S.nf.country = ''; } if (t.dataset.nfilter === 'region') S.nf.country = ''; S.nfReplied = false; return render(); }
@@ -1376,7 +1467,7 @@ root.addEventListener('submit', async e => {
     }
     if (kind === 'pipe') {
       const touches = Object.fromEntries(TOUCHES.map(([k]) => [k, d['t_' + k] || '']).filter(([, v]) => v));
-      const keys = ['status', 'priority', 'contact_name', 'contact_role', 'contact_email', 'linkedin', 'next_step', 'next_date', 'call_date', 'proposal_date', 'pilot_start', 'pilot_end', 'cohort', 'needs_done', 'rating', 'tier', 'income_band', 'price', 'renewal_date', 'reason', 'come_back'];
+      const keys = ['status', 'priority', 'ref', 'list', 'who_to_approach', 'contact_name', 'contact_role', 'contact_email', 'other_email', 'where_found', 'programme_page', 'source_note', 'linkedin', 'next_step', 'next_date', 'call_date', 'proposal_date', 'pilot_start', 'pilot_end', 'cohort', 'needs_done', 'rating', 'tier', 'income_band', 'price', 'renewal_date', 'reason', 'come_back'];
       const patch = Object.fromEntries(keys.map(k => [k, String(d[k] ?? '').trim()]));
       patch.warm = d.warm === '1'; patch.touches = touches;
       const cur = pipeOf(id);
