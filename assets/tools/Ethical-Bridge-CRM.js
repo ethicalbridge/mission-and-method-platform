@@ -1206,21 +1206,23 @@ const REL = [
   ['jobs', 'Jobs portal', '#4fb3e8'],
   ['fundova', 'Fundova', '#7b4fc4'],
   ['call', 'Meeting or call requested', '#d6336c'],
+  ['request', 'Asked to be listed', '#2f9e44'],
 ];
 // Handova, Jobs portal and Fundova are not relationship levels: they mark organisations by initiative, whatever their
 // tie with us. Handova = uses it (conversions). Jobs portal / Fundova = mentioned interest in it (why) or uses it (conversions).
 // Their pins keep their relationship colour and get a ring in the initiative's colour (one ring per initiative).
-const OVERLAYS = ['call', 'handova', 'fundova', 'jobs'];
+const OVERLAYS = ['request', 'call', 'handova', 'fundova', 'jobs'];
 const OV_TIP = {
   handova: 'Organisations that use Handova (registered or posted a need), whatever their relationship with us.',
   jobs: 'Organisations that mentioned the Jobs & Opportunities portal (or want to post jobs, internships or volunteering), whatever their relationship with us.',
+  request: 'Organisations that came to us and asked to be added to Ethical Bridge (instead of us finding and listing them).',
   call: 'Organisations that asked for a meeting, call or chat with us, whatever their relationship with us.',
   fundova: 'Organisations that mentioned Fundova, the donor-mapping platform or finding funding through us, whatever their relationship with us.',
 };
-const ovOf = (r, k) => k === 'call' ? (r.ally_reasons || []).includes('call') : k === 'handova' ? (r.conversions || []).includes('handova') : (r.conversions || []).includes(k) || (r.ally_reasons || []).includes(k);
+const ovOf = (r, k) => k === 'call' || k === 'request' ? (r.ally_reasons || []).includes(k) : k === 'handova' ? (r.conversions || []).includes('handova') : (r.conversions || []).includes(k) || (r.ally_reasons || []).includes(k);
 const ovTags = x => OVERLAYS.filter(k => x.ov[k]).map(k => `<span class="crm-hvtag" style="--hc:${relColor(k)}" title="${esc(k === 'handova' ? (x.cvNote || 'Uses Handova') : OV_TIP[k])}">${esc(relLabel(k))}</span>`).join('');
 const REL_ORDER = ['visited', 'strong', 'possible', 'replied', 'removed'];
-const REASONS = [['call', 'Call or meeting'], ['visit', 'Visit / met in person'], ['collab', 'Partnership or further work'], ['handova', 'Handova'], ['jobs', 'Jobs & Opportunities'], ['fundova', 'Funding (Fundova)'], ['story', 'Interview, video or story'], ['network', 'Networking · Local Impact Alliance'], ['promote', 'Promotion · featuring us']];
+const REASONS = [['call', 'Call or meeting'], ['visit', 'Visit / met in person'], ['collab', 'Partnership or further work'], ['handova', 'Handova'], ['jobs', 'Jobs & Opportunities'], ['fundova', 'Funding (Fundova)'], ['story', 'Interview, video or story'], ['network', 'Networking · Local Impact Alliance'], ['promote', 'Promotion · featuring us'], ['request', 'Asked to be listed (came to us)']];
 const ALLY_MARKS = [['', 'Not reviewed (replied)'], ['visited', 'Visited · relationship built'], ['strong', 'Strong ally'], ['possible', 'Possible ally'], ['no', 'Not an ally']];
 const relColor = k => REL.find(x => x[0] === k)[2];
 const relLabel = k => REL.find(x => x[0] === k)[1];
@@ -1274,7 +1276,7 @@ function renderRelMap() {
       <span class="tiny"><b>${list.length}</b> of ${all.length} organisations${noPin ? ` · ${noPin} without a map location (listed below)` : ''}</span></div></section>
     <section class="crm-relmap-wrap"><div id="crm-relmap" class="crm-relmap" role="region" aria-label="Map of organisations by relationship"></div>
       <button type="button" class="button secondary small crm-relmap-reset" data-action="rel-reset">Fit all pins</button></section>
-    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a box above to show only that group. Boxes of the same kind add up (for example Strong + Possible allies); a relationship box and an initiative box together narrow the view (for example Strong allies interested in the Jobs portal). The numbers update with your selection, and Total shows how many organisations are on the map; click it to show everyone again. Pins sit on each organisation's main office. Rings around a pin mark the initiatives: pink for a meeting or call requested, orange for Handova, light blue for the Jobs portal and purple for Fundova.</p>
+    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a box above to show only that group. Boxes of the same kind add up (for example Strong + Possible allies); a relationship box and an initiative box together narrow the view (for example Strong allies interested in the Jobs portal). The numbers update with your selection, and Total shows how many organisations are on the map; click it to show everyone again. Pins sit on each organisation's main office. Rings around a pin mark the initiatives: green for organisations that asked to be listed, pink for a meeting or call requested, orange for Handova, light blue for the Jobs portal and purple for Fundova.</p>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Ally type &amp; why</span><p class="tiny crm-legend">Strongest tie first: visited, strong, possible, replied, removed · then country A–Z</p></div></div>
     <div class="tablewrap crm-table crm-reltable"><table><thead><tr>${['Country', 'Organisation', 'Relationship', 'Ally type & why', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || '<tr><td colspan="5">No organisations match these filters.</td></tr>'}</tbody></table></div>
@@ -1295,8 +1297,8 @@ function relModal(id) {
 function exportRel() {
   const list = relFiltered(relRows().filter(x => inContinent(x.o)));
   downloadCsv(`ethical-bridge-relationships-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
-    ['continent', 'region', 'country', 'organisation', 'relationship', 'meeting_requested', 'uses_handova', 'jobs_portal', 'fundova', 'why', 'note', 'email', 'last_email'],
-    list.map(x => [x.o.continent, x.o.region, x.o.country, x.o.name, relLabel(x.cat), x.ov.call ? 'yes' : '', x.ov.handova ? 'yes' : '', x.ov.jobs ? 'yes' : '', x.ov.fundova ? 'yes' : '', x.reasons.map(reasonLabel).join('; '), x.note, x.o.email || x.first?.from_addr || '', x.last?.sent_at.slice(0, 10) || '']));
+    ['continent', 'region', 'country', 'organisation', 'relationship', 'asked_to_be_listed', 'meeting_requested', 'uses_handova', 'jobs_portal', 'fundova', 'why', 'note', 'email', 'last_email'],
+    list.map(x => [x.o.continent, x.o.region, x.o.country, x.o.name, relLabel(x.cat), x.ov.request ? 'yes' : '', x.ov.call ? 'yes' : '', x.ov.handova ? 'yes' : '', x.ov.jobs ? 'yes' : '', x.ov.fundova ? 'yes' : '', x.reasons.map(reasonLabel).join('; '), x.note, x.o.email || x.first?.from_addr || '', x.last?.sent_at.slice(0, 10) || '']));
 }
 
 // Leaflet is loaded the first time the map opens (same library and tiles as ethicalbridge.org).
