@@ -1234,18 +1234,30 @@ function relRows() {
   });
 }
 const hasPin = o => Number.isFinite(o.lat) && Number.isFinite(o.lng) && o.lat !== null && o.lng !== null;
+// Boxes work in two groups: relationship levels (visited … removed) and initiatives (meeting, Handova, Jobs, Fundova).
+// Inside a group, selected boxes add up (OR); between the groups they narrow (AND): "Strong allies" + "Jobs portal"
+// shows strong allies interested in the Jobs portal. The reason and search filters narrow everything.
+const relSel = f => f.show.filter(k => !OVERLAYS.includes(k)), ovSel = f => f.show.filter(k => OVERLAYS.includes(k));
+function relBase(all, f = S.rf) {
+  const q = norm(f.q);
+  return all.filter(x => (!f.reason || x.reasons.includes(f.reason)) && (!q || norm(x.o.name).includes(q) || norm(x.o.country).includes(q) || norm(x.note).includes(q)));
+}
+const inRelSel = (x, f) => { const r = relSel(f); return !r.length || r.includes(x.cat); };
+const inOvSel = (x, f) => { const o = ovSel(f); return !o.length || o.some(k => x.ov[k]); };
 function relFiltered(all) {
-  const f = S.rf, q = norm(f.q);
-  return all.filter(x => (!f.show.length || f.show.includes(x.cat) || OVERLAYS.some(k => x.ov[k] && f.show.includes(k))) && (!f.reason || x.reasons.includes(f.reason))
-    && (!q || norm(x.o.name).includes(q) || norm(x.o.country).includes(q) || norm(x.note).includes(q)))
+  const f = S.rf;
+  return relBase(all, f).filter(x => inRelSel(x, f) && inOvSel(x, f))
     .sort((a, b) => REL_ORDER.indexOf(a.cat) - REL_ORDER.indexOf(b.cat) || byCountry(a.o, b.o));
 }
 function renderRelMap() {
   if (S.msgs === null) return `<p class="muted crm-loading">Loading conversations…</p>`;
   const all = relRows().filter(x => inContinent(x.o));
   const list = relFiltered(all), noPin = list.filter(x => !hasPin(x.o)).length;
-  const n = k => all.filter(x => OVERLAYS.includes(k) ? x.ov[k] : x.cat === k).length;
-  const f = S.rf;
+  const f = S.rf, base = relBase(all, f);
+  // Each box counts what it would add to the current view: relationship boxes respect the selected initiatives, and
+  // initiative boxes respect the selected relationship levels, plus the reason and search filters.
+  const n = k => OVERLAYS.includes(k) ? base.filter(x => x.ov[k] && inRelSel(x, f)).length : base.filter(x => x.cat === k && inOvSel(x, f)).length;
+  const filtered = f.show.length || f.reason || f.q;
   const rows = list.map(x => `<tr>
       <td>${esc(x.o.country)}</td>
       <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(x.id)}">${esc(x.o.name)}</button>${hasPin(x.o) ? '' : '<span class="tiny">No map location</span>'}</td>
@@ -1254,7 +1266,7 @@ function renderRelMap() {
       <td><button class="button secondary small" data-action="rel-edit" data-id="${esc(x.id)}">Edit</button></td></tr>`);
   return `<section class="rowhead section-head"><h2>Relationship map</h2><div class="actions"><button class="button secondary" data-action="reload-msgs">Refresh</button><button class="button" data-action="rel-export">Export</button></div></section>
     ${S.msgsError ? `<div class="notice warn" role="alert">${esc(S.msgsError)}</div>` : ''}
-    <section class="crm-rel-legend" aria-label="Choose what to show on the map">${REL.map(([k, l, c]) => `<button type="button" data-relcat="${k}" class="${f.show.includes(k) ? 'on' : f.show.length ? 'off' : ''}" aria-pressed="${f.show.includes(k)}" title="${OV_TIP[k] ? OV_TIP[k] + ' Their pins have a ring in this colour. ' : ''}${f.show.includes(k) ? 'Click to stop showing only these' : 'Click to show only these (click more to add them)'}" style="--c:${c}"><i class="${k === 'removed' ? 'ring' : OVERLAYS.includes(k) ? 'hv' : ''}"></i><b>${n(k)}</b><span>${esc(l)}</span></button>`).join('')}</section>
+    <section class="crm-rel-legend" aria-label="Choose what to show on the map"><button type="button" data-action="rel-all" class="crm-rel-total ${f.show.length ? 'off' : 'on'}" title="${f.show.length ? 'Click to show every organisation again' : 'All organisations in this view'}" style="--c:#123c48"><b>${list.length}</b><span>${filtered ? `Total shown · of ${all.length}` : 'Total organisations'}</span></button>${REL.map(([k, l, c]) => `<button type="button" data-relcat="${k}" class="${f.show.includes(k) ? 'on' : f.show.length ? 'off' : ''}" aria-pressed="${f.show.includes(k)}" title="${OV_TIP[k] ? OV_TIP[k] + ' Their pins have a ring in this colour. ' : ''}${f.show.includes(k) ? 'Click to stop showing only these' : 'Click to show only these (click more to add them)'}" style="--c:${c}"><i class="${k === 'removed' ? 'ring' : OVERLAYS.includes(k) ? 'hv' : ''}"></i><b>${n(k)}</b><span>${esc(l)}</span></button>`).join('')}</section>
     <section class="panel crm-filters"><div class="crm-frow"><b>Filter</b>
       <label><span>Why they're an ally</span><select data-relreason class="${f.reason ? 'crm-on' : ''}">${opts(REASONS, f.reason, 'Any reason')}</select></label>
       <label><span>Search</span><input data-relq class="${f.q ? 'crm-on' : ''}" value="${esc(f.q)}" placeholder="Name, country or note"></label>
@@ -1262,7 +1274,7 @@ function renderRelMap() {
       <span class="tiny"><b>${list.length}</b> of ${all.length} organisations${noPin ? ` · ${noPin} without a map location (listed below)` : ''}</span></div></section>
     <section class="crm-relmap-wrap"><div id="crm-relmap" class="crm-relmap" role="region" aria-label="Map of organisations by relationship"></div>
       <button type="button" class="button secondary small crm-relmap-reset" data-action="rel-reset">Fit all pins</button></section>
-    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a colour above to show only that group; click more colours to add them, or click a selected one again to remove it. Pins sit on each organisation's main office. Rings around a pin mark the initiatives: pink for a meeting or call requested, orange for Handova, light blue for the Jobs portal and purple for Fundova.</p>
+    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a box above to show only that group. Boxes of the same kind add up (for example Strong + Possible allies); a relationship box and an initiative box together narrow the view (for example Strong allies interested in the Jobs portal). The numbers update with your selection, and Total shows how many organisations are on the map; click it to show everyone again. Pins sit on each organisation's main office. Rings around a pin mark the initiatives: pink for a meeting or call requested, orange for Handova, light blue for the Jobs portal and purple for Fundova.</p>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Ally type &amp; why</span><p class="tiny crm-legend">Strongest tie first: visited, strong, possible, replied, removed · then country A–Z</p></div></div>
     <div class="tablewrap crm-table crm-reltable"><table><thead><tr>${['Country', 'Organisation', 'Relationship', 'Ally type & why', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || '<tr><td colspan="5">No organisations match these filters.</td></tr>'}</tbody></table></div>
@@ -1406,6 +1418,7 @@ root.addEventListener('click', async e => {
     case 'rel-edit': return openModal(relModal(id));
     case 'rel-export': return exportRel();
     case 'rel-clear': S.rf = { show: [], reason: '', q: '' }; S.relView = null; return render();
+    case 'rel-all': S.rf = { ...S.rf, show: [] }; S.relView = null; return render();
     case 'rel-reset': if (relFit) relFit(); return;
     case 'clear-cfilters': S.cf = { region: '', country: '', name: '', email: '', status: '', ally: '' }; return render();
     case 'add-org': return openModal(addOrgModal());

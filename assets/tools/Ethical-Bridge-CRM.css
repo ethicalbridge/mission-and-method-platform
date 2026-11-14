@@ -349,3 +349,5 @@ tr.nl-wk-camp td { background: #fff5ec; }
 .crm-utable input{width:170px}
 .crm-utable input[type=email]{width:210px}
 .crm-utable td.crm-org{min-width:200px;max-width:260px}
+
+.crm-rel-legend button.crm-rel-total{background:#f3f7f6}.crm-rel-legend button.crm-rel-total.on{border:2px solid var(--c);background:#fff;box-shadow:0 2px 8px #123c481a}.crm-rel-legend button.crm-rel-total.off{opacity:1}
