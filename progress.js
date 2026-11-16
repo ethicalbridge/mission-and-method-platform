@@ -2,7 +2,7 @@
 // Draws the board from progress-core.js. All reads and writes go through the
 // `load` and `actions` functions that admin.js passes in.
 
-import * as P from './progress-core.js?v=1';
+import * as P from './progress-core.js?v=2';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const WHO = { M: 'Method into Impact', C: 'Client', MC: 'Shared' };
@@ -226,9 +226,12 @@ export function createProgress({ root, load, actions, getPath = () => 'all', get
 
   function cardHtml(x, waiting) {
     const c = x.c, top = waiting[0] || x.top;
-    const value = c.proposal_value_agreed ?? c.proposal_value_sent;
+    const value = String((c.proposal_value_agreed || c.proposal_value_sent) ?? '').trim();
     const pkg = c.proposal_type_agreed || c.proposal_type_sent;
-    const pkgTxt = pkg ? `${pkg === 'custom' ? 'Custom' : pkg}${value != null ? ` · ${Number(value) === 0 ? 'free (case study)' : 'USD ' + Number(value).toLocaleString('en-US')}` : ''}` : '';
+    const num = value !== '' && !isNaN(Number(value)) ? Number(value) : null;
+    const valTxt = num === 0 ? 'free (case study)' : num != null ? 'USD ' + num.toLocaleString('en-US') : trim(value.split(/[·(]/)[0].trim(), 40);
+    const pkgTxt = pkg ? `${pkg === 'custom' ? 'Custom' : pkg}${valTxt ? ` · ${valTxt}` : ''}` : '';
+    const pkgTitle = value;
     const status = top
       ? `Step ${top.step || x.currentStep} · ${esc(P.SEG[top.key].label === 'Agreed date' ? top.title : P.SEG[top.key].label)} · ${top.who === 'C' ? 'waiting on client' : top.who === 'MC' ? 'shared' : 'your turn'}${top.due ? ` · due ${esc(P.fmtDay(top.due))}` : ''}`
       : x.closed ? `Closed · ${esc(c.stage.replace('_', ' '))}` : 'Nothing waiting right now';
@@ -240,7 +243,7 @@ export function createProgress({ root, load, actions, getPath = () => 'all', get
         <div class="pg-card-pills">
           <span class="dash-pill dash-pill-path-${esc(c.path)}">${esc(c.path)}</span>
           <span class="dash-pill dash-pill-stage-${esc(c.stage)}">${esc(c.stage.replace('_', ' '))}</span>
-          ${pkgTxt ? `<span class="pg-pill pg-tone-info">${esc(pkgTxt)}</span>` : ''}
+          ${pkgTxt ? `<span class="pg-pill pg-tone-info" title="${esc(pkgTitle)}">${esc(pkgTxt)}</span>` : ''}
           ${top ? pill(top.verdict.tone, top.verdict.pill) : ''}
         </div>
       </header>

@@ -187,8 +187,10 @@ export function instancesFor(c, d, now) {
   sends.forEach((s, i) => {
     const next = sends[i + 1];
     const rep = replies.find(r => r.at >= sod(s.at) && (!next || r.at <= next.at));
-    add('proposal.decide', s.at, rep?.at, {
-      due: i === 0 && c.proposal_due_at ? c.proposal_due_at : addDays(s.at, 7), round: i + 1,
+    // A newer proposal replaces an unanswered older one.
+    add('proposal.decide', s.at, rep?.at || next?.at, {
+      due: i === sends.length - 1 && c.proposal_due_at ? c.proposal_due_at : addDays(s.at, 7), round: i + 1,
+      title: rep || !next ? undefined : `Proposal v${i + 1} (replaced by v${i + 2})`,
     });
     if (rep?.outcome === 'changes_requested') add('proposal.revise', rep.at, next?.at, { round: i + 1 });
     if (rep?.outcome === 'accepted') yesAt = rep.at;
@@ -283,8 +285,11 @@ export function instancesFor(c, d, now) {
     if (it) { it.step = r.step ? STEP_N[r.step] : null; it.row = r; }
     usedRows.add(r.id);
   });
-  if (c.next_steps_due_at && !closed) {
-    const it = add('adhoc', addDays(c.next_steps_due_at, -7), null, { who: 'M', due: c.next_steps_due_at, title: c.next_steps || 'Next step' });
+  // The contact's "next steps" date is used only for clients with no logged agreed dates yet.
+  const hasLoggedDates = tl.some(r => r.due_at);
+  if (c.next_steps_due_at && !closed && !hasLoggedDates) {
+    const first = String(c.next_steps || '').split('\n').map(l => l.replace(/^[-•*\s]+/, '').trim()).find(Boolean) || 'Next step';
+    const it = add('adhoc', minD(addDays(c.next_steps_due_at, -7), now), null, { who: 'M', due: c.next_steps_due_at, title: first.length > 90 ? first.slice(0, 89) + '…' : first });
     if (it) it.legacy = true;
   }
 
