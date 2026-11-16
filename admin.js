@@ -3,6 +3,7 @@
 // Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { createProgress } from './progress.js?v=1';
 
 const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
@@ -153,6 +154,7 @@ async function showApp(session) {
   userEmail.textContent = session.user.email;
   await loadContacts({ selectFirst: true });
   subscribeToChanges();
+  if (currentView === 'progress') progress.refresh();
 }
 
 signinForm.addEventListener('submit', async (ev) => {
@@ -811,7 +813,72 @@ function subscribeToChanges() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_contacts' }, () => loadContacts())
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_bookings' }, () => loadContacts())
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_events'   }, () => { if (selectedId) openDetail(selectedId); })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_timeline' }, () => refreshProgressSoon())
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_deliverables' }, () => refreshProgressSoon())
     .subscribe();
+}
+
+// ============== Progress view (Contacts | Progress switch) ==============
+const viewBtns      = document.querySelectorAll('[data-view]');
+const contactsStats = $('#contacts-stats');
+const contactsView  = $('#contacts-view');
+const progressView  = $('#progress-view');
+let currentView = location.hash === '#progress' ? 'progress' : 'contacts';
+
+async function loadProgressData() {
+  const all = async (q) => { const { data, error } = await q; if (error) throw error; return data || []; };
+  const [contacts, briefs, bookings, attachments, timeline, deliverables, events] = await Promise.all([
+    all(supabase.from('crm_contacts').select('id, created_at, path, name, email, organisation, stage, meeting_at, proposal_sent_at, proposal_due_at, proposal_reply_at, proposal_outcome, proposal_type_sent, proposal_value_sent, proposal_type_agreed, proposal_value_agreed, next_steps, next_steps_due_at, survey_sent_at, survey_responded_at, closure_reason').limit(1000)),
+    all(supabase.from('crm_briefs').select('contact_id, submitted_at').limit(2000)),
+    all(supabase.from('crm_bookings').select('contact_id, created_at, scheduled_at, status').limit(2000)),
+    all(supabase.from('crm_attachments').select('id, contact_id, filename, label, section, storage_path, uploaded_at').limit(5000)),
+    all(supabase.from('crm_timeline').select('*').order('at', { ascending: true }).limit(10000)),
+    all(supabase.from('crm_deliverables').select('*').limit(5000)),
+    all(supabase.from('crm_events').select('contact_id, created_at, type, message').order('created_at', { ascending: false }).limit(3000)),
+  ]);
+  return { contacts, briefs, bookings, attachments, timeline, deliverables, events };
+}
+
+const PROGRESS_TABLES = ['crm_timeline', 'crm_deliverables'];
+const progress = createProgress({
+  root: progressView,
+  load: loadProgressData,
+  getPath: () => currentPath,
+  getSearch: () => currentSearch,
+  openContact: (id) => {
+    setView('contacts');
+    if (!filteredContacts().some(c => c.id === id)) { currentSearch = ''; searchInput.value = ''; applyFilter('all'); }
+    openDetail(id);
+  },
+  actions: {
+    insert: (table, row) => PROGRESS_TABLES.includes(table) ? supabase.from(table).insert(row) : { error: { message: 'Not allowed' } },
+    update: (table, id, patch) => PROGRESS_TABLES.includes(table) ? supabase.from(table).update(patch).eq('id', id) : { error: { message: 'Not allowed' } },
+    download: (path) => downloadAttachment(path),
+  },
+});
+
+let progressTimer = null;
+function refreshProgressSoon() {
+  if (currentView !== 'progress') return;
+  clearTimeout(progressTimer);
+  progressTimer = setTimeout(() => progress.refresh(), 400);
+}
+
+function setView(view) {
+  currentView = view;
+  viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  const isProgress = view === 'progress';
+  contactsStats.hidden = isProgress;
+  contactsView.hidden = isProgress;
+  progressView.hidden = !isProgress;
+  exportBtn.hidden = isProgress;
+  history.replaceState(null, '', isProgress ? '#progress' : location.pathname + location.search);
+  if (isProgress) progress.refresh();
+}
+viewBtns.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+if (currentView === 'progress') {
+  viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === 'progress'));
+  contactsStats.hidden = true; contactsView.hidden = true; progressView.hidden = false; exportBtn.hidden = true;
 }
 
 // ============== Filter buttons + stat tile clicks ==============
@@ -848,7 +915,7 @@ function syncDetailWithFilter() {
 navBtns.forEach(btn => btn.addEventListener('click', () => applyFilter(btn.dataset.stageFilter)));
 statTiles.forEach(t => t.addEventListener('click', () => applyFilter(t.dataset.stage)));
 pathBtns.forEach(btn => btn.addEventListener('click', () => applyPathFilter(btn.dataset.pathFilter)));
-searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); syncDetailWithFilter(); });
+searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); syncDetailWithFilter(); if (currentView === 'progress') progress.render(); });
 
 function applyPathFilter(path) {
   currentPath = path;
@@ -856,6 +923,7 @@ function applyPathFilter(path) {
   renderStats();
   renderList();
   syncDetailWithFilter();
+  if (currentView === 'progress') progress.render();
 }
 
 // ============== CSV export ==============
