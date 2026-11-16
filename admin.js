@@ -3,7 +3,7 @@
 // Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { createProgress } from './progress.js?v=2';
+import { renderClientFile } from './client-file.js?v=1';
 
 const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
@@ -131,6 +131,7 @@ let selectedId  = null;
 let currentFilter = 'all';
 let currentPath   = 'all'; // 'all' | 'founder' | 'org'
 let currentSearch = '';
+let detailTab     = 'file'; // 'file' (client file) | 'crm' (CRM record)
 
 // ============== Auth ==============
 async function boot() {
@@ -154,7 +155,6 @@ async function showApp(session) {
   userEmail.textContent = session.user.email;
   await loadContacts({ selectFirst: true });
   subscribeToChanges();
-  if (currentView === 'progress') progress.refresh();
 }
 
 signinForm.addEventListener('submit', async (ev) => {
@@ -380,17 +380,19 @@ async function openDetail(id) {
 
   detailBody.innerHTML = '<p style="color:#5d7079">Loading…</p>';
 
-  const [briefRes, bookingsRes, eventsRes, attachmentsRes] = await Promise.all([
+  const [briefRes, bookingsRes, eventsRes, attachmentsRes, timelineRes, deliverablesRes] = await Promise.all([
     supabase.from('crm_briefs').select('*').eq('contact_id', id).order('submitted_at', { ascending: false }).limit(1).maybeSingle(),
     supabase.from('crm_bookings').select('*').eq('contact_id', id).order('scheduled_at', { ascending: false }),
     supabase.from('crm_events').select('*').eq('contact_id', id).order('created_at', { ascending: false }).limit(100),
     supabase.from('crm_attachments').select('id, contact_id, filename, mime, size_bytes, storage_path, label, section, uploaded_at, uploaded_by').eq('contact_id', id).order('uploaded_at', { ascending: false }),
+    supabase.from('crm_timeline').select('*').eq('contact_id', id).order('at', { ascending: true }),
+    supabase.from('crm_deliverables').select('*').eq('contact_id', id).order('version', { ascending: true }),
   ]);
 
   const contact = allContacts.find(c => c.id === id);
   if (!contact) { detailBody.innerHTML = '<p>Not found.</p>'; return; }
 
-  renderDetail(contact, briefRes.data, bookingsRes.data || [], eventsRes.data || [], attachmentsRes.data || []);
+  renderDetail(contact, briefRes.data, bookingsRes.data || [], eventsRes.data || [], attachmentsRes.data || [], timelineRes.data || [], deliverablesRes.data || []);
 }
 
 // Per-section label hints shown in the mini upload UI inside each pipeline section.
@@ -435,7 +437,7 @@ function sectionDocsHtml(section, attachments) {
   `;
 }
 
-function renderDetail(c, brief, bookings, events, attachments) {
+function renderDetail(c, brief, bookings, events, attachments, timeline = [], deliverables = []) {
   const answers = (brief && brief.answers) || {};
   const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
 
@@ -481,6 +483,13 @@ function renderDetail(c, brief, bookings, events, attachments) {
         </p>
       </div>
     </div>
+
+    <nav class="cf-tabs" role="tablist">
+      <button type="button" data-detail-tab="file" class="${detailTab === 'file' ? 'active' : ''}">Client file</button>
+      <button type="button" data-detail-tab="crm" class="${detailTab === 'crm' ? 'active' : ''}">CRM record</button>
+    </nav>
+    <div id="client-file" ${detailTab === 'file' ? '' : 'hidden'}></div>
+    <div id="crm-record" ${detailTab === 'crm' ? '' : 'hidden'}>
 
     <h3>Stage</h3>
     <div class="dash-detail-stage-row">${stageButtons}</div>
@@ -596,7 +605,25 @@ function renderDetail(c, brief, bookings, events, attachments) {
       <textarea id="notes-field" placeholder="Running notes about this contact.">${esc(c.notes || '')}</textarea>
       <button class="dash-save-btn" id="save-notes">Save notes</button>
     </div>
+    </div>
   `;
+
+  renderClientFile(detailBody.querySelector('#client-file'), {
+    contact: c, brief, bookings, events, attachments, timeline, deliverables,
+    actions: {
+      insert: (table, row) => ['crm_timeline', 'crm_deliverables'].includes(table) ? supabase.from(table).insert(row) : { error: { message: 'Not allowed' } },
+      update: (table, id, patch) => ['crm_timeline', 'crm_deliverables'].includes(table) ? supabase.from(table).update(patch).eq('id', id) : { error: { message: 'Not allowed' } },
+      download: (path) => downloadAttachment(path),
+      upload: (input, statusEl) => uploadFiles(c.id, input, 'general', null, statusEl),
+      reload: () => openDetail(c.id),
+    },
+  });
+  detailBody.querySelectorAll('[data-detail-tab]').forEach(btn => btn.addEventListener('click', () => {
+    detailTab = btn.dataset.detailTab;
+    detailBody.querySelectorAll('[data-detail-tab]').forEach(b => b.classList.toggle('active', b === btn));
+    detailBody.querySelector('#client-file').hidden = detailTab !== 'file';
+    detailBody.querySelector('#crm-record').hidden = detailTab !== 'crm';
+  }));
 
   detailBody.querySelectorAll('[data-set-stage]').forEach(btn => {
     btn.addEventListener('click', () => setStage(c.id, btn.dataset.setStage));
@@ -703,8 +730,8 @@ async function savePipelineSection(contactId, section) {
 }
 
 // ---------- Attachments ----------
-async function uploadFiles(contactId, input, section = null, labelOverride = null) {
-  const status = detailBody.querySelector('#upload-status');
+async function uploadFiles(contactId, input, section = null, labelOverride = null, statusEl = null) {
+  const status = statusEl || detailBody.querySelector('#upload-status');
   const label  = labelOverride || null;
   const files = Array.from(input.files || []);
   if (!files.length) return;
@@ -813,72 +840,19 @@ function subscribeToChanges() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_contacts' }, () => loadContacts())
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_bookings' }, () => loadContacts())
     .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_events'   }, () => { if (selectedId) openDetail(selectedId); })
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_timeline' }, () => refreshProgressSoon())
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_deliverables' }, () => refreshProgressSoon())
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_timeline' }, (p) => refreshClientFileSoon(p))
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_deliverables' }, (p) => refreshClientFileSoon(p))
     .subscribe();
 }
 
-// ============== Progress view (Contacts | Progress switch) ==============
-const viewBtns      = document.querySelectorAll('[data-view]');
-const contactsStats = $('#contacts-stats');
-const contactsView  = $('#contacts-view');
-const progressView  = $('#progress-view');
-let currentView = location.hash === '#progress' ? 'progress' : 'contacts';
 
-async function loadProgressData() {
-  const all = async (q) => { const { data, error } = await q; if (error) throw error; return data || []; };
-  const [contacts, briefs, bookings, attachments, timeline, deliverables, events] = await Promise.all([
-    all(supabase.from('crm_contacts').select('id, created_at, path, name, email, organisation, stage, meeting_at, proposal_sent_at, proposal_due_at, proposal_reply_at, proposal_outcome, proposal_type_sent, proposal_value_sent, proposal_type_agreed, proposal_value_agreed, next_steps, next_steps_due_at, survey_sent_at, survey_responded_at, closure_reason').limit(1000)),
-    all(supabase.from('crm_briefs').select('contact_id, submitted_at').limit(2000)),
-    all(supabase.from('crm_bookings').select('contact_id, created_at, scheduled_at, status').limit(2000)),
-    all(supabase.from('crm_attachments').select('id, contact_id, filename, label, section, storage_path, uploaded_at').limit(5000)),
-    all(supabase.from('crm_timeline').select('*').order('at', { ascending: true }).limit(10000)),
-    all(supabase.from('crm_deliverables').select('*').limit(5000)),
-    all(supabase.from('crm_events').select('contact_id, created_at, type, message').order('created_at', { ascending: false }).limit(3000)),
-  ]);
-  return { contacts, briefs, bookings, attachments, timeline, deliverables, events };
-}
 
-const PROGRESS_TABLES = ['crm_timeline', 'crm_deliverables'];
-const progress = createProgress({
-  root: progressView,
-  load: loadProgressData,
-  getPath: () => currentPath,
-  getSearch: () => currentSearch,
-  openContact: (id) => {
-    setView('contacts');
-    if (!filteredContacts().some(c => c.id === id)) { currentSearch = ''; searchInput.value = ''; applyFilter('all'); }
-    openDetail(id);
-  },
-  actions: {
-    insert: (table, row) => PROGRESS_TABLES.includes(table) ? supabase.from(table).insert(row) : { error: { message: 'Not allowed' } },
-    update: (table, id, patch) => PROGRESS_TABLES.includes(table) ? supabase.from(table).update(patch).eq('id', id) : { error: { message: 'Not allowed' } },
-    download: (path) => downloadAttachment(path),
-  },
-});
-
-let progressTimer = null;
-function refreshProgressSoon() {
-  if (currentView !== 'progress') return;
-  clearTimeout(progressTimer);
-  progressTimer = setTimeout(() => progress.refresh(), 400);
-}
-
-function setView(view) {
-  currentView = view;
-  viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
-  const isProgress = view === 'progress';
-  contactsStats.hidden = isProgress;
-  contactsView.hidden = isProgress;
-  progressView.hidden = !isProgress;
-  exportBtn.hidden = isProgress;
-  history.replaceState(null, '', isProgress ? '#progress' : location.pathname + location.search);
-  if (isProgress) progress.refresh();
-}
-viewBtns.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
-if (currentView === 'progress') {
-  viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === 'progress'));
-  contactsStats.hidden = true; contactsView.hidden = true; progressView.hidden = false; exportBtn.hidden = true;
+let clientFileTimer = null;
+function refreshClientFileSoon(payload) {
+  const id = payload?.new?.contact_id || payload?.old?.contact_id;
+  if (!selectedId || (id && id !== selectedId)) return;
+  clearTimeout(clientFileTimer);
+  clientFileTimer = setTimeout(() => openDetail(selectedId), 500);
 }
 
 // ============== Filter buttons + stat tile clicks ==============
@@ -915,7 +889,7 @@ function syncDetailWithFilter() {
 navBtns.forEach(btn => btn.addEventListener('click', () => applyFilter(btn.dataset.stageFilter)));
 statTiles.forEach(t => t.addEventListener('click', () => applyFilter(t.dataset.stage)));
 pathBtns.forEach(btn => btn.addEventListener('click', () => applyPathFilter(btn.dataset.pathFilter)));
-searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); syncDetailWithFilter(); if (currentView === 'progress') progress.render(); });
+searchInput.addEventListener('input', (ev) => { currentSearch = ev.target.value; renderList(); syncDetailWithFilter(); });
 
 function applyPathFilter(path) {
   currentPath = path;
@@ -923,7 +897,6 @@ function applyPathFilter(path) {
   renderStats();
   renderList();
   syncDetailWithFilter();
-  if (currentView === 'progress') progress.render();
 }
 
 // ============== CSV export ==============
