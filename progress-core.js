@@ -131,7 +131,7 @@ export function instancesFor(c, d, now) {
     if (!from) return;
     const S = SEG[key];
     let f = toD(from), t = toD(to);
-    if (t && t < f) t = f;
+    if (t && t < f) f = t; // done before it was due to start (e.g. drafted before the yes)
     const it = {
       key, step: S.step, unit: S.unit || 'd', who: x.who || S.who,
       from: f, to: t, due: toD(x.due), scheduled: toD(x.scheduled), nudgeAt: toD(x.nudgeAt),
