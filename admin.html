@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin.css?v=wide-fields-1">
+<link rel="stylesheet" href="progress.css?v=2">
 </head>
 <body>
 
@@ -120,6 +121,10 @@
         <small>Admin dashboard</small>
       </div>
     </a>
+    <div class="dash-view-switch" role="tablist" aria-label="View">
+      <button type="button" data-view="contacts" class="active" role="tab">Contacts</button>
+      <button type="button" data-view="progress" role="tab">Progress</button>
+    </div>
     <nav class="dash-nav">
       <button type="button" data-path-filter="all" class="active">All</button>
       <button type="button" data-path-filter="founder">People</button>
@@ -134,13 +139,13 @@
     </div>
   </header>
 
-  <section class="dash-stats" aria-label="Pipeline stats">
+  <section id="contacts-stats" class="dash-stats" aria-label="Pipeline stats">
     <div class="dash-stat dash-stat-open"      data-stage="open"><b id="stat-open">0</b><span>Open</span><small>new · booked · met · proposal</small></div>
     <div class="dash-stat dash-stat-completed" data-stage="completed"><b id="stat-completed">0</b><span>Completed</span><small>won</small></div>
     <div class="dash-stat dash-stat-closed"    data-stage="closed"><b id="stat-closed">0</b><span>Closed</span><small>declined · ghosted · lost · …</small></div>
   </section>
 
-  <main class="dash-main">
+  <main id="contacts-view" class="dash-main">
     <aside class="dash-list" aria-label="Contacts">
       <h2 class="dash-list-head">
         <span>Contacts <span id="list-count" class="dash-list-count">0</span></span>
@@ -166,8 +171,10 @@
     </section>
   </main>
 
+  <section id="progress-view" class="pg-view" aria-label="Progress and bottlenecks" hidden></section>
+
 </div>
 
-<script type="module" src="admin.js?v=dash-27"></script>
+<script type="module" src="admin.js?v=dash-29"></script>
 </body>
 </html>
