@@ -3,7 +3,7 @@
 // Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { renderClientFile } from './client-file.js?v=1';
+import { renderClientFile } from './client-file.js?v=3';
 
 const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
@@ -406,7 +406,10 @@ const SECTION_DOC_HINTS = {
 };
 
 function sectionDocsHtml(section, attachments) {
-  const files = attachments.filter(a => (a.section || 'general') === section);
+  const CRM_SECTIONS = ['brief', 'meeting', 'proposal', 'survey', 'closure'];
+  const files = attachments.filter(a => section === 'general'
+    ? !CRM_SECTIONS.includes(a.section || 'general')
+    : a.section === section);
   const list = files.length
     ? files.map(a => `
       <div class="dash-section-doc">
@@ -463,9 +466,7 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
     </div>`).join('') : '<p style="color:#5d7079;font-size:13px;margin:0">No booking yet.</p>';
 
   const subMetaBits = [];
-  if (c.organisation)     subMetaBits.push(esc(c.organisation));
   if (c.role)             subMetaBits.push(esc(c.role));
-  if (c.country)          subMetaBits.push(esc(c.country));
   if (c.lang && c.lang !== 'en') subMetaBits.push(c.lang.toUpperCase());
 
   // Attachments are rendered inline per-section; this just builds the general bucket preview for the bottom block.
@@ -474,7 +475,8 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
   detailBody.innerHTML = `
     <div class="dash-detail-head">
       <div>
-        <h2>${esc(c.name)}</h2>
+        <h2>${esc(c.name)}${c.organisation ? ` <span class="dash-detail-org">· ${esc(c.organisation.trim())}</span>` : ''}</h2>
+        ${c.country ? `<p class="dash-detail-country">${esc(c.country)}</p>` : ''}
         <p class="dash-detail-sub">
           <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>
           · <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>
@@ -611,10 +613,18 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
   renderClientFile(detailBody.querySelector('#client-file'), {
     contact: c, brief, bookings, events, attachments, timeline, deliverables,
     actions: {
-      insert: (table, row) => ['crm_timeline', 'crm_deliverables'].includes(table) ? supabase.from(table).insert(row) : { error: { message: 'Not allowed' } },
-      update: (table, id, patch) => ['crm_timeline', 'crm_deliverables'].includes(table) ? supabase.from(table).update(patch).eq('id', id) : { error: { message: 'Not allowed' } },
+      insert: (table, row) => CLIENT_FILE_TABLES.includes(table) ? supabase.from(table).insert(row) : { error: { message: 'Not allowed' } },
+      update: (table, id, patch) => {
+        if (table === 'crm_attachments') return supabase.from(table).update({ label: patch.label ?? null, section: patch.section ?? null }).eq('id', id);
+        return CLIENT_FILE_TABLES.includes(table) ? supabase.from(table).update(patch).eq('id', id) : { error: { message: 'Not allowed' } };
+      },
+      remove: (table, id) => CLIENT_FILE_TABLES.includes(table) ? supabase.from(table).delete().eq('id', id) : { error: { message: 'Not allowed' } },
+      deleteFile: async (id, path) => {
+        await supabase.storage.from('crm-docs').remove([path]);
+        return supabase.from('crm_attachments').delete().eq('id', id);
+      },
+      uploadFiles: (files, section, label) => uploadFileList(c.id, files, section, label),
       download: (path) => downloadAttachment(path),
-      upload: (input, statusEl) => uploadFiles(c.id, input, 'general', null, statusEl),
       reload: () => openDetail(c.id),
     },
   });
@@ -730,6 +740,27 @@ async function savePipelineSection(contactId, section) {
 }
 
 // ---------- Attachments ----------
+const CLIENT_FILE_TABLES = ['crm_timeline', 'crm_deliverables'];
+
+// Upload File objects for a contact; returns { ids } of the new crm_attachments rows.
+async function uploadFileList(contactId, files, section = null, label = null) {
+  const ids = [];
+  const by = (await supabase.auth.getUser()).data?.user?.email || null;
+  for (const file of files) {
+    const path = `${contactId}/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, '_')}`;
+    const { error: upErr } = await supabase.storage.from('crm-docs').upload(path, file, { upsert: false });
+    if (upErr) return { ids, error: upErr.message };
+    const { data, error } = await supabase.from('crm_attachments').insert({
+      contact_id: contactId, filename: file.name, mime: file.type || null, size_bytes: file.size,
+      storage_path: path, label: files.length === 1 ? label : null, section, uploaded_by: by,
+    }).select('id').single();
+    if (error) return { ids, error: error.message };
+    ids.push(data.id);
+    await supabase.from('crm_events').insert({ contact_id: contactId, type: 'file_uploaded', message: `Uploaded ${file.name}${section ? ' [' + section + ']' : ''}` });
+  }
+  return { ids };
+}
+
 async function uploadFiles(contactId, input, section = null, labelOverride = null, statusEl = null) {
   const status = statusEl || detailBody.querySelector('#upload-status');
   const label  = labelOverride || null;
