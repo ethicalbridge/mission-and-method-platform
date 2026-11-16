@@ -121,7 +121,7 @@ async function loadNewsletter() {
   const [subs, camps] = await Promise.allSettled([api('newsletter'), api('campaigns')]);
   if (subs.status === 'fulfilled') S.subs = subs.value.subscribers; else { S.subs = S.subs || []; S.subsError = subs.reason?.message || 'Could not load the newsletter list.'; }
   if (camps.status === 'fulfilled') { S.camps = camps.value.campaigns; S.cevents = camps.value.events; } else { S.camps = S.camps || []; S.campsError = camps.reason?.message || 'Could not load the newsletters sent.'; }
-  if (['Newsletter', 'Dashboard'].includes(S.view)) render();
+  if (['Newsletter', 'Dashboard', 'Relationship map'].includes(S.view)) render();
 }
 
 function setSaving(delta) { S.saving += delta; const el = document.getElementById('save-state'); if (el) el.textContent = S.saving ? 'Saving…' : 'All changes saved'; }
@@ -1207,14 +1207,16 @@ const REL = [
   ['fundova', 'Fundova', '#7b4fc4'],
   ['call', 'Meeting or call requested', '#d6336c'],
   ['request', 'Asked to be listed', '#2f9e44'],
+  ['newsletter', 'Newsletter subscribers', '#8d5524'],
 ];
 // Handova, Jobs portal and Fundova are not relationship levels: they mark organisations by initiative, whatever their
 // tie with us. Handova = uses it (conversions). Jobs portal / Fundova = mentioned interest in it (why) or uses it (conversions).
 // Their pins keep their relationship colour and get a ring in the initiative's colour (one ring per initiative).
-const OVERLAYS = ['request', 'call', 'handova', 'fundova', 'jobs'];
+const OVERLAYS = ['request', 'call', 'handova', 'fundova', 'jobs', 'newsletter'];
 const OV_TIP = {
   handova: 'Organisations that use Handova (registered or posted a need), whatever their relationship with us.',
   jobs: 'Organisations that mentioned the Jobs & Opportunities portal (or want to post jobs, internships or volunteering), whatever their relationship with us.',
+  newsletter: 'Organisations with at least one person subscribed to our newsletter (matched in the Newsletter tab), whatever their relationship with us.',
   request: 'Organisations that came to us and asked to be added to Ethical Bridge (instead of us finding and listing them).',
   call: 'Organisations that asked for a meeting, call or chat with us, whatever their relationship with us.',
   fundova: 'Organisations that mentioned Fundova, the donor-mapping platform or finding funding through us, whatever their relationship with us.',
@@ -1228,11 +1230,21 @@ const relColor = k => REL.find(x => x[0] === k)[2];
 const relLabel = k => REL.find(x => x[0] === k)[1];
 const reasonLabel = k => REASONS.find(x => x[0] === k)?.[1] || k;
 const reasonChips = list => (list || []).map(k => `<span class="crm-why">${esc(reasonLabel(k))}</span>`).join('');
+// Organisations with someone subscribed to the newsletter (Brevo list, matched to organisations in the Newsletter tab).
+function newsletterOrgIds() {
+  return new Set(S.subs ? newsletterRows().filter(r => r.sub.subscribed && r.org).map(r => r.org.id) : []);
+}
 function relRows() {
-  return conversations().map(c => {
-    const r = S.outreach.get(c.id) || {};
-    const cat = c.o.removed ? 'removed' : c.ally === 'visited' ? 'visited' : c.ally === 'strong' ? 'strong' : c.ally === 'suggested' ? 'possible' : 'replied';
-    return { ...c, cat, reasons: r.ally_reasons || [], note: r.ally_note || '', handova: ovOf(r, 'handova'), ov: Object.fromEntries(OVERLAYS.map(k => [k, ovOf(r, k)])), cvNote: r.conversion_note || '' };
+  const nl = newsletterOrgIds(), convs = conversations(), seen = new Set(convs.map(c => c.id));
+  // Subscribers' organisations always appear, even with no email exchanged yet.
+  for (const id of nl) if (!seen.has(id)) { const o = S.orgById.get(id); if (o) convs.push({ o, id, all: [], ally: '', mark: S.outreach.get(id)?.ally || '', nl: true }); }
+  return convs.map(c => {
+    const r = S.outreach.get(c.id) || {}, mark = r.ally || '', sub = nl.has(c.id);
+    // Subscribing to the newsletter is wanting to stay in touch: unless marked otherwise by hand, at least a possible ally.
+    const cat = c.o.removed ? 'removed' : c.ally === 'visited' || mark === 'visited' ? 'visited' : c.ally === 'strong' || mark === 'strong' ? 'strong'
+      : c.ally === 'suggested' || mark === 'possible' || (sub && !mark) ? 'possible' : 'replied';
+    const ov = Object.fromEntries(OVERLAYS.map(k => [k, k === 'newsletter' ? sub : ovOf(r, k)]));
+    return { ...c, cat, reasons: r.ally_reasons || [], note: r.ally_note || (sub && !c.all.length ? 'Subscribed to our newsletter.' : ''), handova: ov.handova, ov, cvNote: r.conversion_note || '' };
   });
 }
 const hasPin = o => Number.isFinite(o.lat) && Number.isFinite(o.lng) && o.lat !== null && o.lng !== null;
@@ -1262,7 +1274,7 @@ function renderRelMap() {
   const filtered = f.show.length || f.reason || f.q;
   const rows = list.map(x => `<tr>
       <td>${esc(x.o.country)}</td>
-      <td class="crm-org"><button class="link" data-action="thread" data-id="${esc(x.id)}">${esc(x.o.name)}</button>${hasPin(x.o) ? '' : '<span class="tiny">No map location</span>'}</td>
+      <td class="crm-org"><button class="link" data-action="${x.all.length ? 'thread' : 'rel-edit'}" data-id="${esc(x.id)}">${esc(x.o.name)}</button>${hasPin(x.o) ? '' : '<span class="tiny">No map location</span>'}</td>
       <td><span class="crm-rel" style="--c:${relColor(x.cat)}">${esc(relLabel(x.cat))}</span>${ovTags(x)}${x.mark === 'no' ? '<span class="tiny">Marked “not an ally”</span>' : x.ally === 'suggested' && x.mark !== 'possible' ? '<span class="tiny">Suggested from their reply</span>' : ''}</td>
       <td class="crm-text">${x.reasons.length || x.note ? `<div class="crm-whys">${reasonChips(x.reasons)}</div>${x.note ? `<p>${esc(x.note)}</p>` : ''}` : '<span class="muted">—</span>'}</td>
       <td><button class="button secondary small" data-action="rel-edit" data-id="${esc(x.id)}">Edit</button></td></tr>`);
@@ -1276,7 +1288,7 @@ function renderRelMap() {
       <span class="tiny"><b>${list.length}</b> of ${all.length} organisations${noPin ? ` · ${noPin} without a map location (listed below)` : ''}</span></div></section>
     <section class="crm-relmap-wrap"><div id="crm-relmap" class="crm-relmap" role="region" aria-label="Map of organisations by relationship"></div>
       <button type="button" class="button secondary small crm-relmap-reset" data-action="rel-reset">Fit all pins</button></section>
-    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a box above to show only that group. Boxes of the same kind add up (for example Strong + Possible allies); a relationship box and an initiative box together narrow the view (for example Strong allies interested in the Jobs portal). The numbers update with your selection, and Total shows how many organisations are on the map; click it to show everyone again. Pins sit on each organisation's main office. Rings around a pin mark the initiatives: green for organisations that asked to be listed, pink for a meeting or call requested, orange for Handova, light blue for the Jobs portal and purple for Fundova.</p>
+    <p class="tiny crm-hint">Click a pin to see why the organisation is an ally and to open the conversation. Click a box above to show only that group. Boxes of the same kind add up (for example Strong + Possible allies); a relationship box and an initiative box together narrow the view (for example Strong allies interested in the Jobs portal). The numbers update with your selection, and Total shows how many organisations are on the map; click it to show everyone again. Pins sit on each organisation's main office. Rings around a pin mark the initiatives: green for organisations that asked to be listed, pink for a meeting or call requested, orange for Handova, light blue for the Jobs portal, purple for Fundova and brown for newsletter subscribers.</p>
     <section class="panel"><div class="rowhead"><div><span class="eyebrow">Ally type &amp; why</span><p class="tiny crm-legend">Strongest tie first: visited, strong, possible, replied, removed · then country A–Z</p></div></div>
     <div class="tablewrap crm-table crm-reltable"><table><thead><tr>${['Country', 'Organisation', 'Relationship', 'Ally type & why', ''].map(h => `<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.join('') || '<tr><td colspan="5">No organisations match these filters.</td></tr>'}</tbody></table></div>
@@ -1291,14 +1303,14 @@ function relModal(id) {
       <fieldset class="field full crm-reasons"><legend class="label">Why (tick all that apply)</legend>${REASONS.map(([k, l]) => `<label><input type="checkbox" name="r_${k}" ${x.reasons.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset>
       ${field('Note (what they said or asked for)', 'ally_note', x.note, 'area')}
       ${(() => { const r = S.outreach.get(id) || {}; const cv = r.conversions || []; return `<fieldset class="field full crm-reasons"><legend class="label" title="${esc(CONV_TIP)}">Conversion: initiatives they already use</legend>${CONVERSIONS.map(([k, l, tip]) => `<label title="${esc(tip)}"><input type="checkbox" name="cv_${k}" ${cv.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset>${field('Conversion note (for example, when they registered)', 'conversion_note', r.conversion_note || '', 'area')}`; })()}
-      <div class="actions field full"><button class="button" type="submit">Save</button><button class="button secondary" type="button" data-action="thread" data-id="${esc(id)}">Open conversation</button><button class="button secondary" type="button" data-action="close">Cancel</button></div>
+      <div class="actions field full"><button class="button" type="submit">Save</button>${x.all.length ? `<button class="button secondary" type="button" data-action="thread" data-id="${esc(id)}">Open conversation</button>` : ''}<button class="button secondary" type="button" data-action="close">Cancel</button></div>
     </form>`, 'Organisations interviewed in person count as visited unless marked “Not an ally”.');
 }
 function exportRel() {
   const list = relFiltered(relRows().filter(x => inContinent(x.o)));
   downloadCsv(`ethical-bridge-relationships-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
-    ['continent', 'region', 'country', 'organisation', 'relationship', 'asked_to_be_listed', 'meeting_requested', 'uses_handova', 'jobs_portal', 'fundova', 'why', 'note', 'email', 'last_email'],
-    list.map(x => [x.o.continent, x.o.region, x.o.country, x.o.name, relLabel(x.cat), x.ov.request ? 'yes' : '', x.ov.call ? 'yes' : '', x.ov.handova ? 'yes' : '', x.ov.jobs ? 'yes' : '', x.ov.fundova ? 'yes' : '', x.reasons.map(reasonLabel).join('; '), x.note, x.o.email || x.first?.from_addr || '', x.last?.sent_at.slice(0, 10) || '']));
+    ['continent', 'region', 'country', 'organisation', 'relationship', 'asked_to_be_listed', 'meeting_requested', 'uses_handova', 'jobs_portal', 'fundova', 'newsletter', 'why', 'note', 'email', 'last_email'],
+    list.map(x => [x.o.continent, x.o.region, x.o.country, x.o.name, relLabel(x.cat), x.ov.request ? 'yes' : '', x.ov.call ? 'yes' : '', x.ov.handova ? 'yes' : '', x.ov.jobs ? 'yes' : '', x.ov.fundova ? 'yes' : '', x.ov.newsletter ? 'yes' : '', x.reasons.map(reasonLabel).join('; '), x.note, x.o.email || x.first?.from_addr || '', x.last?.sent_at.slice(0, 10) || '']));
 }
 
 // Leaflet is loaded the first time the map opens (same library and tiles as ethicalbridge.org).
@@ -1340,7 +1352,7 @@ async function mountRelMap() {
     L.circleMarker([x.o.lat, x.o.lng], removed ? { radius: 7, color: c, weight: 2.5, fillColor: '#fff', fillOpacity: 1 } : { radius: big ? 8 : 6.5, color: '#fff', weight: 1.5, fillColor: c, fillOpacity: .95 })
       .bindPopup(`<div class="crm-relpop"><strong>${esc(x.o.name)}</strong><span class="tiny">${esc([x.o.city, x.o.country].filter(Boolean).join(', '))}</span>
         <span class="crm-rel" style="--c:${c}">${esc(relLabel(x.cat))}</span>${ovTags(x)}${x.cvNote ? `<p class="tiny">${esc(x.cvNote)}</p>` : ''}${x.reasons.length ? `<div class="crm-whys">${reasonChips(x.reasons)}</div>` : ''}${x.note ? `<p>${esc(x.note)}</p>` : ''}
-        <div class="crm-relpop-actions"><button type="button" class="link" data-pop="thread" data-id="${esc(x.id)}">Open conversation (${x.all.length})</button><button type="button" class="link" data-pop="rel-edit" data-id="${esc(x.id)}">Edit ally type &amp; why</button></div></div>`, { minWidth: 240, maxWidth: 300 })
+        <div class="crm-relpop-actions">${x.all.length ? `<button type="button" class="link" data-pop="thread" data-id="${esc(x.id)}">Open conversation (${x.all.length})</button>` : '<span class="tiny muted">No emails yet</span>'}<button type="button" class="link" data-pop="rel-edit" data-id="${esc(x.id)}">Edit ally type &amp; why</button></div></div>`, { minWidth: 240, maxWidth: 300 })
       .addTo(layer);
   });
   relFit = () => { const b = layer.getBounds(); if (b.isValid()) relMap.fitBounds(b, { padding: [28, 28], maxZoom: 6 }); else relMap.setView([15, 20], 2); };
