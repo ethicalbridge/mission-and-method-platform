@@ -3,7 +3,7 @@
 // Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { renderClientFile } from './client-file.js?v=3';
+import { renderClientFile } from './client-file.js?v=4';
 
 const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
@@ -624,6 +624,12 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
         return supabase.from('crm_attachments').delete().eq('id', id);
       },
       uploadFiles: (files, section, label) => uploadFileList(c.id, files, section, label),
+      updateContact: async (patch) => {
+        const allowed = { meeting_notes: patch.meeting_notes ?? null };
+        const res = await supabase.from('crm_contacts').update(allowed).eq('id', c.id);
+        if (!res.error) Object.assign(c, allowed);
+        return res;
+      },
       download: (path) => downloadAttachment(path),
       reload: () => openDetail(c.id),
     },

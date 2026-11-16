@@ -51,6 +51,18 @@ const DONE_LABEL = {
   'adhoc': (it) => it.title,
 };
 
+// Which page is open per contact: null = the client file, or { t: 'step'|'doc'|'row', key }.
+const VIEWS = new Map();
+const STEP_GROUPS = {
+  discovery: { label: 'Discovery call', steps: ['brief', 'prep', 'call', 'recap'] },
+  proposal:  { label: 'Proposal', steps: ['proposal'] },
+  agreement: { label: 'Agreement', steps: ['agreement'] },
+  build:     { label: 'Building the documents', steps: ['build', 'review'] },
+  handover:  { label: 'Handover', steps: ['handover'] },
+  close:     { label: 'Closing', steps: ['close', 'followup'] },
+};
+const groupOfStep = (step) => Object.entries(STEP_GROUPS).find(([, g]) => g.steps.includes(step))?.[0] || null;
+
 export function renderClientFile(root, ctx) {
   // ctx: { contact, brief, bookings, attachments, timeline, deliverables, events, actions, now }
   const now = ctx.now || new Date();
@@ -120,6 +132,12 @@ export function renderClientFile(root, ctx) {
     `<div class="cf-now-item"><span class="cf-now-label">Now</span><b>Nothing open.</b> <span class="cf-muted">Add a date or task to plan the next step.</span></div>`;
 
   // ---------- render ----------
+  const view = VIEWS.get(c.id);
+  if (view) {
+    root.innerHTML = `<div class="cf">${pageHtml(view)}<dialog class="cf-dialog"></dialog></div>`;
+    bind();
+    return;
+  }
   root.innerHTML = `
     <div class="cf">
       <section class="cf-now">${nowHtml}</section>
@@ -170,6 +188,105 @@ export function renderClientFile(root, ctx) {
     </div>`;
   bind();
 
+  // ---------- step pages ----------
+  function msgLi(r) {
+    const ch = r.channel === 'meeting' || r.kind === 'meeting' ? 'meeting' : r.channel;
+    const who = r.direction === 'in' ? first : r.direction === 'out' ? 'You' : 'Note';
+    const long = r.body && (r.body.length > 280 || r.body.split('\n').length > 4);
+    return `<li class="cf-msg cf-msg-${r.direction}" data-ch="${esc(ch)}">
+      <span class="cf-msg-edit">${editBtn('crm_timeline', r.id)}</span>
+      <div class="cf-msg-meta">${CH_ICON[ch] || '•'} ${esc(CH[ch] || 'Other')} · ${esc(who)}${r.direction === 'in' ? ' → you' : r.direction === 'out' ? ` → ${esc(first)}` : ''} · ${esc(P.fmtDay(r.at))}</div>
+      <div class="cf-msg-title">${esc(r.title)}</div>
+      ${r.body ? `<div class="cf-msg-body ${long ? 'is-long' : ''}">${esc(r.body)}</div>${long ? '<button type="button" class="cf-more" data-more>Show full email</button>' : ''}` : ''}
+      ${r.attachment_id ? fileChip(r.attachment_id) : ''}</li>`;
+  }
+  function filesBlock(ids) {
+    const list = [...new Set(ids)].map(att).filter(Boolean);
+    return list.length ? `<ul class="cf-filelist">${list.map(a => `<li>${fileChip(a.id)}<small>${esc(P.fmtShort(a.uploaded_at))}</small>${editBtn('crm_attachments', a.id)}</li>`).join('')}</ul>` : '<p class="cf-muted">No files yet.</p>';
+  }
+  function dayKey(d) { return P.sod(d).getTime(); }
+  function section(title, body, add = '') {
+    return `<section class="cf-card"><div class="cf-card-head"><h4>${esc(title)}</h4>${add}</div>${body}</section>`;
+  }
+
+  function pageHtml(v) {
+    const back = `<button type="button" class="cf-back" data-back>‹ Back to the client file</button>`;
+    if (v.t === 'doc') return back + docPageHtml(v.key);
+    if (v.t === 'row') {
+      const r = tl.find(o => o.id === v.key);
+      if (!r) return back + '<p class="cf-muted">This line no longer exists.</p>';
+      const head = `<section class="cf-page-head"><span class="cf-page-kicker">${esc(r.kind === 'deadline' ? 'Date or task' : r.kind === 'meeting' ? 'Meeting' : r.kind === 'milestone' ? 'Event' : 'Entry')}</span>
+        <h3>${esc(r.title)}</h3><p>${esc(rangeTxt(r.due_at || r.at, r.meta?.ends_at))}${r.owed_by ? ` · ${esc(whoName(r.owed_by))}` : ''}${r.done_at ? ` · done ${esc(P.fmtDay(r.done_at))}` : ''} ${editBtn('crm_timeline', r.id)}</p>
+        ${r.body ? `<div class="cf-notes">${esc(r.body)}</div>` : ''}${r.attachment_id ? fileChip(r.attachment_id) : ''}</section>`;
+      const g = groupOfStep(r.step);
+      return back + head + (g ? stepSectionsHtml(g, { around: [r.at] }) : '');
+    }
+    return back + stepSectionsHtml(v.key, {});
+  }
+
+  function stepSectionsHtml(key, { around = [] }) {
+    const g = STEP_GROUPS[key];
+    const inStep = (r) => g.steps.includes(r.step);
+    // Days that belong to this step: when its emails and meetings happened. Anything sent the same day
+    // (e.g. documents attached to the email after the call) belongs here too.
+    const days = new Set([...tl.filter(r => inStep(r) && ['message', 'meeting', 'doc_sent', 'agreement_sent', 'agreement_signed'].includes(r.kind)).map(r => dayKey(r.at)), ...around.map(dayKey)]);
+    if (key === 'discovery' && c.meeting_at) days.add(dayKey(c.meeting_at));
+    const sameDay = (r) => days.has(dayKey(r.at));
+    const items = x.items.filter(i => g.steps.includes(P.STEPS[(i.step || 0) - 1]?.key));
+    const dates = [...items.map(i => i.from), ...items.map(i => i.to), ...tl.filter(inStep).map(r => P.toD(r.at))].filter(Boolean).sort((a, b) => a - b);
+    const notes = tl.filter(r => r.kind === 'note' && inStep(r));
+    const decisions = tl.filter(r => r.kind === 'decision' && (inStep(r) || sameDay(r))).sort((a, b) => P.toD(b.at) - P.toD(a.at));
+    const msgs = tl.filter(r => CORRESPONDENCE_KINDS.includes(r.kind) && P.toD(r.at) <= now && (inStep(r) || (sameDay(r) && ['doc_sent', 'doc_received'].includes(r.kind)))).sort((a, b) => P.toD(b.at) - P.toD(a.at));
+    const fileIds = [
+      ...tl.filter(r => r.attachment_id && (inStep(r) || (sameDay(r) && r.kind !== 'decision'))).map(r => r.attachment_id),
+      ...x.d.deliverables.filter(d => d.attachment_id && d.sent_at && days.has(dayKey(d.sent_at))).map(d => d.attachment_id),
+      ...x.d.attachments.filter(a => g.steps.includes(stepOfFile(a))).map(a => a.id),
+    ];
+    const stepDefault = g.steps.includes('call') ? 'call' : g.steps[0];
+    const adds = (kinds) => kinds.map(([k, l]) => `<button type="button" class="cf-btn" data-add="${k}" data-step="${stepDefault}">${l}</button>`).join(' ');
+    const flow = items.filter(i => i.key !== 'adhoc').sort((a, b) => a.from - b.from).map(i => `<li class="${!i.to && i.due && P.sod(i.due) < today ? 'is-late' : ''}">
+      <span class="cf-date">${esc(P.fmtDay(i.to || i.due || i.from))}</span><span class="cf-what">${i.to ? '✓ ' + esc(DONE_LABEL[i.key](i, x)) : esc(i.title)}</span>
+      <span class="cf-who cf-who-${i.who}">${esc(whoName(i.who))}</span><span class="cf-acts">${i.ref ? (i.to ? `<button type="button" class="cf-undo" title="Not done" data-undo="${esc(i.ref.table)}|${esc(i.ref.id)}|${esc(i.ref.field)}">↺</button>` : `<button type="button" class="cf-tick" data-done="${esc(i.ref.table)}|${esc(i.ref.id)}|${esc(i.ref.field)}">✓</button>`) : ''}</span></li>`).join('');
+    const tasks = tl.filter(r => inStep(r) && (r.kind === 'deadline' || ['meeting', 'milestone'].includes(r.kind))).map(r => `<li><span class="cf-date">${esc(rangeTxt(r.due_at || r.at, r.meta?.ends_at))}</span><span class="cf-what">${r.done_at ? '✓ ' : ''}${esc(r.title)}</span><span class="cf-who cf-who-${r.owed_by || 'MC'}">${esc(whoName(r.owed_by || 'MC'))}</span><span class="cf-acts">${editBtn('crm_timeline', r.id)}</span></li>`).join('');
+
+    const briefBlock = key === 'discovery' && ctx.brief?.answers && Object.keys(ctx.brief.answers).length
+      ? `<details class="cf-brief"><summary>What ${esc(first)} wrote in the brief</summary><dl>${Object.entries(ctx.brief.answers).filter(([, v]) => v != null && String(v).trim()).map(([k, v]) => `<dt>${esc(k.replace(/_/g, ' '))}</dt><dd>${esc(Array.isArray(v) ? v.join(', ') : typeof v === 'object' ? JSON.stringify(v) : v)}</dd>`).join('')}</dl></details>` : '';
+    const callNotes = key === 'discovery'
+      ? `<div class="cf-notes-head"><b>Notes from the call</b> <button type="button" class="cf-btn" data-callnotes>✎ Edit notes</button></div>${c.meeting_notes ? `<div class="cf-notes">${esc(c.meeting_notes)}</div>` : '<p class="cf-muted">No notes yet.</p>'}` : '';
+    const noteRows = notes.map(r => `<div class="cf-note-row"><div class="cf-notes-head"><b>${esc(r.title)}</b> <small class="cf-muted">${esc(P.fmtDay(r.at))}</small> ${editBtn('crm_timeline', r.id)}</div>${r.body ? `<div class="cf-notes">${esc(r.body)}</div>` : ''}${r.attachment_id ? fileChip(r.attachment_id) : ''}</div>`).join('');
+
+    return `
+      <section class="cf-page-head"><span class="cf-page-kicker">Step</span><h3>${esc(g.label)}</h3>
+        <p>${dates.length ? `${esc(P.fmtDay(dates[0]))}${dates.length > 1 && dayKey(dates[0]) !== dayKey(dates[dates.length - 1]) ? ` – ${esc(P.fmtDay(dates[dates.length - 1]))}` : ''}` : 'Not started yet'}</p>
+        ${flow ? `<ul class="cf-list cf-list-flow">${flow}</ul>` : ''}</section>
+      ${section('Notes', (callNotes + noteRows + briefBlock) || '<p class="cf-muted">No notes yet.</p>', adds([['note', '+ Note']]))}
+      ${section('Documents shared', filesBlock(fileIds), adds([['upload', '+ Add file']]))}
+      ${section('What we agreed', decisions.length ? `<ul class="cf-decisions">${decisions.map(r => `<li><span class="cf-date">${esc(P.fmtDay(r.at))}</span><div><b>${esc(r.title)}</b>${r.body ? `<span>${esc(r.body)}</span>` : ''}${fileChip(r.attachment_id)}</div><span class="cf-acts">${editBtn('crm_timeline', r.id)}</span></li>`).join('')}</ul>` : '<p class="cf-muted">No decisions logged for this step yet.</p>', adds([['decision', '+ Decision']]))}
+      ${section('Emails and messages', msgs.length ? `<ul class="cf-thread">${msgs.map(msgLi).join('')}</ul>` : '<p class="cf-muted">No messages logged for this step yet.</p>', adds([['message', '+ Message']]))}
+      ${section('Dates and tasks', tasks ? `<ul class="cf-list">${tasks}</ul>` : '<p class="cf-muted">No dates for this step.</p>', adds([['task', '+ Date or task']]))}`;
+  }
+
+  function docPageHtml(name) {
+    const vs = x.byName.get(name) || [];
+    if (!vs.length) return '<p class="cf-muted">This document no longer exists.</p>';
+    const ids = new Set(vs.map(v => v.id));
+    const cell = (d) => d ? esc(P.fmtDay(d)) : '<span class="cf-muted">—</span>';
+    const table = `<table class="cf-docs cf-docs-full"><thead><tr><th>Version</th><th>Due</th><th>Sent</th><th>Feedback due</th><th>Feedback in</th><th>Final</th><th>Files</th><th></th></tr></thead><tbody>
+      ${vs.map(v => `<tr><td><b>v${v.version}</b></td><td>${cell(v.due_at)}</td><td>${cell(v.sent_at)}</td><td>${cell(v.feedback_due_at)}</td><td>${cell(v.feedback_at)}</td><td>${cell(v.final_at)}</td>
+        <td>${fileChip(v.attachment_id)}${v.feedback_attachment_id ? `<span class="cf-muted">feedback:</span> ${fileChip(v.feedback_attachment_id)}` : ''}</td><td class="cf-acts">${editBtn('crm_deliverables', v.id)}</td></tr>`).join('')}</tbody></table>`;
+    const notes = vs.filter(v => v.notes).map(v => `<p><b>v${v.version}:</b> ${esc(v.notes)}</p>`).join('');
+    const short = name.split(/\s+\d/)[0].toLowerCase();
+    const msgs = tl.filter(r => CORRESPONDENCE_KINDS.includes(r.kind) && P.toD(r.at) <= now && (ids.has(r.deliverable_id) || `${r.title} ${r.body || ''}`.toLowerCase().includes(short))).sort((a, b) => P.toD(b.at) - P.toD(a.at));
+    const decisions = tl.filter(r => r.kind === 'decision' && `${r.title} ${r.body || ''}`.toLowerCase().includes(short));
+    const items = x.items.filter(i => i.deliverable === name).sort((a, b) => a.from - b.from).map(i => `<li class="${!i.to && i.due && P.sod(i.due) < today ? 'is-late' : ''}"><span class="cf-date">${esc(P.fmtDay(i.to || i.due || i.from))}</span><span class="cf-what">${i.to ? '✓ ' + esc(DONE_LABEL[i.key](i, x)) : esc(i.title)}</span><span class="cf-who cf-who-${i.who}">${esc(whoName(i.who))}</span><span class="cf-acts">${i.ref ? (i.to ? `<button type="button" class="cf-undo" data-undo="${esc(i.ref.table)}|${esc(i.ref.id)}|${esc(i.ref.field)}">↺</button>` : `<button type="button" class="cf-tick" data-done="${esc(i.ref.table)}|${esc(i.ref.id)}|${esc(i.ref.field)}">✓</button>`) : ''}</span></li>`).join('');
+    return `<section class="cf-page-head"><span class="cf-page-kicker">Document</span><h3>${esc(name)}</h3>
+        ${items ? `<ul class="cf-list cf-list-flow">${items}</ul>` : ''}</section>
+      ${section('Versions', table + (notes ? `<div class="cf-doc-notes">${notes}</div>` : ''), `<button type="button" class="cf-btn" data-add="version" data-name="${esc(name)}">+ Version</button>`)}
+      ${section('Files', filesBlock(vs.flatMap(v => [v.attachment_id, v.feedback_attachment_id]).filter(Boolean)), '<button type="button" class="cf-btn" data-add="upload">+ Add file</button>')}
+      ${section('What we agreed', decisions.length ? `<ul class="cf-decisions">${decisions.map(r => `<li><span class="cf-date">${esc(P.fmtDay(r.at))}</span><div><b>${esc(r.title)}</b>${r.body ? `<span>${esc(r.body)}</span>` : ''}</div><span class="cf-acts">${editBtn('crm_timeline', r.id)}</span></li>`).join('')}</ul>` : '<p class="cf-muted">No decisions mention this document yet.</p>', '<button type="button" class="cf-btn" data-add="decision">+ Decision</button>')}
+      ${section('Emails and messages', msgs.length ? `<ul class="cf-thread">${msgs.map(msgLi).join('')}</ul>` : '<p class="cf-muted">No messages about this document yet.</p>', '<button type="button" class="cf-btn" data-add="message">+ Message</button>')}`;
+  }
+
   // ---------- Gantt ----------
   function ganttHtml() {
     const rows = [];
@@ -186,14 +303,14 @@ export function renderClientFile(root, ctx) {
 
     // Getting to yes
     const call = it('call.held')[0], brief = it('brief.book')[0];
-    if (brief || call) rows.push({ label: 'Discovery', segs: [...(brief ? segOf(brief, 'Brief → call booked') : []), ...(call ? segOf(call, call.to ? `Discovery call ${P.fmtDay(call.to)}` : 'Waiting for the call') : [])],
+    if (brief || call) rows.push({ open: 'step|discovery', label: 'Discovery', segs: [...(brief ? segOf(brief, 'Brief → call booked') : []), ...(call ? segOf(call, call.to ? `Discovery call ${P.fmtDay(call.to)}` : 'Waiting for the call') : [])],
       marks: x.c.meeting_at ? [mark(x.c.meeting_at, 'MC', `Discovery call ${P.fmtDay(x.c.meeting_at)}`, 'done')] : [] });
     const props = [...it('proposal.write'), ...it('proposal.decide'), ...it('proposal.revise')];
-    if (props.length) rows.push({ label: 'Proposal', segs: props.flatMap(i => segOf(i, `${i.title}${i.to ? ` · ${P.fmtShort(i.from)}–${P.fmtShort(i.to)}` : ''}`)), marks: [] });
+    if (props.length) rows.push({ open: 'step|proposal', label: 'Proposal', segs: props.flatMap(i => segOf(i, `${i.title}${i.to ? ` · ${P.fmtShort(i.from)}–${P.fmtShort(i.to)}` : ''}`)), marks: [] });
     const agr = [...it('agreement.send'), ...it('agreement.sign')];
-    if (agr.length) rows.push({ label: 'Agreement', segs: agr.flatMap(i => segOf(i)), marks: [] });
+    if (agr.length) rows.push({ open: 'step|agreement', label: 'Agreement', segs: agr.flatMap(i => segOf(i)), marks: [] });
     const intake = it('agreement.intake');
-    if (intake.length) rows.push({ label: 'Intake survey', segs: intake.flatMap(i => segOf(i)), marks: [] });
+    if (intake.length) rows.push({ open: 'step|agreement', label: 'Intake survey', segs: intake.flatMap(i => segOf(i)), marks: [] });
 
     // Documents, one row per deliverable
     for (const [name, vs] of x.byName) {
@@ -201,20 +318,20 @@ export function renderClientFile(root, ctx) {
       const segs = its.flatMap(i => segOf(i));
       const marks = vs.filter(v => v.sent_at).map(v => mark(v.sent_at, 'M', `v${v.version} sent ${P.fmtDay(v.sent_at)}`, 'done'))
         .concat(vs.filter(v => v.final_at).map(v => mark(v.final_at, 'M', `Final ${P.fmtDay(v.final_at)}`, 'done')));
-      rows.push({ label: name, segs, marks, doc: true });
+      rows.push({ open: `doc|${name}`, label: name, segs, marks, doc: true });
     }
 
     // Key dates: meetings, milestones and agreed dates
     tl.filter(r => ['meeting', 'milestone'].includes(r.kind) && r.step !== 'prep').forEach(r => {
       const end = r.meta?.ends_at;
       const past = P.toD(r.at) <= now;
-      rows.push({ label: r.title, key: true,
+      rows.push({ open: `row|${r.id}`, label: r.title, key: true,
         segs: end ? [seg(r.at, P.addDays(end, 1), r.owed_by || 'MC', past ? 'done' : 'plan', `${r.title} · ${P.fmtShort(r.at)}–${P.fmtShort(end)}`)] : [],
         marks: end ? [] : [mark(r.at, r.owed_by || 'MC', `${r.title} · ${P.fmtDay(r.at)}`, past ? 'done' : 'plan')] });
     });
     x.items.filter(i => i.key === 'adhoc' && !i.legacy).forEach(i => {
       const isDone = !!i.to;
-      rows.push({ label: i.title, key: true, segs: [], marks: [mark(i.to || i.due, i.who, `${i.title} · ${isDone ? 'done' : 'due'} ${P.fmtDay(i.to || i.due)}`, isDone ? 'done' : P.sod(i.due) < today ? 'late' : 'plan')] });
+      rows.push({ open: i.row ? `row|${i.row.id}` : null, label: i.title, key: true, segs: [], marks: [mark(i.to || i.due, i.who, `${i.title} · ${isDone ? 'done' : 'due'} ${P.fmtDay(i.to || i.due)}`, isDone ? 'done' : P.sod(i.due) < today ? 'late' : 'plan')] });
     });
     if (!rows.length) return '<p class="cf-muted">The timeline fills in as the brief, call, proposal and documents come in.</p>';
 
@@ -249,7 +366,7 @@ export function renderClientFile(root, ctx) {
         : `<span class="cf-g-lbl" style="left:calc(${l.pos}% + 9px)">${esc(l.text)}</span>`).join('');
       const bars = r.segs.filter(s => !s.point).map(s => `<i class="cf-g-bar cf-${s.who} is-${s.state}" style="left:${pct(s.from)}%;width:${Math.max(0.8, pct(s.to) - pct(s.from))}%" title="${esc(s.label)}"></i>`).join('');
       const marks = [...r.marks, ...r.segs.filter(s => s.point)].map(m => `<i class="cf-g-dot cf-${m.who} is-${m.state}" style="left:${pct(m.from)}%" title="${esc(m.label)}"></i>`).join('');
-      return `${gh}<div class="cf-g-row"><div class="cf-g-label" title="${esc(r.label)}">${esc(r.label)}</div><div class="cf-g-track">${grid}${bars}${marks}${labels}${todayLine}</div></div>`;
+      return `${gh}<div class="cf-g-row"><div class="cf-g-label">${r.open ? `<button type="button" class="cf-g-open" data-open="${esc(r.open)}" title="Open everything about ${esc(r.label)}">${esc(r.label)} <span>›</span></button>` : esc(r.label)}</div><div class="cf-g-track">${grid}${bars}${marks}${labels}${todayLine}</div></div>`;
     }).join('');
     return `<div class="cf-gantt"><div class="cf-g-row cf-g-head"><div class="cf-g-label"></div><div class="cf-g-track">${head}${todayLine}</div></div>${body}</div>`;
   }
@@ -344,20 +461,28 @@ export function renderClientFile(root, ctx) {
       if (table === 'crm_attachments') return openDialog('file', x.d.attachments.find(a => a.id === id));
       const r = tl.find(o => o.id === id);
       if (!r) return;
-      openDialog(r.kind === 'decision' ? 'decision' : ['deadline', 'meeting', 'milestone'].includes(r.kind) && !(r.kind === 'meeting' && r.body) ? 'task' : 'message', r);
+      openDialog(r.kind === 'note' ? 'note' : r.kind === 'decision' ? 'decision' : ['deadline', 'meeting', 'milestone'].includes(r.kind) && !(r.kind === 'meeting' && r.body) ? 'task' : 'message', r);
     });
-    root.querySelectorAll('[data-add]').forEach(b => b.onclick = () => openDialog(b.dataset.add));
+    root.querySelectorAll('[data-add]').forEach(b => b.onclick = () => openDialog(b.dataset.add, null, { step: b.dataset.step || null, name: b.dataset.name || null }));
+    root.querySelectorAll('[data-open]').forEach(b => b.onclick = () => {
+      const [t, ...rest] = b.dataset.open.split('|');
+      VIEWS.set(c.id, { t, key: rest.join('|') });
+      renderClientFile(root, ctx);
+      root.scrollIntoView({ block: 'start' });
+    });
+    root.querySelectorAll('[data-back]').forEach(b => b.onclick = () => { VIEWS.delete(c.id); renderClientFile(root, ctx); root.scrollIntoView({ block: 'start' }); });
+    root.querySelector('[data-callnotes]')?.addEventListener('click', () => openDialog('callnotes'));
   }
 
   // ---------- dialogs ----------
   // openDialog(kind) adds a new line; openDialog(kind, row) edits that line.
-  function openDialog(kind, v = null) {
+  function openDialog(kind, v = null, dflt = {}) {
     const dlg = root.querySelector('.cf-dialog');
     const val = (k) => esc(v?.[k] ?? '');
     const sel = (cur, opts) => opts.map(([k, l]) => `<option value="${esc(k)}" ${String(cur ?? '') === String(k) ? 'selected' : ''}>${esc(l)}</option>`).join('');
     const dIn = (d) => d ? toDateInput(P.toD(d)) : '';
     const fileOpts = (cur) => sel(cur, [['', '—'], ...x.d.attachments.map(a => [a.id, a.label || a.filename])]);
-    const stepOpts = (cur) => sel(cur, [['', '—'], ...P.STEPS.map(s => [s.key, s.label])]);
+    const stepOpts = (cur) => sel(cur ?? dflt.step, [['', '—'], ...P.STEPS.map(s => [s.key, s.label])]);
     const fileStepOpts = (cur) => sel(cur, [...P.STEPS.map(s => [s.key, s.label]), ['other', 'Other']]);
     const linkOpts = (cur) => sel(cur, [['', 'Not linked to a document version'],
       ...x.d.deliverables.flatMap(d => [[`${d.id}|attachment_id`, `${d.name} v${d.version} · the document`], [`${d.id}|feedback_attachment_id`, `${d.name} v${d.version} · ${first}'s feedback`]])]);
@@ -407,7 +532,7 @@ export function renderClientFile(root, ctx) {
             : { ...base, kind, at: dateOrNull(fd.get('due_at'), 9), direction: 'internal', channel: kind === 'meeting' ? 'meeting' : 'other', due_at: null };
         } },
       version: { title: v ? `Edit ${v.name} v${v.version}` : 'Add a document version', table: 'crm_deliverables', html: `
-        <label class="cf-wide">Document<input name="name" list="cf-dl-names" required maxlength="200" value="${val('name')}" placeholder="e.g. Manual de Procedimientos"><datalist id="cf-dl-names">${[...x.byName.keys()].map(n => `<option value="${esc(n)}">`).join('')}</datalist></label>
+        <label class="cf-wide">Document<input name="name" list="cf-dl-names" required maxlength="200" value="${v ? val('name') : esc(dflt.name || '')}" placeholder="e.g. Manual de Procedimientos"><datalist id="cf-dl-names">${[...x.byName.keys()].map(n => `<option value="${esc(n)}">`).join('')}</datalist></label>
         <label>Version<input type="number" name="version" min="1" value="${v?.version || 1}" required></label>
         <label>Due<input type="date" name="due_at" value="${dIn(v?.due_at)}"></label>
         <label>Sent<input type="date" name="sent_at" value="${dIn(v?.sent_at)}"></label>
@@ -424,10 +549,24 @@ export function renderClientFile(root, ctx) {
             feedback_at: dateOrNull(fd.get('feedback_at')), final_at: dateOrNull(fd.get('final_at')),
             attachment_id: fd.get('attachment_id') || null, feedback_attachment_id: fd.get('feedback_attachment_id') || null, notes: (fd.get('notes') || '').trim() || null };
         } },
+      note: { title: v ? 'Edit note' : 'Add a note', table: 'crm_timeline', html: `
+        <label class="cf-wide">Title<input name="title" required maxlength="200" value="${v ? val('title') : 'Notes'}"></label>
+        <label class="cf-wide">Notes<textarea name="body" rows="12" placeholder="Write or paste your notes">${val('body')}</textarea></label>
+        <label>Date<input type="date" name="at" value="${dIn(v?.at) || toDateInput(new Date())}" required></label>
+        <label>Step<select name="step">${stepOpts(v?.step)}</select></label>
+        <label>File<select name="attachment_id">${fileOpts(v?.attachment_id)}</select></label>`,
+        row: (fd) => ({ at: dateOrNull(fd.get('at')), direction: 'internal', channel: 'other', kind: 'note', step: fd.get('step') || null,
+          title: fd.get('title').trim(), body: (fd.get('body') || '').trim() || null, attachment_id: fd.get('attachment_id') || null }) },
+      callnotes: { title: 'Notes from the discovery call', html: `
+        <label class="cf-wide">Notes<textarea name="meeting_notes" rows="18">${esc(c.meeting_notes || '')}</textarea></label>`,
+        custom: async (fd) => {
+          const r = await ctx.actions.updateContact({ meeting_notes: (fd.get('meeting_notes') || '').trim() || null });
+          return r?.error ? 'Could not save: ' + r.error.message : null;
+        } },
       upload: { title: 'Add a file', html: `
         <label class="cf-wide">File(s)<input type="file" name="files" multiple required></label>
         <label class="cf-wide">Name to show (optional)<input name="label" maxlength="140" placeholder="e.g. ToR signed by Andrea"></label>
-        <label>Step<select name="step">${fileStepOpts(P.STEPS[(x.currentStep || 1) - 1]?.key || 'other')}</select></label>
+        <label>Step<select name="step">${fileStepOpts(dflt.step || P.STEPS[(x.currentStep || 1) - 1]?.key || 'other')}</select></label>
         <label class="cf-wide">Link to a document version<select name="link">${linkOpts('')}</select></label>`,
         custom: async (fd, msg) => {
           const files = fd.getAll('files').filter(f => f && f.size);
