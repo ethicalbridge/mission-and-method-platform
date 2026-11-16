@@ -193,6 +193,11 @@ table{border-collapse:collapse;width:100%}
 .nl-subject { margin: 0; font-size: 14px; }
 .nl-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin: 14px 0 8px; }
 .nl-stats > div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; }
+.nl-stats > button.nl-stat { all: unset; box-sizing: border-box; cursor: pointer; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; text-align: left; transition: border-color .15s, box-shadow .15s; }
+.nl-stats > button.nl-stat:hover { border-color: var(--teal); }
+.nl-stats > button.nl-stat:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.nl-stats > button.nl-stat.on { border: 2px solid var(--teal); box-shadow: 0 2px 8px #123c481f; background: #f3faf8; }
+.nl-people-head { margin: 6px 0 4px; }
 .nl-stats b { display: block; font-size: 22px; color: var(--teal); font-weight: 900; line-height: 1.1; }
 .nl-stats span { display: block; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; font-weight: 800; color: var(--muted); margin-top: 3px; }
 @media (max-width: 760px) { .nl-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

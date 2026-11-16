@@ -941,12 +941,13 @@ function renderSent() {
   const sum = cs.filter(c => c.sent_at).map(campSummary);
   const rate = (k) => { const s = sum.reduce((a, x) => a + (x.base || 0), 0); return s ? pct(sum.reduce((a, x) => a + (x[k] || 0), 0), s) : '—'; };
   const cards = cs.map(c => {
-    const x = campSummary(c), open = S.campOpen === c.id;
-    const stat = (label, v, of) => `<div><b>${v == null ? '—' : num(v)}</b><span>${esc(label)}${of && v != null ? ` · ${pct(v, of)}` : ''}</span></div>`;
+    const x = campSummary(c), open = S.campOpen === c.id, sel = open ? (S.campFilter || 'all') : '';
+    // Each box is a button: it opens the people list showing only that group (click it again to show everyone).
+    const stat = (k, label, v, of) => `<button type="button" class="nl-stat${sel === k ? ' on' : ''}" data-action="camp-filter" data-id="${esc(c.id)}" data-k="${k}" aria-pressed="${sel === k}" title="Show who: ${esc(label.toLowerCase())}"><b>${v == null ? '—' : num(v)}</b><span>${esc(label)}${of && v != null ? ` · ${pct(v, of)}` : ''}</span></button>`;
     return `<article class="panel nl-camp${open ? ' open' : ''}">
       <div class="rowhead"><div><span class="eyebrow">${c.sent_at ? esc(fmtDT(c.sent_at)) : 'Not sent yet'}${c.brevo_id ? ` · Brevo #${esc(c.brevo_id)}` : ''}</span><h3>${esc(c.name)}</h3><p class="muted nl-subject">${esc(c.subject || '')}</p></div>
-        <div class="actions"><button class="button secondary small" data-action="camp-edit" data-id="${esc(c.id)}">Edit</button><button class="button small" data-action="camp-toggle" data-id="${esc(c.id)}" aria-expanded="${open}">${open ? 'Hide people' : 'Who opened'}</button></div></div>
-      <div class="nl-stats">${stat('Sent to', x.sent)}${stat('Delivered', x.delivered, x.sent)}${stat('Opened', x.opened, x.base)}${stat('Clicked', x.clicked, x.base)}${stat('Unsubscribed', x.unsubscribed, x.base)}${stat('Not delivered', x.bounced, x.sent)}</div>
+        <div class="actions"><button class="button secondary small" data-action="camp-edit" data-id="${esc(c.id)}">Edit</button><button class="button small" data-action="camp-toggle" data-id="${esc(c.id)}" aria-expanded="${open}">${open ? 'Hide people' : 'See people'}</button></div></div>
+      <div class="nl-stats">${stat('all', 'Sent to', x.sent)}${stat('delivered', 'Delivered', x.delivered, x.sent)}${stat('opened', 'Opened', x.opened, x.base)}${stat('clicked', 'Clicked', x.clicked, x.base)}${stat('unsubscribed', 'Unsubscribed', x.unsubscribed, x.base)}${stat('bounced', 'Not delivered', x.bounced, x.sent)}</div>
       <p class="tiny muted">${esc(c.list_name || 'List not recorded')}${x.hasEvents ? ` · Tracked per person: ${x.tracked.opened} opened, ${x.tracked.clicked} clicked` : ' · No per-person events from Brevo yet'}${Object.keys(x.report).length ? ' · Totals include figures copied from Brevo’s report' : ''}</p>
       ${c.notes ? `<p class="tiny">${esc(c.notes)}</p>` : ''}
       ${open ? campDetail(c) : ''}</article>`;
@@ -957,13 +958,26 @@ function renderSent() {
     ${anyEvents ? '' : `<div class="notice" role="status">Opens and clicks per person appear here as soon as Brevo starts sending them. Until then, use “Edit” to copy the totals from Brevo’s campaign report.</div>`}
     ${cards || '<p class="muted">No newsletters recorded yet. Use “Add newsletter”.</p>'}`;
 }
+const CAMP_FILTERS = {
+  all: ['everyone it was sent to', () => true],
+  delivered: ['delivered', p => p.delivered && !p.bounced],
+  opened: ['opened', p => p.opened],
+  clicked: ['clicked a link', p => p.clicks.length],
+  unsubscribed: ['unsubscribed', p => p.unsub],
+  bounced: ['not delivered', p => p.bounced],
+};
 function campDetail(c) {
   const ix = new Map((S.subs || []).map(s => [String(s.email).toLowerCase(), s]));
-  const rows = campPeople(c).map(p => { const s = ix.get(p.email); const m = s ? matchSubscriber(s) : { org: null }; return { p, org: m.org }; })
+  const fk = CAMP_FILTERS[S.campFilter] ? S.campFilter : 'all', [flabel, fn] = CAMP_FILTERS[fk];
+  const everyone = campPeople(c), shown = everyone.filter(fn);
+  const x = campSummary(c), total = { all: x.sent, delivered: x.delivered, opened: x.opened, clicked: x.clicked, unsubscribed: x.unsubscribed, bounced: x.bounced }[fk];
+  const gap = fk !== 'all' && total != null && total > shown.length
+    ? `<p class="notice" role="status">Brevo counts ${num(total)}, but only ${num(shown.length)} ${shown.length === 1 ? 'person is' : 'people are'} recorded by name here. ${x.hasEvents ? 'The others are in Brevo’s totals only (for example automated or Apple privacy opens).' : 'Per-person results for this newsletter have not been imported from Brevo yet.'}</p>` : '';
+  const rows = shown.map(p => { const s = ix.get(p.email); const m = s ? matchSubscriber(s) : { org: null }; return { p, org: m.org }; })
     .sort((a, b) => (!!b.p.clicks.length - !!a.p.clicks.length) || (!!b.p.opened - !!a.p.opened) || (a.org && b.org ? byCountry(a.org, b.org) : a.p.email.localeCompare(b.p.email)));
   const status = p => p.unsub ? '<span class="pill bad">Unsubscribed</span>' : p.spam ? '<span class="pill bad">Marked as spam</span>' : p.bounced ? `<span class="pill warn">${esc(p.bounced)}</span>` : p.clicks.length ? '<span class="pill">Clicked</span>' : p.opened ? '<span class="pill">Opened</span>' : p.delivered ? '<span class="pill dim">Delivered</span>' : '<span class="pill dim">No data yet</span>';
-  return `<div class="tablewrap crm-table nl-people"><table><thead><tr><th>Organisation</th><th>Email</th><th>Result</th><th>First opened</th><th>Links clicked</th></tr></thead><tbody>
-    ${rows.map(({ p, org }) => `<tr><td>${org ? `<button class="link" data-action="org" data-id="${esc(org.id)}">${esc(org.name)}</button><span class="tiny">${esc(org.country)}</span>` : '<span class="muted">—</span>'}</td><td>${esc(p.email)}</td><td>${status(p)}</td><td class="tiny">${p.opened ? (new Date(p.opened).getTime() === new Date(c.sent_at).getTime() ? 'Yes (from Brevo’s report, time not recorded)' : esc(fmtDT(p.opened))) : '—'}</td><td class="tiny">${p.clicks.map(u => esc(nlCampLink(u))).join('<br>') || '—'}</td></tr>`).join('') || '<tr><td colspan="5">No recipients recorded.</td></tr>'}
+  return `<div class="rowhead nl-people-head"><p class="tiny"><b>${num(shown.length)}</b> of ${num(everyone.length)} people · showing ${esc(flabel)}${fk !== 'all' ? ` · <button type="button" class="link" data-action="camp-filter" data-id="${esc(c.id)}" data-k="all">Show everyone</button>` : ''}</p></div>${gap}<div class="tablewrap crm-table nl-people"><table><thead><tr><th>Organisation</th><th>Email</th><th>Result</th><th>First opened</th><th>Links clicked</th></tr></thead><tbody>
+    ${rows.map(({ p, org }) => `<tr><td>${org ? `<button class="link" data-action="org" data-id="${esc(org.id)}">${esc(org.name)}</button><span class="tiny">${esc(org.country)}</span>` : '<span class="muted">—</span>'}</td><td>${esc(p.email)}</td><td>${status(p)}</td><td class="tiny">${p.opened ? (new Date(p.opened).getTime() === new Date(c.sent_at).getTime() ? 'Yes (from Brevo’s report, time not recorded)' : esc(fmtDT(p.opened))) : '—'}</td><td class="tiny">${p.clicks.map(u => esc(nlCampLink(u))).join('<br>') || '—'}</td></tr>`).join('') || `<tr><td colspan="5">${everyone.length ? 'Nobody recorded in this group.' : 'No recipients recorded.'}</td></tr>`}
   </tbody></table></div><p class="tiny muted">People shown were on the list when it was sent, plus anyone Brevo reported on. Opens can be undercounted: some email apps block tracking, and Apple Mail can count opens that didn’t happen.</p>`;
 }
 const toLocalInput = d => { if (!d) return ''; const x = new Date(d); return isNaN(x) ? '' : `${ymd(x)}T${pad2(x.getHours())}:${pad2(x.getMinutes())}`; };
@@ -1414,7 +1428,11 @@ root.addEventListener('click', async e => {
     case 'export-tl': return exportTimeline();
     case 'camp-add': return openModal(campModal(''));
     case 'camp-edit': return openModal(campModal(id));
-    case 'camp-toggle': S.campOpen = S.campOpen === id ? '' : id; return render();
+    case 'camp-toggle': S.campOpen = S.campOpen === id ? '' : id; S.campFilter = 'all'; return render();
+    case 'camp-filter': { const k = t.dataset.k || 'all';
+      // Clicking the selected box again closes the list; another box switches the group shown.
+      if (S.campOpen === id && (S.campFilter || 'all') === k) { S.campOpen = ''; S.campFilter = 'all'; } else { S.campOpen = id; S.campFilter = k; }
+      return render(); }
     case 'camp-goto': S.nlView = 'Sent'; S.campOpen = id; render(); window.scrollTo(0, 0); return;
     case 'camp-delete': {
       if (!confirm('Delete this newsletter from the CRM? Its per-person results are deleted too. Nothing changes in Brevo.')) return;
