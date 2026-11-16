@@ -69,3 +69,7 @@ revoke all on public.crm_timeline, public.crm_deliverables from anon;
 grant select, insert, update, delete on public.crm_timeline, public.crm_deliverables to authenticated;
 
 alter publication supabase_realtime add table public.crm_timeline, public.crm_deliverables;
+
+-- 2026-11-16 · decisions in the client file
+alter table public.crm_timeline drop constraint crm_timeline_kind_check;
+alter table public.crm_timeline add constraint crm_timeline_kind_check check (kind = any (array['message','meeting','doc_sent','doc_received','agreement_sent','agreement_signed','reminder','milestone','deadline','note','decision']));
