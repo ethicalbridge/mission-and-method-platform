@@ -3,7 +3,7 @@
 // Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { renderClientFile } from './client-file.js?v=4';
+import { renderClientFile } from './client-file.js?v=5';
 
 const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
@@ -131,7 +131,6 @@ let selectedId  = null;
 let currentFilter = 'all';
 let currentPath   = 'all'; // 'all' | 'founder' | 'org'
 let currentSearch = '';
-let detailTab     = 'file'; // 'file' (client file) | 'crm' (CRM record)
 
 // ============== Auth ==============
 async function boot() {
@@ -361,7 +360,7 @@ function renderList() {
         </div>
         <div class="dash-card-email">${esc(c.email)}</div>
         <div class="dash-card-pills">
-          <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>
+          <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>${founderPill(c)}
           <span class="dash-pill dash-pill-stage-${c.stage}">${c.stage.replace('_',' ')}</span>
           ${booking ? `<span class="dash-pill dash-pill-stage-booked">${fmtDate(booking.scheduled_at)}</span>` : ''}
         </div>
@@ -479,22 +478,20 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
         ${c.country ? `<p class="dash-detail-country">${esc(c.country)}</p>` : ''}
         <p class="dash-detail-sub">
           <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>
-          · <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>
+          · <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>${founderPill(c)}
           ${subMetaBits.length ? ' · ' + subMetaBits.join(' · ') : ''}
           · <small>received ${fmtRelative(c.created_at)}</small>
         </p>
       </div>
     </div>
 
-    <nav class="cf-tabs" role="tablist">
-      <button type="button" data-detail-tab="file" class="${detailTab === 'file' ? 'active' : ''}">Client file</button>
-      <button type="button" data-detail-tab="crm" class="${detailTab === 'crm' ? 'active' : ''}">CRM record</button>
-    </nav>
-    <div id="client-file" ${detailTab === 'file' ? '' : 'hidden'}></div>
-    <div id="crm-record" ${detailTab === 'crm' ? '' : 'hidden'}>
+    <details class="cf-stage"><summary>Stage: <b>${esc(stageLabel(c.stage))}</b> <span>change</span></summary>
+      <div class="dash-detail-stage-row">${stageButtons}</div>
+    </details>
+    <div id="client-file"></div>
+    <details id="crm-record" class="cf-crm">
+      <summary>All CRM fields <span>brief answers, call, proposal, survey, closure, private notes and the delete button</span></summary>
 
-    <h3>Stage</h3>
-    <div class="dash-detail-stage-row">${stageButtons}</div>
     <div class="dash-detail-danger">
       <button type="button" class="dash-delete-btn" data-delete-contact="${c.id}">Delete this contact</button>
     </div>
@@ -607,7 +604,7 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
       <textarea id="notes-field" placeholder="Running notes about this contact.">${esc(c.notes || '')}</textarea>
       <button class="dash-save-btn" id="save-notes">Save notes</button>
     </div>
-    </div>
+    </details>
   `;
 
   renderClientFile(detailBody.querySelector('#client-file'), {
@@ -634,12 +631,6 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
       reload: () => openDetail(c.id),
     },
   });
-  detailBody.querySelectorAll('[data-detail-tab]').forEach(btn => btn.addEventListener('click', () => {
-    detailTab = btn.dataset.detailTab;
-    detailBody.querySelectorAll('[data-detail-tab]').forEach(b => b.classList.toggle('active', b === btn));
-    detailBody.querySelector('#client-file').hidden = detailTab !== 'file';
-    detailBody.querySelector('#crm-record').hidden = detailTab !== 'crm';
-  }));
 
   detailBody.querySelectorAll('[data-set-stage]').forEach(btn => {
     btn.addEventListener('click', () => setStage(c.id, btn.dataset.setStage));
@@ -956,6 +947,11 @@ function csvField(v) {
   const s = String(v == null ? '' : v);
   if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
   return s;
+}
+
+// Organisations whose contact is the founder also get a "founder" pill.
+function founderPill(c) {
+  return c.path === 'org' && /fund|found|owner|due[ñn]/i.test(c.role || '') ? ' <span class="dash-pill dash-pill-path-founder">founder</span>' : '';
 }
 
 // ============== Utils ==============
