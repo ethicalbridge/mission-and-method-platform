@@ -66,7 +66,7 @@ const S = {
   area: lsGet(LS.area) === 'Universities' ? 'Universities' : 'Organisations',
   loading: true, loadError: '', directoryError: '', directoryLoadedAt: '',
   view: 'Dashboard', continent: lsGet(LS.continent) || 'All',
-  f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '', priority: '', list: '' }, page: 0,
+  f: { region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '', priority: '', list: '', language: '' }, page: 0,
   rf: { show: [], reason: '', q: '' }, relView: null,
   msgs: null, msgsError: '', cf: { region: '', country: '', name: '', email: '', status: '', ally: '' },
   subs: null, subsError: '', nf: { continent: '', region: '', country: '', name: '', email: '', match: '', status: 'Subscribed' }, nlQuery: '',
@@ -190,6 +190,7 @@ function filteredOrgs() {
     else if (e && !norm(o.email).includes(e) && !(p && [p.contact_email, p.other_email].some(v => norm(v).includes(e)))) return false;
     if (p && f.priority && (p.priority || '') !== (f.priority === '__none' ? '' : f.priority)) return false;
     if (p && f.list && p.list !== f.list) return false;
+    if (p && f.language && (p.language || '') !== (f.language === '__none' ? '' : f.language)) return false;
     const r = outreachOf(o.id);
     const is = (want, have, none) => !want || (want === '__contacted' || want === '__any' ? have !== none : have === want);
     if (f.interview && r.interview_status !== f.interview) return false;
@@ -205,7 +206,7 @@ function filteredOrgs() {
 const byCountry = (a, b) => (!a.country - !b.country) || a.country.localeCompare(b.country, 'en', { sensitivity: 'base' }) || a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
 const FILTER_LABELS = { region: 'Region', country: 'Country', name: 'Name', email: 'Email address', interview: 'Interview', emailStatus: 'Email', reply: 'Reply', ig: 'Instagram', fb: 'Facebook', li: 'LinkedIn', priority: 'Priority', list: 'List' };
 const filterValueLabel = v => v === '__contacted' ? 'Any contact' : v === '__any' ? 'Any response' : interviewLabel(v);
-const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '', priority: '', list: '' });
+const EMPTY_FILTERS = () => ({ region: '', country: '', name: '', email: '', interview: '', emailStatus: '', reply: '', ig: '', fb: '', li: '', priority: '', list: '', language: '' });
 
 // ---------- shell ----------
 function render() {
@@ -282,6 +283,8 @@ const USTAGES = [
 const UOUT = [['Not now', 'They said not now: note the reason and the month to come back'], ['Lost', 'They said no: note the reason (reviewed each quarter)']];
 const TOUCHES = [['d0', 'Day 0', 'LinkedIn note'], ['d2', 'Day 2', 'First email with the offer pack'], ['d7', 'Day 7', 'Follow-up with a live need'], ['d14', 'Day 14', 'Last follow-up with a result or case study'], ['d45', 'Day 45', 'One restart with news']];
 const UPRIORITY = [['A', 'A · priority'], ['B', 'B'], ['C', 'C']];
+// The language each university is written to (19 Nov 2026): one mail-merge email per language.
+const ULANG = ['English', 'Spanish', 'Portuguese'];
 const UTIER = ['Programme Partner', 'Impact Partner'];
 const stageIdx = st => USTAGES.findIndex(x => x[0] === st);
 const stageOf = st => USTAGES.find(x => x[0] === st);
@@ -516,7 +519,7 @@ function renderOrganisations() {
 // approach, the named contact and emails, and where they were found. These fields live in the university's pipeline record.
 const UNI_LISTS = ['Map (A2)', 'Global (A3)', 'Networks (A4)'];
 const UNI_HEADS = [['Continent', ''], ['Region', ''], ['Country', ''], ['ID', 'Row ID in the university contact list: U = university or centre, N = network or association.'],
-  ['Priority', 'A strong fit and a hook Handova can use now · B good fit, hook needs adapting · C weak fit'], ['List', 'Map (A2) universities with a placement scheme · Global (A3) centres and programmes worldwide · Networks (A4)'],
+  ['Language', 'The language the university is written to: English, Spanish or Portuguese. Warm contacts are marked too.'], ['List', 'Map (A2) universities with a placement scheme · Global (A3) centres and programmes worldwide · Networks (A4)'],
   ['University', 'Click the name for its email marks, notes and details.'], ['Centre or programme', 'The centre, programme or office this row is about.'], ['Who to approach', 'The office or role that fits the Handova pitch.'],
   ['Contact name', 'Named person, from the university’s own pages. Edit it here.'], ['Role', ''], ['Email', 'Write to this address. Edit it here.'], ['Other email', 'Office address to copy, or a second contact.'],
   ['Where found', 'Page where the email is written: check it before sending.'], ['Note', 'What to check: outdated names, office-only addresses and other caveats.'], ['Programme page', 'Page that confirms the programme or hook.'],
@@ -534,11 +537,11 @@ function renderUniOutreach() {
   const replyItems = [['__any', 'Any response'], ...REPLY];
   const active = Object.entries(f).filter(([, v]) => v);
   const only = active.length === 1 ? active[0].join('=') : active.length ? '?' : '';
-  const pri = k => base.filter(o => (pipeOf(o.id).priority || '') === k).length;
+  const lang = k => base.filter(o => (pipeOf(o.id).language || '') === k).length;
   const withEmail = base.filter(o => pipeOf(o.id).contact_email || o.email).length;
   const groups = [
     ['Contacts', [['With an email', withEmail, 'email=@'], ['No email yet', s.orgs - withEmail, 'email=__none']]],
-    ['Priority', [['A · priority', pri('A'), 'priority=A'], ['B', pri('B'), 'priority=B'], ['C', pri('C'), 'priority=C'], ['Networks', base.filter(o => pipeOf(o.id).list === 'Networks (A4)').length, 'list=Networks (A4)']]],
+    ['Language', [...ULANG.map(l => [l, lang(l), 'language=' + l]), ['Networks', base.filter(o => pipeOf(o.id).list === 'Networks (A4)').length, 'list=Networks (A4)']]],
     ['Emails', [['Emails sent', s.sent, 'emailStatus=Sent'], ['Not yet emailed', s.orgs - s.sent, 'emailStatus=Not sent'], ['Replies', s.replied, 'reply=Replied'], ['Automatic replies', s.auto, 'reply=Automatic reply'], ['Bounce backs', s.bounce, 'reply=Bounce back']]],
   ];
   const qbtn = ([l, v, q]) => `<button type="button" data-quick="${esc(q)}" class="${q === only ? 'active' : ''}" title="Show ${esc(l.toLowerCase())} in the table"><b>${v}</b><span>${esc(l)}</span></button>`;
@@ -548,7 +551,7 @@ function renderUniOutreach() {
     const pin = (k, label, type = 'text') => `<input type="${type}" data-pipe="${k}" data-id="${esc(o.id)}" value="${esc(p[k] || '')}" aria-label="${esc(label)} for ${esc(o.name)}">`;
     return `<tr class="${r.reply_status === 'Replied' ? 'reply' : ''}">
       <td>${esc(o.continent)}</td><td>${esc(o.region)}</td><td>${esc(o.country)}</td>
-      <td class="tiny">${esc(p.ref || '')}</td><td>${p.priority ? `<span class="pill dim">${esc(p.priority)}</span>` : '<span class="muted">—</span>'}${p.warm ? ' <span class="pill" title="Warm contact or introduction">Warm</span>' : ''}</td><td class="tiny">${esc(p.list || '')}</td>
+      <td class="tiny">${esc(p.ref || '')}</td><td>${p.language ? `<span class="pill dim">${esc(p.language)}</span>` : '<span class="muted">—</span>'}${p.warm ? ' <span class="pill" title="Warm contact or introduction">Warm</span>' : ''}</td><td class="tiny">${esc(p.list || '')}</td>
       <td class="crm-org"><button class="link" data-action="org" data-id="${esc(o.id)}">${esc(o.name)}</button></td>
       <td class="tiny">${esc(o.unit || '')}</td><td class="tiny">${esc(p.who_to_approach || '')}</td>
       <td>${pin('contact_name', 'Contact name')}</td><td>${pin('contact_role', 'Role')}</td><td>${pin('contact_email', 'Email', 'email')}</td><td>${pin('other_email', 'Other email', 'email')}</td>
@@ -566,7 +569,7 @@ function renderUniOutreach() {
       <div class="crm-frow"><b>General</b>
         <label><span>Region</span>${sel('region', regions, 'All regions')}</label>
         <label><span>Country</span>${sel('country', countries, 'All countries')}</label>
-        <label><span>Priority</span>${sel('priority', [...UPRIORITY, ['__none', 'None (networks)']], 'Any')}</label>
+        <label><span>Language</span>${sel('language', [...ULANG, ['__none', 'Not set']], 'Any')}</label>
         <label><span>List</span>${sel('list', UNI_LISTS, 'All lists')}</label></div>
       <div class="crm-frow"><b>Search</b>
         <label><span>University, centre or contact</span><input data-filter="name" class="${f.name ? 'crm-on' : ''}" value="${esc(f.name)}" placeholder="Search by name"></label>
@@ -1176,8 +1179,8 @@ function editOwnOrgModal(id) {
 function exportOrgs() {
   const list = filteredOrgs();
   if (isUni()) return downloadCsv(`ethical-bridge-universities-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
-    ['continent', 'region', 'country', 'id', 'priority', 'list', 'university', 'centre_or_programme', 'who_to_approach', 'contact_name', 'role', 'email', 'other_email', 'where_found', 'note', 'programme_page', 'email_status', 'date_sent', 'reply_status', 'stage'],
-    list.map(o => { const r = outreachOf(o.id), p = pipeOf(o.id); return [o.continent, o.region, o.country, p.ref, p.priority, p.list, o.name, o.unit, p.who_to_approach, p.contact_name, p.contact_role, p.contact_email || o.email, p.other_email, p.where_found, p.source_note, p.programme_page || o.website, r.email_status, r.date_sent || '', r.reply_status, p.status]; }));
+    ['continent', 'region', 'country', 'id', 'language', 'priority', 'list', 'university', 'centre_or_programme', 'who_to_approach', 'contact_name', 'role', 'email', 'other_email', 'where_found', 'note', 'programme_page', 'email_status', 'date_sent', 'reply_status', 'stage'],
+    list.map(o => { const r = outreachOf(o.id), p = pipeOf(o.id); return [o.continent, o.region, o.country, p.ref, p.language || '', p.priority, p.list, o.name, o.unit, p.who_to_approach, p.contact_name, p.contact_role, p.contact_email || o.email, p.other_email, p.where_found, p.source_note, p.programme_page || o.website, r.email_status, r.date_sent || '', r.reply_status, p.status]; }));
   downloadCsv(`ethical-bridge-organisations-${S.continent === 'All' ? 'all' : norm(S.continent).replace(/\W+/g, '-')}-${today()}.csv`,
     ['continent', 'region', 'country', 'public_name', 'interview_status', 'interview_date', 'contact_person', 'public_email', 'public_phone', 'personal_phone', 'email_status', 'date_sent', 'instagram_status', 'facebook_status', 'linkedin_status', 'reply_status', 'notes', 'website'],
     list.map(o => { const r = outreachOf(o.id); return [o.continent, o.region, o.country, o.name, interviewLabel(r.interview_status), r.interview_date || '', r.contact_person, o.email, o.phone, r.personal_phone, r.email_status, r.date_sent || '', r.instagram_status, r.facebook_status, r.linkedin_status, r.reply_status, r.notes, o.website]; }));
