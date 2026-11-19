@@ -3,7 +3,7 @@
 // Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { renderClientFile } from './client-file.js?v=6';
+import { renderClientFile } from './client-file.js?v=7';
 
 const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';

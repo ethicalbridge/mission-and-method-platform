@@ -2,7 +2,7 @@
 // One simple page per client: now, Gantt, next, done, decisions,
 // correspondence and documents. Logic for dates lives in progress-core.js.
 
-import * as P from './progress-core.js?v=7';
+import * as P from './progress-core.js?v=8';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pad = (n) => String(n).padStart(2, '0');
@@ -414,9 +414,11 @@ export function renderClientFile(root, ctx) {
     if (c.survey_sent_at) rows.push({ at: P.toD(c.survey_sent_at), dir: 'out', channel: 'email', cat: 'message', title: 'Exit survey sent', crm: true });
     if (c.survey_responded_at) rows.push({ at: P.toD(c.survey_responded_at), dir: 'in', channel: 'email', cat: 'message', title: 'Exit survey answered', body: c.survey_notes || null, crm: true });
     (ctx.deliverables || []).forEach(v => {
-      if (v.sent_at && P.toD(v.sent_at) <= now && !has(r => r.file && r.file === v.attachment_id && sameDay(r.at, v.sent_at)))
+      // A version sent or answered the same day as a logged email is part of that email: don't list it twice.
+      if (v.sent_at && P.toD(v.sent_at) <= now && !has(r => !r.crm && r.dir === 'out' && ['doc', 'message'].includes(r.cat) && sameDay(r.at, v.sent_at)))
         rows.push({ at: P.toD(v.sent_at), dir: 'out', channel: 'doc', cat: 'doc', title: `${v.name} v${v.version} sent`, file: v.attachment_id, edit: ['crm_deliverables', v.id] });
-      if (v.feedback_at) rows.push({ at: P.toD(v.feedback_at), dir: 'in', channel: 'doc', cat: 'doc', title: `Feedback on ${v.name} v${v.version}`, file: v.feedback_attachment_id, edit: ['crm_deliverables', v.id] });
+      if (v.feedback_at && P.toD(v.feedback_at) <= now && !has(r => !r.crm && r.dir === 'in' && sameDay(r.at, v.feedback_at)))
+        rows.push({ at: P.toD(v.feedback_at), dir: 'in', channel: 'doc', cat: 'doc', title: `Feedback on ${v.name} v${v.version}`, file: v.feedback_attachment_id, edit: ['crm_deliverables', v.id] });
     });
     // Updates logged by the admin itself: stage changes, uploads, proposal notes
     (ctx.events || []).forEach(e => {
