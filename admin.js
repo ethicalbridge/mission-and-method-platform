@@ -3,7 +3,7 @@
 // Everyone else is blocked by RLS.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { renderClientFile } from './client-file.js?v=5';
+import { renderClientFile } from './client-file.js?v=6';
 
 const SUPABASE_URL  = 'https://itzrnaxfllcztpzrgnoa.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ignrdHXThk5I88py3FaxbA_QegLgiAI';
@@ -351,18 +351,17 @@ function renderList() {
   }
 
   listEl.innerHTML = rows.map(c => {
-    const booking = c._bookings[0];
+    const booking = c._bookings.find(b => b.status !== 'cancelled') || c._bookings[0];
+    const initials = String(c.name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+    const org = (c.organisation || '').trim();
+    const kind = c.path === 'org' ? 'Organisation' : 'Founder';
     return `
-      <li class="dash-card ${c.id === selectedId ? 'active' : ''}" data-id="${c.id}">
-        <div class="dash-card-row">
-          <div class="dash-card-name">${esc(c.name)}</div>
-          <div class="dash-card-when">${fmtRelative(c.created_at)}</div>
-        </div>
-        <div class="dash-card-email">${esc(c.email)}</div>
-        <div class="dash-card-pills">
-          <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>${founderPill(c)}
-          <span class="dash-pill dash-pill-stage-${c.stage}">${c.stage.replace('_',' ')}</span>
-          ${booking ? `<span class="dash-pill dash-pill-stage-booked">${fmtDate(booking.scheduled_at)}</span>` : ''}
+      <li class="dash-card dc ${c.id === selectedId ? 'active' : ''}" data-id="${c.id}">
+        <span class="dc-av dc-av-${esc(c.stage)}" aria-hidden="true">${esc(initials)}</span>
+        <div class="dc-main">
+          <div class="dc-top"><span class="dc-name">${esc(c.name)}</span><span class="dc-when">${fmtRelative(c.created_at)}</span></div>
+          <div class="dc-org">${org ? `${esc(org)} · ` : ''}${kind}</div>
+          <div class="dc-status"><i class="dc-dot dc-st-${esc(c.stage)}"></i>${esc(stageLabel(c.stage))}${booking ? `<span class="dc-call">· call ${fmtDate(booking.scheduled_at)}</span>` : ''}</div>
         </div>
       </li>`;
   }).join('');
@@ -441,7 +440,7 @@ function sectionDocsHtml(section, attachments) {
 
 function renderDetail(c, brief, bookings, events, attachments, timeline = [], deliverables = []) {
   const answers = (brief && brief.answers) || {};
-  const fields = c.path === 'founder' ? FOUNDER_FIELDS : ORG_FIELDS;
+  const fields = Object.keys(answers).some(k => k.startsWith('o_')) ? ORG_FIELDS : FOUNDER_FIELDS;
 
   // Always render the three buckets in the fixed order Open → Completed → Closed.
   // The current stage button is highlighted; any other button moves the contact to that stage.
@@ -478,7 +477,7 @@ function renderDetail(c, brief, bookings, events, attachments, timeline = [], de
         ${c.country ? `<p class="dash-detail-country">${esc(c.country)}</p>` : ''}
         <p class="dash-detail-sub">
           <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>
-          · <span class="dash-pill dash-pill-path-${c.path}">${c.path}</span>${founderPill(c)}
+          · <span class="dash-pill dash-pill-path-${c.path}">${c.path === 'org' ? 'organisation' : 'founder'}</span>
           ${subMetaBits.length ? ' · ' + subMetaBits.join(' · ') : ''}
           · <small>received ${fmtRelative(c.created_at)}</small>
         </p>
@@ -947,11 +946,6 @@ function csvField(v) {
   const s = String(v == null ? '' : v);
   if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
   return s;
-}
-
-// Organisations whose contact is the founder also get a "founder" pill.
-function founderPill(c) {
-  return c.path === 'org' && /fund|found|owner|due[ñn]/i.test(c.role || '') ? ' <span class="dash-pill dash-pill-path-founder">founder</span>' : '';
 }
 
 // ============== Utils ==============

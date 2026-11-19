@@ -529,3 +529,26 @@ body {
   .dash-topbar { grid-template-columns: 1fr; row-gap: 10px; }
   .dash-brand small { display: none; }
 }
+
+/* =========================================================
+   Contact list · redesigned cards
+   ========================================================= */
+.dash-card.dc { flex-direction: row; align-items: flex-start; gap: 12px; padding: 14px 16px; border-left: 3px solid transparent; }
+.dash-card.dc.active { background: #eef7f4; border-left-color: var(--teal); padding-left: 16px; }
+.dc-av { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 13px; letter-spacing: .02em; color: #fff; background: var(--ink-dim); }
+.dc-av-new { background: #8a9aa3; }
+.dc-av-booked { background: #6c7fd8; }
+.dc-av-met { background: var(--teal); }
+.dc-av-proposal_sent { background: #8b5cc4; }
+.dc-av-won { background: #2e8b3e; }
+.dc-av-declined, .dc-av-ghosted, .dc-av-not_fit, .dc-av-budget, .dc-av-timing, .dc-av-cancelled, .dc-av-other, .dc-av-archived { background: #b9b0a2; }
+.dc-main { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.dc-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.dc-name { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); line-height: 1.2; }
+.dc-when { font-size: 11px; color: var(--ink-dim); white-space: nowrap; }
+.dc-org { font-size: 12.5px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dc-status { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+.dc-dot { width: 8px; height: 8px; border-radius: 50%; background: #8a9aa3; flex: 0 0 auto; }
+.dc-st-booked { background: #6c7fd8; } .dc-st-met { background: var(--teal); } .dc-st-proposal_sent { background: #8b5cc4; } .dc-st-won { background: #2e8b3e; }
+.dc-st-declined, .dc-st-ghosted, .dc-st-not_fit, .dc-st-budget, .dc-st-timing, .dc-st-cancelled, .dc-st-other, .dc-st-archived { background: #b9b0a2; }
+.dc-call { font-weight: 600; color: var(--ink-dim); }
