@@ -223,3 +223,11 @@
 }
 .dash-detail .cf-page-head h3 { color: #fff; font-size: 22px; margin: 2px 0; }
 .cf-cat-date, .cf-cat-update { padding-right: 34px !important; }
+
+/* more air in the timeline labels */
+.cf-g-row { min-height: 38px; align-items: center; border-bottom: 1px dashed #f1ece2; }
+.cf-g-head { min-height: 22px; border-bottom: 0; }
+.cf-g-label { padding: 7px 14px 7px 0; line-height: 1.35; font-size: 12.5px; }
+.cf-g-open { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.35; }
+.cf-g-track { border-bottom: 0; }
+.cf-g-group { margin: 14px 0 4px; }
