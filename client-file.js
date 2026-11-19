@@ -2,7 +2,7 @@
 // One simple page per client: now, Gantt, next, done, decisions,
 // correspondence and documents. Logic for dates lives in progress-core.js.
 
-import * as P from './progress-core.js?v=6';
+import * as P from './progress-core.js?v=7';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pad = (n) => String(n).padStart(2, '0');
