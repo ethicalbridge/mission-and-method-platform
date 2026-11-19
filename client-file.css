@@ -138,6 +138,30 @@
 .cf-pill.cf-late { background: #f1dcdc; color: var(--cf-late); }
 .cf-upload-status { font-size: 12px; color: var(--ink-dim); margin: 6px 0 0; min-height: 0; }
 
+/* history */
+.cf-history { display: flex; flex-direction: column; gap: 6px; }
+.cf-day { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 900; color: var(--ink-dim); margin: 10px 0 2px; border-bottom: 1px solid var(--cf-line); padding-bottom: 3px; }
+.cf-day:first-child { margin-top: 0; }
+.cf-history .cf-msg { max-width: 88%; }
+.cf-cat-decision { border-left-color: #2e8b3e !important; background: #f1faef !important; align-self: center; max-width: 92% !important; }
+.cf-cat-note { border-left-color: #c99a2e !important; background: #fffaf0 !important; align-self: center; max-width: 92% !important; }
+.cf-cat-update, .cf-cat-date { border: 0 !important; background: transparent !important; padding: 2px 8px !important; align-self: center; max-width: 92% !important; }
+.cf-cat-update .cf-msg-title, .cf-cat-date .cf-msg-title { font-weight: 600; color: var(--ink-dim); font-size: 12px; }
+.cf-cat-update .cf-msg-meta, .cf-cat-date .cf-msg-meta { display: none; }
+.cf-cat-date .cf-msg-title::before { content: '◷ '; }
+.cf-cat-update .cf-msg-title::before { content: '↻ '; }
+.cf-src { font-weight: 600; color: var(--teal); }
+/* stage and CRM fields inside the client file */
+.cf-stage { margin: 4px 0 12px; }
+.cf-stage > summary { cursor: pointer; font-size: 13px; color: var(--ink-dim); list-style: none; display: inline-flex; gap: 6px; align-items: center; background: var(--cream); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; }
+.cf-stage > summary b { color: var(--teal-deep); text-transform: capitalize; }
+.cf-stage > summary span { color: var(--teal); font-weight: 800; font-size: 12px; }
+.cf-stage[open] > summary { margin-bottom: 8px; }
+.cf-crm { margin-top: 18px; border: 1px solid var(--border); border-radius: 12px; padding: 10px 16px; background: #fff; }
+.cf-crm > summary { cursor: pointer; font-weight: 800; color: var(--teal-deep); font-size: 14px; }
+.cf-crm > summary span { font-weight: 400; color: var(--ink-dim); font-size: 12px; margin-left: 6px; }
+.dash-pill-path-founder { background: #fde9df; color: #a33b16; }
+
 /* long messages */
 .cf-msg-body.is-long { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .cf-msg-body.is-long.is-open { display: block; -webkit-line-clamp: unset; }
@@ -198,3 +222,4 @@
   font-family: 'Playfair Display', Georgia, serif; font-weight: 700; margin: 0 0 12px; font-size: 20px; color: var(--teal-deep);
 }
 .dash-detail .cf-page-head h3 { color: #fff; font-size: 22px; margin: 2px 0; }
+.cf-cat-date, .cf-cat-update { padding-right: 34px !important; }

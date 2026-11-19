@@ -2,7 +2,7 @@
 // One simple page per client: now, Gantt, next, done, decisions,
 // correspondence and documents. Logic for dates lives in progress-core.js.
 
-import * as P from './progress-core.js?v=5';
+import * as P from './progress-core.js?v=6';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pad = (n) => String(n).padStart(2, '0');
@@ -23,6 +23,8 @@ const STEP_KEYS = ['brief', 'prep', 'call', 'recap', 'proposal', 'agreement', 'b
 const STEP_LABEL = { ...Object.fromEntries(P.STEPS.map(s => [s.key, s.label])), other: 'Other' };
 const toSection = (step) => ({ call: 'meeting', close: 'closure', other: 'general' }[step] || step);
 const editBtn = (table, id) => id ? `<button type="button" class="cf-edit" data-edit="${table}|${esc(id)}" title="Edit">✎</button>` : '';
+const HIST_FILTERS = [['all', 'All'], ['message', 'Emails & messages'], ['meeting', 'Calls & meetings'], ['decision', 'Decisions'], ['note', 'Notes'], ['doc', 'Documents'], ['date', 'Dates'], ['update', 'Updates']];
+const HIST_ORDER = new Map(); // contact id -> 'old' (default) | 'new'
 const CORRESPONDENCE_KINDS = ['message', 'meeting', 'doc_sent', 'doc_received', 'agreement_sent', 'agreement_signed', 'reminder'];
 
 // Past-tense labels for finished steps.
@@ -172,10 +174,11 @@ export function renderClientFile(root, ctx) {
       </section>
 
       <section class="cf-card">
-        <div class="cf-card-head"><h4>Correspondence</h4>
-          <div class="cf-filter">${['all', 'email', 'whatsapp', 'meeting', 'doc'].map(f => `<button type="button" class="cf-chip ${f === 'all' ? 'active' : ''}" data-filter="${f}">${f === 'all' ? 'All' : CH[f] + (f === 'doc' ? 's' : f === 'meeting' ? 's' : '')}</button>`).join('')}</div>
-          <button type="button" class="cf-btn" data-add="message">+ Message</button></div>
-        ${correspondenceHtml()}
+        <div class="cf-card-head"><h4>History</h4>
+          <div class="cf-filter">${HIST_FILTERS.map(([k, l]) => `<button type="button" class="cf-chip ${k === 'all' ? 'active' : ''}" data-filter="${k}">${l}</button>`).join('')}</div>
+          <button type="button" class="cf-btn" data-order>${HIST_ORDER.get(c.id) === 'new' ? 'Oldest first' : 'Newest first'}</button>
+          <button type="button" class="cf-btn" data-add="message">+ Message</button> <button type="button" class="cf-btn" data-add="note" data-step="">+ Note</button></div>
+        ${historyHtml()}
       </section>
 
       <section class="cf-card">
@@ -382,28 +385,67 @@ export function renderClientFile(root, ctx) {
   }
 
   // ---------- correspondence ----------
-  function correspondenceHtml() {
-    const rows = tl.filter(r => CORRESPONDENCE_KINDS.includes(r.kind) && P.toD(r.at) <= now).map(r => ({
-      at: P.toD(r.at), dir: r.direction, channel: r.channel, title: r.title, body: r.body, file: r.attachment_id,
-      due: r.due_at && !r.done_at ? r : null, kind: r.kind, edit: ['crm_timeline', r.id],
+  // ---------- history: everything about this client, in date order ----------
+  function historyHtml() {
+    const rows = [];
+    const sameDay = (a, b) => P.sod(a).getTime() === P.sod(b).getTime();
+    const catOf = (r) => r.kind === 'decision' ? 'decision' : r.kind === 'note' ? 'note'
+      : ['deadline', 'milestone'].includes(r.kind) ? 'date'
+      : (r.channel === 'meeting' || r.channel === 'call' || r.kind === 'meeting') ? 'meeting'
+      : ['doc_sent', 'doc_received', 'agreement_sent', 'agreement_signed'].includes(r.kind) && r.channel === 'doc' ? 'doc' : 'message';
+    tl.filter(r => P.toD(r.at) <= now).forEach(r => rows.push({
+      at: P.toD(r.at), dir: r.direction, channel: r.channel, cat: catOf(r), kind: r.kind, title: r.title, body: r.body,
+      file: r.attachment_id, due: r.due_at && !r.done_at ? r : null, done: r.done_at, edit: ['crm_timeline', r.id], step: r.step,
     }));
-    if (ctx.brief?.submitted_at) rows.push({ at: P.toD(ctx.brief.submitted_at), dir: 'in', channel: 'other', title: 'Filled in the brief on the website' });
-    (ctx.bookings || []).forEach(b => rows.push({ at: P.toD(b.created_at || b.scheduled_at), dir: 'in', channel: 'other', title: `${b.status === 'cancelled' ? 'Cancelled the call' : 'Booked a call'} for ${P.fmtDay(b.scheduled_at)}` }));
-    (ctx.deliverables || []).filter(v => v.feedback_at).forEach(v => rows.push({ at: P.toD(v.feedback_at), dir: 'in', channel: 'doc', title: `Feedback on ${v.name} v${v.version}`, file: v.feedback_attachment_id, edit: ['crm_deliverables', v.id] }));
-    rows.sort((a, b) => b.at - a.at);
-    if (!rows.length) return '<p class="cf-muted">No messages logged yet.</p>';
-    return `<ul class="cf-thread">${rows.map(r => {
-      const ch = r.channel === 'meeting' || r.kind === 'meeting' ? 'meeting' : r.channel;
-      const who = r.dir === 'in' ? first : r.dir === 'out' ? 'You' : 'Note';
-      return `<li class="cf-msg cf-msg-${r.dir}" data-ch="${esc(ch)}">
-        ${r.edit ? `<span class="cf-msg-edit">${editBtn(...r.edit)}</span>` : ''}
-        <div class="cf-msg-meta">${CH_ICON[ch] || '•'} ${esc(CH[ch] || 'Other')} · ${esc(who)}${r.dir === 'in' ? ' → you' : r.dir === 'out' ? ` → ${esc(first)}` : ''} · ${esc(P.fmtDay(r.at))}</div>
+    const has = (pred) => rows.some(pred);
+    // From the CRM record
+    if (ctx.brief?.submitted_at) {
+      const a = ctx.brief.answers || {};
+      const body = Object.entries(a).filter(([, v]) => v != null && String(v).trim()).map(([k, v]) => `${k.replace(/_/g, ' ')}: ${Array.isArray(v) ? v.join(', ') : typeof v === 'object' ? JSON.stringify(v) : v}`).join('\n');
+      rows.push({ at: P.toD(ctx.brief.submitted_at), dir: 'in', channel: 'other', cat: 'message', title: 'Filled in the brief on the website', body, crm: true });
+    }
+    (ctx.bookings || []).forEach(b => rows.push({ at: P.toD(b.created_at || b.scheduled_at), dir: 'in', channel: 'other', cat: 'meeting', title: `${b.status === 'cancelled' ? 'Cancelled the call' : 'Booked a call'} for ${P.fmtDay(b.scheduled_at)}`, crm: true }));
+    if (c.meeting_at && P.toD(c.meeting_at) <= now && !has(r => r.cat === 'meeting' && r.step === 'call' && sameDay(r.at, c.meeting_at)))
+      rows.push({ at: P.toD(c.meeting_at), dir: 'internal', channel: 'meeting', cat: 'meeting', title: 'Discovery call', body: c.meeting_notes || null, crm: true, callNotes: true });
+    if (c.proposal_sent_at && !has(r => r.kind === 'doc_sent' && r.step === 'proposal' && sameDay(r.at, c.proposal_sent_at)))
+      rows.push({ at: P.toD(c.proposal_sent_at), dir: 'out', channel: 'email', cat: 'message', title: 'Proposal sent', crm: true });
+    if (c.proposal_reply_at && !has(r => r.dir === 'in' && r.step === 'proposal' && sameDay(r.at, c.proposal_reply_at)))
+      rows.push({ at: P.toD(c.proposal_reply_at), dir: 'in', channel: 'email', cat: 'message', title: `Answer on the proposal${c.proposal_outcome ? ': ' + c.proposal_outcome.replace(/_/g, ' ') : ''}`, crm: true });
+    if (c.survey_sent_at) rows.push({ at: P.toD(c.survey_sent_at), dir: 'out', channel: 'email', cat: 'message', title: 'Exit survey sent', crm: true });
+    if (c.survey_responded_at) rows.push({ at: P.toD(c.survey_responded_at), dir: 'in', channel: 'email', cat: 'message', title: 'Exit survey answered', body: c.survey_notes || null, crm: true });
+    (ctx.deliverables || []).forEach(v => {
+      if (v.sent_at && P.toD(v.sent_at) <= now && !has(r => r.file && r.file === v.attachment_id && sameDay(r.at, v.sent_at)))
+        rows.push({ at: P.toD(v.sent_at), dir: 'out', channel: 'doc', cat: 'doc', title: `${v.name} v${v.version} sent`, file: v.attachment_id, edit: ['crm_deliverables', v.id] });
+      if (v.feedback_at) rows.push({ at: P.toD(v.feedback_at), dir: 'in', channel: 'doc', cat: 'doc', title: `Feedback on ${v.name} v${v.version}`, file: v.feedback_attachment_id, edit: ['crm_deliverables', v.id] });
+    });
+    // Updates logged by the admin itself: stage changes, uploads, proposal notes
+    (ctx.events || []).forEach(e => {
+      const m = e.message || '';
+      if (e.type === 'stage_change' || e.type === 'file_uploaded' || (e.type === 'proposal_updated' && m.length > 25) || (e.type === 'meeting_updated' && m.length > 25))
+        rows.push({ at: P.toD(e.created_at), dir: 'internal', channel: 'other', cat: 'update', title: m.replace(/\s*\[[a-z]+\]$/, ''), sys: true });
+    });
+    if (!rows.length) return '<p class="cf-muted">Nothing logged yet.</p>';
+    const newest = HIST_ORDER.get(c.id) === 'new';
+    rows.sort((a, b) => newest ? b.at - a.at : a.at - b.at);
+    let lastDay = '';
+    return `<div class="cf-history">${rows.map(r => {
+      const day = P.fmtDay(r.at);
+      const dh = day !== lastDay ? `<div class="cf-day" data-day>${esc(day)}</div>` : '';
+      lastDay = day;
+      const ch = r.cat === 'meeting' ? 'meeting' : r.channel;
+      const label = { decision: 'Decision', note: 'Note', date: 'Date set', update: 'Update' }[r.cat] || CH[ch] || 'Other';
+      const icon = { decision: '◆', note: '✎', date: '◷', update: '↻' }[r.cat] || CH_ICON[ch] || '•';
+      const who = r.dir === 'in' ? `${first} → you` : r.dir === 'out' ? `You → ${first}` : r.cat === 'decision' ? 'Agreed' : '';
+      const long = r.body && (r.body.length > 280 || r.body.split('\n').length > 4);
+      return `${dh}<div class="cf-msg cf-msg-${r.dir} cf-cat-${r.cat}" data-ch="${esc(r.cat)}">
+        ${r.edit ? `<span class="cf-msg-edit">${editBtn(...r.edit)}</span>` : r.callNotes ? '<span class="cf-msg-edit"><button type="button" class="cf-edit" data-callnotes title="Edit notes">✎</button></span>' : ''}
+        <div class="cf-msg-meta">${icon} ${esc(label)}${who ? ` · ${esc(who)}` : ''} · ${esc(r.at.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }))}${r.crm ? ' · <span class="cf-src">from the CRM</span>' : ''}</div>
         <div class="cf-msg-title">${esc(r.title)}</div>
-        ${r.body ? `<div class="cf-msg-body ${r.body.length > 280 || r.body.split('\n').length > 4 ? 'is-long' : ''}">${esc(r.body)}</div>${r.body.length > 280 || r.body.split('\n').length > 4 ? '<button type="button" class="cf-more" data-more>Show full email</button>' : ''}` : ''}
+        ${r.body ? `<div class="cf-msg-body ${long ? 'is-long' : ''}">${esc(r.body)}</div>${long ? `<button type="button" class="cf-more" data-more>${r.cat === 'message' ? 'Show full email' : 'Show all'}</button>` : ''}` : ''}
         ${r.file ? fileChip(r.file) : ''}
-        ${r.due ? `<span class="cf-reply">Reply needed by ${esc(P.fmtDay(r.due.due_at))} · ${esc(whoName(r.due.owed_by))}</span>` : ''}
-      </li>`;
-    }).join('')}</ul>`;
+        ${r.due ? `<span class="cf-reply">${r.cat === 'date' ? 'Due' : 'Reply needed by'} ${esc(P.fmtDay(r.due.due_at))} · ${esc(whoName(r.due.owed_by))}</span>` : ''}
+      </div>`;
+    }).join('')}</div>`;
   }
 
   // ---------- documents ----------
@@ -453,7 +495,19 @@ export function renderClientFile(root, ctx) {
     root.querySelectorAll('[data-filter]').forEach(b => b.onclick = () => {
       root.querySelectorAll('[data-filter]').forEach(o => o.classList.toggle('active', o === b));
       const f = b.dataset.filter;
-      root.querySelectorAll('.cf-msg').forEach(m => { m.hidden = f !== 'all' && m.dataset.ch !== f; });
+      const hist = root.querySelector('.cf-history');
+      if (!hist) return;
+      hist.querySelectorAll('.cf-msg').forEach(m => { m.hidden = f !== 'all' && m.dataset.ch !== f; });
+      // hide a day heading when none of its entries is shown
+      hist.querySelectorAll('[data-day]').forEach(d => {
+        let n = d.nextElementSibling, any = false;
+        while (n && !n.hasAttribute('data-day')) { if (!n.hidden) any = true; n = n.nextElementSibling; }
+        d.hidden = !any;
+      });
+    });
+    root.querySelector('[data-order]')?.addEventListener('click', () => {
+      HIST_ORDER.set(c.id, HIST_ORDER.get(c.id) === 'new' ? 'old' : 'new');
+      renderClientFile(root, ctx);
     });
     root.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => {
       const [table, id] = b.dataset.edit.split('|');
@@ -471,7 +525,7 @@ export function renderClientFile(root, ctx) {
       root.scrollIntoView({ block: 'start' });
     });
     root.querySelectorAll('[data-back]').forEach(b => b.onclick = () => { VIEWS.delete(c.id); renderClientFile(root, ctx); root.scrollIntoView({ block: 'start' }); });
-    root.querySelector('[data-callnotes]')?.addEventListener('click', () => openDialog('callnotes'));
+    root.querySelectorAll('[data-callnotes]').forEach(b => b.addEventListener('click', () => openDialog('callnotes')));
   }
 
   // ---------- dialogs ----------
